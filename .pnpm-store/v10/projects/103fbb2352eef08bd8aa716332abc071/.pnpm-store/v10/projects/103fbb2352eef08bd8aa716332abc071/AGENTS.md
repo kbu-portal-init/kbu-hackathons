@@ -1,0 +1,67 @@
+# KBU Hub agent guide
+
+## Architecture
+
+- This is a Next.js App Router project using TypeScript and the `@/*` import alias.
+- Route groups organize the application without changing URLs:
+  - `app/(public)` contains the public site and its shared header and footer.
+  - `app/(participant)/teams` contains the participant workspace.
+  - `app/(management)/panel` contains the management workspace.
+- Keep public pages available without authentication. Authentication, approval checks, database access, mutations, and redirects are not implemented yet.
+- Treat `/teams` as the future approved participant workspace and `/panel` as the future management workspace.
+
+## Components and navigation
+
+- Prefer Server Components. Add `"use client"` only when a component needs browser state, events, effects, or a client-only library.
+- Keep page files server-rendered where possible; place interactive behavior in focused client components.
+- Maintain public, participant, and management link definitions in `lib/navigation.ts`. Update that file whenever a navigation destination changes.
+- Update `README.md` and this file whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Keep the README route map aligned with the application and `lib/navigation.ts` aligned with navigable routes.
+- Reuse application components from `components`. Do not place app-specific UI in `components/ui`.
+- `components/ui` is shadcn-generated source. Do not hand-edit it. This project uses shadcn's Base UI configuration; browse the [component catalog](https://ui.shadcn.com/docs/components) and add a component with `pnpm dlx shadcn@latest add <component>`.
+
+## Styling
+
+- Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
+- Orange is the product primary color. Use the existing semantic primary utilities or Tailwind orange utilities such as `bg-orange-600`, `text-orange-500`, and `bg-orange-900` when appropriate.
+- Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.
+- Use Lucide icons through `lucide-react`.
+
+## Quality checks
+
+Run the relevant checks before finishing a change:
+
+```bash
+pnpm lint
+pnpm exec tsc --noEmit
+pnpm build
+```
+
+Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
+
+## Git branches
+
+- Before beginning implementation, create or claim the relevant GitHub issue, assign yourself, and add a `Working on this` comment.
+- Make each change on a focused branch instead of the default branch.
+- Use `<type>/<short-description>` in lowercase kebab case, such as `feat/team-settings`, `fix/sidebar-toggle`, `docs/readme`, or `chore/update-dependencies`.
+- Keep a branch limited to one coherent change and run the relevant quality checks before handing it off.
+
+## Pull requests
+
+- Open a pull request from the focused branch and link the corresponding GitHub issue with `Closes #<issue-number>`.
+- Use a concise conventional title, for example `feat: add team settings page` or `fix: correct mobile navigation`.
+- Use this body format:
+
+```md
+## Summary
+- What changed and why.
+
+## Validation
+- [ ] pnpm lint
+- [ ] pnpm exec tsc --noEmit
+- [ ] pnpm build
+
+## Screenshots
+<!-- Optional: include when helpful to review visible UI changes. -->
+
+Closes #<issue-number>
+```

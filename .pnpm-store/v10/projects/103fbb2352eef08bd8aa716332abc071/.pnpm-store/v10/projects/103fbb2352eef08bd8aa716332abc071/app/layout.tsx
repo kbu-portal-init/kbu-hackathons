@@ -1,0 +1,25 @@
+import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import type { ReactNode } from "react";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import "./globals.css";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+    variable: "--font-plus-jakarta-sans",
+    subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+    title: "KBU Hub | Hackathons that move ideas forward",
+    description: "Discover hackathons, join a team, and keep up with the KBU community.",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+    return (
+        <html lang="en" className={`${plusJakartaSans.variable} h-full antialiased`}>
+            <body className="min-h-full bg-white text-zinc-950 dark:bg-zinc-950 dark:text-white">
+                <TooltipProvider>{children}</TooltipProvider>
+            </body>
+        </html>
+    );
+}
