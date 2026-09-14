@@ -1,0 +1,28 @@
+name: Validate main pull request source
+
+on:
+    pull_request:
+        branches:
+            - main
+        types:
+            - opened
+            - reopened
+            - synchronize
+            - edited
+
+permissions:
+    contents: read
+
+jobs:
+    require-dev-source-branch:
+        name: Require dev source branch
+        runs-on: ubuntu-latest
+        steps:
+            - name: Validate source branch
+              env:
+                  HEAD_REF: ${{ github.head_ref }}
+              run: |
+                  if [ "$HEAD_REF" != "dev" ]; then
+                      echo "::error::Pull requests targeting main must come from the dev branch."
+                      exit 1
+                  fi
