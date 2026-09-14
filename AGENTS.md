@@ -41,13 +41,15 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 ## Git branches
 
 - Before beginning implementation, create or claim the relevant GitHub issue, assign yourself, and add a `Working on this` comment.
-- Make each change on a focused branch instead of the default branch.
+- Create each focused branch from `dev`. Open its pull request into `dev`; do not merge feature branches directly into `main`.
+- Promote tested integrated work from `dev` to `main` through a separate release pull request.
+- `.github/workflows/main-source-branch.yml` validates that `main` pull requests originate from `dev`. Keep its `Require dev source branch` job configured as a required `main` branch status check after the workflow has run.
 - Use `<type>/<short-description>` in lowercase kebab case, such as `feat/team-settings`, `fix/sidebar-toggle`, `docs/readme`, or `chore/update-dependencies`.
 - Keep a branch limited to one coherent change and run the relevant quality checks before handing it off.
 
 ## Pull requests
 
-- Open a pull request from the focused branch and link the corresponding GitHub issue with `Closes #<issue-number>`.
+- Open a pull request from the focused branch into `dev` and link the corresponding GitHub issue with `Closes #<issue-number>`. Use a separate `dev` to `main` pull request for a release.
 - Use a concise conventional title, for example `feat: add team settings page` or `fix: correct mobile navigation`.
 - Use this body format:
 

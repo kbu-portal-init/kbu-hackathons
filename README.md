@@ -36,7 +36,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Branching
 
-Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Then use a focused branch for the issue. Name branches by work type and a short, lowercase description:
+Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Create a focused branch from `dev` for the issue, then open its pull request into `dev`. Promote tested changes from `dev` to `main` through a separate pull request.
+
+Name feature branches by work type and a short, lowercase description:
 
 ```text
 feat/event-registration
@@ -47,7 +49,9 @@ chore/update-dependencies
 
 ## Pull requests
 
-Open a pull request from the focused branch and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`.
+Open a pull request from the focused branch into `dev` and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`. When the integrated work is ready for release, open a separate `dev` to `main` pull request.
+
+The `Validate main pull request source` GitHub Actions workflow rejects a `main` pull request unless its source branch is `dev`. After it first runs, configure its `Require dev source branch` job as a required status check in the `main` branch ruleset.
 
 Use this description format:
 
