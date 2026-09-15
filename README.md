@@ -54,6 +54,11 @@ Open a pull request from the focused branch into `dev` and link its GitHub issue
 
 The `Validate main pull request source` GitHub Actions workflow rejects a `main` pull request unless its source branch is `dev`. After it first runs, configure its `Require dev source branch` job as a required status check in the `main` branch ruleset.
 
+### Merge strategy
+
+- Use **Squash and merge** for focused feature, fix, documentation, and maintenance pull requests into `dev`. This keeps one clear commit for each issue.
+- Use **Create a merge commit** for `dev` to `main` release pull requests. This preserves `dev` as an ancestor of `main` and prevents future release pull requests from repeating earlier commits.
+
 Use this description format:
 
 ```md
