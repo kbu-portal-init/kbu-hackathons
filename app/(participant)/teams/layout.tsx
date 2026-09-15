@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { getUserRole, requireAuth } from "@/actions/auth";
+import { requireAuth } from "@/actions/auth";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { getUserRole } from "@/types/auth";
 
 export default async function TeamsLayout({ children }: Readonly<{ children: ReactNode }>) {
     const session = await requireAuth();
