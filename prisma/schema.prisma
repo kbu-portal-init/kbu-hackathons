@@ -23,7 +23,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role         String    @default("user") // "user" | "organizer" | "admin"
+  role String @default("user") // "user" | "organizer" | "admin"
 
   teamProfile      TeamProfile?
   organizerProfile OrganizerProfile?
@@ -78,6 +78,8 @@ model Verification {
   @@map("verification")
 }
 
+// ---- Business Logic Models ---- //
+
 model TeamProfile {
   id     String @id @default(cuid())
   userId String @unique
@@ -85,7 +87,11 @@ model TeamProfile {
 
   // team specific fields
   teamName String
-  // ...
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("team_profile")
 }
 
 model OrganizerProfile {
@@ -94,6 +100,11 @@ model OrganizerProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // organizer specific fields
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("organizer_profile")
 }
 
 model AdminProfile {
@@ -102,4 +113,9 @@ model AdminProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // admin specific fields
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_profile")
 }
