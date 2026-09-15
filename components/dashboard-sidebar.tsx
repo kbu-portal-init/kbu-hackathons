@@ -17,16 +17,23 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
+import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
 
 type DashboardSidebarProps = {
-    area: "participant" | "management";
+    area: "participant" | "management" | "admin";
     children: ReactNode;
 };
 
 export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
     const isParticipant = area === "participant";
-    const links = isParticipant ? participantDashboardLinks : managementDashboardLinks;
+    const isAdmin = area === "admin";
+    const links = isParticipant ? participantDashboardLinks : isAdmin ? adminDashboardLinks : managementDashboardLinks;
+    const sidebarLabel = isParticipant
+        ? "Team workspace"
+        : isAdmin
+          ? "Administrator workspace"
+          : "Management workspace";
+    const headerTitle = isParticipant ? "Team dashboard" : isAdmin ? "Administrator dashboard" : "Management panel";
     return (
         <SidebarProvider className="min-h-screen flex-1">
             <Sidebar collapsible="icon">
@@ -43,9 +50,7 @@ export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
                 </SidebarHeader>
                 <SidebarContent>
                     <SidebarGroup>
-                        <SidebarGroupLabel>
-                            {isParticipant ? "Team workspace" : "Management workspace"}
-                        </SidebarGroupLabel>
+                        <SidebarGroupLabel>{sidebarLabel}</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu className="gap-1">
                                 {links.map(({ href, label, icon: Icon }) => (
@@ -74,9 +79,7 @@ export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
             <div className="flex min-w-0 flex-1 flex-col">
                 <header className="flex h-14 items-center gap-3 border-b border-orange-100 bg-white px-4">
                     <SidebarTrigger />
-                    <p className="text-sm font-semibold text-zinc-700">
-                        {isParticipant ? "Team dashboard" : "Management panel"}
-                    </p>
+                    <p className="text-sm font-semibold text-zinc-700">{headerTitle}</p>
                 </header>
                 {children}
             </div>

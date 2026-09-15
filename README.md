@@ -6,7 +6,7 @@ KBU Hub is the web platform for discovering KBU hackathons, reading announcement
 
 The project currently provides a responsive UI shell and placeholder dashboard pages. Authentication, team-registration approval checks, data storage, and form submissions have not been implemented yet.
 
-Public pages are available to everyone. The `/teams` participant workspace and `/panel` management workspace are visual placeholders until access control is designed.
+Public pages are available to everyone. The `/teams` participant workspace, `/panel` management workspace, and `/admin` administrator workspace are visual placeholders until access control is designed.
 
 ## Routes
 
@@ -16,7 +16,8 @@ Public pages are available to everyone. The `/teams` participant workspace and `
 | Registration | `/register` | Explain the future team registration and approval process. |
 | Login | `/login`, `/login/participant`, `/login/management` | Choose an access type and view the corresponding dummy login form. |
 | Participant dashboard | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Future approved-team workspace. |
-| Management dashboard | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/organizers`, `/panel/settings` | Future organizer and administrator workspace. |
+| Management dashboard | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Future organizer workspace. |
+| Administrator dashboard | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Future elevated management workspace. |
 
 ## Getting started
 
@@ -36,7 +37,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Branching
 
-Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Then use a focused branch for the issue. Name branches by work type and a short, lowercase description:
+Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Create a focused branch from `dev` for the issue, then open its pull request into `dev`. Promote tested changes from `dev` to `main` through a separate pull request.
+
+Name feature branches by work type and a short, lowercase description:
 
 ```text
 feat/event-registration
@@ -47,7 +50,9 @@ chore/update-dependencies
 
 ## Pull requests
 
-Open a pull request from the focused branch and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`.
+Open a pull request from the focused branch into `dev` and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`. When the integrated work is ready for release, open a separate `dev` to `main` pull request.
+
+The `Validate main pull request source` GitHub Actions workflow rejects a `main` pull request unless its source branch is `dev`. After it first runs, configure its `Require dev source branch` job as a required status check in the `main` branch ruleset.
 
 Use this description format:
 
