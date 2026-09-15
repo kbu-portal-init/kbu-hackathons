@@ -53,6 +53,8 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 
 - Open a pull request from the focused branch into `dev` and link the corresponding GitHub issue with `Closes #<issue-number>`. Use a separate `dev` to `main` pull request for a release.
 - Use a concise conventional title, for example `feat: add team settings page` or `fix: correct mobile navigation`.
+- Use **Squash and merge** for focused pull requests into `dev`; this keeps one commit per issue.
+- Use **Create a merge commit** for `dev` to `main` release pull requests. Do not squash this promotion because `dev` must remain an ancestor of `main`.
 - Use this body format:
 
 ```md
