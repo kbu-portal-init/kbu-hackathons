@@ -1,5 +1,6 @@
 import { ArrowRight, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
+import { redirectHomeIfAlreadyAuthenticated } from "@/lib/auth/guards";
 
 const loginOptions = [
     {
@@ -16,7 +17,8 @@ const loginOptions = [
     },
 ] as const;
 
-export default function LoginChoicePage() {
+export default async function LoginChoicePage() {
+    await redirectHomeIfAlreadyAuthenticated();
     return (
         <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
             <section className="mx-auto w-full max-w-4xl">

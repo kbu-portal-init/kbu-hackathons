@@ -1,8 +1,10 @@
-import { LoginPage } from "@/components/login-page";
+import { LoginContent } from "@/app/(public)/login/_components/login-content";
+import { redirectHomeIfAlreadyAuthenticated } from "@/lib/auth/guards";
 
-export default function ManagementLoginPage() {
+export default async function ManagementLoginPage() {
+    await redirectHomeIfAlreadyAuthenticated();
     return (
-        <LoginPage
+        <LoginContent
             audience="management"
             title="Management panel"
             description="Sign in to manage events, registrations, announcements, and community updates."
