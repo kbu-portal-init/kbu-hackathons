@@ -1,6 +1,9 @@
+import { requireAdmin } from "@/actions/auth";
 import { RoutePlaceholder } from "@/components/route-placeholder";
 
-export default function AdminOrganizersPage() {
+export default async function AdminOrganizersPage() {
+    await requireAdmin();
+
     return (
         <RoutePlaceholder
             eyebrow="Administrator workspace"

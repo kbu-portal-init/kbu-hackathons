@@ -24,21 +24,31 @@ import { adminDashboardLinks, managementDashboardLinks, participantDashboardLink
 type DashboardSidebarProps = {
     area: "participant" | "management" | "admin";
     children: ReactNode;
+    role: "admin" | "organizer" | "user" | null;
 };
 
-export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
-    const isParticipant = area === "participant";
-
+export function DashboardSidebar({ area, children, role }: DashboardSidebarProps) {
     const router = useRouter();
 
-    const isAdmin = area === "admin";
-    const links = isParticipant ? participantDashboardLinks : isAdmin ? adminDashboardLinks : managementDashboardLinks;
-    const sidebarLabel = isParticipant
-        ? "Team workspace"
-        : isAdmin
-          ? "Administrator workspace"
-          : "Management workspace";
-    const headerTitle = isParticipant ? "Team dashboard" : isAdmin ? "Administrator dashboard" : "Management panel";
+    const config = {
+        participant: {
+            label: "Team workspace",
+            title: "Team dashboard",
+            links: participantDashboardLinks,
+        },
+        management: {
+            label: "Management workspace",
+            title: "Management panel",
+            links: managementDashboardLinks,
+        },
+        admin: {
+            label: "Administrator workspace",
+            title: "Administrator dashboard",
+            links: adminDashboardLinks,
+        },
+    } as const;
+
+    const { label: sidebarLabel, title: headerTitle, links } = config[area];
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
@@ -67,6 +77,13 @@ export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
+                                {role === "admin" && (
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton render={<Link href="/admin" />} tooltip="Go to Admin Panel">
+                                            <span>Go to Admin Panel</span>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>

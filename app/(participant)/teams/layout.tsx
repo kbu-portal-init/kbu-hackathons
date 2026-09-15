@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
+import { getUserRole, requireAuth } from "@/actions/auth";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
-export default function TeamsLayout({ children }: Readonly<{ children: ReactNode }>) {
-    return <DashboardSidebar area="participant">{children}</DashboardSidebar>;
+export default async function TeamsLayout({ children }: Readonly<{ children: ReactNode }>) {
+    const session = await requireAuth();
+    return (
+        <DashboardSidebar area="participant" role={getUserRole(session.user.role)}>
+            {children}
+        </DashboardSidebar>
+    );
 }

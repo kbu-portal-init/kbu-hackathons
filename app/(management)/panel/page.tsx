@@ -1,5 +1,9 @@
+import { requireOrganizerOrAdmin } from "@/actions/auth";
 import { RoutePlaceholder } from "@/components/route-placeholder";
+
 export default function PanelPage() {
+    requireOrganizerOrAdmin();
+
     return (
         <RoutePlaceholder
             eyebrow="Management access"
