@@ -24,7 +24,7 @@ import { adminDashboardLinks, managementDashboardLinks, participantDashboardLink
 type DashboardSidebarProps = {
     area: "participant" | "management" | "admin";
     children: ReactNode;
-    role: "admin" | "organizer" | "user" | null;
+    role: "admin" | "organizer" | "team" | null;
 };
 
 export function DashboardSidebar({ area, children, role }: DashboardSidebarProps) {

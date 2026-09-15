@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
+import { loginAsStaff, loginAsTeam } from "@/actions/auth/login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
@@ -28,25 +29,25 @@ export function LoginPage({ audience, title, description }: LoginPageProps) {
             password: "",
         },
         onSubmit: async ({ value }) => {
-            await authClient.signIn.email(
-                {
-                    email: value.email,
-                    password: value.password,
+            const callbacks = {
+                onSuccess: () => {
+                    router.push(isParticipant ? "/teams" : "/panel");
+                    toast.success("Sign in successful");
                 },
-                {
-                    onSuccess: () => {
-                        router.push("/panel");
-                        toast.success("Sign in successful");
-                    },
-                    onError: (error) => {
-                        toast.error(error.error.message || error.error.statusText);
-                    },
+                onError: (error: { error: { message?: string; statusText?: string } }) => {
+                    toast.error(error.error.message || error.error.statusText);
                 },
-            );
+            };
+            const result = isParticipant
+                ? await loginAsTeam({ username: value.email, password: value.password }, callbacks)
+                : await loginAsStaff({ email: value.email, password: value.password }, callbacks);
+            if (result?.error) {
+                toast.error(typeof result.error === "string" ? result.error : result.error.message);
+            }
         },
         validators: {
             onSubmit: z.object({
-                email: z.email("Invalid email address"),
+                email: z.string().min(1, isParticipant ? "Team name is required" : "Email is required"),
                 password: z.string().min(8, "Password must be at least 8 characters"),
             }),
         },

@@ -4,6 +4,8 @@ KBU Hub is the web platform for discovering KBU hackathons, reading announcement
 
 ## Current status
 
+The proposed single-event database design is documented in [Database design](docs/database-design.md), with a standalone Prisma proposal in `docs/schema.proposed.prisma`. It covers shared team logins, member notification emails, registrations and submissions; it is not yet applied to the active schema. Validate the proposal with `pnpm exec prisma validate --schema docs/schema.proposed.prisma`.
+
 The project currently provides a responsive UI shell and placeholder dashboard pages. Authentication, team-registration approval checks, data storage, and form submissions have not been implemented yet.
 
 Public pages are available to everyone. The `/teams` participant workspace, `/panel` management workspace, and `/admin` administrator workspace are visual placeholders until access control is designed.

@@ -1,5 +1,5 @@
-import { requireOrganizerOrAdmin } from "@/actions/auth";
 import { RoutePlaceholder } from "@/components/route-placeholder";
+import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 
 export default async function PanelEventPage() {
     await requireOrganizerOrAdmin();

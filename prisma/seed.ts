@@ -2,7 +2,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "@/generated/prisma/client";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/config";
 
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
@@ -33,17 +33,12 @@ async function main() {
             },
         });
 
-        // Update role + create AdminProfile
+        // Update role and mark the provisioned admin email as verified.
         await prisma.user.update({
             where: { email: adminEmail },
             data: {
                 role: "admin",
                 emailVerified: true,
-                adminProfile: {
-                    create: {
-                        // add any admin-specific fields here later
-                    },
-                },
             },
         });
 

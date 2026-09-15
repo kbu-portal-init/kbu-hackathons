@@ -2,6 +2,8 @@
 
 ## Architecture
 
+- `docs/database-design.md` and `docs/schema.proposed.prisma` describe the proposed single-event database with shared team accounts and notification-only member emails. These are design artifacts, not the active schema or an applied migration. Validate the proposal with `pnpm exec prisma validate --schema docs/schema.proposed.prisma`.
+
 - This is a Next.js App Router project using TypeScript and the `@/*` import alias.
 - Route groups organize the application without changing URLs:
   - `app/(public)` contains the public site and its shared header and footer.

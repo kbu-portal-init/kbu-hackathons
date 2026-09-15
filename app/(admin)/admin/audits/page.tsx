@@ -1,5 +1,5 @@
-import { requireAdmin } from "@/actions/auth";
 import { RoutePlaceholder } from "@/components/route-placeholder";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export default async function AdminAuditsPage() {
     await requireAdmin();

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { requireOrganizerOrAdmin } from "@/actions/auth";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getUserRole } from "@/types/auth";
 
 export default async function PanelLayout({ children }: Readonly<{ children: ReactNode }>) {
