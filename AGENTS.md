@@ -17,6 +17,7 @@
 ## Components and navigation
 
 - Prefer Server Components. Add `"use client"` only when a component needs browser state, events, effects, or a client-only library.
+- Keep page-specific components in a private `_components` folder beside their route page, for example `app/(public)/login/_components/login-content.tsx`. Keep reusable components shared by multiple routes in the root `components/` directory. The `_components` folder is private and does not create a URL segment.
 - Keep page files server-rendered where possible; place interactive behavior in focused client components.
 - Maintain public, participant, and management link definitions in `lib/navigation.ts`. Update that file whenever a navigation destination changes.
 - Update `README.md` and this file whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Keep the README route map aligned with the application and `lib/navigation.ts` aligned with navigable routes.

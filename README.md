@@ -93,6 +93,7 @@ Closes #<issue-number>
 ## Tooling
 
 - **Next.js App Router** with TypeScript and the `@/*` import alias.
+- Route-specific components live in a private `_components` folder next to their page. Shared components live in `components/`; `_components` folders do not create URL segments.
 - **Tailwind CSS v4** with the full default palette. Orange is the semantic primary color, so utilities such as `bg-orange-600` and `text-orange-500` are available alongside semantic theme classes.
 - **shadcn/ui** using the Base UI, Nova, neutral-base configuration and **Lucide** icons.
 - **Biome** for linting and formatting, with Husky and lint-staged running checks before commits.

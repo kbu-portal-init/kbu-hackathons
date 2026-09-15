@@ -1,8 +1,8 @@
-import { LoginPage } from "@/components/login-page";
+import { LoginContent } from "@/app/(public)/login/_components/login-content";
 
 export default function ManagementLoginPage() {
     return (
-        <LoginPage
+        <LoginContent
             audience="management"
             title="Management panel"
             description="Sign in to manage events, registrations, announcements, and community updates."

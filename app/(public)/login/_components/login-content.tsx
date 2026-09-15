@@ -10,7 +10,7 @@ import { loginAsStaff, loginAsTeam } from "@/actions/auth/login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
-import Loader from "./loader";
+import Loader from "../../../../components/loader";
 
 type LoginPageProps = {
     audience: "participant" | "management";
@@ -18,7 +18,7 @@ type LoginPageProps = {
     description: string;
 };
 
-export function LoginPage({ audience, title, description }: LoginPageProps) {
+export function LoginContent({ audience, title, description }: LoginPageProps) {
     const router = useRouter();
     const { isPending } = authClient.useSession();
     const isParticipant = audience === "participant";
