@@ -7,8 +7,10 @@
   - `app/(public)` contains the public site and its shared header and footer.
   - `app/(participant)/teams` contains the participant workspace.
   - `app/(management)/panel` contains the management workspace.
+  - `app/(admin)/admin` contains the administrator workspace.
 - Keep public pages available without authentication. Authentication, approval checks, database access, mutations, and redirects are not implemented yet.
 - Treat `/teams` as the future approved participant workspace and `/panel` as the future management workspace.
+- Treat `/admin` as the future elevated management workspace. Keep it out of public navigation and use the management login flow as its future entry point.
 
 ## Components and navigation
 
