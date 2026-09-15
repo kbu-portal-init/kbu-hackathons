@@ -2,6 +2,7 @@
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import {
     Sidebar,
@@ -17,6 +18,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 import { managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
 
 type DashboardSidebarProps = {
@@ -27,6 +29,9 @@ type DashboardSidebarProps = {
 export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
     const isParticipant = area === "participant";
     const links = isParticipant ? participantDashboardLinks : managementDashboardLinks;
+
+    const router = useRouter();
+
     return (
         <SidebarProvider className="min-h-screen flex-1">
             <Sidebar collapsible="icon">
@@ -63,7 +68,18 @@ export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton tooltip="Sign out">
+                            <SidebarMenuButton
+                                tooltip="Sign out"
+                                onClick={() => {
+                                    authClient.signOut({
+                                        fetchOptions: {
+                                            onSuccess: () => {
+                                                router.push("/");
+                                            },
+                                        },
+                                    });
+                                }}
+                            >
                                 <LogOut />
                                 <span>Sign out</span>
                             </SidebarMenuButton>

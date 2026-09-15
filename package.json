@@ -25,6 +25,7 @@
         "@base-ui/react": "^1.0.0",
         "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "7.10.0",
+        "@tanstack/react-form": "^1.33.5",
         "better-auth": "^1.7.5",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -37,7 +38,8 @@
         "react": "19.2.8",
         "react-dom": "19.2.8",
         "sonner": "^2.0.8",
-        "tailwind-merge": "^3.7.0"
+        "tailwind-merge": "^3.7.0",
+        "zod": "^4.6.5"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.5.13",

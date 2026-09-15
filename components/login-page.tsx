@@ -1,7 +1,15 @@
+"use client";
+
+import { useForm } from "@tanstack/react-form";
 import { ArrowLeft, LockKeyhole } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import Loader from "./loader";
 
 type LoginPageProps = {
     audience: "participant" | "management";
@@ -10,22 +18,60 @@ type LoginPageProps = {
 };
 
 export function LoginPage({ audience, title, description }: LoginPageProps) {
+    const router = useRouter();
+    const { isPending } = authClient.useSession();
     const isParticipant = audience === "participant";
+
+    const form = useForm({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+        onSubmit: async ({ value }) => {
+            await authClient.signIn.email(
+                {
+                    email: value.email,
+                    password: value.password,
+                },
+                {
+                    onSuccess: () => {
+                        router.push("/panel");
+                        toast.success("Sign in successful");
+                    },
+                    onError: (error) => {
+                        toast.error(error.error.message || error.error.statusText);
+                    },
+                },
+            );
+        },
+        validators: {
+            onSubmit: z.object({
+                email: z.email("Invalid email address"),
+                password: z.string().min(8, "Password must be at least 8 characters"),
+            }),
+        },
+    });
+
+    if (isPending) {
+        return <Loader />;
+    }
+
     const identifier = isParticipant
         ? {
               label: "TeamName",
               name: "team",
-              type: "text",
+              type: "text" as const,
               autoComplete: "username",
               placeholder: "Enter your teamname we provided you",
           }
         : {
               label: "Email address",
               name: "email",
-              type: "email",
+              type: "email" as const,
               autoComplete: "email",
               placeholder: "you@example.com",
           };
+
     return (
         <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
             <div className="w-full max-w-md">
@@ -35,52 +81,97 @@ export function LoginPage({ audience, title, description }: LoginPageProps) {
                 >
                     <ArrowLeft className="size-4" /> Back to KBU Hub
                 </Link>
+
                 <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
                     <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">
                         <LockKeyhole className="size-5" />
                     </div>
+
                     <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-600">
                         {isParticipant ? "Participant access" : "Management access"}
                     </p>
+
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">{title}</h1>
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{description}</p>
-                    <form className="mt-8 space-y-5">
-                        <div className="space-y-2">
-                            <label htmlFor={identifier.name} className="text-sm font-medium">
-                                {identifier.label}
-                            </label>
-                            <Input
-                                id={identifier.name}
-                                name={identifier.name}
-                                type={identifier.type}
-                                autoComplete={identifier.autoComplete}
-                                placeholder={identifier.placeholder}
-                                required
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label htmlFor="password" className="text-sm font-medium">
-                                    Password
-                                </label>
-                                <span className="text-xs text-zinc-500">Forgot password?</span>
-                            </div>
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
-                                placeholder="Enter your password"
-                                required
-                            />
-                        </div>
-                        <Button type="submit" className="h-10 w-full">
-                            Sign in
-                        </Button>
+
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            form.handleSubmit();
+                        }}
+                        className="mt-8 space-y-5"
+                    >
+                        {/* Identifier field (Email for management) */}
+                        <form.Field name="email">
+                            {(field) => (
+                                <div className="space-y-2">
+                                    <label htmlFor={field.name} className="text-sm font-medium">
+                                        {identifier.label}
+                                    </label>
+                                    <Input
+                                        id={field.name}
+                                        name={field.name}
+                                        type={identifier.type}
+                                        autoComplete={identifier.autoComplete}
+                                        placeholder={identifier.placeholder}
+                                        value={field.state.value}
+                                        onBlur={field.handleBlur}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        required
+                                    />
+                                    {field.state.meta.errors.map((error) => (
+                                        <p key={error?.message} className="text-sm text-red-500">
+                                            {error?.message}
+                                        </p>
+                                    ))}
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Password field */}
+                        <form.Field name="password">
+                            {(field) => (
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label htmlFor={field.name} className="text-sm font-medium">
+                                            Password
+                                        </label>
+                                        <span className="text-xs text-zinc-500">Forgot password?</span>
+                                    </div>
+                                    <Input
+                                        id={field.name}
+                                        name={field.name}
+                                        type="password"
+                                        autoComplete="current-password"
+                                        placeholder="Enter your password"
+                                        value={field.state.value}
+                                        onBlur={field.handleBlur}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        required
+                                    />
+                                    {field.state.meta.errors.map((error) => (
+                                        <p key={error?.message} className="text-sm text-red-500">
+                                            {error?.message}
+                                        </p>
+                                    ))}
+                                </div>
+                            )}
+                        </form.Field>
+
+                        <form.Subscribe
+                            selector={(state) => ({
+                                canSubmit: state.canSubmit,
+                                isSubmitting: state.isSubmitting,
+                            })}
+                        >
+                            {({ canSubmit, isSubmitting }) => (
+                                <Button type="submit" className="h-10 w-full" disabled={!canSubmit || isSubmitting}>
+                                    {isSubmitting ? "Signing in..." : "Sign in"}
+                                </Button>
+                            )}
+                        </form.Subscribe>
                     </form>
-                    <p className="mt-6 text-center text-xs text-zinc-500">
-                        Demo page only. Authentication will be connected later.
-                    </p>
                 </div>
             </div>
         </main>
