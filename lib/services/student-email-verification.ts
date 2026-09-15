@@ -2,7 +2,7 @@ import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
 import type { ActionResult } from "@/lib/contracts/common";
-import type { StudentEmailVerificationData } from "@/lib/contracts/email";
+import { type StudentEmailVerificationData, studentEmailSchema } from "@/lib/contracts/email";
 import prisma from "@/lib/prisma";
 import { sendEmail } from "@/lib/services/email";
 
@@ -11,6 +11,7 @@ const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 export async function sendStudentEmailVerification(teamMemberId: string) {
     const member = await prisma.teamMember.findUnique({ where: { id: teamMemberId } });
     if (!member) throw new Error("Team member not found");
+    if (!studentEmailSchema.safeParse(member.studentEmail).success) throw new Error("Invalid student email domain");
 
     const token = randomBytes(32).toString("base64url");
     const tokenHash = createHash("sha256").update(token).digest("hex");

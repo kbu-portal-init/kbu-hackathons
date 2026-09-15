@@ -1,112 +1,102 @@
 # KBU Hub
 
-KBU Hub is the web platform for discovering KBU hackathons, reading announcements, and finding resources for students. It also provides the starting point for participant and management workspaces.
+KBU Hub is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
 
-## Current status
+## Current foundation
 
-The proposed single-event database design is documented in [Database design](docs/database-design.md), with a standalone Prisma proposal in `docs/schema.proposed.prisma`. It covers shared team logins, member notification emails, registrations and submissions; it is not yet applied to the active schema. Validate the proposal with `pnpm exec prisma validate --schema docs/schema.proposed.prisma`.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, SMTP email delivery, and student email verification.
 
-The project currently provides a responsive UI shell and placeholder dashboard pages. Authentication, team-registration approval checks, data storage, and form submissions have not been implemented yet.
+The system uses three account roles:
 
-Public pages are available to everyone. The `/teams` participant workspace, `/panel` management workspace, and `/admin` administrator workspace are visual placeholders until access control is designed.
+- **Team**: one shared username/password account for the team.
+- **Organizer**: staff email/password account.
+- **Admin**: elevated staff email/password account.
+
+Team members are roster records. They do not receive Better Auth accounts; their `@ms.kbu.ac.th` addresses are used for notifications and single-use email verification links sent by organizers or admins.
 
 ## Routes
 
-| Area | Routes | Purpose |
+| Area | Routes | Status |
 | --- | --- | --- |
-| Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Discover hackathons, community updates, and student resources. |
-| Registration | `/register` | Explain the future team registration and approval process. |
-| Login | `/login`, `/login/participant`, `/login/management` | Choose an access type and view the corresponding dummy login form. |
-| Participant dashboard | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Future approved-team workspace. |
-| Management dashboard | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Future organizer workspace. |
-| Administrator dashboard | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Future elevated management workspace. |
+| Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Available without authentication |
+| Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
+| Participant | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Protected workspace foundation; feature workflows continue in later branches |
+| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace foundation; feature workflows continue in later branches |
+| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audits/settings remain placeholders |
+| Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
+
+## Architecture boundaries
+
+The backend is organized as contracts ? actions/data ? services ? persistence:
+
+- `lib/contracts`: Zod schemas and public input/output DTOs.
+- `actions`: thin authenticated server actions that validate input and return `ActionResult` envelopes.
+- `lib/data`: read-only queries, including offset-paginated lists.
+- `lib/services`: business rules, Better Auth integration, transactions, email, and mutations.
+- `lib/mappers`: pure conversion from Prisma/service records to contract-safe DTOs.
+
+Pages and client components consume contracts only. Prisma models, Better Auth objects, sessions, and raw exceptions never cross the UI boundary. Dates crossing that boundary are ISO strings. Validation errors contain a generic message and field-specific `fieldErrors`.
+
+## Implemented backend capabilities
+
+- Create, list/read, update, ban, and unban organizer accounts.
+- Admins can ban organizers and teams; organizers can ban teams only. Bans revoke active sessions and create audit records.
+- Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
+- SMTP delivery is provider-neutral through `sendEmail`; Better Auth password-reset messages use the same service.
+- The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
+
+Participant registration, organizer operational workflows, audit browsing, and general account-management UI are intentionally deferred.
 
 ## Getting started
 
-### Requirements
-
-- Node.js 22 or later
-- pnpm 10.27.0
-
-Install dependencies and start the development server:
+Requirements: Node.js 22+ and pnpm 10.27+.
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and provider-neutral `SMTP_*` settings.
 
-## Branching
+## Prisma workflow
 
-Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Create a focused branch from `dev` for the issue, then open its pull request into `dev`. Promote tested changes from `dev` to `main` through a separate pull request.
-
-Name feature branches by work type and a short, lowercase description:
-
-```text
-feat/event-registration
-fix/mobile-navigation
-docs/project-guide
-chore/update-dependencies
+```bash
+pnpm exec prisma validate --schema prisma/schema.prisma
+pnpm exec prisma format --schema prisma/schema.prisma
+pnpm exec prisma generate
+pnpm db:migrate
+pnpm db:migrate:deploy
+pnpm db:push
+pnpm db:seed
 ```
 
-## Pull requests
+Migration, push, and seed commands mutate database state. The development seed clears existing development data and recreates fixtures; never point it at production.
 
-Open a pull request from the focused branch into `dev` and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`. When the integrated work is ready for release, open a separate `dev` to `main` pull request.
+## Quality checks
 
-The `Validate main pull request source` GitHub Actions workflow rejects a `main` pull request unless its source branch is `dev`. After it first runs, configure its `Require dev source branch` job as a required status check in the `main` branch ruleset.
-
-### Merge strategy
-
-- Use **Squash and merge** for focused feature, fix, documentation, and maintenance pull requests into `dev`. This keeps one clear commit for each issue.
-- Use **Create a merge commit** for `dev` to `main` release pull requests. This preserves `dev` as an ancestor of `main` and prevents future release pull requests from repeating earlier commits.
-
-Use this description format:
-
-```md
-## Summary
-- What changed and why.
-
-## Validation
-- [ ] pnpm lint
-- [ ] pnpm exec tsc --noEmit
-- [ ] pnpm build
-
-## Screenshots
-<!-- Optional: include when helpful to review visible UI changes. -->
-
-Closes #<issue-number>
+```bash
+pnpm lint
+pnpm exec tsc --noEmit
+pnpm build
 ```
 
-## Commands
+## Contribution workflow
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Start the Next.js development server. |
-| `pnpm build` | Create a production build. |
-| `pnpm start` | Serve a completed production build. |
-| `pnpm lint` | Check formatting and lint rules with Biome. |
-| `pnpm lint:fix` | Apply Biome lint and formatting fixes. |
-| `pnpm format` | Format files with Biome. |
-| `pnpm exec tsc --noEmit` | Run TypeScript checking. |
+Create or claim an issue, assign yourself, and leave a `Working on this` comment before implementation. Create a focused branch from `dev` using names such as `feat/team-settings`, `fix/sidebar-toggle`, or `docs/project-guide`. Open the pull request into `dev`; release work moves from `dev` to `main` through a separate pull request.
+
+Use squash merges for focused pull requests into `dev` and merge commits for `dev` to `main`. Keep route-specific components beside their page in `_components`, shared components in `components/`, and shadcn-generated primitives in `components/ui`. Do not hand-edit generated UI source.
+
+Update `README.md`, `AGENTS.md`, and `lib/navigation.ts` whenever a route, workflow, command, dependency, or architectural boundary changes.
 
 ## Tooling
 
-- **Next.js App Router** with TypeScript and the `@/*` import alias.
-- Route-specific components live in a private `_components` folder next to their page. Shared components live in `components/`; `_components` folders do not create URL segments.
-- **Tailwind CSS v4** with the full default palette. Orange is the semantic primary color, so utilities such as `bg-orange-600` and `text-orange-500` are available alongside semantic theme classes.
-- **shadcn/ui** using the Base UI, Nova, neutral-base configuration and **Lucide** icons.
-- **Biome** for linting and formatting, with Husky and lint-staged running checks before commits.
+- Next.js App Router with TypeScript and the `@/*` import alias.
+- Prisma 7 with PostgreSQL and the `@prisma/adapter-pg` driver adapter.
+- Better Auth for sessions and credentials.
+- Tailwind CSS v4, shadcn/ui Base UI components, and Lucide icons.
+- Biome for linting and formatting, with Husky/lint-staged checks before commits.
 
-The shadcn-generated files in `components/ui` are intentionally excluded from Biome checks. Add application-specific composition and styling in other `components` files instead.
-
-## Keeping documentation current
-
-Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
-
-### Adding shadcn components
-
-This project uses shadcn’s Base UI configuration. Browse the available components in the [shadcn component catalog](https://ui.shadcn.com/docs/components), then add one with pnpm:
+Browse the [shadcn component catalog](https://ui.shadcn.com/docs/components) before adding a primitive:
 
 ```bash
 pnpm dlx shadcn@latest add <component>

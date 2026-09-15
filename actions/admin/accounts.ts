@@ -5,6 +5,7 @@ import type { AccountActionData } from "@/lib/contracts/accounts";
 import { banAccountSchema, unbanAccountSchema } from "@/lib/contracts/accounts";
 import type { ActionResult } from "@/lib/contracts/common";
 import { banAccount as banAccountService, unbanAccount as unbanAccountService } from "@/lib/services/account-banning";
+import { toFieldErrors } from "@/lib/validation/zod";
 import { getUserRole } from "@/types/auth";
 
 export async function banAccount(input: unknown): Promise<ActionResult<AccountActionData>> {
@@ -16,9 +17,7 @@ export async function banAccount(input: unknown): Promise<ActionResult<AccountAc
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Some fields are invalid",
-                fieldErrors: Object.fromEntries(
-                    parsed.error.issues.map((issue) => [issue.path.join("."), [issue.message]]),
-                ),
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
     }
@@ -38,9 +37,7 @@ export async function unbanAccount(input: unknown): Promise<ActionResult<Account
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Some fields are invalid",
-                fieldErrors: Object.fromEntries(
-                    parsed.error.issues.map((issue) => [issue.path.join("."), [issue.message]]),
-                ),
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
     }

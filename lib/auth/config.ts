@@ -19,7 +19,13 @@ export const auth = betterAuth({
             });
         },
     },
-    plugins: [username({ immutableUsername: true }), admin()],
+    plugins: [
+        username({
+            immutableUsername: true,
+            usernameValidator: (value) => /^[a-zA-Z0-9_.-]+$/.test(value),
+        }),
+        admin(),
+    ],
     user: {
         additionalFields: {
             role: {

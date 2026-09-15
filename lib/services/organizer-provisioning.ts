@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
 import type { UpdateOrganizerInput } from "@/lib/contracts/organizers";
+import { toAccountActionData } from "@/lib/mappers/accounts";
+import prisma from "@/lib/prisma";
 
 export async function updateOrganizer(input: UpdateOrganizerInput): Promise<ActionResult<{ id: string }>> {
     const user = await prisma.user.findFirst({ where: { id: input.userId, role: "organizer" } });
@@ -11,14 +13,13 @@ export async function updateOrganizer(input: UpdateOrganizerInput): Promise<Acti
     const { userId, ...data } = input;
     try {
         await auth.api.adminUpdateUser({ body: { userId, data }, headers: await headers() });
-        return { ok: true, data: { id: userId } };
+        return { ok: true, data: { id: toAccountActionData({ id: userId }).userId } };
     } catch {
         return { ok: false, error: { code: "UPDATE_FAILED", message: "Failed to update organizer" } };
     }
 }
 
 import type { CreateOrganizerData, CreateOrganizerInput } from "@/lib/contracts/organizers";
-import prisma from "@/lib/prisma";
 
 export async function provisionOrganizer(input: CreateOrganizerInput): Promise<ActionResult<CreateOrganizerData>> {
     const existing = await prisma.user.findUnique({ where: { email: input.email } });
@@ -32,7 +33,7 @@ export async function provisionOrganizer(input: CreateOrganizerInput): Promise<A
             where: { email: input.email },
             data: { role: "organizer", emailVerified: true },
         });
-        return { ok: true, data: { id: user.id } };
+        return { ok: true, data: { id: toAccountActionData(user).userId } };
     } catch {
         return { ok: false, error: { code: "CREATE_FAILED", message: "Failed to create organizer account" } };
     }

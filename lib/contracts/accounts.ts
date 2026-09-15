@@ -13,5 +13,6 @@ export const banAccountSchema = z.object({
 export const unbanAccountSchema = z.object({ userId: z.string().min(1) });
 
 export type BanAccountInput = z.infer<typeof banAccountSchema>;
+export type BanAccountFormInput = z.input<typeof banAccountSchema>;
 export type UnbanAccountInput = z.infer<typeof unbanAccountSchema>;
 export type AccountActionData = { userId: string };

@@ -1,10 +1,14 @@
 import { z } from "zod";
 import type { PageInput } from "@/lib/contracts/common";
 
+export const organizerNameSchema = z.string().trim().min(1, "Name is required");
+export const organizerEmailSchema = z.email("Invalid email address");
+export const organizerPasswordSchema = z.string().min(8, "Password must be at least 8 characters");
+
 export const createOrganizerSchema = z.object({
-    name: z.string().trim().min(1, "Name is required"),
-    email: z.email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    name: organizerNameSchema,
+    email: organizerEmailSchema,
+    password: organizerPasswordSchema,
 });
 export type CreateOrganizerInput = z.infer<typeof createOrganizerSchema>;
 
@@ -29,8 +33,8 @@ export const listOrganizersSchema = z.object({
 export type ListOrganizersInput = z.infer<typeof listOrganizersSchema> & PageInput;
 
 export const updateOrganizerSchema = organizerIdSchema.extend({
-    name: z.string().trim().min(1).optional(),
-    email: z.email().optional(),
-    password: z.string().min(8).optional(),
+    name: organizerNameSchema.optional(),
+    email: organizerEmailSchema.optional(),
+    password: organizerPasswordSchema.optional(),
 });
 export type UpdateOrganizerInput = z.infer<typeof updateOrganizerSchema>;

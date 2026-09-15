@@ -2,6 +2,7 @@ import "server-only";
 
 import type { ListResult } from "@/lib/contracts/common";
 import type { ListOrganizersInput, OrganizerListItem } from "@/lib/contracts/organizers";
+import { toOrganizerListItem, toOrganizerListResult } from "@/lib/mappers/organizers";
 import prisma from "@/lib/prisma";
 
 export async function listOrganizers(input: ListOrganizersInput): Promise<ListResult<OrganizerListItem>> {
@@ -26,14 +27,7 @@ export async function listOrganizers(input: ListOrganizersInput): Promise<ListRe
             },
         }),
     ]);
-    return {
-        items: users.map((user) => ({
-            ...user,
-            createdAt: user.createdAt.toISOString(),
-            banExpires: user.banExpires?.toISOString() ?? null,
-        })),
-        meta: { total, page, pageSize, hasNextPage: page * pageSize < total },
-    };
+    return toOrganizerListResult(users, { page, pageSize }, total);
 }
 
 export async function getOrganizer(userId: string): Promise<OrganizerListItem | null> {
@@ -41,7 +35,5 @@ export async function getOrganizer(userId: string): Promise<OrganizerListItem | 
         where: { id: userId, role: "organizer" },
         select: { id: true, name: true, email: true, createdAt: true, banned: true, banReason: true, banExpires: true },
     });
-    return user
-        ? { ...user, createdAt: user.createdAt.toISOString(), banExpires: user.banExpires?.toISOString() ?? null }
-        : null;
+    return user ? toOrganizerListItem(user) : null;
 }

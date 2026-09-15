@@ -4,6 +4,7 @@ import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { ActionResult } from "@/lib/contracts/common";
 import { studentEmailVerificationSchema } from "@/lib/contracts/email";
 import { sendStudentEmailVerification } from "@/lib/services/student-email-verification";
+import { toFieldErrors } from "@/lib/validation/zod";
 
 export async function requestStudentEmailVerification(input: unknown): Promise<ActionResult<{ sent: true }>> {
     await requireOrganizerOrAdmin();
@@ -14,9 +15,17 @@ export async function requestStudentEmailVerification(input: unknown): Promise<A
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Invalid team member",
-                fieldErrors: { teamMemberId: ["Team member ID is required"] },
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
-    await sendStudentEmailVerification(parsed.data.teamMemberId);
+    try {
+        await sendStudentEmailVerification(parsed.data.teamMemberId);
+    } catch (error) {
+        if (error instanceof Error && error.message === "Team member not found")
+            return { ok: false, error: { code: "TEAM_MEMBER_NOT_FOUND", message: "Team member not found" } };
+        if (error instanceof Error && error.message === "Invalid student email domain")
+            return { ok: false, error: { code: "INVALID_STUDENT_EMAIL", message: "Student email is invalid" } };
+        return { ok: false, error: { code: "EMAIL_SEND_FAILED", message: "Unable to send verification email" } };
+    }
     return { ok: true, data: { sent: true } };
 }

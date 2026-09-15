@@ -12,6 +12,7 @@ import {
 } from "@/lib/contracts/organizers";
 import { getOrganizer, listOrganizers } from "@/lib/data/organizers";
 import { provisionOrganizer, updateOrganizer as updateOrganizerService } from "@/lib/services/organizer-provisioning";
+import { toFieldErrors } from "@/lib/validation/zod";
 
 export async function createOrganizer(input: unknown): Promise<ActionResult<CreateOrganizerData>> {
     await requireAdmin();
@@ -22,9 +23,7 @@ export async function createOrganizer(input: unknown): Promise<ActionResult<Crea
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Invalid organizer details",
-                fieldErrors: Object.fromEntries(
-                    parsed.error.issues.map((issue) => [issue.path.join("."), [issue.message]]),
-                ),
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
     }
@@ -40,7 +39,7 @@ export async function updateOrganizer(input: unknown): Promise<ActionResult<Crea
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Some fields are invalid",
-                fieldErrors: Object.fromEntries(parsed.error.issues.map((i) => [i.path.join("."), [i.message]])),
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
     return updateOrganizerService(parsed.data);
@@ -55,7 +54,7 @@ export async function listOrganizerAccounts(input: unknown): Promise<ListActionR
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Invalid pagination",
-                fieldErrors: Object.fromEntries(parsed.error.issues.map((i) => [i.path.join("."), [i.message]])),
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
     return { ok: true, data: await listOrganizers(parsed.data) };
@@ -70,7 +69,7 @@ export async function getOrganizerAccount(input: unknown): Promise<ActionResult<
             error: {
                 code: "VALIDATION_ERROR",
                 message: "Invalid organizer ID",
-                fieldErrors: { userId: ["User ID is required"] },
+                fieldErrors: toFieldErrors(parsed.error),
             },
         };
     const organizer = await getOrganizer(parsed.data.userId);
