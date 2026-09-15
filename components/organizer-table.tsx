@@ -69,7 +69,7 @@ export function OrganizerTable({ organizers }: OrganizerTableProps) {
                                 <TableRow key={org.id}>
                                     <TableCell>{org.name}</TableCell>
                                     <TableCell>{org.email}</TableCell>
-                                    <TableCell>{new Date(org.createdAt).toLocaleDateString()}</TableCell>
+                                    <TableCell>{new Date(org.createdAt).toLocaleDateString().slice(0, 10)}</TableCell>
                                 </TableRow>
                             ))
                         )}

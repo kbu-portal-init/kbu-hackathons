@@ -13,8 +13,12 @@ async function main() {
     console.log("🌱 Starting seed...");
 
     // ========== 1. Create Admin ==========
-    const adminEmail = "admin@example.com";
-    const adminPassword = "adminpassword";
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+        throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be set");
+    }
 
     const existingAdmin = await prisma.user.findUnique({
         where: { email: adminEmail },
