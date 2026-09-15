@@ -77,10 +77,11 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
-                                {role === "admin" && (
+                                {/* Only shown when the user is in the management area and has the admin role */}
+                                {area === "management" && role === "admin" && (
                                     <SidebarMenuItem>
-                                        <SidebarMenuButton render={<Link href="/admin" />} tooltip="Go to Admin Panel">
-                                            <span>Go to Admin Panel</span>
+                                        <SidebarMenuButton render={<Link href="/admin" />} tooltip="Admin Panel">
+                                            <span>Admin Panel</span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 )}
