@@ -1,6 +1,6 @@
-import { Menu } from "lucide-react";
 import Link from "next/link";
 
+import { MobileNavigation } from "@/components/mobile-navigation";
 import { publicLinks } from "@/lib/navigation";
 
 export function SiteHeader() {
@@ -30,35 +30,9 @@ export function SiteHeader() {
                 >
                     Login
                 </Link>
-                <details className="relative md:hidden">
-                    <summary
-                        className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg text-zinc-700 hover:bg-orange-50 dark:text-zinc-200 dark:hover:bg-orange-950/40"
-                        aria-label="Open menu"
-                    >
-                        <Menu className="size-6" />
-                    </summary>
-                    <div className="absolute right-0 top-12 w-72 rounded-xl border border-orange-100 bg-white p-4 shadow-xl dark:border-orange-950/50 dark:bg-zinc-950">
-                        <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
-                            {publicLinks.map(({ label, href }) => (
-                                <Link
-                                    key={href}
-                                    href={href}
-                                    className="rounded-lg px-3 py-3 text-base font-medium text-zinc-700 hover:bg-orange-50 hover:text-orange-700 dark:text-zinc-200 dark:hover:bg-orange-950/40 dark:hover:text-orange-300"
-                                >
-                                    {label}
-                                </Link>
-                            ))}
-                            <div className="mt-3 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-                                <Link
-                                    href="/login"
-                                    className="block rounded-full bg-orange-600 px-4 py-3 text-center text-sm font-semibold text-white"
-                                >
-                                    Login
-                                </Link>
-                            </div>
-                        </nav>
-                    </div>
-                </details>
+                <div className="md:hidden">
+                    <MobileNavigation />
+                </div>
             </div>
         </header>
     );
