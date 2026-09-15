@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import prisma from "@/lib/prisma";
+import { getUserRole } from "@/types/auth";
 
 export async function requireAuth() {
     const session = await auth.api.getSession({
@@ -15,6 +16,20 @@ export async function requireAuth() {
     }
 
     return session;
+}
+
+export async function redirectHomeIfAlreadyAuthenticated() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (session?.user) redirect("/");
+}
+
+export async function redirectAuthenticatedUser() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const role = getUserRole(session?.user?.role);
+
+    if (role === "team") redirect("/teams");
+    if (role === "organizer") redirect("/panel");
+    if (role === "admin") redirect("/admin");
 }
 
 export async function requireOrganizerOrAdmin() {

@@ -1,6 +1,8 @@
 import { LoginContent } from "@/app/(public)/login/_components/login-content";
+import { redirectHomeIfAlreadyAuthenticated } from "@/lib/auth/guards";
 
-export default function ManagementLoginPage() {
+export default async function ManagementLoginPage() {
+    await redirectHomeIfAlreadyAuthenticated();
     return (
         <LoginContent
             audience="management"
