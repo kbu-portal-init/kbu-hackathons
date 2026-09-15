@@ -1,4 +1,14 @@
-import { Bell, CalendarDays, ClipboardList, FileText, LayoutDashboard, Settings, Upload, Users } from "lucide-react";
+import {
+    Bell,
+    CalendarDays,
+    ClipboardList,
+    FileText,
+    LayoutDashboard,
+    Settings,
+    ShieldCheck,
+    Upload,
+    Users,
+} from "lucide-react";
 
 export const publicLinks = [
     { href: "/events", label: "Events" },
@@ -25,6 +35,13 @@ export const managementDashboardLinks = [
     },
     { href: "/panel/teams", label: "All Teams", icon: Users },
     { href: "/panel/event", label: "Event", icon: CalendarDays },
-    { href: "/panel/organizers", label: "Organizers", icon: Users },
     { href: "/panel/settings", label: "Settings", icon: Settings },
+] as const;
+
+export const adminDashboardLinks = [
+    { href: "/admin", label: "Overview", icon: LayoutDashboard },
+    { href: "/admin/audits", label: "Audit logs", icon: ClipboardList },
+    { href: "/admin/organizers", label: "Organizers", icon: Users },
+    { href: "/admin/settings", label: "Settings", icon: Settings },
+    { href: "/panel", label: "Management panel", icon: ShieldCheck },
 ] as const;

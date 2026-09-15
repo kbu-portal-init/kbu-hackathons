@@ -7,8 +7,10 @@
   - `app/(public)` contains the public site and its shared header and footer.
   - `app/(participant)/teams` contains the participant workspace.
   - `app/(management)/panel` contains the management workspace.
+  - `app/(admin)/admin` contains the administrator workspace.
 - Keep public pages available without authentication. Authentication, approval checks, database access, mutations, and redirects are not implemented yet.
 - Treat `/teams` as the future approved participant workspace and `/panel` as the future management workspace.
+- Treat `/admin` as the future elevated management workspace. Keep it out of public navigation and use the management login flow as its future entry point.
 
 ## Components and navigation
 
@@ -51,6 +53,8 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 
 - Open a pull request from the focused branch into `dev` and link the corresponding GitHub issue with `Closes #<issue-number>`. Use a separate `dev` to `main` pull request for a release.
 - Use a concise conventional title, for example `feat: add team settings page` or `fix: correct mobile navigation`.
+- Use **Squash and merge** for focused pull requests into `dev`; this keeps one commit per issue.
+- Use **Create a merge commit** for `dev` to `main` release pull requests. Do not squash this promotion because `dev` must remain an ancestor of `main`.
 - Use this body format:
 
 ```md
@@ -67,3 +71,13 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 
 Closes #<issue-number>
 ```
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
