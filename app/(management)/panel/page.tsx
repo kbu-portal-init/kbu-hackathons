@@ -1,5 +1,9 @@
 import { RoutePlaceholder } from "@/components/route-placeholder";
-export default function PanelPage() {
+import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
+
+export default async function PanelPage() {
+    await requireOrganizerOrAdmin();
+
     return (
         <RoutePlaceholder
             eyebrow="Management access"

@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  REOPENED
+}
+
+enum TeamMemberRole {
+  LEADER
+  DEVELOPER
+  DESIGNER
+  PRODUCT_MANAGER
+  MARKETER
+  PRESENTER
+  RESEARCHER
+  TESTER
+  OTHER
+}
+
+// Migration must enforce id = 1 and valid dates/team-size bounds.
+model EventSettings {
+  id                   Int      @id @default(1)
+  title                String
+  description          String?
+  venue                String?
+  imageUrls            String[]
+  promoUrl             String?
+  registrationOpensAt  DateTime @db.Timestamptz(3)
+  registrationClosesAt DateTime @db.Timestamptz(3)
+  startsAt             DateTime @db.Timestamptz(3)
+  endsAt               DateTime @db.Timestamptz(3)
+  submissionOpensAt    DateTime @db.Timestamptz(3)
+  submissionDeadline   DateTime @db.Timestamptz(3)
+  maxTeams             Int
+  minTeamSize          Int
+  maxTeamSize          Int
+  createdAt            DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt            DateTime @updatedAt @db.Timestamptz(3)
+
+  @@map("event_settings")
+}
+
+model Team {
+  id           String        @id @default(cuid())
+  // Reserved before provisioning; must equal User.username once linked.
+  loginName    String        @unique
+  displayName  String
+  imageUrl     String?
+  userId       String?       @unique
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  members      TeamMember[]
+  registration Registration?
+  submission   Submission?
+  archivedAt   DateTime?     @db.Timestamptz(3)
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(3)
+
+  @@map("team")
+}
+
+model TeamMember {
+  id                        String                     @id @default(cuid())
+  teamId                    String
+  team                      Team                       @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  name                      String
+  // Contact and verification address; not an auth identity.
+  studentEmail              String
+  studentEmailVerifiedAt    DateTime?
+  role                      TeamMemberRole             @default(OTHER)
+  createdAt                 DateTime                   @default(now()) @db.Timestamptz(3)
+  updatedAt                 DateTime                   @updatedAt @db.Timestamptz(3)
+  studentEmailVerifications StudentEmailVerification[]
+
+  @@unique([teamId, studentEmail])
+  @@map("team_member")
+}
+
+model StudentEmailVerification {
+  id           String     @id @default(cuid())
+  teamMemberId String
+  teamMember   TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  tokenHash    String     @unique
+  expiresAt    DateTime
+  verifiedAt   DateTime?
+  createdAt    DateTime   @default(now())
+
+  @@index([teamMemberId, expiresAt])
+  @@map("student_email_verification")
+}
+
+model Registration {
+  id               String               @id @default(cuid())
+  teamId           String               @unique
+  team             Team                 @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  status           RegistrationStatus   @default(PENDING)
+  applicationNotes String?
+  submittedAt      DateTime?            @db.Timestamptz(3)
+  withdrawnAt      DateTime?            @db.Timestamptz(3)
+  reviews          RegistrationReview[]
+  createdAt        DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime             @updatedAt @db.Timestamptz(3)
+
+  @@index([status, submittedAt])
+  @@map("registration")
+}
+
+model RegistrationReview {
+  id             String         @id @default(cuid())
+  registrationId String
+  registration   Registration   @relation(fields: [registrationId], references: [id], onDelete: Restrict)
+  reviewerId     String?
+  reviewer       User?          @relation(fields: [reviewerId], references: [id], onDelete: SetNull)
+  decision       ReviewDecision
+  reason         String?
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+
+  @@index([registrationId, createdAt])
+  @@index([reviewerId])
+  @@map("registration_review")
+}
+
+model Submission {
+  id              String    @id @default(cuid())
+  teamId          String    @unique
+  team            Team      @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  title           String
+  description     String?
+  repositoryUrl   String?
+  demoUrl         String?
+  presentationUrl String?
+  submittedAt     DateTime? @db.Timestamptz(3)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(3)
+
+  @@map("submission")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  // Logical reference retained even if the original entity is removed.
+  targetType String
+  targetId   String
+  details    Json?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([actorId, createdAt])
+  @@index([targetType, targetId, createdAt])
+  @@index([createdAt])
+  @@map("audit_log")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+
+  role       String    @default("team") // team | organizer | admin
+  banned     Boolean   @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  username        String?              @unique
+  displayUsername String?
+  team            Team?
+  reviews         RegistrationReview[]
+  auditLogs       AuditLog[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}

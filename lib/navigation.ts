@@ -45,3 +45,5 @@ export const adminDashboardLinks = [
     { href: "/admin/settings", label: "Settings", icon: Settings },
     { href: "/panel", label: "Management panel", icon: ShieldCheck },
 ] as const;
+
+export const toAdminDashboardLink = { href: "/admin", label: "Admin dashboard", icon: LayoutDashboard };
