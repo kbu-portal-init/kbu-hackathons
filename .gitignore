@@ -24,6 +24,9 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.crt
+*.cer
 
 # debug
 npm-debug.log*
@@ -33,6 +36,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,3 +44,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local documents
+foldder-local/

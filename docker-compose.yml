@@ -1,0 +1,99 @@
+# ==============================================================================
+# KBU Hackathon 2026 - Production Docker Compose Specification
+# Tuned for Debian 13 Host (2 vCPUs, 8 GB RAM, 76 GB NVMe)
+# Security baseline: Least Privilege, Internal DB network, Log rotation quotas
+# ==============================================================================
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kbu_hackathon_web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000" # Bound strictly to localhost; only Nginx can reach it
+    env_file:
+      - path: /opt/hackathon/.env.production
+        required: false
+      - path: .env.local
+        required: false
+      - path: .env
+        required: false
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    networks:
+      - frontend_net
+      - backend_net
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.3"
+          memory: 2048M
+        reservations:
+          cpus: "0.2"
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  db:
+    image: postgres:16-alpine
+    container_name: kbu_hackathon_db
+    restart: unless-stopped
+    env_file:
+      - path: /opt/hackathon/.env.production
+        required: false
+      - path: .env.local
+        required: false
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-kbu_hackathon}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_net # Completely isolated; no host port mapping
+    deploy:
+      resources:
+        limits:
+          cpus: "0.6"
+          memory: 1536M
+        reservations:
+          cpus: "0.1"
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    internal: true # Cannot receive external traffic; database isolation
+
+volumes:
+  postgres_data:
+    driver: local
