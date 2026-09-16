@@ -56,11 +56,17 @@ Participant registration workflows, organizer management workflows beyond the fo
 
 Prisma 7 uses `prisma7.config.ts`, PostgreSQL, the generated client in `generated/prisma`, and the `@prisma/adapter-pg` driver adapter. The active schema is `prisma/schema.prisma`; files under `docs/` are design references unless explicitly applied through migrations.
 
+Local development uses `docker-compose.local.yml` to run a postgres container on `localhost:5432`. The production `docker-compose.yml` is a full-stack spec with internal networking and no host port mapping. The `db:start`/`db:watch`/`db:stop`/`db:down` scripts reference the local file explicitly via `-f docker-compose.local.yml`.
+
 Common commands:
 
 ```bash
 pnpm install
 pnpm dev
+pnpm db:start          # start local postgres via docker-compose.local.yml
+pnpm db:watch          # start postgres in foreground (logs visible)
+pnpm db:stop           # stop postgres container
+pnpm db:down           # stop and remove postgres container + volume
 pnpm exec prisma validate --schema prisma/schema.prisma
 pnpm exec prisma generate
 pnpm exec prisma format --schema prisma/schema.prisma

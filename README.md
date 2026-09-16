@@ -49,10 +49,12 @@ Participant registration, organizer operational workflows, audit browsing, and g
 
 ## Getting started
 
-Requirements: Node.js 22+ and pnpm 10.27+.
+Requirements: Node.js 22+, pnpm 10.27+, and Docker.
 
 ```bash
 pnpm install
+pnpm db:start          # start local postgres via docker-compose.local.yml
+pnpm db:migrate        # apply migrations
 pnpm dev
 ```
 
@@ -61,6 +63,10 @@ Copy the required values from `.env.example`. The application expects `DATABASE_
 ## Prisma workflow
 
 ```bash
+pnpm db:start          # start local postgres
+pnpm db:watch          # start postgres with logs
+pnpm db:stop           # stop postgres
+pnpm db:down           # stop and remove postgres + volume
 pnpm exec prisma validate --schema prisma/schema.prisma
 pnpm exec prisma format --schema prisma/schema.prisma
 pnpm exec prisma generate
