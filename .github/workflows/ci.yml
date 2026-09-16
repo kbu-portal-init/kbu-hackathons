@@ -40,5 +40,13 @@ jobs:
             - name: TypeScript Typecheck
               run: pnpm exec tsc --noEmit
 
+            - name: Cache Next.js build
+              uses: actions/cache@v4
+              with:
+                path: .next/cache
+                key: nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
+                restore-keys: |
+                  nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+
             - name: Next.js Production Build
               run: pnpm build
