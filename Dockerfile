@@ -26,6 +26,8 @@ WORKDIR /app
 
 # Copy lockfiles and manifests
 COPY package.json pnpm-lock.yaml ./
+COPY prisma7.config.ts ./
+COPY prisma/schema.prisma ./prisma/schema.prisma
 
 # Install dependencies using frozen lockfile
 RUN pnpm i --frozen-lockfile
