@@ -40,6 +40,15 @@ pnpm build
 
 Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
 
+## Production containers
+
+- Use Node.js 24 LTS for Docker builds and runtime, with `gcompat` in the shared base. Keep pnpm 10.27.0 in build stages only.
+- Preserve standalone output, UID 1001 execution, the localhost web binding, and the private database network.
+- Both Compose services require `/opt/hackathon/.env.production`. Do not introduce local environment file fallbacks or interpolated database credential defaults.
+- Deployment requires nonempty `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` values. Health checks must expand these inside the container using escaped Compose dollar signs.
+- Validate with `docker compose config --quiet`, `docker compose build web`, and `docker compose up -d` on the configured host. Check database readiness, HTTP and static asset responses, and `docker compose exec web id -u` (expected `1001`). See README for the full commands.
+- Use an isolated test volume for database startup validation. Preserve production volumes; environment changes do not rotate existing database credentials.
+
 ## Git branches
 
 - Before beginning implementation, create or claim the relevant GitHub issue, assign yourself, and add a `Working on this` comment.

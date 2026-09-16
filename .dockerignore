@@ -1,0 +1,38 @@
+# Dependency directories
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+out
+build
+
+# Version control & tooling
+.git
+.github
+.husky
+.agents
+
+# Documentation & local staging
+foldder-local
+README.md
+SECURITY_STANDARDS.md
+SERVER_RUNBOOK.md
+DOCKER_GUIDELINES.md
+GITHUB_DEVOPS_WORKFLOW.md
+
+# Secrets, environments & certificates
+.env*
+*.pem
+*.key
+*.crt
+*.cer
+
+# Logs & cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store

@@ -35,6 +35,51 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Production Docker deployment
+
+The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker
+Compose is configured for a Linux production host with Docker Compose 2.24.0 or
+later. Both services require `/opt/hackathon/.env.production`; local `.env` and
+`.env.local` files are not loaded into the containers.
+
+Create that file on the host with restricted permissions and these nonempty values:
+
+```dotenv
+POSTGRES_DB=kbu_hackathon
+POSTGRES_USER=kbu_hackathon
+POSTGRES_PASSWORD=<set-a-unique-production-password>
+```
+
+Replace the password placeholder before deployment. The database receives these
+values directly from the file. Existing PostgreSQL volumes retain their original
+credentials; changing this file does not rotate an existing database password.
+The application currently has no database or authentication integration. When
+adding it, use `db:5432` as the database address from the web container.
+
+From the repository directory on the production host:
+
+```bash
+docker compose config --quiet
+docker compose build web
+docker compose up -d
+docker compose ps
+docker compose exec web id -u
+docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+curl --fail http://127.0.0.1:3000/
+```
+
+Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a
+`/_next/static/` asset referenced by the returned HTML also responds successfully.
+The web port is bound to localhost for a host reverse proxy; PostgreSQL has no
+published port. A missing production environment file fails Compose validation.
+Use `config --quiet` to avoid printing credentials. Validate fresh database startup
+with a separate test volume; never remove the production `postgres_data` volume
+as part of testing.
+
+Environment files are excluded from image builds. Future `NEXT_PUBLIC_*` settings
+must be supplied at build time; runtime environment injection cannot change values
+already bundled into browser assets.
+
 ## Branching
 
 Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Create a focused branch from `dev` for the issue, then open its pull request into `dev`. Promote tested changes from `dev` to `main` through a separate pull request.
