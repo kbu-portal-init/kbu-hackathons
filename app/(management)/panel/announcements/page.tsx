@@ -1,6 +1,9 @@
 import { RoutePlaceholder } from "@/components/route-placeholder";
+import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 
-export default function PanelAnnouncementsPage() {
+export default async function PanelAnnouncementsPage() {
+    await requireOrganizerOrAdmin();
+
     return (
         <RoutePlaceholder
             eyebrow="Management workspace"

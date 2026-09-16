@@ -2,6 +2,7 @@
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import {
     Sidebar,
@@ -17,23 +18,38 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
 
 type DashboardSidebarProps = {
     area: "participant" | "management" | "admin";
     children: ReactNode;
+    role: "admin" | "organizer" | "team" | null;
 };
 
-export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
-    const isParticipant = area === "participant";
-    const isAdmin = area === "admin";
-    const links = isParticipant ? participantDashboardLinks : isAdmin ? adminDashboardLinks : managementDashboardLinks;
-    const sidebarLabel = isParticipant
-        ? "Team workspace"
-        : isAdmin
-          ? "Administrator workspace"
-          : "Management workspace";
-    const headerTitle = isParticipant ? "Team dashboard" : isAdmin ? "Administrator dashboard" : "Management panel";
+export function DashboardSidebar({ area, children, role }: DashboardSidebarProps) {
+    const router = useRouter();
+
+    const config = {
+        participant: {
+            label: "Team workspace",
+            title: "Team dashboard",
+            links: participantDashboardLinks,
+        },
+        management: {
+            label: "Management workspace",
+            title: "Management panel",
+            links: managementDashboardLinks,
+        },
+        admin: {
+            label: "Administrator workspace",
+            title: "Administrator dashboard",
+            links: adminDashboardLinks,
+        },
+    } as const;
+
+    const { label: sidebarLabel, title: headerTitle, links } = config[area];
+
     return (
         <SidebarProvider className="min-h-screen flex-1">
             <Sidebar collapsible="icon">
@@ -61,6 +77,14 @@ export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
+                                {/* Only shown when the user is in the management area and has the admin role */}
+                                {area === "management" && role === "admin" && (
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton render={<Link href="/admin" />} tooltip="Admin Panel">
+                                            <span>Admin Panel</span>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
@@ -68,7 +92,18 @@ export function DashboardSidebar({ area, children }: DashboardSidebarProps) {
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton tooltip="Sign out">
+                            <SidebarMenuButton
+                                tooltip="Sign out"
+                                onClick={() => {
+                                    authClient.signOut({
+                                        fetchOptions: {
+                                            onSuccess: () => {
+                                                router.push("/");
+                                            },
+                                        },
+                                    });
+                                }}
+                            >
                                 <LogOut />
                                 <span>Sign out</span>
                             </SidebarMenuButton>

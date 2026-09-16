@@ -1,5 +1,6 @@
 import { ArrowRight, CalendarDays, Megaphone, Users } from "lucide-react";
 import Link from "next/link";
+import { redirectAuthenticatedUser } from "@/lib/auth/guards";
 
 const events = [
     ["KBU Innovation Sprint", "Coming soon", "Campus hackathon"],
@@ -7,7 +8,9 @@ const events = [
     ["Future Tech Challenge", "Save the date", "Themed challenge"],
 ] as const;
 
-export default function Home() {
+export default async function Home() {
+    await redirectAuthenticatedUser();
+
     return (
         <main>
             <section className="overflow-hidden border-b border-orange-100 bg-orange-50 dark:border-orange-950/50 dark:bg-orange-950/20">
