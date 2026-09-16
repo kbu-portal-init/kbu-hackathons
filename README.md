@@ -12,7 +12,7 @@ Public pages are available to everyone. The `/teams` participant workspace, `/pa
 
 | Area | Routes | Purpose |
 | --- | --- | --- |
-| Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Discover hackathons, community updates, student benefits, developer packs, and institutional resources. |
+| Public | `/`, `/events`, `/announcements`, `/resources`, `/resources/[id]`, `/about` | Discover hackathons, community updates, student benefits, developer packs, and step-by-step claim guides. |
 | Registration | `/register` | Explain the future team registration and approval process. |
 | Login | `/login`, `/login/participant`, `/login/management` | Choose an access type and view the corresponding dummy login form. |
 | Participant dashboard | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Future approved-team workspace. |
