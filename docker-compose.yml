@@ -9,6 +9,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+      secrets:
+        - sentry_auth_token
     container_name: kbu_hackathon_web
     restart: unless-stopped
     ports:
@@ -17,8 +21,9 @@ services:
       - path: /opt/hackathon/.env.production
         required: true
     environment:
-      - NODE_ENV=production
-      - PORT=3000
+      NODE_ENV: production
+      PORT: "3000"
+      SENTRY_AUTH_TOKEN: ""
     networks:
       - frontend_net
       - backend_net
@@ -50,6 +55,8 @@ services:
     env_file:
       - path: /opt/hackathon/.env.production
         required: true
+    environment:
+      SENTRY_AUTH_TOKEN: ""
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -85,3 +92,7 @@ networks:
 volumes:
   postgres_data:
     driver: local
+
+secrets:
+  sentry_auth_token:
+    environment: SENTRY_AUTH_TOKEN

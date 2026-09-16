@@ -60,7 +60,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and provider-neutral `SMTP_*` settings.
+Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
 
 ## Prisma workflow
 
@@ -92,31 +92,33 @@ pnpm build
 
 The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
 
-Create that file on the host with restricted permissions and these nonempty values:
+Create that file on the host with restricted permissions and the required database values:
 
 ```dotenv
 POSTGRES_DB=kbu_hackathon
 POSTGRES_USER=kbu_hackathon
 POSTGRES_PASSWORD=<set-a-unique-production-password>
+NEXT_PUBLIC_SENTRY_DSN=<public-sentry-project-dsn>
+SENTRY_AUTH_TOKEN=
 ```
 
-Replace the password placeholder before deployment. The database receives these values directly from the file. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
+Replace the password placeholder before deployment. For browser error reporting, replace `NEXT_PUBLIC_SENTRY_DSN` with the public project DSN; leave it empty to disable Sentry reporting. Compose passes it to the image build. Set `SENTRY_AUTH_TOKEN` to a Sentry auth token if you want source maps uploaded during the image build; leave it empty otherwise. Compose mounts it only for that build step and clears it from the running containers. The database receives its values directly from the file. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
 
 From the repository directory on the production host:
 
 ```bash
-docker compose config --quiet
-docker compose build web
-docker compose up -d
-docker compose ps
-docker compose exec web id -u
-docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+docker compose --env-file /opt/hackathon/.env.production config --quiet
+docker compose --env-file /opt/hackathon/.env.production build web
+docker compose --env-file /opt/hackathon/.env.production up -d
+docker compose --env-file /opt/hackathon/.env.production ps
+docker compose --env-file /opt/hackathon/.env.production exec web id -u
+docker compose --env-file /opt/hackathon/.env.production exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
 curl --fail http://127.0.0.1:3000/
 ```
 
 Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a `/_next/static/` asset referenced by the returned HTML also responds successfully. The web port is bound to localhost for a host reverse proxy; PostgreSQL has no published port. A missing production environment file fails Compose validation. Use `config --quiet` to avoid printing credentials. Validate fresh database startup with a separate test volume; never remove the production `postgres_data` volume as part of testing.
 
-Environment files are excluded from image builds. Future `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
+Environment files are excluded from image builds. `NEXT_PUBLIC_SENTRY_DSN` and other `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
 
 ## Branching
 

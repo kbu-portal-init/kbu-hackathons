@@ -50,3 +50,6 @@ foldder-local/
 
 # prisma generated client
 /generated/prisma
+
+# Sentry Config File
+.env.sentry-build-plugin
