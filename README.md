@@ -4,7 +4,7 @@ KBU Hub is the web platform for a single KBU hackathon event. It provides public
 
 ## Current foundation
 
-The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, SMTP email delivery, and student email verification.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, SMTP email delivery, student email verification, and event settings management.
 
 Sentry captures application errors and emits one informational event when each Node.js server instance starts; it does not report every successful request.
 
@@ -23,7 +23,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Available without authentication |
 | Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
 | Participant | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Protected workspace foundation; feature workflows continue in later branches |
-| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace foundation; feature workflows continue in later branches |
+| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audits/settings remain placeholders |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 
@@ -45,9 +45,10 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - Admins can ban organizers and teams; organizers can ban teams only. Bans revoke active sessions and create audit records.
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
 - SMTP delivery is provider-neutral through `sendEmail`; Better Auth password-reset messages use the same service.
+- Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
 
-Participant registration, organizer operational workflows, audit browsing, and general account-management UI are intentionally deferred.
+Participant registration, broader organizer operational workflows, audit browsing, and general account-management UI are intentionally deferred.
 
 ## Getting started
 
