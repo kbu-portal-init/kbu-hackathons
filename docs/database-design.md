@@ -1,8 +1,6 @@
 # Single-event database design
 
-Status: proposal. `prisma/schema.prisma` remains the active schema. The companion
-`docs/schema.proposed.prisma` is a review artifact, not a migration input until the
-application and authentication changes are implemented together.
+Status: design reference. `prisma/schema.prisma` is the active schema. This document describes planned data-model and workflow decisions; apply changes through reviewed migrations and implementation work.
 
 ## Agreed requirements
 
@@ -108,10 +106,3 @@ initial account, registration and submission model.
 5. Validate the schema, review generated SQL and run application checks. Test
    provisioning retries, both login methods, cross-role rejection and approval
    gating before applying a migration to a database with retained data.
-
-## Proposal check
-
-`pnpm exec prisma validate --schema docs/schema.proposed.prisma`
-
-This checks Prisma syntax and relations only. It does not migrate a database,
-generate the application's client, or validate the business rules above.

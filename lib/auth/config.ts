@@ -36,4 +36,5 @@ export const auth = betterAuth({
             },
         },
     },
+    disabledPaths: ["/admin/impersonate-user", "/admin/stop-impersonating"],
 });
