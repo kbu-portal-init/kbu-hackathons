@@ -38,14 +38,17 @@ RUN pnpm i --frozen-lockfile
 FROM build-base AS builder
 WORKDIR /app
 
+ARG NEXT_PUBLIC_SENTRY_DSN
+ENV NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Compile Next.js standalone bundle
-RUN pnpm build
+# Compile Next.js standalone bundle. The Sentry auth token is mounted only for this build step.
+RUN --mount=type=secret,id=sentry_auth_token,target=/run/secrets/sentry_auth_token,required=false SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" pnpm build
 
 # ------------------------------------------------------------------------------
 # Stage 3: Minimal Unprivileged Runtime

@@ -28,6 +28,7 @@
         "@hookform/resolvers": "^5.9.1",
         "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "7.10.0",
+        "@sentry/nextjs": "^10.74.0",
         "better-auth": "^1.7.5",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
