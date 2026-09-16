@@ -6,10 +6,17 @@ import type { ActionResult } from "@/lib/contracts/common";
 import type { DeleteObjectInput, FinalizeInput, PresignedUrlInput, PresignedUrlResult } from "@/lib/contracts/storage";
 import { R2_BUCKET, r2 } from "@/lib/r2";
 
-export async function generatePresignedUploadUrl(input: PresignedUrlInput): Promise<ActionResult<PresignedUrlResult>> {
+function assertKeyOwnership(key: string, teamId: string): boolean {
+    return key.startsWith(`uploads/${teamId}/`);
+}
+
+export async function generatePresignedUploadUrl(
+    input: PresignedUrlInput,
+    teamId: string,
+): Promise<ActionResult<PresignedUrlResult>> {
     try {
         const ext = input.fileName.split(".").pop() ?? "bin";
-        const key = `uploads/${crypto.randomUUID()}.${ext}`;
+        const key = `uploads/${teamId}/${crypto.randomUUID()}.${ext}`;
 
         const command = new PutObjectCommand({
             Bucket: R2_BUCKET,
@@ -40,7 +47,10 @@ export async function generatePresignedUploadUrl(input: PresignedUrlInput): Prom
     }
 }
 
-export async function verifyUpload(input: FinalizeInput): Promise<ActionResult<{ publicUrl: string }>> {
+export async function verifyUpload(input: FinalizeInput, teamId: string): Promise<ActionResult<{ publicUrl: string }>> {
+    if (!assertKeyOwnership(input.key, teamId)) {
+        return { ok: false, error: { code: "FORBIDDEN", message: "Access denied" } };
+    }
     try {
         const head = await r2.send(
             new HeadObjectCommand({
@@ -70,7 +80,10 @@ export async function verifyUpload(input: FinalizeInput): Promise<ActionResult<{
     }
 }
 
-export async function deleteObject(input: DeleteObjectInput): Promise<ActionResult<{ ok: true }>> {
+export async function deleteObject(input: DeleteObjectInput, teamId: string): Promise<ActionResult<{ ok: true }>> {
+    if (!assertKeyOwnership(input.key, teamId)) {
+        return { ok: false, error: { code: "FORBIDDEN", message: "Access denied" } };
+    }
     try {
         await r2.send(
             new DeleteObjectCommand({

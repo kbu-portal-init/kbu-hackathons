@@ -4,10 +4,17 @@ import { finalizeSchema } from "@/lib/contracts/storage";
 import { verifyUpload } from "@/lib/services/storage";
 import { toFieldErrors } from "@/lib/validation/zod";
 
-export async function POST(request: NextRequest) {
+async function getTeamSession() {
     try {
-        await requireApprovedTeam();
+        return await requireApprovedTeam();
     } catch {
+        return null;
+    }
+}
+
+export async function POST(request: NextRequest) {
+    const session = await getTeamSession();
+    if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -21,7 +28,7 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const result = await verifyUpload(parsed.data);
+    const result = await verifyUpload(parsed.data, session.team.id);
 
     if (!result.ok) {
         return NextResponse.json({ error: result.error.message }, { status: 404 });
