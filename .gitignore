@@ -24,6 +24,9 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.crt
+*.cer
 
 # debug
 npm-debug.log*
@@ -42,4 +45,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local documents
+foldder-local/
+
+# prisma generated client
 /generated/prisma

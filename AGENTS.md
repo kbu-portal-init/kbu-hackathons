@@ -14,6 +14,22 @@ Keep page-specific interactive components in a private `_components` directory b
 
 Prefer Server Components. Use client components only for browser state, events, forms, mutations, or client-only libraries. Keep navigable public, participant, and management destinations in `lib/navigation.ts`.
 
+## Components and navigation
+
+- Prefer Server Components. Add `"use client"` only when a component needs browser state, events, effects, or a client-only library.
+- Keep page files server-rendered where possible; place interactive behavior in focused client components.
+- Maintain public, participant, and management link definitions in `lib/navigation.ts`. Update that file whenever a navigation destination changes.
+- Update `README.md` and this file whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Keep the README route map aligned with the application and `lib/navigation.ts` aligned with navigable routes.
+- Reuse application components from `components`. Do not place app-specific UI in `components/ui`.
+- `components/ui` is shadcn-generated source. Do not hand-edit it. This project uses shadcn's Base UI configuration; browse the [component catalog](https://ui.shadcn.com/docs/components) and add a component with `pnpm dlx shadcn@latest add <component>`.
+
+## Styling
+
+- Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
+- Orange is the product primary color. Use the existing semantic primary utilities or Tailwind orange utilities such as `bg-orange-600`, `text-orange-500`, and `bg-orange-900` when appropriate.
+- Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.
+- Use Lucide icons through `lucide-react`.
+
 ## Authentication and roles
 
 Better Auth is configured in `lib/auth/config.ts` with the Prisma adapter, email/password authentication, username support, and admin capabilities. The supported `User.role` values are:
@@ -80,9 +96,9 @@ pnpm db:push
 
 Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`). Keep provider names out of application configuration.
 
-## Quality and contribution workflow
+## Quality checks
 
-Run the relevant checks before handoff:
+Run the relevant checks before finishing a change:
 
 ```bash
 pnpm lint
@@ -90,6 +106,57 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
-Create focused branches from `dev` using lowercase `<type>/<short-description>` names, open pull requests into `dev`, and promote tested `dev` to `main` with a separate release pull request. Keep each branch coherent. Update this file and `README.md` whenever routes, commands, dependencies, workflows, or architecture change.
+Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
 
-Use squash merges for focused pull requests into `dev` and merge commits for `dev` to `main`. Do not add application-specific UI to `components/ui`, bypass service-layer authorization, or return raw persistence objects from actions.
+## Production containers
+
+- Use Node.js 24 LTS for Docker builds and runtime, with `gcompat` in the shared base. Keep pnpm 10.27.0 in build stages only.
+- Preserve standalone output, UID 1001 execution, the localhost web binding, and the private database network.
+- Both Compose services require `/opt/hackathon/.env.production`. Do not introduce local environment file fallbacks or interpolated database credential defaults.
+- Deployment requires nonempty `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` values. Health checks must expand these inside the container using escaped Compose dollar signs.
+- Validate with `docker compose config --quiet`, `docker compose build web`, and `docker compose up -d` on the configured host. Check database readiness, HTTP and static asset responses, and `docker compose exec web id -u` (expected `1001`). See README for the full commands.
+- Use an isolated test volume for database startup validation. Preserve production volumes; environment changes do not rotate existing database credentials.
+
+## Git branches
+
+- Before beginning implementation, create or claim the relevant GitHub issue, assign yourself, and add a `Working on this` comment.
+- Create each focused branch from `dev`. Open its pull request into `dev`; do not merge feature branches directly into `main`.
+- Promote tested integrated work from `dev` to `main` through a separate release pull request.
+- `.github/workflows/main-source-branch.yml` validates that `main` pull requests originate from `dev`. Keep its `Require dev source branch` job configured as a required `main` branch status check after the workflow has run.
+- `.github/workflows/ci.yml` validates code quality (Biome lint, TypeScript typecheck, Next.js build) on PRs to `dev` and `main`.
+- `.github/workflows/deploy.yml` triggers automated remote deployment to `/opt/hackathon` on the Debian 13 production host upon push to `main` using the least-privilege `kbu-deploy` service account.
+- Use `<type>/<short-description>` in lowercase kebab case, such as `feat/team-settings`, `fix/sidebar-toggle`, `docs/readme`, or `chore/update-dependencies`.
+- Keep a branch limited to one coherent change and run the relevant quality checks before handing it off.
+
+## Pull requests
+
+- Open a pull request from the focused branch into `dev` and link the corresponding GitHub issue with `Closes #<issue-number>`. Use a separate `dev` to `main` pull request for a release.
+- Use a concise conventional title, for example `feat: add team settings page` or `fix: correct mobile navigation`.
+- Use **Squash and merge** for focused pull requests into `dev`; this keeps one commit per issue.
+- Use **Create a merge commit** for `dev` to `main` release pull requests. Do not squash this promotion because `dev` must remain an ancestor of `main`.
+- Use this body format:
+
+```md
+## Summary
+- What changed and why.
+
+## Validation
+- [ ] pnpm lint
+- [ ] pnpm exec tsc --noEmit
+- [ ] pnpm build
+
+## Screenshots
+<!-- Optional: include when helpful to review visible UI changes. -->
+
+Closes #<issue-number>
+```
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

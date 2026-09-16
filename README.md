@@ -58,6 +58,8 @@ pnpm db:migrate        # apply migrations
 pnpm dev
 ```
 
+Open [http://localhost:3000](http://localhost:3000).
+
 Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and provider-neutral `SMTP_*` settings.
 
 ## Prisma workflow
@@ -86,24 +88,112 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
-## Contribution workflow
+## Production Docker deployment
 
-Create or claim an issue, assign yourself, and leave a `Working on this` comment before implementation. Create a focused branch from `dev` using names such as `feat/team-settings`, `fix/sidebar-toggle`, or `docs/project-guide`. Open the pull request into `dev`; release work moves from `dev` to `main` through a separate pull request.
+The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
 
-Use squash merges for focused pull requests into `dev` and merge commits for `dev` to `main`. Keep route-specific components beside their page in `_components`, shared components in `components/`, and shadcn-generated primitives in `components/ui`. Do not hand-edit generated UI source.
+Create that file on the host with restricted permissions and these nonempty values:
 
-Update `README.md`, `AGENTS.md`, and `lib/navigation.ts` whenever a route, workflow, command, dependency, or architectural boundary changes.
+```dotenv
+POSTGRES_DB=kbu_hackathon
+POSTGRES_USER=kbu_hackathon
+POSTGRES_PASSWORD=<set-a-unique-production-password>
+```
+
+Replace the password placeholder before deployment. The database receives these values directly from the file. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
+
+From the repository directory on the production host:
+
+```bash
+docker compose config --quiet
+docker compose build web
+docker compose up -d
+docker compose ps
+docker compose exec web id -u
+docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+curl --fail http://127.0.0.1:3000/
+```
+
+Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a `/_next/static/` asset referenced by the returned HTML also responds successfully. The web port is bound to localhost for a host reverse proxy; PostgreSQL has no published port. A missing production environment file fails Compose validation. Use `config --quiet` to avoid printing credentials. Validate fresh database startup with a separate test volume; never remove the production `postgres_data` volume as part of testing.
+
+Environment files are excluded from image builds. Future `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
+
+## Branching
+
+Before starting a change, create or claim its GitHub issue, assign yourself, and leave a `Working on this` comment so the work is visible to the team. Create a focused branch from `dev` for the issue, then open its pull request into `dev`. Promote tested changes from `dev` to `main` through a separate pull request.
+
+Name feature branches by work type and a short, lowercase description:
+
+```text
+feat/event-registration
+fix/mobile-navigation
+docs/project-guide
+chore/update-dependencies
+```
+
+## Pull requests
+
+Open a pull request from the focused branch into `dev` and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`. When the integrated work is ready for release, open a separate `dev` to `main` pull request.
+
+The `Validate main pull request source` workflow (`.github/workflows/main-source-branch.yml`) rejects a `main` pull request unless its source branch is `dev`. The `Continuous Integration` workflow (`.github/workflows/ci.yml`) validates code quality (Biome lint, TypeScript typecheck, Next.js build) on pull requests to `dev` and `main`.
+
+When a release pull request is merged into `main`, the `Secure Production Deployment` workflow (`.github/workflows/deploy.yml`) triggers an automated, zero-trust deployment to `/opt/hackathon` on the production host via SSH using the restricted `kbu-deploy` service account.
+
+### Merge strategy
+
+- Use **Squash and merge** for focused feature, fix, documentation, and maintenance pull requests into `dev`. This keeps one clear commit for each issue.
+- Use **Create a merge commit** for `dev` to `main` release pull requests. This preserves `dev` as an ancestor of `main` and prevents future release pull requests from repeating earlier commits.
+
+Use this description format:
+
+```md
+## Summary
+- What changed and why.
+
+## Validation
+- [ ] pnpm lint
+- [ ] pnpm exec tsc --noEmit
+- [ ] pnpm build
+
+## Screenshots
+<!-- Optional: include when helpful to review visible UI changes. -->
+
+Closes #<issue-number>
+```
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the Next.js development server. |
+| `pnpm build` | Create a production build. |
+| `pnpm start` | Serve a completed production build. |
+| `pnpm lint` | Check formatting and lint rules with Biome. |
+| `pnpm lint:fix` | Apply Biome lint and formatting fixes. |
+| `pnpm format` | Format files with Biome. |
+| `pnpm exec tsc --noEmit` | Run TypeScript checking. |
+| `pnpm db:start` | Start local postgres via docker-compose.local.yml. |
+| `pnpm db:watch` | Start postgres in foreground with logs. |
+| `pnpm db:stop` | Stop postgres container. |
+| `pnpm db:down` | Stop and remove postgres container + volume. |
 
 ## Tooling
 
-- Next.js App Router with TypeScript and the `@/*` import alias.
-- Prisma 7 with PostgreSQL and the `@prisma/adapter-pg` driver adapter.
-- Better Auth for sessions and credentials.
-- Tailwind CSS v4, shadcn/ui Base UI components, and Lucide icons.
-- Biome for linting and formatting, with Husky/lint-staged checks before commits.
+- **Next.js App Router** with TypeScript and the `@/*` import alias.
+- **Prisma 7** with PostgreSQL and the `@prisma/adapter-pg` driver adapter.
+- **Better Auth** for sessions and credentials.
+- **Tailwind CSS v4** with the full default palette. Orange is the semantic primary color, so utilities such as `bg-orange-600` and `text-orange-500` are available alongside semantic theme classes.
+- **shadcn/ui** using the Base UI, Nova, neutral-base configuration and **Lucide** icons.
+- **Biome** for linting and formatting, with Husky and lint-staged running checks before commits.
+
+The shadcn-generated files in `components/ui` are intentionally excluded from Biome checks. Add application-specific composition and styling in other `components` files instead.
 
 Browse the [shadcn component catalog](https://ui.shadcn.com/docs/components) before adding a primitive:
 
 ```bash
 pnpm dlx shadcn@latest add <component>
 ```
+
+## Keeping documentation current
+
+Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
