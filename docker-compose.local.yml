@@ -1,17 +1,17 @@
-name: kbu-hackathon
+name: kbu-hackathon-local
 
 services:
   postgres:
-    image: postgres:17
-    container_name: kbu-hackathon-postgres
+    image: postgres:17-alpine
+    container_name: kbu-hackathon-local-postgres
     environment:
-      POSTGRES_DB: kbu-hackathon
-      POSTGRES_USER: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-kbu-hackathon}
     ports:
       - "5432:5432"
     volumes:
-      - kbu-hackathon_postgres_data:/var/lib/postgresql/data
+      - kbu-hackathon_local_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 10s
@@ -20,4 +20,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  kbu-hackathon_postgres_data:
+  kbu-hackathon_local_postgres_data:
