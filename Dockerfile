@@ -4,12 +4,16 @@
 # Multi-Stage Production Dockerfile for Next.js (pnpm)
 # Hardened according to KBU Security & Least Privilege Standards
 # - Unprivileged user (UID 1001: nextjs)
-# - Standalone minimal runtime layer (~150MB)
+# - Standalone minimal runtime layer
 # - No root execution in production
 # ==============================================================================
 
-# Base image with pnpm
-FROM node:20-alpine AS base
+# Shared native compatibility support for build and runtime
+FROM node:24-alpine AS base
+RUN apk add --no-cache gcompat
+
+# pnpm is only needed in build stages
+FROM base AS build-base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm install -g pnpm@10.27.0
@@ -17,8 +21,7 @@ RUN npm install -g pnpm@10.27.0
 # ------------------------------------------------------------------------------
 # Stage 1: Dependency Installation Cache
 # ------------------------------------------------------------------------------
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+FROM build-base AS deps
 WORKDIR /app
 
 # Copy lockfiles and manifests
@@ -30,7 +33,7 @@ RUN pnpm i --frozen-lockfile
 # ------------------------------------------------------------------------------
 # Stage 2: Production Build
 # ------------------------------------------------------------------------------
-FROM base AS builder
+FROM build-base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -45,7 +48,7 @@ RUN pnpm build
 # ------------------------------------------------------------------------------
 # Stage 3: Minimal Unprivileged Runtime
 # ------------------------------------------------------------------------------
-FROM node:20-alpine AS runner
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

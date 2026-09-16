@@ -15,11 +15,7 @@ services:
       - "127.0.0.1:3000:3000" # Bound strictly to localhost; only Nginx can reach it
     env_file:
       - path: /opt/hackathon/.env.production
-        required: false
-      - path: .env.local
-        required: false
-      - path: .env
-        required: false
+        required: true
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -53,15 +49,7 @@ services:
     restart: unless-stopped
     env_file:
       - path: /opt/hackathon/.env.production
-        required: false
-      - path: .env.local
-        required: false
-      - path: .env
-        required: false
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB:-kbu_hackathon}
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+        required: true
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -80,7 +68,7 @@ services:
         max-size: "10m"
         max-file: "3"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
       interval: 10s
       timeout: 5s
       retries: 5
