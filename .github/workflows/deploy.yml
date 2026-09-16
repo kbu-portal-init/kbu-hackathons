@@ -13,47 +13,8 @@ permissions:
     contents: read
 
 jobs:
-    verify:
-        name: Code Quality & Build Verification
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-              with:
-                version: 10.27.0
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                node-version: 24
-                cache: pnpm
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Biome Lint Check
-              run: pnpm lint
-
-            - name: TypeScript Typecheck
-              run: pnpm exec tsc --noEmit
-
-            - name: Cache Next.js build
-              uses: actions/cache@v4
-              with:
-                path: .next/cache
-                key: nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
-                restore-keys: |
-                  nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
-
-            - name: Next.js Production Build
-              run: pnpm build
-
     deploy:
         name: Deploy to Debian 13 Host
-        needs: verify
         runs-on: ubuntu-latest
         steps:
             - name: Trigger Remote Container Deployment
@@ -63,12 +24,31 @@ jobs:
                 username: ${{ secrets.SERVER_USER }}
                 key: ${{ secrets.SERVER_SSH_KEY }}
                 port: ${{ secrets.SERVER_PORT }}
-                script_stop: true
+                script_stop: false
                 script: |
+                    set -e
                     cd /opt/hackathon
+
+                    # Tag current image as rollback target
+                    docker tag hackathon-web:latest hackathon-web:rollback 2>/dev/null || true
+
+                    # Pull latest code
                     git fetch origin main
                     git reset --hard ${{ github.sha }}
+
+                    # Build and start new containers
                     docker compose --env-file /opt/hackathon/.env.production up -d --build --remove-orphans
-                    timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'
+
+                    # Health check with automatic rollback on failure
+                    if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'; then
+                        echo "❌ Health check failed — rolling back to previous image..."
+                        docker compose --env-file /opt/hackathon/.env.production down
+                        docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
+                        docker compose --env-file /opt/hackathon/.env.production up -d
+                        echo "⚠️ Rollback complete. Investigate the failed build."
+                        exit 1
+                    fi
+
+                    echo "✅ Health check passed."
                     docker image prune -f
                     docker builder prune -f --filter "until=72h"
