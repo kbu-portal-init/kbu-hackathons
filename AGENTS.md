@@ -95,7 +95,7 @@ pnpm db:push
 
 `db:migrate`, `db:migrate:deploy`, `db:push`, and `db:seed` mutate database state. Confirm the target database before running them. The development seed resets data and recreates fixture accounts, so it must never run against production.
 
-Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`). Keep provider names out of application configuration.
+Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`). Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
 
 ## Quality checks
 
@@ -114,8 +114,9 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 - Use Node.js 24 LTS for Docker builds and runtime, with `gcompat` in the shared base. Keep pnpm 10.27.0 in build stages only.
 - Preserve standalone output, UID 1001 execution, the localhost web binding, and the private database network.
 - Both Compose services require `/opt/hackathon/.env.production`. Do not introduce local environment file fallbacks or interpolated database credential defaults.
+- `NEXT_PUBLIC_SENTRY_DSN` is passed to the production image build. `SENTRY_AUTH_TOKEN` is mounted as a BuildKit secret for source-map uploads and must remain unavailable to runtime containers.
 - Deployment requires nonempty `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` values. Health checks must expand these inside the container using escaped Compose dollar signs.
-- Validate with `docker compose config --quiet`, `docker compose build web`, and `docker compose up -d` on the configured host. Check database readiness, HTTP and static asset responses, and `docker compose exec web id -u` (expected `1001`). See README for the full commands.
+- Validate with `docker compose --env-file /opt/hackathon/.env.production config --quiet`, `docker compose --env-file /opt/hackathon/.env.production build web`, and `docker compose --env-file /opt/hackathon/.env.production up -d` on the configured host. Check database readiness, HTTP and static asset responses, and `docker compose exec web id -u` (expected `1001`). See README for the full commands.
 - Use an isolated test volume for database startup validation. Preserve production volumes; environment changes do not rotate existing database credentials.
 
 ## Git branches
