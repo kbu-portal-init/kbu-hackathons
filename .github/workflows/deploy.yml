@@ -5,6 +5,10 @@ on:
         branches:
             - main
 
+concurrency:
+    group: production-deployment
+    cancel-in-progress: false
+
 permissions:
     contents: read
 
@@ -54,7 +58,8 @@ jobs:
                 script_stop: true
                 script: |
                     cd /opt/hackathon
-                    git pull origin main
-                    docker compose down --remove-orphans
-                    docker compose up -d --build
+                    git fetch origin main
+                    git reset --hard ${{ github.sha }}
+                    docker compose up -d --build --remove-orphans
+                    timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'
                     docker image prune -f
