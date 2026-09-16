@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+const eventDateSchema = z.preprocess(
+    (value) => (typeof value === "string" || value instanceof Date ? value : undefined),
+    z.coerce.date(),
+);
+
 export const eventSettingsIdSchema = z.object({ id: z.literal(1) });
 
 export const upsertEventSettingsSchema = z
@@ -9,12 +14,12 @@ export const upsertEventSettingsSchema = z
         venue: z.string().trim().optional(),
         imageUrls: z.array(z.string().url()).optional(),
         promoUrl: z.string().url("Invalid URL").optional(),
-        registrationOpensAt: z.coerce.date(),
-        registrationClosesAt: z.coerce.date(),
-        startsAt: z.coerce.date(),
-        endsAt: z.coerce.date(),
-        submissionOpensAt: z.coerce.date(),
-        submissionDeadline: z.coerce.date(),
+        registrationOpensAt: eventDateSchema,
+        registrationClosesAt: eventDateSchema,
+        startsAt: eventDateSchema,
+        endsAt: eventDateSchema,
+        submissionOpensAt: eventDateSchema,
+        submissionDeadline: eventDateSchema,
         maxTeams: z.coerce.number().int().min(1, "Max teams must be at least 1"),
         minTeamSize: z.coerce.number().int().min(1, "Min team size must be at least 1"),
         maxTeamSize: z.coerce.number().int().min(1, "Max team size must be at least 1"),

@@ -63,10 +63,11 @@ The branch currently provides:
 - Admin-protected organizer create, list/read, update, ban, and unban workflows.
 - Admin and organizer account-ban permissions: admins may target organizers and teams; organizers may target teams only. Bans revoke sessions and write audit records.
 - Organizer/admin-triggered student email verification.
+- Organizer/admin event settings reads and upserts with Zod validation, ISO-string DTO mapping, atomic persistence, and audit logging.
 - Provider-neutral SMTP delivery through `sendEmail`, including Better Auth password-reset delivery.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 
-Participant registration workflows, organizer management workflows beyond the foundation, audit browsing, and broader account-management UI remain follow-up work.
+Participant registration workflows, broader organizer management workflows, audit browsing, and broader account-management UI remain follow-up work.
 
 ## Database and email workflow
 

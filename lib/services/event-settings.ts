@@ -17,56 +17,49 @@ export async function upsertEventSettings(
     input: UpsertEventSettingsInput,
     actorId: string,
 ): Promise<ActionResult<UpsertEventSettingsData>> {
-    const existing = await prisma.eventSettings.findUnique({ where: { id: 1 } });
-
     try {
         await prisma.$transaction(async (tx) => {
-            if (existing) {
-                await tx.eventSettings.update({
-                    where: { id: 1 },
-                    data: {
-                        title: input.title,
-                        description: input.description ?? null,
-                        venue: input.venue ?? null,
-                        imageUrls: input.imageUrls ?? [],
-                        promoUrl: input.promoUrl ?? null,
-                        registrationOpensAt: input.registrationOpensAt,
-                        registrationClosesAt: input.registrationClosesAt,
-                        startsAt: input.startsAt,
-                        endsAt: input.endsAt,
-                        submissionOpensAt: input.submissionOpensAt,
-                        submissionDeadline: input.submissionDeadline,
-                        maxTeams: input.maxTeams,
-                        minTeamSize: input.minTeamSize,
-                        maxTeamSize: input.maxTeamSize,
-                    },
-                });
-            } else {
-                await tx.eventSettings.create({
-                    data: {
-                        id: 1,
-                        title: input.title,
-                        description: input.description ?? null,
-                        venue: input.venue ?? null,
-                        imageUrls: input.imageUrls ?? [],
-                        promoUrl: input.promoUrl ?? null,
-                        registrationOpensAt: input.registrationOpensAt,
-                        registrationClosesAt: input.registrationClosesAt,
-                        startsAt: input.startsAt,
-                        endsAt: input.endsAt,
-                        submissionOpensAt: input.submissionOpensAt,
-                        submissionDeadline: input.submissionDeadline,
-                        maxTeams: input.maxTeams,
-                        minTeamSize: input.minTeamSize,
-                        maxTeamSize: input.maxTeamSize,
-                    },
-                });
-            }
+            await tx.eventSettings.upsert({
+                where: { id: 1 },
+                update: {
+                    title: input.title,
+                    description: input.description ?? null,
+                    venue: input.venue ?? null,
+                    imageUrls: input.imageUrls ?? [],
+                    promoUrl: input.promoUrl ?? null,
+                    registrationOpensAt: input.registrationOpensAt,
+                    registrationClosesAt: input.registrationClosesAt,
+                    startsAt: input.startsAt,
+                    endsAt: input.endsAt,
+                    submissionOpensAt: input.submissionOpensAt,
+                    submissionDeadline: input.submissionDeadline,
+                    maxTeams: input.maxTeams,
+                    minTeamSize: input.minTeamSize,
+                    maxTeamSize: input.maxTeamSize,
+                },
+                create: {
+                    id: 1,
+                    title: input.title,
+                    description: input.description ?? null,
+                    venue: input.venue ?? null,
+                    imageUrls: input.imageUrls ?? [],
+                    promoUrl: input.promoUrl ?? null,
+                    registrationOpensAt: input.registrationOpensAt,
+                    registrationClosesAt: input.registrationClosesAt,
+                    startsAt: input.startsAt,
+                    endsAt: input.endsAt,
+                    submissionOpensAt: input.submissionOpensAt,
+                    submissionDeadline: input.submissionDeadline,
+                    maxTeams: input.maxTeams,
+                    minTeamSize: input.minTeamSize,
+                    maxTeamSize: input.maxTeamSize,
+                },
+            });
 
             await tx.auditLog.create({
                 data: {
                     actorId,
-                    action: existing ? "EVENT_SETTINGS_UPDATED" : "EVENT_SETTINGS_CREATED",
+                    action: "EVENT_SETTINGS_UPSERTED",
                     targetType: "EventSettings",
                     targetId: "1",
                     details: {
