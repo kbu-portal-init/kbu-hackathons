@@ -1,0 +1,44 @@
+name: Continuous Integration
+
+on:
+    pull_request:
+        branches:
+            - dev
+            - main
+    push:
+        branches:
+            - dev
+
+permissions:
+    contents: read
+
+jobs:
+    verify:
+        name: Lint, Typecheck & Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                version: 10.27.0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: 24
+                cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Biome Lint Check
+              run: pnpm lint
+
+            - name: TypeScript Typecheck
+              run: pnpm exec tsc --noEmit
+
+            - name: Next.js Production Build
+              run: pnpm build

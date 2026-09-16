@@ -55,6 +55,8 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 - Create each focused branch from `dev`. Open its pull request into `dev`; do not merge feature branches directly into `main`.
 - Promote tested integrated work from `dev` to `main` through a separate release pull request.
 - `.github/workflows/main-source-branch.yml` validates that `main` pull requests originate from `dev`. Keep its `Require dev source branch` job configured as a required `main` branch status check after the workflow has run.
+- `.github/workflows/ci.yml` validates code quality (Biome lint, TypeScript typecheck, Next.js build) on PRs to `dev` and `main`.
+- `.github/workflows/deploy.yml` triggers automated remote deployment to `/opt/hackathon` on the Debian 13 production host upon push to `main` using the least-privilege `kbu-deploy` service account.
 - Use `<type>/<short-description>` in lowercase kebab case, such as `feat/team-settings`, `fix/sidebar-toggle`, `docs/readme`, or `chore/update-dependencies`.
 - Keep a branch limited to one coherent change and run the relevant quality checks before handing it off.
 
