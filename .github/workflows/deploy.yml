@@ -63,3 +63,4 @@ jobs:
                     docker compose --env-file /opt/hackathon/.env.production up -d --build --remove-orphans
                     timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'
                     docker image prune -f
+                    docker builder prune -f --filter "until=72h"
