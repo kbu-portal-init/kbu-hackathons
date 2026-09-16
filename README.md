@@ -6,8 +6,6 @@ KBU Hub is the web platform for a single KBU hackathon event. It provides public
 
 The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, SMTP email delivery, student email verification, and event settings management.
 
-Sentry captures application errors and emits one informational event when each Node.js server instance starts; it does not report every successful request.
-
 The system uses three account roles:
 
 - **Team**: one shared username/password account for the team.
