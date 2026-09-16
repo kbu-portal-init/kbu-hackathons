@@ -94,7 +94,7 @@ pnpm db:push
 
 `db:migrate`, `db:migrate:deploy`, `db:push`, and `db:seed` mutate database state. Confirm the target database before running them. The development seed resets data and recreates fixture accounts, so it must never run against production.
 
-Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`). Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Keep provider names out of application configuration.
+Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`). Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
 
 ## Quality checks
 
