@@ -97,7 +97,9 @@ chore/update-dependencies
 
 Open a pull request from the focused branch into `dev` and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`. When the integrated work is ready for release, open a separate `dev` to `main` pull request.
 
-The `Validate main pull request source` GitHub Actions workflow rejects a `main` pull request unless its source branch is `dev`. After it first runs, configure its `Require dev source branch` job as a required status check in the `main` branch ruleset.
+The `Validate main pull request source` workflow (`.github/workflows/main-source-branch.yml`) rejects a `main` pull request unless its source branch is `dev`. The `Continuous Integration` workflow (`.github/workflows/ci.yml`) validates code quality (Biome lint, TypeScript typecheck, Next.js build) on pull requests to `dev` and `main`.
+
+When a release pull request is merged into `main`, the `Secure Production Deployment` workflow (`.github/workflows/deploy.yml`) triggers an automated, zero-trust deployment to `/opt/hackathon` on the production host via SSH using the restricted `kbu-deploy` service account.
 
 ### Merge strategy
 
