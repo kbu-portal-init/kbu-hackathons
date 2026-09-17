@@ -4,7 +4,7 @@ import { DeleteObjectCommand, HeadObjectCommand, PutObjectCommand } from "@aws-s
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { ActionResult } from "@/lib/contracts/common";
 import type { DeleteObjectInput, FinalizeInput, PresignedUrlInput, PresignedUrlResult } from "@/lib/contracts/storage";
-import { R2_BUCKET, r2 } from "@/lib/r2";
+import { R2_BUCKET, R2_PUBLIC_URL, r2 } from "@/lib/r2";
 
 function assertKeyOwnership(key: string, teamId: string): boolean {
     return key.startsWith(`uploads/${teamId}/`);
@@ -22,6 +22,7 @@ export async function generatePresignedUploadUrl(
             Bucket: R2_BUCKET,
             Key: key,
             ContentType: input.fileType,
+            ContentLength: input.fileSize,
         });
 
         const presignedUrl = await getSignedUrl(r2, command, {
@@ -33,7 +34,7 @@ export async function generatePresignedUploadUrl(
             data: {
                 presignedUrl,
                 key,
-                publicUrl: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`,
+                publicUrl: `${R2_PUBLIC_URL}/${key}`,
             },
         };
     } catch {
@@ -69,7 +70,7 @@ export async function verifyUpload(input: FinalizeInput, teamId: string): Promis
         return {
             ok: true,
             data: {
-                publicUrl: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${input.key}`,
+                publicUrl: `${R2_PUBLIC_URL}/${input.key}`,
             },
         };
     } catch {
