@@ -59,8 +59,12 @@ function TeamLoginForm({ onSuccess }: { onSuccess: () => void }) {
         defaultValues: { username: "", password: "" },
     });
     const onSubmit = async (values: TeamLoginInput) => {
-        const result = await loginAsTeam(values, loginCallbacks(onSuccess));
-        if (result?.error) toast.error(typeof result.error === "string" ? result.error : result.error.message);
+        const result = await loginAsTeam(values);
+        if (result?.error) {
+            toast.error(result.error);
+            return;
+        }
+        onSuccess();
     };
     return (
         <LoginFields
