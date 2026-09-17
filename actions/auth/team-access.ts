@@ -8,12 +8,13 @@ export async function checkTeamAccess(): Promise<{ approved: boolean; message?: 
         headers: await import("next/headers").then((m) => m.headers()),
     });
 
-    if (!session?.user || session.user.role !== "team") {
+    const user = session?.user;
+    if (user?.role !== "team") {
         return { approved: false, message: "Unauthorized" };
     }
 
     const team = await prisma.team.findUnique({
-        where: { userId: session.user.id },
+        where: { userId: user.id },
         include: { registration: true },
     });
 

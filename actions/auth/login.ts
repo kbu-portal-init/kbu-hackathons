@@ -6,7 +6,7 @@ import { checkTeamAccess } from "./team-access";
 
 type StaffLoginOptions = Parameters<typeof authClient.signIn.email>[1];
 
-export async function loginAsTeam(input: TeamLoginInput): Promise<{ error: string } | void> {
+export async function loginAsTeam(input: TeamLoginInput): Promise<{ error: string } | undefined> {
     const parsed = teamLoginSchema.safeParse(input);
     if (!parsed.success) {
         return { error: parsed.error.issues[0]?.message ?? "Invalid login" };
@@ -25,7 +25,7 @@ export async function loginAsTeam(input: TeamLoginInput): Promise<{ error: strin
 
     const access = await checkTeamAccess();
     if (!access.approved) {
-        authClient.signOut();
+        await authClient.signOut();
         return { error: access.message ?? "Your team does not have access." };
     }
 }
