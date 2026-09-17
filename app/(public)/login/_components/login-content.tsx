@@ -60,8 +60,8 @@ function TeamLoginForm({ onSuccess }: { onSuccess: () => void }) {
     });
     const onSubmit = async (values: TeamLoginInput) => {
         const result = await loginAsTeam(values);
-        if (result?.error) {
-            toast.error(result.error);
+        if (!result.ok) {
+            toast.error(result.error.message);
             return;
         }
         onSuccess();
@@ -85,8 +85,12 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
         defaultValues: { email: "", password: "" },
     });
     const onSubmit = async (values: StaffLoginInput) => {
-        const result = await loginAsStaff(values, loginCallbacks(onSuccess));
-        if (result?.error) toast.error(typeof result.error === "string" ? result.error : result.error.message);
+        const result = await loginAsStaff(values);
+        if (!result.ok) {
+            toast.error(result.error.message);
+            return;
+        }
+        onSuccess();
     };
     return (
         <LoginFields
@@ -157,15 +161,6 @@ function LoginFields<TFieldValues extends FieldValues>({
             </Button>
         </form>
     );
-}
-
-function loginCallbacks(onSuccess: () => void) {
-    return {
-        onSuccess,
-        onError: (error: { error: { message?: string; statusText?: string } }) => {
-            toast.error(error.error.message || error.error.statusText);
-        },
-    };
 }
 
 function FormError({ message }: { message?: string }) {
