@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import { type FieldValues, type Path, type SubmitHandler, type UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { loginAsStaff, loginAsTeam } from "@/actions/auth/login";
+import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
-import Loader from "../../../../components/loader";
 
 type LoginContentProps = { audience: "participant" | "management"; title: string; description: string };
 
