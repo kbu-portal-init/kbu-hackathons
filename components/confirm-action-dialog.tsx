@@ -53,7 +53,7 @@ export function ConfirmActionDialog({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction variant="destructive" disabled={isPending} onClick={handleConfirm}>
+                    <AlertDialogAction disabled={isPending} onClick={handleConfirm}>
                         {isPending ? pendingLabel : confirmLabel}
                     </AlertDialogAction>
                 </AlertDialogFooter>
