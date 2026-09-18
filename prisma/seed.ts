@@ -127,12 +127,14 @@ async function createTeam(input: {
     const team = await prisma.team.create({
         data: { loginName: input.loginName, displayName: input.displayName, userId: user.id },
     });
+    const verifiedAt = input.status === "APPROVED" ? new Date("2026-02-10T12:00:00.000Z") : null;
     const leader = await prisma.teamMember.create({
         data: {
             teamId: team.id,
             name: `${input.displayName} Leader`,
             studentEmail: `${input.loginName}.leader@ms.kbu.ac.th`,
             role: "LEADER",
+            studentEmailVerifiedAt: verifiedAt,
         },
     });
     await prisma.teamMember.createMany({
@@ -142,12 +144,14 @@ async function createTeam(input: {
                 name: `${input.displayName} Developer`,
                 studentEmail: `${input.loginName}.developer@ms.kbu.ac.th`,
                 role: "DEVELOPER",
+                studentEmailVerifiedAt: verifiedAt,
             },
             {
                 teamId: team.id,
                 name: `${input.displayName} Designer`,
                 studentEmail: `${input.loginName}.designer@ms.kbu.ac.th`,
                 role: "DESIGNER",
+                studentEmailVerifiedAt: verifiedAt,
             },
         ],
     });

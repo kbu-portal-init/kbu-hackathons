@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ActionResult } from "./common";
 
 export const teamLoginSchema = z.object({
     username: z.string().trim().min(1, "Team name is required"),
@@ -12,3 +13,9 @@ export const staffLoginSchema = z.object({
 
 export type TeamLoginInput = z.infer<typeof teamLoginSchema>;
 export type StaffLoginInput = z.infer<typeof staffLoginSchema>;
+
+export type LoginData = {
+    authenticated: true;
+};
+
+export type LoginResult = ActionResult<LoginData>;
