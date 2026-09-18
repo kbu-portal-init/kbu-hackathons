@@ -1,5 +1,6 @@
-import { ArrowRight, CalendarDays, Megaphone, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import RoomExperience from "@/components/_3d/RoomExperience";
 import { redirectAuthenticatedUser } from "@/lib/auth/guards";
 
 const events = [
@@ -41,23 +42,8 @@ export default async function Home() {
                             </Link>
                         </div>
                     </div>
-                    <div className="relative hidden min-h-72 lg:block">
-                        <div className="absolute right-8 top-4 size-56 rounded-full bg-orange-300/50 blur-3xl dark:bg-orange-600/30" />
-                        <div className="relative ml-auto max-w-sm rounded-3xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/40 dark:border-orange-900 dark:bg-zinc-900 dark:shadow-none">
-                            <p className="text-sm font-semibold text-orange-600">What’s happening</p>
-                            <p className="mt-4 text-3xl font-bold tracking-tight">Ideas start here.</p>
-                            <div className="mt-8 space-y-4 text-sm text-zinc-600 dark:text-zinc-300">
-                                <p className="flex items-center gap-3">
-                                    <CalendarDays className="size-5 text-orange-600" /> Discover upcoming events
-                                </p>
-                                <p className="flex items-center gap-3">
-                                    <Users className="size-5 text-orange-600" /> Find your people
-                                </p>
-                                <p className="flex items-center gap-3">
-                                    <Megaphone className="size-5 text-orange-600" /> Stay in the loop
-                                </p>
-                            </div>
-                        </div>
+                    <div className="relative">
+                        <RoomExperience />
                     </div>
                 </div>
             </section>
