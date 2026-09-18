@@ -6,17 +6,17 @@ import type { ActionResult } from "@/lib/contracts/common";
 import type { DeleteObjectInput, FinalizeInput, PresignedUrlInput, PresignedUrlResult } from "@/lib/contracts/storage";
 import { R2_BUCKET, R2_PUBLIC_URL, r2 } from "@/lib/r2";
 
-function assertKeyOwnership(key: string, teamId: string): boolean {
-    return key.startsWith(`uploads/${teamId}/`);
+function assertKeyOwnership(key: string, owner: string): boolean {
+    return key.startsWith(`uploads/${owner}/`);
 }
 
 export async function generatePresignedUploadUrl(
     input: PresignedUrlInput,
-    teamId: string,
+    owner: string,
 ): Promise<ActionResult<PresignedUrlResult>> {
     try {
         const ext = input.fileName.split(".").pop() ?? "bin";
-        const key = `uploads/${teamId}/${crypto.randomUUID()}.${ext}`;
+        const key = `uploads/${owner}/${crypto.randomUUID()}.${ext}`;
 
         const command = new PutObjectCommand({
             Bucket: R2_BUCKET,

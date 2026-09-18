@@ -1,23 +1,22 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { requireApprovedTeam } from "@/lib/auth/guards";
+import { requireApprovedTeam, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { finalizeSchema } from "@/lib/contracts/storage";
 import { verifyUpload } from "@/lib/services/storage";
 import { toFieldErrors } from "@/lib/validation/zod";
 
-async function getTeamSession() {
+async function getUploadOwner(key: string) {
     try {
-        return await requireApprovedTeam();
+        if (key.startsWith("uploads/events/")) {
+            await requireOrganizerOrAdmin();
+            return "events";
+        }
+        return (await requireApprovedTeam()).team.id;
     } catch {
         return null;
     }
 }
 
 export async function POST(request: NextRequest) {
-    const session = await getTeamSession();
-    if (!session) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await request.json();
     const parsed = finalizeSchema.safeParse(body);
 
@@ -28,7 +27,9 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const result = await verifyUpload(parsed.data, session.team.id);
+    const owner = await getUploadOwner(parsed.data.key);
+    if (!owner) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const result = await verifyUpload(parsed.data, owner);
 
     if (!result.ok) {
         return NextResponse.json({ error: result.error.message }, { status: 404 });

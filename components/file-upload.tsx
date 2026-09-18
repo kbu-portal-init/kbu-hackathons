@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useUpload } from "@/lib/hooks/use-upload";
 
 type FileUploadProps = {
-    category: "image" | "submission";
+    category: "image" | "submission" | "event-image";
     accept?: string;
     currentFile?: string | null;
     onUploadComplete: (url: string, key: string) => void;

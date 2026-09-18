@@ -64,6 +64,7 @@ The branch currently provides:
 - Admin and organizer account-ban permissions: admins may target organizers and teams; organizers may target teams only. Bans revoke sessions and write audit records.
 - Organizer/admin-triggered student email verification.
 - Organizer/admin event settings reads and upserts with Zod validation, ISO-string DTO mapping, atomic persistence, and audit logging.
+- Cloudflare R2 storage with presigned uploads, authenticated finalize/delete routes, team-owned `uploads/<team-id>/` keys, and organizer/admin-owned `uploads/events/` keys.
 - Provider-neutral SMTP delivery through `sendEmail`, including Better Auth password-reset delivery.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 
@@ -95,7 +96,11 @@ pnpm db:push
 
 `db:migrate`, `db:migrate:deploy`, `db:push`, and `db:seed` mutate database state. Confirm the target database before running them. The development seed resets data and recreates fixture accounts, so it must never run against production.
 
-Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`). Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
+Required environment categories are `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`), and Cloudflare R2 (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `NEXT_PUBLIC_R2_PUBLIC_URL`). Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
+
+## File storage workflow
+
+Uploads use `app/api/upload/presigned-url`, `app/api/upload/finalize`, and `app/api/upload/delete`. The browser sends metadata to obtain a five-minute presigned R2 URL, uploads directly to R2, then finalizes the object through the application. Team categories (`image`, `submission`) require an approved team session and use `uploads/<team-id>/`; `event-image` requires an organizer/admin session and uses `uploads/events/`. Services must enforce key ownership and never trust a client-provided URL or key outside the authorized prefix. Event image URLs are saved separately through event settings; storage deletion does not update database URL arrays.
 
 ## Quality checks
 

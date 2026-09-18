@@ -4,7 +4,7 @@ KBU Hub is the web platform for a single KBU hackathon event. It provides public
 
 ## Current foundation
 
-The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, SMTP email delivery, student email verification, and event settings management.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, SMTP email delivery, student email verification, event settings management, and Cloudflare R2 file storage.
 
 The system uses three account roles:
 
@@ -44,6 +44,7 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
 - SMTP delivery is provider-neutral through `sendEmail`; Better Auth password-reset messages use the same service.
 - Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
+- File storage uses Cloudflare R2 presigned uploads. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated, finalized through authenticated API routes, and read from their public R2 URLs.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
 
 Participant registration, broader organizer operational workflows, audit browsing, and general account-management UI are intentionally deferred.
@@ -61,7 +62,19 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
+Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, Cloudflare R2 values (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`), and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
+
+## File storage
+
+Uploads use three authenticated API requests:
+
+| Endpoint | Access | Purpose |
+| --- | --- | --- |
+| `POST /api/upload/presigned-url` | Approved team or organizer/admin | Validate metadata and create a short-lived R2 upload URL. |
+| `POST /api/upload/finalize` | Owner of the upload scope | Confirm the object exists and return its public URL. |
+| `POST /api/upload/delete` | Owner of the upload scope | Delete an object from R2. |
+
+Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser uploads directly to R2; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
 
 ## Prisma workflow
 

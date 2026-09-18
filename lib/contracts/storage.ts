@@ -21,11 +21,11 @@ export const presignedUrlSchema = z
         fileName: z.string().trim().min(1, "File name is required").max(255),
         fileType: z.string().min(1, "File type is required"),
         fileSize: z.number().int().positive("File size must be positive"),
-        category: z.enum(["image", "submission"]),
+        category: z.enum(["image", "submission", "event-image"]),
     })
     .refine(
         (data) => {
-            if (data.category === "image") {
+            if (data.category === "image" || data.category === "event-image") {
                 return (ALLOWED_IMAGE_TYPES as readonly string[]).includes(data.fileType);
             }
             return (ALLOWED_SUBMISSION_TYPES as readonly string[]).includes(data.fileType);
@@ -34,7 +34,8 @@ export const presignedUrlSchema = z
     )
     .refine(
         (data) => {
-            const maxSize = data.category === "image" ? MAX_IMAGE_SIZE : MAX_FILE_SIZE;
+            const maxSize =
+                data.category === "image" || data.category === "event-image" ? MAX_IMAGE_SIZE : MAX_FILE_SIZE;
             return data.fileSize <= maxSize;
         },
         { message: "File too large", path: ["fileSize"] },
