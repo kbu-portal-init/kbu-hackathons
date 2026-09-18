@@ -14,6 +14,7 @@ async function main() {
     const { DeleteObjectCommand, HeadObjectCommand } = await import("@aws-sdk/client-s3");
     const { deleteObject, generatePresignedUploadUrl, verifyUpload } = await import("@/lib/services/storage");
     const { r2 } = await import("@/lib/r2");
+    assert.ok(r2, "Test R2 client should be configured");
 
     const originalSend = r2.send;
     const sentCommands: unknown[] = [];

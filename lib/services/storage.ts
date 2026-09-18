@@ -4,7 +4,7 @@ import { DeleteObjectCommand, HeadObjectCommand, PutObjectCommand } from "@aws-s
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { ActionResult } from "@/lib/contracts/common";
 import type { DeleteObjectInput, FinalizeInput, PresignedUrlInput, PresignedUrlResult } from "@/lib/contracts/storage";
-import { R2_BUCKET, R2_PUBLIC_URL, r2 } from "@/lib/r2";
+import { isR2Configured, R2_BUCKET, R2_PUBLIC_URL, r2 } from "@/lib/r2";
 
 function assertKeyOwnership(key: string, owner: string): boolean {
     return key.startsWith(`uploads/${owner}/`);
@@ -15,6 +15,9 @@ export async function generatePresignedUploadUrl(
     owner: string,
 ): Promise<ActionResult<PresignedUrlResult>> {
     try {
+        if (!isR2Configured() || !r2 || !R2_BUCKET || !R2_PUBLIC_URL) {
+            throw new Error("R2 storage is not configured");
+        }
         const ext = input.fileName.split(".").pop() ?? "bin";
         const key = `uploads/${owner}/${crypto.randomUUID()}.${ext}`;
 
@@ -52,6 +55,9 @@ export async function verifyUpload(input: FinalizeInput, teamId: string): Promis
     if (!assertKeyOwnership(input.key, teamId)) {
         return { ok: false, error: { code: "FORBIDDEN", message: "Access denied" } };
     }
+    if (!isR2Configured() || !r2 || !R2_BUCKET || !R2_PUBLIC_URL) {
+        return { ok: false, error: { code: "STORAGE_NOT_CONFIGURED", message: "Storage is not configured" } };
+    }
     try {
         const head = await r2.send(
             new HeadObjectCommand({
@@ -84,6 +90,9 @@ export async function verifyUpload(input: FinalizeInput, teamId: string): Promis
 export async function deleteObject(input: DeleteObjectInput, teamId: string): Promise<ActionResult<{ ok: true }>> {
     if (!assertKeyOwnership(input.key, teamId)) {
         return { ok: false, error: { code: "FORBIDDEN", message: "Access denied" } };
+    }
+    if (!isR2Configured() || !r2 || !R2_BUCKET) {
+        return { ok: false, error: { code: "STORAGE_NOT_CONFIGURED", message: "Storage is not configured" } };
     }
     try {
         await r2.send(
