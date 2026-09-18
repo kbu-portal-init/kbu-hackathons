@@ -21,11 +21,10 @@ export const notificationTypes = [
 export type NotificationType = (typeof notificationTypes)[number];
 
 export type NotificationData = {
-    resetUrl?: string;
     verificationUrl?: string;
     teamName?: string;
     username?: string;
-    password?: string;
+    resetUrl?: string;
     reason?: string | null;
     expiresAt?: string | null;
     loginEmail?: string;

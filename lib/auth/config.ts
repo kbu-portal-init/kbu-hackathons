@@ -4,6 +4,7 @@ import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
+import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
@@ -11,7 +12,32 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
+        resetPasswordTokenExpiresIn: PASSWORD_RESET_TOKEN_TTL_SECONDS,
         sendResetPassword: async ({ user, url }) => {
+            const team = await prisma.team.findUnique({
+                where: { userId: user.id },
+                select: {
+                    members: {
+                        where: { role: "LEADER", studentEmailVerifiedAt: { not: null } },
+                        select: { studentEmail: true },
+                        take: 1,
+                    },
+                },
+            });
+            if (team) {
+                const leaderEmail = team.members[0]?.studentEmail;
+                if (!leaderEmail) {
+                    throw new Error("Team password reset requires a verified leader email");
+                }
+                await sendNotification({
+                    type: "PASSWORD_RESET",
+                    recipients: [leaderEmail],
+                    data: { resetUrl: url },
+                    targetType: "User",
+                    targetId: user.id,
+                });
+                return;
+            }
             await sendNotification({
                 type: "PASSWORD_RESET",
                 recipients: [user.email],

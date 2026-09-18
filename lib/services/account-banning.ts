@@ -4,7 +4,7 @@ import type { AccountActionData, BanAccountInput, UnbanAccountInput } from "@/li
 import type { ActionResult } from "@/lib/contracts/common";
 import { toAccountActionData } from "@/lib/mappers/accounts";
 import prisma from "@/lib/prisma";
-import { sendNotification } from "@/lib/services/notifications";
+import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
 import type { ManagementRole } from "@/types/auth";
 
 export async function banAccount(
@@ -51,14 +51,27 @@ export async function banAccount(
         throw error;
     }
     const recipients = user.team?.members.map((member) => member.studentEmail) ?? [];
-    await sendNotification({
-        type: "ACCOUNT_BANNED",
-        recipients: recipients.length > 0 ? recipients : [user.email],
-        data: { reason: input.reason, expiresAt: input.expiresAt?.toISOString() ?? null },
-        actorId,
-        targetType: "User",
-        targetId: user.id,
-    });
+    try {
+        await sendNotification({
+            type: "ACCOUNT_BANNED",
+            recipients: recipients.length > 0 ? recipients : [user.email],
+            data: { reason: input.reason, expiresAt: input.expiresAt?.toISOString() ?? null },
+            actorId,
+            targetType: "User",
+            targetId: user.id,
+        });
+    } catch (error) {
+        if (isNotificationDeliveryError(error)) {
+            return {
+                ok: false,
+                error: {
+                    code: "EMAIL_SEND_FAILED",
+                    message: "The account was banned, but the notification email could not be delivered.",
+                },
+            };
+        }
+        throw error;
+    }
     return { ok: true, data: toAccountActionData(user) };
 }
 
@@ -97,13 +110,26 @@ export async function unbanAccount(
         throw error;
     }
     const recipients = user.team?.members.map((member) => member.studentEmail) ?? [];
-    await sendNotification({
-        type: "ACCOUNT_UNBANNED",
-        recipients: recipients.length > 0 ? recipients : [user.email],
-        data: {},
-        actorId,
-        targetType: "User",
-        targetId: user.id,
-    });
+    try {
+        await sendNotification({
+            type: "ACCOUNT_UNBANNED",
+            recipients: recipients.length > 0 ? recipients : [user.email],
+            data: {},
+            actorId,
+            targetType: "User",
+            targetId: user.id,
+        });
+    } catch (error) {
+        if (isNotificationDeliveryError(error)) {
+            return {
+                ok: false,
+                error: {
+                    code: "EMAIL_SEND_FAILED",
+                    message: "The account was restored, but the notification email could not be delivered.",
+                },
+            };
+        }
+        throw error;
+    }
     return { ok: true, data: toAccountActionData(user) };
 }

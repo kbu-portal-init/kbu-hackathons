@@ -1,5 +1,7 @@
 import "server-only";
 
+import { after } from "next/server";
+import type { Prisma } from "@/generated/prisma/client";
 import type { EmailMessage, NotificationData, NotificationInput, NotificationType } from "@/lib/contracts/email";
 import prisma from "@/lib/prisma";
 import { sendEmail } from "@/lib/services/email";
@@ -10,6 +12,27 @@ type TeamRegistrationNotificationType =
     | "TEAM_REGISTRATION_APPROVED"
     | "TEAM_REGISTRATION_REJECTED"
     | "TEAM_REGISTRATION_REOPENED";
+
+export class NotificationDeliveryError extends Error {
+    readonly recipients: string[];
+
+    constructor(recipients: string[], cause?: unknown) {
+        super("Unable to deliver notification email", { cause });
+        this.name = "NotificationDeliveryError";
+        this.recipients = recipients;
+    }
+}
+
+export function isNotificationDeliveryError(error: unknown): error is NotificationDeliveryError {
+    return error instanceof NotificationDeliveryError;
+}
+
+export class NotificationTargetNotFoundError extends Error {
+    constructor(message = "Notification target was not found") {
+        super(message);
+        this.name = "NotificationTargetNotFoundError";
+    }
+}
 
 function escapeHtml(value: string | undefined | null) {
     return (value ?? "").replace(/[&<>"']/g, (character) => {
@@ -44,8 +67,8 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
             return {
                 type,
                 subject: `${data.teamName ?? "Your team"} registration approved`,
-                text: `Your team registration has been approved. You can now sign in to KBU Hub.\n\nUsername: ${data.username ?? "Not provided"}\nPassword: ${data.password ?? "Not provided"}`,
-                html: `<p>Your team registration has been approved.</p><p>You can now sign in to KBU Hub.</p><p><strong>Username:</strong> ${escapeHtml(data.username) || "Not provided"}<br /><strong>Password:</strong> ${escapeHtml(data.password) || "Not provided"}</p>`,
+                text: `Your team registration has been approved.\n\nTeam username: ${data.username ?? "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`,
+                html: `<p>Your team registration has been approved.</p><p><strong>Team username:</strong> ${escapeHtml(data.username) || "Not provided"}</p><p><a href="${escapeHtml(data.resetUrl)}">Set your team password</a></p>`,
             };
         case "TEAM_REGISTRATION_REJECTED":
             return {
@@ -79,8 +102,8 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
             return {
                 type,
                 subject: "Your KBU Hub organizer account is ready",
-                text: `Your organizer account has been created.\n\nUsername: ${data.loginEmail ?? "Not provided"}\nPassword: ${data.password ?? "Not provided"}`,
-                html: `<p>Your organizer account has been created.</p><p><strong>Username:</strong> ${escapeHtml(data.loginEmail) || "Not provided"}<br /><strong>Password:</strong> ${escapeHtml(data.password) || "Not provided"}</p>`,
+                text: `Your organizer account has been created. Set your password using this link: ${data.resetUrl}`,
+                html: `<p>Your organizer account has been created.</p><p><a href="${escapeHtml(data.resetUrl)}">Set your password</a></p>`,
             };
     }
 }
@@ -89,9 +112,54 @@ function uniqueRecipients(recipients: string[]) {
     return [...new Set(recipients.map((recipient) => recipient.trim().toLowerCase()).filter(Boolean))];
 }
 
-export async function sendNotification(input: NotificationInput): Promise<{ sent: boolean; recipients: string[] }> {
+async function recordNotificationAudit(input: {
+    actorId?: string;
+    action: "EMAIL_SENT" | "EMAIL_SEND_FAILED";
+    targetType: string;
+    targetId: string;
+    details: Prisma.InputJsonValue;
+}) {
+    try {
+        if (input.actorId) {
+            await prisma.auditLog.create({
+                data: {
+                    actorId: input.actorId,
+                    action: input.action,
+                    targetType: input.targetType,
+                    targetId: input.targetId,
+                    details: input.details,
+                },
+            });
+        } else {
+            await prisma.auditLog.create({
+                data: {
+                    action: input.action,
+                    targetType: input.targetType,
+                    targetId: input.targetId,
+                    details: input.details,
+                },
+            });
+        }
+    } catch {
+        // Notification delivery must not be reported as failed because audit logging is unavailable.
+    }
+}
+
+function scheduleNotificationAudit(input: Parameters<typeof recordNotificationAudit>[0]) {
+    try {
+        after(async () => {
+            await recordNotificationAudit(input);
+        });
+    } catch {
+        // Audit logging is best-effort and must not change the outcome of an SMTP delivery.
+    }
+}
+
+export async function sendNotification(input: NotificationInput): Promise<{ sent: true; recipients: string[] }> {
     const recipients = uniqueRecipients(input.recipients);
-    if (recipients.length === 0) return { sent: false, recipients };
+    if (recipients.length === 0) {
+        throw new NotificationDeliveryError([], new Error("Notification has no recipients"));
+    }
 
     const rendered = renderNotification(input.type, input.data);
     const targetType = input.targetType ?? "Notification";
@@ -99,31 +167,27 @@ export async function sendNotification(input: NotificationInput): Promise<{ sent
 
     try {
         await sendEmail({ ...rendered, to: recipients });
-        await prisma.auditLog.create({
-            data: {
-                actorId: input.actorId,
-                action: "EMAIL_SENT",
-                targetType,
-                targetId,
-                details: { notificationType: input.type, recipients },
-            },
+        scheduleNotificationAudit({
+            actorId: input.actorId,
+            action: "EMAIL_SENT",
+            targetType,
+            targetId,
+            details: { notificationType: input.type, recipients },
         });
         return { sent: true, recipients };
     } catch (error) {
-        await prisma.auditLog.create({
-            data: {
-                actorId: input.actorId,
-                action: "EMAIL_SEND_FAILED",
-                targetType,
-                targetId,
-                details: {
-                    notificationType: input.type,
-                    recipients,
-                    error: error instanceof Error ? error.message : "Unknown email delivery error",
-                },
+        scheduleNotificationAudit({
+            actorId: input.actorId,
+            action: "EMAIL_SEND_FAILED",
+            targetType,
+            targetId,
+            details: {
+                notificationType: input.type,
+                recipients,
+                error: "Email delivery failed",
             },
         });
-        return { sent: false, recipients };
+        throw new NotificationDeliveryError(recipients, error);
     }
 }
 
@@ -131,7 +195,7 @@ export async function sendTeamRegistrationNotification(input: {
     type: TeamRegistrationNotificationType;
     teamId: string;
     registrationId?: string;
-    data: Pick<NotificationData, "teamName" | "reason" | "username" | "password">;
+    data: Pick<NotificationData, "teamName" | "reason" | "username" | "resetUrl">;
     actorId?: string;
 }): Promise<{ sent: boolean; recipients: string[] }> {
     const team = await prisma.team.findUnique({
@@ -139,11 +203,21 @@ export async function sendTeamRegistrationNotification(input: {
         select: {
             id: true,
             displayName: true,
-            members: { select: { studentEmail: true } },
+            members: {
+                where: { role: "LEADER", studentEmailVerifiedAt: { not: null } },
+                select: { studentEmail: true },
+                take: 1,
+            },
         },
     });
 
-    if (!team) return { sent: false, recipients: [] };
+    if (!team) throw new NotificationTargetNotFoundError("Team was not found");
+    if (team.members.length === 0) {
+        throw new NotificationDeliveryError([], new Error("Team has no verified leader email"));
+    }
+    if (input.type === "TEAM_REGISTRATION_APPROVED" && !input.data.resetUrl) {
+        throw new Error("A password reset URL is required for team approval notifications");
+    }
 
     return sendNotification({
         type: input.type,
@@ -152,7 +226,7 @@ export async function sendTeamRegistrationNotification(input: {
             teamName: input.data.teamName ?? team.displayName,
             reason: input.data.reason,
             username: input.data.username,
-            password: input.data.password,
+            resetUrl: input.data.resetUrl,
         },
         actorId: input.actorId,
         targetType: "Registration",
