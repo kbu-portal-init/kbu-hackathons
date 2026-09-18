@@ -65,7 +65,7 @@ The branch currently provides:
 - Organizer/admin-triggered student email verification.
 - Organizer/admin event settings reads and upserts with Zod validation, ISO-string DTO mapping, atomic persistence, and audit logging.
 - Cloudflare R2 storage with presigned uploads, authenticated finalize/delete routes, team-owned `uploads/<team-id>/` keys, and organizer/admin-owned `uploads/events/` keys.
-- Provider-neutral SMTP delivery through `sendEmail`, including Better Auth password-reset delivery.
+- Provider-neutral SMTP delivery through `sendEmail`, with typed notification templates and `sendNotification` for Better Auth password resets, student verification, account ban/unban, and organizer account-created messages. Delivery outcomes are recorded in `AuditLog`.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 
 Participant registration workflows, broader organizer management workflows, audit browsing, and broader account-management UI remain follow-up work.

@@ -1,11 +1,12 @@
 import "server-only";
-import { headers } from "next/headers";
 
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
-import type { UpdateOrganizerInput } from "@/lib/contracts/organizers";
+import type { CreateOrganizerData, CreateOrganizerInput, UpdateOrganizerInput } from "@/lib/contracts/organizers";
 import { toAccountActionData } from "@/lib/mappers/accounts";
 import prisma from "@/lib/prisma";
+import { sendNotification } from "@/lib/services/notifications";
 
 export async function updateOrganizer(input: UpdateOrganizerInput): Promise<ActionResult<{ id: string }>> {
     const user = await prisma.user.findFirst({ where: { id: input.userId, role: "organizer" } });
@@ -19,8 +20,6 @@ export async function updateOrganizer(input: UpdateOrganizerInput): Promise<Acti
     }
 }
 
-import type { CreateOrganizerData, CreateOrganizerInput } from "@/lib/contracts/organizers";
-
 export async function provisionOrganizer(input: CreateOrganizerInput): Promise<ActionResult<CreateOrganizerData>> {
     const existing = await prisma.user.findUnique({ where: { email: input.email } });
     if (existing) {
@@ -32,6 +31,13 @@ export async function provisionOrganizer(input: CreateOrganizerInput): Promise<A
         const user = await prisma.user.update({
             where: { email: input.email },
             data: { role: "organizer", emailVerified: true },
+        });
+        await sendNotification({
+            type: "ORGANIZER_ACCOUNT_CREATED",
+            recipients: [user.email],
+            data: { loginEmail: user.email, password: input.password },
+            targetType: "User",
+            targetId: user.id,
         });
         return { ok: true, data: { id: toAccountActionData(user).userId } };
     } catch {

@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import prisma from "@/lib/prisma";
-import { sendEmail } from "@/lib/services/email";
+import { sendNotification } from "@/lib/services/notifications";
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
@@ -12,10 +12,12 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async ({ user, url }) => {
-            await sendEmail({
-                to: user.email,
-                subject: "Reset your KBU Hub password",
-                text: `Reset your password: ${url}`,
+            await sendNotification({
+                type: "PASSWORD_RESET",
+                recipients: [user.email],
+                data: { resetUrl: url },
+                targetType: "User",
+                targetId: user.id,
             });
         },
     },

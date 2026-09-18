@@ -4,7 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import type { ActionResult } from "@/lib/contracts/common";
 import { type StudentEmailVerificationData, studentEmailSchema } from "@/lib/contracts/email";
 import prisma from "@/lib/prisma";
-import { sendEmail } from "@/lib/services/email";
+import { sendNotification } from "@/lib/services/notifications";
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -24,10 +24,12 @@ export async function sendStudentEmailVerification(teamMemberId: string) {
 
     const baseUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
     const url = `${baseUrl}/student-email/verify?token=${encodeURIComponent(token)}`;
-    await sendEmail({
-        to: member.studentEmail,
-        subject: "Verify your KBU Hub student email",
-        text: `Verify your email address: ${url}`,
+    await sendNotification({
+        type: "STUDENT_EMAIL_VERIFICATION",
+        recipients: [member.studentEmail],
+        data: { verificationUrl: url },
+        targetType: "TeamMember",
+        targetId: member.id,
     });
 }
 
