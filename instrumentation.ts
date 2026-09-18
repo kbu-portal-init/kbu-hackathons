@@ -3,8 +3,8 @@ import * as Sentry from "@sentry/nextjs";
 export async function register() {
     if (process.env.NEXT_RUNTIME === "nodejs") {
         if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
-            const { assertR2Configured } = await import("./lib/r2");
-            assertR2Configured();
+            const { assertProductionEnvironment } = await import("./lib/env");
+            assertProductionEnvironment();
         }
 
         await import("./sentry.server.config");

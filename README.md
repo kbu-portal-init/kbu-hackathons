@@ -62,7 +62,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Copy the required values from `.env.example`. The application expects `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, Cloudflare R2 values (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`), and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
+Copy the required values from `.env.example`. The application expects `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, Cloudflare R2 values (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`), and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Production Node.js startup validates the required application, authentication, SMTP, and R2 values and stops when they are missing or invalid. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
 
 ## File storage
 
@@ -119,6 +119,8 @@ SENTRY_AUTH_TOKEN=
 Replace the password placeholder before deployment. For browser error reporting, replace `NEXT_PUBLIC_SENTRY_DSN` with the public project DSN; leave it empty to disable Sentry reporting. Compose passes it to the image build. Set `SENTRY_AUTH_TOKEN` to a Sentry auth token if you want source maps uploaded during the image build; leave it empty otherwise. Compose mounts it only for that build step and clears it from the running containers. The database receives its values directly from the file. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
 
 From the repository directory on the production host:
+
+The deployment workflow validates `/opt/hackathon/.env.production` for all required nonblank variables before tagging images, pulling code, building, or starting containers. A missing file or value stops deployment without changing the running release.
 
 ```bash
 docker compose --env-file /opt/hackathon/.env.production config --quiet
