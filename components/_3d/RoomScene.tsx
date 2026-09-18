@@ -31,7 +31,7 @@ const MODEL_URL = "/models/office-desk.glb";
 
 const DEFAULT_CAMERA = new THREE.Vector3(5.0, 6.4, 10.6);
 const DEFAULT_TARGET = new THREE.Vector3(0, 4.4, 3.6);
-const HOVER_EMISSIVE = new THREE.Color(0xff7a1a);
+const HOVER_EMISSIVE = new THREE.Color(0x22d3ee);
 const COLOR_BLACK = new THREE.Color(0x000000);
 const HOVER_INTENSITY = 0.45;
 const LAMP_HEAD = new THREE.Vector3(2.7, 8.0, 4.5);
@@ -53,10 +53,16 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
     const onHoverRef = useRef(onHover);
     const onSelectRef = useRef(onSelect);
     const onActionRef = useRef(onAction);
+    const onProgressRef = useRef(onProgress);
+    const onReadyRef = useRef(onReady);
+    const onErrorRef = useRef(onError);
     activeRef.current = active;
     onHoverRef.current = onHover;
     onSelectRef.current = onSelect;
     onActionRef.current = onAction;
+    onProgressRef.current = onProgress;
+    onReadyRef.current = onReady;
+    onErrorRef.current = onError;
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -72,7 +78,7 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         try {
             renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         } catch {
-            onError?.();
+            onErrorRef.current?.();
             return;
         }
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
@@ -96,12 +102,13 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         controls.maxPolarAngle = Math.PI * 0.52;
         controls.rotateSpeed = 0.55;
 
-        // Warm, modern lighting: soft sky fill, a warm key light with soft
-        // shadows, a low fill from the opposite side.
-        const hemisphere = new THREE.HemisphereLight(0xfff3e4, 0x2a1a10, 0.6);
+        // Cool "developer studio" lighting: a daylight key with soft shadows,
+        // a cyan-tinted fill, and a dim hemispherical bounce. The desk lamp
+        // below stays warm amber as an intentional accent.
+        const hemisphere = new THREE.HemisphereLight(0xd6ecf7, 0x0b1220, 0.55);
         scene.add(hemisphere);
 
-        const keyLight = new THREE.DirectionalLight(0xffe9d2, 1.7);
+        const keyLight = new THREE.DirectionalLight(0xeaf4ff, 1.5);
         keyLight.position.set(6, 9.5, 7.5);
         if (renderer.shadowMap.enabled) {
             keyLight.castShadow = true;
@@ -118,12 +125,12 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         }
         scene.add(keyLight);
 
-        const fillLight = new THREE.DirectionalLight(0xffd0a0, 0.35);
+        const fillLight = new THREE.DirectionalLight(0x7dd3fc, 0.4);
         fillLight.position.set(-7, 5, -4);
         scene.add(fillLight);
 
         // Desk lamp light, off until the lamp object is toggled.
-        const lampLight = new THREE.PointLight(0xff9f4d, 0, 9, 2);
+        const lampLight = new THREE.PointLight(0xffb45e, 0, 9, 2);
         lampLight.position.copy(LAMP_HEAD);
         scene.add(lampLight);
         let lampOn = false;
@@ -158,7 +165,7 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
 
         // --- Model loading ---------------------------------------------------
         const manager = new THREE.LoadingManager();
-        manager.onProgress = (_url, loaded, total) => onProgress?.(loaded, total);
+        manager.onProgress = (_url, loaded, total) => onProgressRef.current?.(loaded, total);
         const loader = new GLTFLoader(manager);
 
         let mixer: THREE.AnimationMixer | null = null;
@@ -201,10 +208,10 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
                     }
                 }
 
-                onReady?.();
+                onReadyRef.current?.();
             },
             undefined,
-            () => onError?.(),
+            () => onErrorRef.current?.(),
         );
 
         // --- Interaction (raycasting against registered meshes) --------------
@@ -249,11 +256,16 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
                 return;
             }
             focusAnimation.targetPoint = center.clone();
-            const direction = center.clone().sub(DEFAULT_TARGET).normalize();
-            focusAnimation.cameraPoint = center
-                .clone()
-                .add(direction.multiplyScalar(3.4))
-                .setY(Math.max(2.6, center.y));
+            // Frame from the current viewpoint, keeping the distance inside the
+            // orbit range so re-enabling controls does not snap the camera.
+            const distance = THREE.MathUtils.clamp(
+                camera.position.distanceTo(center),
+                controls.minDistance + 0.5,
+                controls.maxDistance,
+            );
+            const direction = camera.position.clone().sub(center).normalize();
+            focusAnimation.cameraPoint = center.clone().add(direction.multiplyScalar(distance));
+            focusAnimation.cameraPoint.y = Math.max(2.6, focusAnimation.cameraPoint.y);
             focusAnimation.active = true;
             controls.enabled = false;
         }
@@ -321,17 +333,28 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         resizeObserver.observe(container);
 
         // --- Render loop -----------------------------------------------------
-        const clock = new THREE.Clock();
+        // Timer replaces the deprecated THREE.Clock (deprecated in r183).
+        // update() must run once per frame before getDelta(); the first delta
+        // is 0, which matches the old Clock's auto-start behaviour.
+        const timer = new THREE.Timer();
         let frame = 0;
         let visible = true;
 
+        // Route every visibility change through one helper. Resetting on the
+        // false -> true transition keeps the mixer from receiving one huge
+        // "away" delta when the tab or the canvas scrolls back into view.
+        const setVisible = (next: boolean) => {
+            if (next && !visible) timer.reset();
+            visible = next;
+        };
+
         const onVisibilityChange = () => {
-            visible = document.visibilityState === "visible";
+            setVisible(document.visibilityState === "visible");
         };
         document.addEventListener("visibilitychange", onVisibilityChange);
 
         const intersectionObserver = new IntersectionObserver((entries) => {
-            visible = entries[0]?.isIntersecting ?? true;
+            setVisible(entries[0]?.isIntersecting ?? true);
         });
         intersectionObserver.observe(canvas);
 
@@ -339,7 +362,8 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
             frame = requestAnimationFrame(animate);
             if (!visible) return;
 
-            const delta = clock.getDelta();
+            timer.update();
+            const delta = timer.getDelta();
             mixer?.update(delta);
 
             // Slow drift while the visitor decides to enter; stops on entry.
@@ -396,7 +420,10 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
             }
             renderer.dispose();
         };
-    }, [objects, onProgress, onReady, onError]);
+        // Runs once: every other prop is read through refs, and `objects` is the
+        // module-level roomObjects array whose identity never changes. Rebuilding
+        // on a parent render would reload the GLB and reset the camera.
+    }, [objects]);
 
     return <canvas ref={canvasRef} className={className} aria-label="Interactive 3D KBU hackathon workspace" />;
 });
