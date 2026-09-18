@@ -1,8 +1,8 @@
 "use client";
 
+import { checkTeamAccess } from "@/actions/auth/team-access";
 import { authClient } from "@/lib/auth-client";
 import { type LoginResult, staffLoginSchema, teamLoginSchema } from "@/lib/contracts/auth";
-import { checkTeamAccess } from "./team-access";
 
 const success = (): LoginResult => ({ ok: true, data: { authenticated: true } });
 const failure = (code: string, message: string): LoginResult => ({ ok: false, error: { code, message } });
