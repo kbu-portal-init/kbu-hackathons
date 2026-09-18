@@ -70,6 +70,7 @@ model Announcement {
   id          String             @id @default(cuid())
   title       String
   content     String
+  imageUrl    String?
   status      AnnouncementStatus @default(DRAFT)
   publishedAt DateTime?          @db.Timestamptz(3)
   createdById String
