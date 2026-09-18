@@ -25,7 +25,7 @@ export function MobileNavigation() {
         <>
             <button
                 type="button"
-                className="flex size-10 items-center justify-center rounded-lg text-zinc-700 hover:bg-orange-50 dark:text-zinc-200 dark:hover:bg-orange-950/40"
+                className="flex size-10 items-center justify-center rounded-lg text-zinc-700 hover:bg-cyan-50 dark:text-zinc-200 dark:hover:bg-cyan-950/40"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? "Close menu" : "Open menu"}
@@ -45,17 +45,17 @@ export function MobileNavigation() {
                                 key={href}
                                 href={href}
                                 onClick={() => setOpen(false)}
-                                className="rounded-xl px-4 py-3 text-base font-medium text-zinc-700 hover:bg-orange-50 hover:text-orange-700 dark:text-zinc-200 dark:hover:bg-orange-950/40 dark:hover:text-orange-300"
+                                className="rounded-xl px-4 py-3 text-base font-medium text-zinc-700 hover:bg-cyan-50 hover:text-cyan-700 dark:text-zinc-200 dark:hover:bg-cyan-950/40 dark:hover:text-cyan-300"
                             >
                                 {label}
                             </Link>
                         ))}
                     </div>
-                    <div className="mt-auto border-t border-orange-100 pt-6 dark:border-orange-950/50">
+                    <div className="mt-auto border-t border-cyan-100 pt-6 dark:border-cyan-950/50">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}
-                            className="block rounded-full bg-orange-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-orange-700"
+                            className="block rounded-full bg-cyan-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-cyan-700"
                         >
                             Login
                         </Link>

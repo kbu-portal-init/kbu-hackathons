@@ -40,7 +40,7 @@ export default function RoomExperience() {
     }, [selected]);
 
     return (
-        <div className="relative h-72 w-full overflow-hidden rounded-3xl border border-orange-200 bg-gradient-to-b from-orange-50 to-white shadow-xl shadow-orange-200/40 sm:h-80 lg:h-[30rem] dark:border-orange-900 dark:from-orange-950/30 dark:to-zinc-950 dark:shadow-none">
+        <div className="relative h-72 w-full overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-950 to-slate-900 shadow-xl shadow-cyan-500/10 sm:h-80 lg:h-[30rem] dark:border-slate-800 dark:from-slate-950 dark:to-black dark:shadow-cyan-500/10">
             <RoomScene
                 ref={sceneRef}
                 objects={roomObjects}
@@ -70,7 +70,7 @@ export default function RoomExperience() {
             {toast ? (
                 <p
                     role="status"
-                    className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-zinc-900/90 px-4 py-1.5 text-sm font-medium text-white shadow-md"
+                    className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-1.5 text-sm font-medium text-white shadow-md"
                 >
                     {toast.message}
                 </p>

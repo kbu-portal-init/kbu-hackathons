@@ -35,12 +35,12 @@ export function StudentEmailGuideSection() {
             <div className="border-b border-zinc-200/80 bg-zinc-50/80 px-5 py-5 sm:px-8 sm:py-6 dark:border-zinc-800 dark:bg-zinc-900/60">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-xs">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-600 text-white shadow-xs">
                             <Mail className="h-5 w-5" />
                         </div>
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700 dark:bg-orange-950/60 dark:text-orange-300">
+                                <span className="rounded-md bg-cyan-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300">
                                     Official KBU Student Verification
                                 </span>
                                 <span className="text-zinc-300 dark:text-zinc-600">•</span>
@@ -61,7 +61,7 @@ export function StudentEmailGuideSection() {
                         href={studentEmailGuide.portalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 sm:text-sm"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-cyan-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 sm:text-sm"
                     >
                         <span>Open Outlook Webmail</span>
                         <ExternalLink className="h-4 w-4" />
@@ -78,13 +78,13 @@ export function StudentEmailGuideSection() {
                 </div>
 
                 {/* Copyable Format Callout */}
-                <div className="flex flex-col gap-4 rounded-2xl border border-orange-200/90 bg-gradient-to-r from-orange-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 dark:border-orange-900/50 dark:from-orange-950/30 dark:to-amber-950/20">
+                <div className="flex flex-col gap-4 rounded-2xl border border-cyan-200/90 bg-gradient-to-r from-cyan-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 dark:border-cyan-900/50 dark:from-cyan-950/30 dark:to-amber-950/20">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-xl bg-orange-500/10 p-2 text-orange-600 dark:text-orange-400">
+                        <div className="rounded-xl bg-cyan-500/10 p-2 text-cyan-600 dark:text-cyan-400">
                             <ShieldCheck className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-orange-700 dark:text-orange-300 sm:text-xs">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-300 sm:text-xs">
                                 Your Institutional Email Format
                             </p>
                             <p className="mt-0.5 font-mono text-sm font-bold text-zinc-900 sm:text-lg dark:text-zinc-100">
@@ -101,7 +101,7 @@ export function StudentEmailGuideSection() {
                     <button
                         type="button"
                         onClick={handleCopyFormat}
-                        className="inline-flex items-center justify-center gap-1.5 self-start rounded-xl border border-orange-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 shadow-2xs transition hover:bg-orange-50 active:scale-95 sm:self-center dark:border-orange-900/60 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        className="inline-flex items-center justify-center gap-1.5 self-start rounded-xl border border-cyan-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 shadow-2xs transition hover:bg-cyan-50 active:scale-95 sm:self-center dark:border-cyan-900/60 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
                     >
                         {copied ? (
                             <>
@@ -126,10 +126,10 @@ export function StudentEmailGuideSection() {
                         {studentEmailGuide.steps.map((step) => (
                             <div
                                 key={step.stepNumber}
-                                className="flex flex-col justify-between rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-2xs transition hover:border-orange-500/30 hover:shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60"
+                                className="flex flex-col justify-between rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-2xs transition hover:border-cyan-500/30 hover:shadow-xs dark:border-zinc-800 dark:bg-zinc-900/60"
                             >
                                 <div>
-                                    <span className="font-mono text-xs font-bold text-orange-600 dark:text-orange-400">
+                                    <span className="font-mono text-xs font-bold text-cyan-600 dark:text-cyan-400">
                                         {step.stepNumber}
                                     </span>
                                     <h4 className="mt-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -147,7 +147,7 @@ export function StudentEmailGuideSection() {
                 {/* Helpful Verification Tips */}
                 <div className="rounded-2xl border border-zinc-200/80 bg-zinc-50/70 p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-900/40">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
-                        <HelpCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                        <HelpCircle className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                         <span>Important Tips for Student Verification</span>
                     </div>
                     <ul className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -156,7 +156,7 @@ export function StudentEmailGuideSection() {
                                 key={tip}
                                 className="flex items-start gap-2.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400"
                             >
-                                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-500 dark:text-orange-400" />
+                                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cyan-500 dark:text-cyan-400" />
                                 <span>{tip}</span>
                             </li>
                         ))}
