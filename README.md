@@ -22,7 +22,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
 | Participant | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Protected workspace foundation; feature workflows continue in later branches |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
-| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
+| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion and admin profile settings are implemented |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 
 ## Architecture boundaries
@@ -44,7 +44,7 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
 - SMTP delivery is provider-neutral through `sendEmail`; named notification templates route password resets, student verification, account ban/unban, and organizer account-created messages through `sendNotification`. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
-- File storage uses Cloudflare R2 presigned uploads. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated, finalized through authenticated API routes, and read from their public R2 URLs.
+- File storage uses a server-side proxy (`POST /api/upload/proxy`) that streams uploads to Cloudflare R2. Approved teams upload images/submissions under `uploads/<team-id>/`; organizers/admins upload event images under `uploads/events/`; admins upload profile images under `uploads/admins/<admin-id>/`; team members can upload profile images under `uploads/<team-id>/`. Deleting an R2 object does not remove its URL from the database automatically.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
 
 Participant registration, broader organizer operational workflows, and general account-management UI are intentionally deferred. Admins can browse and permanently delete audit records individually. The audit browser provides a manually opened, paginated user/team-member picker through `/api/admin/users`.
@@ -62,19 +62,18 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Copy the required values from `.env.example`. The application expects `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, Cloudflare R2 values (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`), and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Production Node.js startup validates the required application, authentication, SMTP, and R2 values and stops when they are missing or invalid. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
+Copy the required values from `.env.example`. For local development only `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` are required (plus `POSTGRES_*` for the local Docker database). The remaining variables — `SMTP_*` (email), R2 values (file uploads), Sentry DSN, and Turnstile keys — are optional and only needed for their respective features. Production Node.js startup validates all variables and stops when any are missing or invalid.
 
 ## File storage
 
-Uploads use three authenticated API requests:
+Uploads go through a server-side proxy — the browser sends the file to Next.js, which streams it to R2:
 
 | Endpoint | Access | Purpose |
 | --- | --- | --- |
-| `POST /api/upload/presigned-url` | Approved team or organizer/admin | Validate metadata and create a short-lived R2 upload URL. |
-| `POST /api/upload/finalize` | Owner of the upload scope | Confirm the object exists and return its public URL. |
+| `POST /api/upload/proxy` | Approved team, organizer, or admin | Accept a file via `FormData`, validate type/size, upload to R2, return `{ key, publicUrl }`. |
 | `POST /api/upload/delete` | Owner of the upload scope | Delete an object from R2. |
 
-Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser uploads directly to R2; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
+Use `category: "image"` or `"submission"` for team uploads, `category: "event-image"` for management event images, and `category: "admin-profile-image"` for admin profile pictures. File type and size are validated server-side against the allowed MIME types and size limits in `lib/contracts/storage.ts`. The returned `publicUrl` must be saved in the relevant database record. Deleting an R2 object does not remove its URL from the database automatically.
 
 ## Prisma workflow
 
@@ -215,6 +214,8 @@ pnpm dlx shadcn@latest add <component>
 ## Keeping documentation current
 
 Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
+
+
 
 
 
