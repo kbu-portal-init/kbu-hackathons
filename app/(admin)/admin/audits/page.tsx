@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { requireAdmin } from "@/lib/auth/guards";
+import { listAuditLogsSchema } from "@/lib/contracts/audits";
 import { listAuditLogs } from "@/lib/data/audits";
 import { AuditFilters } from "./_components/audit-filters";
 import { AuditLogTable } from "./_components/audit-log-table";
@@ -20,21 +21,17 @@ export default async function AdminAuditsPage({
 
     const params = await searchParams;
 
-    const data = await listAuditLogs({
-        page: Number(params.page ?? 1),
-        pageSize: Number(params.pageSize ?? 20),
-        userId: params.userId,
-        userKind: params.userKind,
-        action: params.action,
-    });
+    const parsedParams = listAuditLogsSchema.safeParse(params);
+    const filters = parsedParams.success ? parsedParams.data : listAuditLogsSchema.parse({});
+    const data = await listAuditLogs(filters);
 
     const { items, meta } = data;
 
     const pageHref = (page: number) => {
         const query = new URLSearchParams({ page: String(page), pageSize: String(meta.pageSize) });
-        if (params.userId) query.set("userId", params.userId);
-        if (params.userKind) query.set("userKind", params.userKind);
-        if (params.action) query.set("action", params.action);
+        if (filters.userId) query.set("userId", filters.userId);
+        if (filters.userKind) query.set("userKind", filters.userKind);
+        if (filters.action) query.set("action", filters.action);
         return `/admin/audits?${query}`;
     };
 
@@ -50,7 +47,7 @@ export default async function AdminAuditsPage({
                     Review and permanently delete administrative activity records.
                 </p>
             </div>
-            <AuditFilters userId={params.userId} userKind={params.userKind} action={params.action} />
+            <AuditFilters userId={filters.userId} userKind={filters.userKind} action={filters.action} />
             <AuditLogTable items={items} />
             <PaginationFooter
                 page={meta.page}

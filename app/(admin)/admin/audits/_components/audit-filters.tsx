@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { type AuditAction, auditActions } from "@/lib/contracts/audits";
 import type { UserDirectoryItem, UserDirectoryResult } from "@/lib/contracts/users";
 
-type Props = { userId?: string; userKind?: "user" | "teamMember"; action?: string };
+type Props = { userId?: string; userKind?: "user" | "teamMember"; action?: AuditAction };
+
 async function fetchUsers(page: number, pageSize: number, search: string): Promise<UserDirectoryResult> {
     const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
     if (search.trim()) params.set("search", search.trim());
@@ -15,6 +17,7 @@ async function fetchUsers(page: number, pageSize: number, search: string): Promi
     if (!response.ok) throw new Error("Unable to load users");
     return response.json() as Promise<UserDirectoryResult>;
 }
+
 export function AuditFilters({ userId, userKind, action }: Props) {
     const router = useRouter();
     const pathname = usePathname();
@@ -55,14 +58,14 @@ export function AuditFilters({ userId, userKind, action }: Props) {
             setLoading(false);
         }
     }
-    function applyFilters(event: React.FormEvent<HTMLFormElement>) {
+    function applyFilters(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         const query = new URLSearchParams({ page: "1", pageSize: "20" });
         const actionValue = String(form.get("action") ?? "").trim();
-        if (selected) {
-            query.set("userId", selected.id);
-            query.set("userKind", selected.kind);
+        if (selected || (userId && userKind)) {
+            query.set("userId", selected?.id ?? userId ?? "");
+            query.set("userKind", selected?.kind ?? userKind ?? "user");
         }
         if (actionValue) query.set("action", actionValue);
         router.push(`${pathname}?${query}`);
@@ -165,13 +168,11 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                     className="flex h-9 w-full rounded-md border border-zinc-200 bg-transparent px-3 text-sm shadow-sm outline-none focus:border-orange-500 dark:border-zinc-700"
                 >
                     <option value="">All audit types</option>
-                    <option value="ACCOUNT_BANNED">Account banned</option>
-                    <option value="ACCOUNT_UNBANNED">Account unbanned</option>
-                    <option value="EMAIL_SENT">Email sent</option>
-                    <option value="EMAIL_SEND_FAILED">Email send failed</option>
-                    <option value="EVENT_SETTINGS_UPSERTED">Event settings updated</option>
-                    <option value="ORGANIZER_ACCOUNT_CREATED">Organizer account created</option>
-                    <option value="STUDENT_EMAIL_VERIFICATION">Student email verification</option>
+                    {auditActions.map((auditAction) => (
+                        <option key={auditAction} value={auditAction}>
+                            {auditAction.replaceAll("_", " ")}
+                        </option>
+                    ))}
                 </select>
             </div>
             <div className="flex gap-2">
