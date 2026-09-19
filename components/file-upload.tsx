@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AlertCircle, CheckCircle, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useUpload } from "@/lib/hooks/use-upload";
 
 type FileUploadProps = {
-    category: "image" | "submission" | "event-image";
+    category: "image" | "submission" | "event-image" | "admin-profile-image" | "member-profile-image";
     accept?: string;
     currentFile?: string | null;
     onUploadComplete: (url: string, key: string) => void;
@@ -51,7 +51,7 @@ export function FileUpload({
         onRemove?.();
     };
 
-    const isUploading = state === "uploading" || state === "finalizing";
+    const isUploading = state === "uploading";
 
     return (
         <div className="space-y-3">
@@ -66,9 +66,9 @@ export function FileUpload({
             />
 
             {currentFile && !selectedFile && (
-                <div className="flex items-center gap-2 rounded-md border p-2">
+                <div className="flex min-w-0 items-center gap-2 rounded-md border p-2">
                     <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="flex-1 truncate text-sm">Current file uploaded</span>
+                    <span className="min-w-0 flex-1 truncate text-sm">File uploaded</span>
                     <Button type="button" variant="ghost" size="sm" onClick={handleRemove} disabled={isUploading}>
                         <X className="h-4 w-4" />
                     </Button>
@@ -77,11 +77,9 @@ export function FileUpload({
 
             {selectedFile && (
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2 rounded-md border p-2">
-                        <span className="flex-1 truncate text-sm">{selectedFile.name}</span>
-                        <span className="text-muted-foreground text-xs">
-                            {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
-                        </span>
+                    <div className="flex min-w-0 items-center gap-2 rounded-md border p-2">
+                        <span className="min-w-0 flex-1 truncate text-sm">{selectedFile.name}</span>
+                        <span className="text-muted-foreground text-xs">{formatFileSize(selectedFile.size)}</span>
                         {!isUploading && (
                             <Button type="button" variant="ghost" size="sm" onClick={handleRemove}>
                                 <X className="h-4 w-4" />
@@ -137,4 +135,9 @@ export function FileUpload({
             </div>
         </div>
     );
+}
+
+function formatFileSize(bytes: number) {
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }

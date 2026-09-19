@@ -1,4 +1,4 @@
-# KBU Hub contributor guide
+﻿# KBU Hub contributor guide
 
 ## Architecture
 
@@ -64,11 +64,11 @@ The branch currently provides:
 - Admin and organizer account-ban permissions: admins may target organizers and teams; organizers may target teams only. Bans revoke sessions and write audit records.
 - Organizer/admin-triggered student email verification.
 - Organizer/admin event settings reads and upserts with Zod validation, ISO-string DTO mapping, atomic persistence, and audit logging.
-- Cloudflare R2 storage with presigned uploads, authenticated finalize/delete routes, team-owned `uploads/<team-id>/` keys, and organizer/admin-owned `uploads/events/` keys.
+- Cloudflare R2 storage with server-side proxy uploads, team-owned `uploads/<team-id>/` keys, organizer/admin-owned `uploads/events/` keys, and admin-owned `uploads/admins/<admin-id>/` keys.
 - Provider-neutral SMTP delivery through `sendEmail`, with typed notification templates and `sendNotification` for Better Auth password resets, student verification, account ban/unban, and organizer account-created messages. SMTP delivery is awaited; delivery outcomes are recorded asynchronously in `AuditLog` and never change the SMTP result. Organizer/team onboarding links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 
-Participant registration workflows, broader organizer management workflows, audit browsing, and broader account-management UI remain follow-up work.
+Participant registration workflows, broader organizer management workflows, and broader account-management UI remain follow-up work. Admins can browse and permanently delete audit records individually; deletion does not create a replacement audit record. The admin audit browser loads user/team-member filter options manually through the paginated `/api/admin/users` route, defaulting to 200 records per request. Admin profile settings update name, email, password, and profile image; admin profile uploads use `uploads/admins/<admin-id>/`.
 
 ## Database and email workflow
 
@@ -96,11 +96,11 @@ pnpm db:push
 
 `db:migrate`, `db:migrate:deploy`, `db:push`, and `db:seed` mutate database state. Confirm the target database before running them. The development seed resets data and recreates fixture accounts, so it must never run against production.
 
-Required environment categories are `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`), and Cloudflare R2 (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `NEXT_PUBLIC_R2_PUBLIC_URL`). Production Node.js startup validates these values and stops when any are missing or invalid; build-time validation is skipped. Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
+Required environment categories are `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`), and Cloudflare R2 (`R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `NEXT_PUBLIC_R2_PUBLIC_URL`). Production Node.js startup validates these values and stops when any are missing or invalid; build-time validation is skipped. Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
 
 ## File storage workflow
 
-Uploads use `app/api/upload/presigned-url`, `app/api/upload/finalize`, and `app/api/upload/delete`. The browser sends metadata to obtain a five-minute presigned R2 URL, uploads directly to R2, then finalizes the object through the application. Team categories (`image`, `submission`) require an approved team session and use `uploads/<team-id>/`; `event-image` requires an organizer/admin session and uses `uploads/events/`. Services must enforce key ownership and never trust a client-provided URL or key outside the authorized prefix. Event image URLs are saved separately through event settings; storage deletion does not update database URL arrays.
+Uploads use `app/api/upload/proxy` and `app/api/upload/delete`. The browser sends the file as `multipart/form-data` to the proxy route, which validates the session, file type, and size, then streams the object to R2. Team categories (`image`, `submission`, `member-profile-image`) require an approved team session and use `uploads/<team-id>/`; `event-image` requires an organizer/admin session and uses `uploads/events/`; `admin-profile-image` requires an admin session and uses `uploads/admins/<admin-id>/`. Services must enforce key ownership and never trust a client-provided URL or key outside the authorized prefix. Event image URLs are saved separately through event settings; storage deletion does not update database URL arrays.
 
 ## Quality checks
 
@@ -163,8 +163,11 @@ Closes #<issue-number>
 
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+This version has breaking changes â€” APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+This block is written and re-added by `next dev` â€” verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+
+

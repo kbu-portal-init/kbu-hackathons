@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const updateTeamLogoSchema = z.object({
-    imageUrl: z.string().url("Invalid URL").nullable(),
+    imageUrl: z.url("Invalid URL").nullable(),
 });
 
 export type UpdateTeamLogoInput = z.infer<typeof updateTeamLogoSchema>;
