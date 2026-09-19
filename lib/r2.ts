@@ -31,3 +31,16 @@ export function assertR2Configured(): void {
         );
     }
 }
+export function isOwnedR2PublicUrl(url: string, keyPrefix: string): boolean {
+    if (!R2_PUBLIC_URL) return false;
+
+    try {
+        const actual = new URL(url);
+        const base = new URL(`${R2_PUBLIC_URL}/`);
+        const basePath = base.pathname.replace(/\/$/, "");
+        const expectedPrefix = `${basePath}/${keyPrefix.replace(/^\//, "").replace(/\/$/, "")}/`;
+        return actual.origin === base.origin && actual.pathname.startsWith(expectedPrefix);
+    } catch {
+        return false;
+    }
+}
