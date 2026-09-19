@@ -286,7 +286,7 @@ function OrganizerTable({
                                                 : " Â· permanent"}
                                         </>
                                     ) : (
-                                        "â€”"
+                                        "—"
                                     )}
                                 </TableCell>
                                 <TableCell>

@@ -65,16 +65,6 @@ export function FileUpload({
                 id={`file-upload-${category}`}
             />
 
-            {currentFile && !selectedFile && (
-                <div className="flex min-w-0 items-center gap-2 rounded-md border p-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="min-w-0 flex-1 truncate text-sm">File uploaded</span>
-                    <Button type="button" variant="ghost" size="sm" onClick={handleRemove} disabled={isUploading}>
-                        <X className="h-4 w-4" />
-                    </Button>
-                </div>
-            )}
-
             {selectedFile && (
                 <div className="space-y-2">
                     <div className="flex min-w-0 items-center gap-2 rounded-md border p-2">
