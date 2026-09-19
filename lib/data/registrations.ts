@@ -63,7 +63,7 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
                     displayName: true,
                     loginName: true,
                     members: {
-                        select: { id: true, name: true, role: true, studentEmail: true },
+                        select: { id: true, name: true, role: true, studentEmail: true, studentEmailVerifiedAt: true },
                         orderBy: { createdAt: "asc" },
                     },
                 },
@@ -97,6 +97,7 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
             name: m.name,
             role: m.role,
             email: m.studentEmail,
+            verifiedAt: m.studentEmailVerifiedAt,
         })),
         reviews: record.reviews.map((rv) => ({
             id: rv.id,

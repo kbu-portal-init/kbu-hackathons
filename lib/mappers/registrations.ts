@@ -35,6 +35,7 @@ type RegistrationDetailRecord = RegistrationListItemRecord & {
         name: string;
         role: string;
         email: string;
+        verifiedAt: Date | null;
     }[];
     reviews: {
         id: string;
@@ -55,6 +56,7 @@ export function toRegistrationDetail(record: RegistrationDetailRecord): Registra
             name: m.name,
             role: m.role,
             email: m.email,
+            verifiedAt: m.verifiedAt?.toISOString() ?? null,
         })),
         reviews: record.reviews.map((rv) => ({
             id: rv.id,

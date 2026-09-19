@@ -289,17 +289,6 @@ export async function approveRegistration(
         };
     }
 
-    const verified = await allMembersVerified(record.teamId);
-    if (!verified) {
-        return {
-            ok: false,
-            error: {
-                code: "EMAIL_VERIFICATION_PENDING",
-                message: "All team members must verify their email before approval",
-            },
-        };
-    }
-
     const leader = record.team.members.find((m) => m.role === "LEADER") ?? record.team.members[0];
     if (!leader) {
         return {

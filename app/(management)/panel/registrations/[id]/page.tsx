@@ -4,10 +4,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
 import { cn } from "@/lib/utils";
+import { MemberRow } from "./_components/member-row";
 import { RegistrationActions } from "./_components/registration-actions";
 
 function StatusBadge({ status }: { status: string }) {
@@ -83,15 +84,12 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
                                 <TableHead>Name</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Email</TableHead>
+                                <TableHead>Verification</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {item.members.map((m) => (
-                                <TableRow key={m.id}>
-                                    <TableCell className="font-medium">{m.name}</TableCell>
-                                    <TableCell>{m.role}</TableCell>
-                                    <TableCell className="break-all">{m.email}</TableCell>
-                                </TableRow>
+                                <MemberRow key={m.id} member={m} />
                             ))}
                         </TableBody>
                     </Table>

@@ -2,6 +2,7 @@
 
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
+import { studentEmailVerificationSchema } from "@/lib/contracts/email";
 import type {
     ApproveRegistrationData,
     RegistrationDetailDTO,
@@ -22,6 +23,7 @@ import {
     rejectRegistration as rejectRegistrationService,
     submitRegistration as submitRegistrationService,
 } from "@/lib/services/registration";
+import { sendStudentEmailVerification } from "@/lib/services/student-email-verification";
 import { toFieldErrors } from "@/lib/validation/zod";
 
 // ── Public (no auth) ───────────────────────────────────────────────
@@ -108,4 +110,21 @@ export async function rejectRegistrationRequest(input: unknown): Promise<ActionR
         };
     }
     return rejectRegistrationService(parsed.data, session.user.id);
+}
+
+export async function resendStudentEmailVerification(input: unknown): Promise<ActionResult<{ sent: boolean }>> {
+    const _session = await requireOrganizerOrAdmin();
+    const parsed = studentEmailVerificationSchema.safeParse(input);
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: "VALIDATION_ERROR",
+                message: "Invalid team member ID",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+    await sendStudentEmailVerification(parsed.data.teamMemberId);
+    return { ok: true, data: { sent: true } };
 }

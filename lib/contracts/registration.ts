@@ -96,6 +96,7 @@ export type RegistrationMemberDTO = {
     name: string;
     role: string;
     email: string;
+    verifiedAt: string | null;
 };
 
 export type RegistrationDetailDTO = RegistrationListItem & {
