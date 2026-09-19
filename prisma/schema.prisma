@@ -110,6 +110,7 @@ model TeamMember {
   // Contact and verification address; not an auth identity.
   studentEmail              String
   studentEmailVerifiedAt    DateTime?
+  imageUrl                  String?
   role                      TeamMemberRole             @default(OTHER)
   createdAt                 DateTime                   @default(now()) @db.Timestamptz(3)
   updatedAt                 DateTime                   @updatedAt @db.Timestamptz(3)
