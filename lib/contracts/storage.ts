@@ -16,57 +16,8 @@ export const ALLOWED_SUBMISSION_TYPES = [
     "text/plain",
 ] as const;
 
-export const presignedUrlSchema = z
-    .object({
-        fileName: z.string().trim().min(1, "File name is required").max(255),
-        fileType: z.string().min(1, "File type is required"),
-        fileSize: z.number().int().positive("File size must be positive"),
-        category: z.enum(["image", "submission", "event-image", "admin-profile-image", "member-profile-image"]),
-    })
-    .refine(
-        (data) => {
-            if (
-                data.category === "image" ||
-                data.category === "event-image" ||
-                data.category === "admin-profile-image" ||
-                data.category === "member-profile-image"
-            ) {
-                return (ALLOWED_IMAGE_TYPES as readonly string[]).includes(data.fileType);
-            }
-            return (ALLOWED_SUBMISSION_TYPES as readonly string[]).includes(data.fileType);
-        },
-        { message: "File type not allowed", path: ["fileType"] },
-    )
-    .refine(
-        (data) => {
-            const maxSize =
-                data.category === "image" ||
-                data.category === "event-image" ||
-                data.category === "admin-profile-image" ||
-                data.category === "member-profile-image"
-                    ? MAX_IMAGE_SIZE
-                    : MAX_FILE_SIZE;
-            return data.fileSize <= maxSize;
-        },
-        { message: "File too large", path: ["fileSize"] },
-    );
-
-export type PresignedUrlInput = z.infer<typeof presignedUrlSchema>;
-
-export type PresignedUrlResult = {
-    presignedUrl: string;
-    key: string;
-    publicUrl: string;
-};
-
 export const deleteObjectSchema = z.object({
     key: z.string().trim().min(1, "Object key is required"),
 });
 
 export type DeleteObjectInput = z.infer<typeof deleteObjectSchema>;
-
-export const finalizeSchema = z.object({
-    key: z.string().trim().min(1, "Object key is required"),
-});
-
-export type FinalizeInput = z.infer<typeof finalizeSchema>;

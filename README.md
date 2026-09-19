@@ -44,7 +44,7 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
 - SMTP delivery is provider-neutral through `sendEmail`; named notification templates route password resets, student verification, account ban/unban, and organizer account-created messages through `sendNotification`. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
-- File storage uses Cloudflare R2 presigned uploads. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated, finalized through authenticated API routes, and read from their public R2 URLs.
+- File storage uses authenticated server-side proxy uploads to Cloudflare R2. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated by the proxy and returned as public R2 URLs.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
 
 Participant registration, broader organizer operational workflows, and general account-management UI are intentionally deferred. Admins can browse and permanently delete audit records individually. The audit browser provides a manually opened, paginated user/team-member picker through `/api/admin/users`.
@@ -81,15 +81,14 @@ Production startup requires the SMTP and Cloudflare R2 settings in addition to t
 
 ## File storage
 
-Uploads use three authenticated API requests:
+Uploads use authenticated API requests:
 
 | Endpoint | Access | Purpose |
 | --- | --- | --- |
-| `POST /api/upload/presigned-url` | Approved team or organizer/admin | Validate metadata and create a short-lived R2 upload URL. |
-| `POST /api/upload/finalize` | Owner of the upload scope | Confirm the object exists and return its public URL. |
+| `POST /api/upload/proxy` | Approved team or organizer/admin | Validate and upload the multipart file to R2. |
 | `POST /api/upload/delete` | Owner of the upload scope | Delete an object from R2. |
 
-Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser uploads directly to R2; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
+Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser sends the file to the authenticated proxy; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
 
 ## Prisma workflow
 
