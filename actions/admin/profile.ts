@@ -11,6 +11,7 @@ import {
 import type { ActionResult } from "@/lib/contracts/common";
 import { getAdminProfile } from "@/lib/data/admin-profile";
 import prisma from "@/lib/prisma";
+import { isOwnedR2PublicUrl } from "@/lib/r2";
 import { toFieldErrors } from "@/lib/validation/zod";
 
 export async function getCurrentAdminProfile(): Promise<ActionResult<AdminProfileActionData>> {
@@ -35,6 +36,13 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };
+
+    if (parsed.data.image && !isOwnedR2PublicUrl(parsed.data.image, `uploads/admins/${session.user.id}`)) {
+        return {
+            ok: false,
+            error: { code: "IMAGE_NOT_OWNED", message: "Profile image must be uploaded to your admin storage area" },
+        };
+    }
 
     try {
         const existing = await prisma.user.findFirst({
