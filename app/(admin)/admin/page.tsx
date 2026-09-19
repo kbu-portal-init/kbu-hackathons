@@ -1,8 +1,6 @@
-﻿import Link from "next/link";
-import { requireAdmin } from "@/lib/auth/guards";
+import Link from "next/link";
 import { getAdminOverview } from "@/lib/data/admin";
 export default async function AdminPage() {
-    await requireAdmin();
     const overview = await getAdminOverview();
     const cards = [
         ["Organizers", overview.organizerCount, "/admin/organizers"],

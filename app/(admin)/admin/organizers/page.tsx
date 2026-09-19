@@ -1,6 +1,5 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { requireAdmin } from "@/lib/auth/guards";
 import { listOrganizers } from "@/lib/data/organizers";
 import { OrganizerManagement } from "./_components/organizer-management";
 
@@ -9,8 +8,6 @@ export default async function AdminOrganizersPage({
 }: {
     searchParams: Promise<{ page?: string; pageSize?: string }>;
 }) {
-    await requireAdmin();
-
     const params = await searchParams;
 
     const data = await listOrganizers({ page: Number(params.page ?? 1), pageSize: Number(params.pageSize ?? 20) });

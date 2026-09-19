@@ -1,6 +1,5 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { requireAdmin } from "@/lib/auth/guards";
 import { listAuditLogsSchema } from "@/lib/contracts/audits";
 import { listAuditLogs } from "@/lib/data/audits";
 import { AuditFilters } from "./_components/audit-filters";
@@ -17,8 +16,6 @@ export default async function AdminAuditsPage({
         action?: string;
     }>;
 }) {
-    await requireAdmin();
-
     const params = await searchParams;
 
     const parsedParams = listAuditLogsSchema.safeParse(params);
