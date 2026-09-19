@@ -22,8 +22,6 @@
         "db:watch": "docker compose -f docker-compose.local.yml up postgres",
         "db:stop": "docker compose -f docker-compose.local.yml stop postgres",
         "db:down": "docker compose -f docker-compose.local.yml down postgres",
-        "test:storage": "tsx tests/storage.test.ts",
-        "test:storage:live": "tsx tests/storage-live.test.ts",
         "test:env": "tsx tests/env.test.ts"
     },
     "dependencies": {

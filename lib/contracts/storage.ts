@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const MAX_FILE_SIZE = 50 * 1024 * 1024;
@@ -21,11 +21,16 @@ export const presignedUrlSchema = z
         fileName: z.string().trim().min(1, "File name is required").max(255),
         fileType: z.string().min(1, "File type is required"),
         fileSize: z.number().int().positive("File size must be positive"),
-        category: z.enum(["image", "submission", "event-image"]),
+        category: z.enum(["image", "submission", "event-image", "admin-profile-image", "member-profile-image"]),
     })
     .refine(
         (data) => {
-            if (data.category === "image" || data.category === "event-image") {
+            if (
+                data.category === "image" ||
+                data.category === "event-image" ||
+                data.category === "admin-profile-image" ||
+                data.category === "member-profile-image"
+            ) {
                 return (ALLOWED_IMAGE_TYPES as readonly string[]).includes(data.fileType);
             }
             return (ALLOWED_SUBMISSION_TYPES as readonly string[]).includes(data.fileType);
@@ -35,7 +40,12 @@ export const presignedUrlSchema = z
     .refine(
         (data) => {
             const maxSize =
-                data.category === "image" || data.category === "event-image" ? MAX_IMAGE_SIZE : MAX_FILE_SIZE;
+                data.category === "image" ||
+                data.category === "event-image" ||
+                data.category === "admin-profile-image" ||
+                data.category === "member-profile-image"
+                    ? MAX_IMAGE_SIZE
+                    : MAX_FILE_SIZE;
             return data.fileSize <= maxSize;
         },
         { message: "File too large", path: ["fileSize"] },

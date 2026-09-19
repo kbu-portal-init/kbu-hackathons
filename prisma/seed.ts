@@ -1,4 +1,4 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -120,6 +120,39 @@ async function main() {
         }),
     ]);
 
+    const teamUsers = await prisma.user.findMany({ where: { role: "team" }, select: { id: true } });
+    const teamMembers = await prisma.teamMember.findMany({ select: { id: true } });
+    const auditActions = [
+        "ACCOUNT_BANNED",
+        "ACCOUNT_UNBANNED",
+        "EMAIL_SENT",
+        "EMAIL_SEND_FAILED",
+        "EVENT_SETTINGS_UPSERTED",
+        "ORGANIZER_ACCOUNT_CREATED",
+        "STUDENT_EMAIL_VERIFICATION",
+    ];
+    await prisma.auditLog.createMany({
+        data: Array.from({ length: 40 }, (_, index) => {
+            const action = auditActions[index % auditActions.length];
+            const actorId =
+                index % 4 === 0 ? adminUser.id : (teamUsers[(index - 1) % teamUsers.length]?.id ?? adminUser.id);
+            const member = teamMembers[index % teamMembers.length];
+            const target =
+                index % 5 === 0
+                    ? { targetType: "EventSettings", targetId: "1" }
+                    : index % 3 === 0
+                      ? { targetType: "TeamMember", targetId: member.id }
+                      : { targetType: "User", targetId: teamUsers[index % teamUsers.length]?.id ?? adminUser.id };
+            return {
+                actorId,
+                action,
+                targetType: target.targetType,
+                targetId: target.targetId,
+                details: { seeded: true, sequence: index + 1, source: "development-seed" },
+                createdAt: new Date(Date.UTC(2026, 1, 1, 9, index, 0)),
+            };
+        }),
+    });
     console.log(`✅ Seeded admin, event settings, and ${teams.length} teams.`);
     console.log("🔐 Admin login: admin@ms.kbu.ac.th / adminpassword");
     console.log("🔐 Team login password for all fixtures: teampassword");
