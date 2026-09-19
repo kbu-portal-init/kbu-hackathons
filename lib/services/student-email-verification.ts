@@ -59,3 +59,10 @@ export async function consumeStudentEmailVerification(
         };
     return { ok: true, data: { teamMemberId: verification.teamMemberId, verifiedAt: now.toISOString() } };
 }
+
+export async function allMembersVerified(teamId: string): Promise<boolean> {
+    const unverified = await prisma.teamMember.count({
+        where: { teamId, studentEmailVerifiedAt: null },
+    });
+    return unverified === 0;
+}
