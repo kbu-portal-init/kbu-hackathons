@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-kbu-hackathon}
+      POSTGRES_DB: ${POSTGRES_DB:-kbu_hackathon}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - kbu-hackathon_local_postgres_data:/var/lib/postgresql/data
     healthcheck:
