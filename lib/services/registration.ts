@@ -1,5 +1,6 @@
 import "server-only";
 
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
 import type {
@@ -12,23 +13,11 @@ import type {
 } from "@/lib/contracts/registration";
 import { countApprovedTeams, getRegistrationByTeamId, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
-import { sendEmail } from "@/lib/services/email";
 import {
     allMembersVerified,
     consumeStudentEmailVerification,
     sendStudentEmailVerification,
 } from "@/lib/services/student-email-verification";
-
-function generatePassword(length = 12): string {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-    let password = "";
-    const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
-    for (let i = 0; i < length; i++) {
-        password += chars[array[i] % chars.length];
-    }
-    return password;
-}
 
 function toLoginName(teamName: string): string {
     return teamName
@@ -51,7 +40,7 @@ async function uniqueLoginName(base: string): Promise<string> {
     }
 }
 
-// ── Internal: create team account and send credentials ─────────────
+// ── Internal: create team account and send magic link ──────────────
 
 async function provisionTeamAccount(
     registrationId: string,
@@ -59,17 +48,16 @@ async function provisionTeamAccount(
     teamDisplayName: string,
     teamLoginName: string,
     leader: { name: string; studentEmail: string },
-    password: string,
-    passwordUsed: "generated" | "provided",
     actorId: string | null,
 ): Promise<ActionResult<ApproveRegistrationData>> {
     const teamEmail = `${teamLoginName}@team.kbu.internal`;
+    const tempPassword = crypto.randomUUID();
 
     try {
         await auth.api.signUpEmail({
             body: {
                 email: teamEmail,
-                password,
+                password: tempPassword,
                 name: teamDisplayName,
             },
         });
@@ -111,29 +99,18 @@ async function provisionTeamAccount(
                     targetId: registrationId,
                     details: {
                         teamLoginName,
-                        passwordUsed,
                         method: actorId ? "manual" : "auto",
                     },
                 },
             });
         });
 
-        await sendEmail({
-            to: leader.studentEmail,
-            subject: `Your team has been approved - ${teamDisplayName}`,
-            text: [
-                `Hello ${leader.name},`,
-                "",
-                `Your team '${teamDisplayName}' has been approved for the hackathon!`,
-                "",
-                "Team login credentials:",
-                `  Username: ${teamLoginName}`,
-                `  Password: ${password}`,
-                "",
-                "All team members can use these credentials to log in at the participant dashboard.",
-                "",
-                "Please save this information securely.",
-            ].join("\n"),
+        await auth.api.signInMagicLink({
+            body: {
+                email: leader.studentEmail,
+                callbackURL: "/teams",
+            },
+            headers: await headers(),
         });
     } catch {
         return {
@@ -147,7 +124,6 @@ async function provisionTeamAccount(
         data: {
             registrationId,
             teamLoginName,
-            passwordUsed,
         },
     };
 }
@@ -281,15 +257,12 @@ export async function verifyTeamMemberEmail(
         return { ok: true, data: { verified: true, allVerified: true } };
     }
 
-    const password = generatePassword();
     await provisionTeamAccount(
         registration.id,
         registration.teamId,
         registration.team.displayName,
         registration.team.loginName,
         { name: leader.name, studentEmail: leader.studentEmail },
-        password,
-        "generated",
         null,
     );
 
@@ -335,17 +308,12 @@ export async function approveRegistration(
         };
     }
 
-    const password = input.password ?? generatePassword();
-    const passwordUsed: "generated" | "provided" = input.password ? "provided" : "generated";
-
     return provisionTeamAccount(
         record.id,
         record.teamId,
         record.team.displayName,
         record.team.loginName,
         { name: leader.name, studentEmail: leader.studentEmail },
-        password,
-        passwordUsed,
         actorId,
     );
 }
@@ -369,8 +337,6 @@ export async function rejectRegistration(
             error: { code: "INVALID_STATUS", message: "Registration is not pending" },
         };
     }
-
-    const leader = record.team.members.find((m) => m.role === "LEADER") ?? record.team.members[0];
 
     await prisma.$transaction(async (tx) => {
         await tx.registration.update({
@@ -398,21 +364,14 @@ export async function rejectRegistration(
         });
     });
 
-    if (leader) {
-        await sendEmail({
-            to: leader.studentEmail,
-            subject: `Registration update - ${record.team.displayName}`,
-            text: [
-                `Hello ${leader.name},`,
-                "",
-                `We regret to inform you that your team '${record.team.displayName}' registration has been rejected.`,
-                "",
-                `Reason: ${input.reason}`,
-                "",
-                "If you believe this is an error, please contact the event organizers.",
-            ].join("\n"),
-        });
-    }
+    const { sendTeamRegistrationNotification } = await import("@/lib/services/notifications");
+    await sendTeamRegistrationNotification({
+        type: "TEAM_REGISTRATION_REJECTED",
+        teamId: record.teamId,
+        registrationId: record.id,
+        data: { reason: input.reason },
+        actorId,
+    }).catch(() => {});
 
     return { ok: true, data: { registrationId: record.id } };
 }

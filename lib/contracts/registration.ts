@@ -45,14 +45,12 @@ export type SubmitRegistrationData = { registrationId: string; teamName: string 
 
 export const approveRegistrationSchema = z.object({
     registrationId: z.string().min(1, "Registration ID is required"),
-    password: z.string().min(8, "Password must be at least 8 characters").max(128, "Password is too long").optional(),
 });
 
 export type ApproveRegistrationInput = z.infer<typeof approveRegistrationSchema>;
 export type ApproveRegistrationData = {
     registrationId: string;
     teamLoginName: string;
-    passwordUsed: "generated" | "provided";
 };
 
 export const rejectRegistrationSchema = z.object({

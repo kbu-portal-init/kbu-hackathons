@@ -22,7 +22,9 @@ export async function listRegistrations(input: ListRegistrationsInput): Promise<
                     select: {
                         displayName: true,
                         loginName: true,
-                        members: { select: { id: true } },
+                        members: {
+                            select: { id: true, name: true, role: true, studentEmail: true },
+                        },
                     },
                 },
                 reviews: {
@@ -35,7 +37,7 @@ export async function listRegistrations(input: ListRegistrationsInput): Promise<
     ]);
 
     const items = records.map((r) => {
-        const leader = null as { name: string; studentEmail: string } | null;
+        const leader = r.team.members.find((m) => m.role === "LEADER") ?? r.team.members[0];
         return toRegistrationListItem({
             id: r.id,
             status: r.status,

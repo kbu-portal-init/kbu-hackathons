@@ -67,8 +67,8 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
             return {
                 type,
                 subject: `${data.teamName ?? "Your team"} registration approved`,
-                text: `Your team registration has been approved.\n\nTeam username: ${data.username ?? "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`,
-                html: `<p>Your team registration has been approved.</p><p><strong>Team username:</strong> ${escapeHtml(data.username) || "Not provided"}</p><p><a href="${escapeHtml(data.resetUrl)}">Set your team password</a></p>`,
+                text: `Your team registration has been approved.\n\nTeam username: ${data.username ?? "Not provided"}\n\nSign in using this link: ${data.resetUrl}`,
+                html: `<p>Your team registration has been approved.</p><p><strong>Team username:</strong> ${escapeHtml(data.username) || "Not provided"}</p><p><a href="${escapeHtml(data.resetUrl)}">Sign in to your team</a></p>`,
             };
         case "TEAM_REGISTRATION_REJECTED":
             return {

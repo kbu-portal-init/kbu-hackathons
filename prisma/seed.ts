@@ -5,7 +5,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import { Pool } from "pg";
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient, TeamMemberRole } from "@/generated/prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
@@ -163,7 +163,7 @@ async function createTeam(input: {
             teamId: team.id,
             name: `${input.displayName} Leader`,
             studentEmail: `${input.loginName}.leader@ms.kbu.ac.th`,
-            role: "LEADER",
+            role: TeamMemberRole.LEADER,
             studentEmailVerifiedAt: verifiedAt,
         },
     });

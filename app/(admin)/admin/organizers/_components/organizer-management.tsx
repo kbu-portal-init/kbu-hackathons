@@ -19,8 +19,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { type BanAccountFormInput, type BanAccountInput, banAccountSchema } from "@/lib/contracts/accounts";
@@ -135,25 +135,53 @@ export function OrganizerManagement({ items }: Props) {
                         <DialogTitle>Create organizer</DialogTitle>
                         <DialogDescription>Create an email-verified organizer account.</DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={createForm.handleSubmit(onCreate)} className="space-y-4">
-                        <TextField
-                            label="Name"
-                            error={createForm.formState.errors.name?.message}
-                            inputProps={createForm.register("name")}
-                        />
-                        <TextField
-                            label="Email"
-                            type="email"
-                            error={createForm.formState.errors.email?.message}
-                            inputProps={createForm.register("email")}
-                        />
-                        <TextField
-                            label="Password"
-                            type="password"
-                            error={createForm.formState.errors.password?.message}
-                            inputProps={createForm.register("password")}
-                        />
-                        <DialogFooter>
+                    <form onSubmit={createForm.handleSubmit(onCreate)}>
+                        <FieldGroup>
+                            <Controller
+                                name="name"
+                                control={createForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            <Controller
+                                name="email"
+                                control={createForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            type="email"
+                                            aria-invalid={fieldState.invalid}
+                                        />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            <Controller
+                                name="password"
+                                control={createForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            type="password"
+                                            aria-invalid={fieldState.invalid}
+                                        />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                        </FieldGroup>
+                        <DialogFooter className="mt-4">
                             <Button type="submit" disabled={createForm.formState.isSubmitting}>
                                 {createForm.formState.isSubmitting ? "Creating..." : "Create"}
                             </Button>
@@ -169,27 +197,55 @@ export function OrganizerManagement({ items }: Props) {
                             Update account details. Leave password blank to keep it unchanged.
                         </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={editForm.handleSubmit(onEdit)} className="space-y-4">
-                        <TextField
-                            label="Name"
-                            error={editForm.formState.errors.name?.message}
-                            inputProps={editForm.register("name")}
-                        />
-                        <TextField
-                            label="Email"
-                            type="email"
-                            error={editForm.formState.errors.email?.message}
-                            inputProps={editForm.register("email")}
-                        />
-                        <TextField
-                            label="New password"
-                            type="password"
-                            error={editForm.formState.errors.password?.message}
-                            inputProps={editForm.register("password", {
-                                setValueAs: (value) => value || undefined,
-                            })}
-                        />
-                        <DialogFooter>
+                    <form onSubmit={editForm.handleSubmit(onEdit)}>
+                        <FieldGroup>
+                            <Controller
+                                name="name"
+                                control={editForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            <Controller
+                                name="email"
+                                control={editForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            type="email"
+                                            aria-invalid={fieldState.invalid}
+                                        />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            <Controller
+                                name="password"
+                                control={editForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>New password</FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            type="password"
+                                            aria-invalid={fieldState.invalid}
+                                            value={field.value ?? ""}
+                                        />
+                                        <FieldDescription>Leave blank to keep current password.</FieldDescription>
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                        </FieldGroup>
+                        <DialogFooter className="mt-4">
                             <Button type="submit" disabled={editForm.formState.isSubmitting}>
                                 {editForm.formState.isSubmitting ? "Saving..." : "Save changes"}
                             </Button>
@@ -205,24 +261,34 @@ export function OrganizerManagement({ items }: Props) {
                             This revokes all current sessions. Leave expiry empty for a permanent ban.
                         </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={banForm.handleSubmit(onBan)} className="space-y-4">
-                        <TextField
-                            label="Reason"
-                            error={banForm.formState.errors.reason?.message}
-                            inputProps={banForm.register("reason")}
-                        />
-                        <Controller
-                            control={banForm.control}
-                            name="expiresAt"
-                            render={({ field }) => (
-                                <BanExpiryField
-                                    value={field.value instanceof Date ? field.value : null}
-                                    onChange={field.onChange}
-                                    error={banForm.formState.errors.expiresAt?.message}
-                                />
-                            )}
-                        />
-                        <DialogFooter>
+                    <form onSubmit={banForm.handleSubmit(onBan)}>
+                        <FieldGroup>
+                            <Controller
+                                name="reason"
+                                control={banForm.control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
+                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            <Controller
+                                control={banForm.control}
+                                name="expiresAt"
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <BanExpiryField
+                                            value={field.value instanceof Date ? field.value : null}
+                                            onChange={field.onChange}
+                                        />
+                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                        </FieldGroup>
+                        <DialogFooter className="mt-4">
                             <Button type="submit" variant="destructive" disabled={banForm.formState.isSubmitting}>
                                 {banForm.formState.isSubmitting ? "Banning..." : "Confirm ban"}
                             </Button>
@@ -313,20 +379,12 @@ function OrganizerTable({
     );
 }
 
-function BanExpiryField({
-    value,
-    onChange,
-    error,
-}: {
-    value: Date | null;
-    onChange: (value: Date | null) => void;
-    error?: string;
-}) {
+function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (value: Date | null) => void }) {
     const date = value ?? undefined;
     const time = value ? format(value, "HH:mm") : "23:59";
     return (
-        <div className="space-y-2">
-            <Label>Expires at</Label>
+        <>
+            <FieldLabel>Expires at</FieldLabel>
             <div className="flex gap-2">
                 <Popover>
                     <PopoverTrigger
@@ -360,36 +418,9 @@ function BanExpiryField({
                     </Button>
                 )}
             </div>
-            <p className="text-xs text-muted-foreground">
-                Leave the date empty for a permanent ban. The default time is 23:59.
-            </p>
-            <FormError message={error} />
-        </div>
+            <FieldDescription>Leave the date empty for a permanent ban. The default time is 23:59.</FieldDescription>
+        </>
     );
-}
-
-function TextField({
-    label,
-    type = "text",
-    error,
-    inputProps,
-}: {
-    label: string;
-    type?: string;
-    error?: string;
-    inputProps: ReturnType<ReturnType<typeof useForm>["register"]>;
-}) {
-    return (
-        <div className="space-y-2">
-            <Label>{label}</Label>
-            <Input type={type} aria-invalid={!!error} {...inputProps} />
-            <FormError message={error} />
-        </div>
-    );
-}
-
-function FormError({ message }: { message?: string }) {
-    return message ? <p className="text-xs text-red-600">{message}</p> : null;
 }
 
 function setExpiryTime(date: Date, time: string) {

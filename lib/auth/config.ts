@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
+import { magicLink } from "better-auth/plugins/magic-link";
 import { username } from "better-auth/plugins/username";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
@@ -53,6 +54,21 @@ export const auth = betterAuth({
             usernameValidator: (value) => /^[a-zA-Z0-9_.-]+$/.test(value),
         }),
         admin(),
+        magicLink({
+            sendMagicLink: async ({ email, url }) => {
+                const team = await prisma.team.findFirst({
+                    where: {
+                        members: { some: { studentEmail: email, role: "LEADER" } },
+                    },
+                    select: { displayName: true },
+                });
+                await sendNotification({
+                    type: "TEAM_REGISTRATION_APPROVED",
+                    recipients: [email],
+                    data: { teamName: team?.displayName, resetUrl: url },
+                });
+            },
+        }),
     ],
     user: {
         additionalFields: {
