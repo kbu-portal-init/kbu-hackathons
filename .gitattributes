@@ -1,0 +1,7 @@
+* text=auto
+*.ts text eol=lf
+*.tsx text eol=lf
+*.prisma text eol=lf
+*.sql text eol=lf
+*.json text eol=lf
+*.md text eol=lf

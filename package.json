@@ -21,9 +21,14 @@
         "db:start": "docker compose -f docker-compose.local.yml up -d postgres",
         "db:watch": "docker compose -f docker-compose.local.yml up postgres",
         "db:stop": "docker compose -f docker-compose.local.yml stop postgres",
-        "db:down": "docker compose -f docker-compose.local.yml down postgres"
+        "db:down": "docker compose -f docker-compose.local.yml down postgres",
+        "test:storage": "tsx tests/storage.test.ts",
+        "test:storage:live": "tsx tests/storage-live.test.ts",
+        "test:env": "tsx tests/env.test.ts"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.1134.0",
+        "@aws-sdk/s3-request-presigner": "^3.1134.0",
         "@base-ui/react": "^1.0.0",
         "@hookform/resolvers": "^5.9.1",
         "@prisma/adapter-pg": "^7.10.0",

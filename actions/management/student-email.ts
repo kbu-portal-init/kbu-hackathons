@@ -3,6 +3,7 @@
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { ActionResult } from "@/lib/contracts/common";
 import { studentEmailVerificationSchema } from "@/lib/contracts/email";
+import { isNotificationDeliveryError } from "@/lib/services/notifications";
 import { sendStudentEmailVerification } from "@/lib/services/student-email-verification";
 import { toFieldErrors } from "@/lib/validation/zod";
 
@@ -25,7 +26,12 @@ export async function requestStudentEmailVerification(input: unknown): Promise<A
             return { ok: false, error: { code: "TEAM_MEMBER_NOT_FOUND", message: "Team member not found" } };
         if (error instanceof Error && error.message === "Invalid student email domain")
             return { ok: false, error: { code: "INVALID_STUDENT_EMAIL", message: "Student email is invalid" } };
-        return { ok: false, error: { code: "EMAIL_SEND_FAILED", message: "Unable to send verification email" } };
+        if (isNotificationDeliveryError(error))
+            return { ok: false, error: { code: "EMAIL_SEND_FAILED", message: "Unable to send verification email" } };
+        return {
+            ok: false,
+            error: { code: "VERIFICATION_REQUEST_FAILED", message: "Unable to prepare verification email" },
+        };
     }
     return { ok: true, data: { sent: true } };
 }
