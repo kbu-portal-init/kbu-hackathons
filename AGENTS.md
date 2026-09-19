@@ -1,4 +1,4 @@
-# KBU Hub contributor guide
+﻿# KBU Hub contributor guide
 
 ## Architecture
 
@@ -68,7 +68,7 @@ The branch currently provides:
 - Provider-neutral SMTP delivery through `sendEmail`, with typed notification templates and `sendNotification` for Better Auth password resets, student verification, account ban/unban, and organizer account-created messages. SMTP delivery is awaited; delivery outcomes are recorded asynchronously in `AuditLog` and never change the SMTP result. Organizer/team onboarding links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 
-Participant registration workflows, broader organizer management workflows, audit browsing, and broader account-management UI remain follow-up work.
+Participant registration workflows, broader organizer management workflows, and broader account-management UI remain follow-up work. Admins can browse and permanently delete audit records individually; deletion does not create a replacement audit record. The admin audit browser loads user/team-member filter options manually through the paginated `/api/admin/users` route, defaulting to 200 records per request.
 
 ## Database and email workflow
 
@@ -163,8 +163,10 @@ Closes #<issue-number>
 
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+This version has breaking changes â€” APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+This block is written and re-added by `next dev` â€” verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+
