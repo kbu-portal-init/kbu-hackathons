@@ -1,7 +1,9 @@
 ﻿import "server-only";
+
 import type { AdminOverview } from "@/lib/contracts/admin";
 import { toAdminOverview } from "@/lib/mappers/admin";
 import prisma from "@/lib/prisma";
+
 export async function getAdminOverview(): Promise<AdminOverview> {
     const [
         organizerCount,
