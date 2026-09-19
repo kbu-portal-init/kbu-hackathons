@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, startOfToday } from "date-fns";
@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { banAccount, unbanAccount } from "@/actions/admin/accounts";
 import { createOrganizer, updateOrganizer } from "@/actions/admin/organizers";
+import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -243,7 +244,7 @@ function OrganizerTable({
     items: OrganizerListItem[];
     onEdit: (item: OrganizerListItem) => void;
     onBan: (item: OrganizerListItem) => void;
-    onUnban: (item: OrganizerListItem) => void;
+    onUnban: (item: OrganizerListItem) => Promise<void>;
 }) {
     return (
         <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
@@ -281,11 +282,11 @@ function OrganizerTable({
                                         <>
                                             {item.banReason ?? "No reason"}
                                             {item.banExpires
-                                                ? ` · until ${new Date(item.banExpires).toLocaleString()}`
-                                                : " · permanent"}
+                                                ? ` Â· until ${new Date(item.banExpires).toLocaleString()}`
+                                                : " Â· permanent"}
                                         </>
                                     ) : (
-                                        "—"
+                                        "â€”"
                                     )}
                                 </TableCell>
                                 <TableCell>
@@ -294,9 +295,18 @@ function OrganizerTable({
                                             Edit
                                         </Button>
                                         {item.banned ? (
-                                            <Button variant="outline" size="sm" onClick={() => onUnban(item)}>
-                                                Unban
-                                            </Button>
+                                            <ConfirmActionDialog
+                                                trigger={
+                                                    <Button variant="outline" size="sm">
+                                                        Unban
+                                                    </Button>
+                                                }
+                                                title="Unban organizer"
+                                                description="Restore this organizer account access?"
+                                                confirmLabel="Unban"
+                                                pendingLabel="Unbanning..."
+                                                onConfirm={() => onUnban(item)}
+                                            />
                                         ) : (
                                             <Button variant="destructive" size="sm" onClick={() => onBan(item)}>
                                                 Ban
