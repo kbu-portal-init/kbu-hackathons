@@ -1,6 +1,10 @@
 import "server-only";
 
-import type { AnnouncementDTO, ListAnnouncementInput } from "@/lib/contracts/announcements";
+import type {
+    AnnouncementDTO,
+    ListAnnouncementInput,
+    ListPublicAnnouncementInput,
+} from "@/lib/contracts/announcements";
 import type { ListResult } from "@/lib/contracts/common";
 import { DEFAULT_PAGE_SIZE } from "@/lib/contracts/common";
 import { mapAnnouncementToDTO } from "@/lib/mappers/announcements";
@@ -75,7 +79,9 @@ export async function getAnnouncementById(announcementId: string): Promise<Annou
     return mapAnnouncementToDTO(announcement);
 }
 
-export async function listPublicAnnouncements(input: ListAnnouncementInput): Promise<ListResult<AnnouncementDTO>> {
+export async function listPublicAnnouncements(
+    input: ListPublicAnnouncementInput,
+): Promise<ListResult<AnnouncementDTO>> {
     const page = input.page ?? 1;
     const pageSize = input.pageSize ?? DEFAULT_PAGE_SIZE;
     const skip = (page - 1) * pageSize;

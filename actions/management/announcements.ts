@@ -5,11 +5,13 @@ import type {
     AnnouncementActionResult,
     AnnouncementListActionResult,
     ListAnnouncementInput,
+    ListPublicAnnouncementInput,
 } from "@/lib/contracts/announcements";
 import {
     announcementIdSchema,
     CreateAnnouncementInputSchema,
     ListAnnouncementSchema,
+    ListPublicAnnouncementSchema,
     updateAnnouncementSchema,
 } from "@/lib/contracts/announcements";
 import {
@@ -178,7 +180,7 @@ export async function deleteAnnouncement(input: unknown): Promise<AnnouncementAc
 }
 
 export async function listPublishedAnnouncements(input: unknown): Promise<AnnouncementListActionResult> {
-    const parsed = ListAnnouncementSchema.safeParse(input);
+    const parsed = ListPublicAnnouncementSchema.safeParse(input);
 
     if (!parsed.success) {
         return {
@@ -193,6 +195,6 @@ export async function listPublishedAnnouncements(input: unknown): Promise<Announ
 
     return {
         ok: true,
-        data: await listPublicAnnouncementsData(parsed.data as ListAnnouncementInput),
+        data: await listPublicAnnouncementsData(parsed.data as ListPublicAnnouncementInput),
     };
 }
