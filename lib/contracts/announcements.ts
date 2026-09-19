@@ -71,6 +71,14 @@ export type AnnouncementDTO = {
     updatedAt: string;
 };
 
+export const ListPublicAnnouncementSchema = z.object({
+    page: z.coerce.number().int().min(1).default(1),
+    pageSize: z.coerce.number().int().min(1).max(100).default(20),
+    search: z.string().trim().optional(),
+});
+
+export type ListPublicAnnouncementInput = z.infer<typeof ListPublicAnnouncementSchema> & PageInput;
+
 export type AnnouncementActionResult = ActionResult<AnnouncementDTO>;
 
 export type AnnouncementListActionResult = ListActionResult<AnnouncementDTO>;
