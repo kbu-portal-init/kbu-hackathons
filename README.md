@@ -215,3 +215,12 @@ pnpm dlx shadcn@latest add <component>
 ## Keeping documentation current
 
 Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
+
+## Unit testing
+
+Run the non-UI unit-test suite with Node's built-in test runner:
+
+    pnpm test:unit
+    pnpm test:unit:watch
+
+Unit tests live under tests/unit and use helpers from tests/helpers. External boundaries are mocked; database integration tests are separate workflows.
