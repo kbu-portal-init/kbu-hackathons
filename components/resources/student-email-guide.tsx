@@ -2,7 +2,7 @@
 
 import { AlertCircle, Check, Copy, ExternalLink, HelpCircle, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { studentEmailGuide } from "@/lib/data/student-benefits";
+import { studentEmailGuide } from "@/lib/public-data/student-benefits";
 
 export function StudentEmailGuideSection() {
     const [copied, setCopied] = useState(false);

@@ -1,4 +1,4 @@
-import "server-only";
+﻿import "server-only";
 
 import { DeleteObjectCommand, HeadObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -19,13 +19,15 @@ export async function generatePresignedUploadUrl(
             throw new Error("R2 storage is not configured");
         }
         const ext = input.fileName.split(".").pop() ?? "bin";
-        const key = `uploads/${owner}/${crypto.randomUUID()}.${ext}`;
+        const key =
+            input.category === "admin-profile-image"
+                ? `uploads/admins/${owner}/${crypto.randomUUID()}.${ext}`
+                : `uploads/${owner}/${crypto.randomUUID()}.${ext}`;
 
         const command = new PutObjectCommand({
             Bucket: R2_BUCKET,
             Key: key,
             ContentType: input.fileType,
-            ContentLength: input.fileSize,
         });
 
         const presignedUrl = await getSignedUrl(r2, command, {

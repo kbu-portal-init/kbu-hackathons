@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 
-process.env.R2_ACCOUNT_ID = "test-account";
+process.env.R2_ENDPOINT = "https://test-account.r2.cloudflarestorage.com";
 process.env.R2_ACCESS_KEY_ID = "test-access-key";
 process.env.R2_SECRET_ACCESS_KEY = "test-secret-key";
 process.env.R2_BUCKET_NAME = "test-bucket";

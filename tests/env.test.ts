@@ -13,7 +13,7 @@ const completeEnvironment: Record<string, string | undefined> = {
     SMTP_USER: "mailer",
     SMTP_PASSWORD: "password",
     SMTP_FROM_EMAIL: "KBU <noreply@example.com>",
-    R2_ACCOUNT_ID: "account",
+    R2_ENDPOINT: "https://account.r2.cloudflarestorage.com",
     R2_ACCESS_KEY_ID: "access",
     R2_SECRET_ACCESS_KEY: "secret",
     R2_BUCKET_NAME: "bucket",

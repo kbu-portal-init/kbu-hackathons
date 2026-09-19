@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useState } from "react";
 
-type UploadState = "idle" | "uploading" | "finalizing" | "done" | "error";
+type UploadState = "idle" | "uploading" | "done" | "error";
 
 type UploadResult = {
     key: string;
@@ -11,67 +11,32 @@ type UploadResult = {
 
 export function useUpload() {
     const [state, setState] = useState<UploadState>("idle");
-    const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
 
     const upload = useCallback(
-        async (file: File, category: "image" | "submission" | "event-image"): Promise<UploadResult | null> => {
+        async (
+            file: File,
+            category: "image" | "submission" | "event-image" | "admin-profile-image" | "member-profile-image",
+        ): Promise<UploadResult | null> => {
             setState("uploading");
-            setProgress(0);
             setError(null);
 
             try {
-                const presignedRes = await fetch("/api/upload/presigned-url", {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("category", category);
+
+                const res = await fetch("/api/upload/proxy", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        fileName: file.name,
-                        fileType: file.type,
-                        fileSize: file.size,
-                        category,
-                    }),
+                    body: formData,
                 });
 
-                if (!presignedRes.ok) {
-                    const err = await presignedRes.json();
-                    throw new Error(err.error || "Failed to get upload URL");
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || "Upload failed");
                 }
 
-                const { presignedUrl, key, publicUrl } = await presignedRes.json();
-
-                setState("uploading");
-                await new Promise<void>((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.upload.onprogress = (e) => {
-                        if (e.lengthComputable) {
-                            setProgress(Math.round((e.loaded / e.total) * 100));
-                        }
-                    };
-                    xhr.onload = () => {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            resolve();
-                        } else {
-                            reject(new Error("Upload to storage failed"));
-                        }
-                    };
-                    xhr.onerror = () => reject(new Error("Network error during upload"));
-                    xhr.open("PUT", presignedUrl);
-                    xhr.setRequestHeader("Content-Type", file.type);
-                    xhr.send(file);
-                });
-
-                setState("finalizing");
-                const finalizeRes = await fetch("/api/upload/finalize", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ key }),
-                });
-
-                if (!finalizeRes.ok) {
-                    const err = await finalizeRes.json();
-                    throw new Error(err.error || "Failed to verify upload");
-                }
-
+                const { key, publicUrl } = await res.json();
                 setState("done");
                 return { key, publicUrl };
             } catch (err) {
@@ -86,9 +51,8 @@ export function useUpload() {
 
     const reset = useCallback(() => {
         setState("idle");
-        setProgress(0);
         setError(null);
     }, []);
 
-    return { state, progress, error, upload, reset };
+    return { state, progress: 0, error, upload, reset };
 }
