@@ -1,0 +1,93 @@
+﻿"use server";
+
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth/config";
+import { requireAdmin } from "@/lib/auth/guards";
+import {
+    type AdminProfileActionData,
+    changeAdminPasswordSchema,
+    updateAdminProfileSchema,
+} from "@/lib/contracts/admin-profile";
+import type { ActionResult } from "@/lib/contracts/common";
+import { getAdminProfile } from "@/lib/data/admin-profile";
+import prisma from "@/lib/prisma";
+import { toFieldErrors } from "@/lib/validation/zod";
+
+export async function getCurrentAdminProfile(): Promise<ActionResult<AdminProfileActionData>> {
+    const session = await requireAdmin();
+    const profile = await getAdminProfile(session.user.id);
+
+    return profile
+        ? { ok: true, data: { profile } }
+        : { ok: false, error: { code: "PROFILE_NOT_FOUND", message: "Admin profile not found" } };
+}
+
+export async function updateAdminProfile(input: unknown): Promise<ActionResult<AdminProfileActionData>> {
+    const session = await requireAdmin();
+
+    const parsed = updateAdminProfileSchema.safeParse(input);
+    if (!parsed.success)
+        return {
+            ok: false,
+            error: {
+                code: "VALIDATION_ERROR",
+                message: "Some fields are invalid",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+
+    try {
+        const existing = await prisma.user.findFirst({
+            where: { email: parsed.data.email, NOT: { id: session.user.id } },
+            select: { id: true },
+        });
+        if (existing)
+            return { ok: false, error: { code: "EMAIL_EXISTS", message: "A user with this email already exists" } };
+        await auth.api.updateUser({
+            headers: await headers(),
+            body: { name: parsed.data.name, image: parsed.data.image ?? null },
+        });
+        await prisma.user.update({ where: { id: session.user.id }, data: { email: parsed.data.email } });
+        const profile = await getAdminProfile(session.user.id);
+        return profile
+            ? { ok: true, data: { profile } }
+            : { ok: false, error: { code: "PROFILE_NOT_FOUND", message: "Admin profile not found" } };
+    } catch {
+        return { ok: false, error: { code: "PROFILE_UPDATE_FAILED", message: "Failed to update profile" } };
+    }
+}
+
+export async function changeAdminPassword(input: unknown): Promise<ActionResult<{ changed: true }>> {
+    await requireAdmin();
+
+    const parsed = changeAdminPasswordSchema.safeParse(input);
+    if (!parsed.success)
+        return {
+            ok: false,
+            error: {
+                code: "VALIDATION_ERROR",
+                message: "Some fields are invalid",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+
+    try {
+        await auth.api.changePassword({
+            headers: await headers(),
+            body: {
+                currentPassword: parsed.data.currentPassword,
+                newPassword: parsed.data.newPassword,
+                revokeOtherSessions: false,
+            },
+        });
+        return { ok: true, data: { changed: true } };
+    } catch {
+        return {
+            ok: false,
+            error: {
+                code: "PASSWORD_CHANGE_FAILED",
+                message: "Current password is incorrect or password could not be changed",
+            },
+        };
+    }
+}
