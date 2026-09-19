@@ -69,17 +69,18 @@ model EventSettings {
 model Announcement {
   id          String             @id @default(cuid())
   title       String
-  content     String
+  body        String
   imageUrl    String?
   status      AnnouncementStatus @default(DRAFT)
+  pinned      Boolean            @default(false)
   publishedAt DateTime?          @db.Timestamptz(3)
-  createdById String
-  createdBy   User               @relation("AnnouncementCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  authorId    String
+  author      User               @relation("AnnouncementCreator", fields: [authorId], references: [id], onDelete: Restrict)
   createdAt   DateTime           @default(now()) @db.Timestamptz(3)
   updatedAt   DateTime           @updatedAt @db.Timestamptz(3)
 
   @@index([status, publishedAt])
-  @@index([createdById])
+  @@index([authorId])
   @@index([createdAt])
   @@map("announcement")
 }

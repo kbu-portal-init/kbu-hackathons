@@ -71,27 +71,26 @@ async function main() {
         data: [
             {
                 title: "KBU Innovation Sprint 2026 is open",
-                content:
-                    "Registration is now open. Form your team, review the challenge details, and submit your application before the registration deadline.",
+                body: "Registration is now open. Form your team, review the challenge details, and submit your application before the registration deadline.",
                 imageUrl: "https://images.example.com/kbu-innovation-sprint-2026.jpg",
                 status: "PUBLISHED",
+                pinned: true,
                 publishedAt: new Date("2026-01-01T00:00:00.000Z"),
-                createdById: adminUser.id,
+                authorId: adminUser.id,
             },
             {
                 title: "Important registration reminder",
-                content:
-                    "Teams must have between 2 and 5 members. Make sure every member is listed with a valid student email before submitting your registration.",
+                body: "Teams must have between 2 and 5 members. Make sure every member is listed with a valid student email before submitting your registration.",
                 imageUrl: "https://images.example.com/registration-reminder.jpg",
                 status: "PUBLISHED",
                 publishedAt: new Date("2026-01-15T09:00:00.000Z"),
-                createdById: adminUser.id,
+                authorId: adminUser.id,
             },
             {
                 title: "Hackathon orientation details",
-                content: "Orientation details will be shared with approved teams before the event begins.",
+                body: "Orientation details will be shared with approved teams before the event begins.",
                 status: "DRAFT",
-                createdById: adminUser.id,
+                authorId: adminUser.id,
             },
         ],
     });

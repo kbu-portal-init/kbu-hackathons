@@ -25,19 +25,19 @@ export function LoginContent({ audience, title, description }: LoginContentProps
     };
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+        <main className="flex flex-1 items-center justify-center bg-cyan-50/60 px-6 py-16 dark:bg-cyan-950/10">
             <div className="w-full max-w-md">
                 <Link
                     href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-orange-600 dark:text-zinc-300"
+                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-cyan-600 dark:text-zinc-300"
                 >
                     <ArrowLeft className="size-4" /> Back to KBU Hub
                 </Link>
-                <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">
+                <div className="rounded-2xl border border-cyan-100 bg-white p-7 shadow-xl shadow-cyan-100/40 dark:border-cyan-950 dark:bg-zinc-900 dark:shadow-none">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300">
                         <LockKeyhole className="size-5" />
                     </div>
-                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-600">
+                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-cyan-600">
                         {isParticipant ? "Participant access" : "Management access"}
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">{title}</h1>

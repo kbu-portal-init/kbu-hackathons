@@ -1,6 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
-
-@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
     --background: #ffffff;
@@ -9,57 +8,71 @@
     --card-foreground: #18181b;
     --popover: #ffffff;
     --popover-foreground: #18181b;
-    --primary: #ea580c;
+
+    --primary: #0891b2;
     --primary-foreground: #ffffff;
-    --secondary: #f4f4f5;
-    --secondary-foreground: #27272a;
-    --muted: #f4f4f5;
-    --muted-foreground: #71717a;
-    --accent: #ffedd5;
-    --accent-foreground: #9a3412;
+
+    --secondary: #f1f5f9;
+    --secondary-foreground: #1e293b;
+
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+
+    --accent: #ecfeff;
+    --accent-foreground: #155e75;
+
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
-    --border: #e4e4e7;
-    --input: #e4e4e7;
-    --ring: #ea580c;
-    --sidebar: #fff7ed;
-    --sidebar-foreground: #27272a;
-    --sidebar-primary: #ea580c;
+
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #0891b2;
+
+    --sidebar: #f8fafc;
+    --sidebar-foreground: #1e293b;
+    --sidebar-primary: #0891b2;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ffedd5;
-    --sidebar-accent-foreground: #9a3412;
-    --sidebar-border: #fed7aa;
-    --sidebar-ring: #ea580c;
+    --sidebar-accent: #ecfeff;
+    --sidebar-accent-foreground: #155e75;
+    --sidebar-border: #cbd5e1;
+    --sidebar-ring: #0891b2;
 }
 
 .dark {
-    --background: #18181b;
-    --foreground: #fafafa;
-    --card: #27272a;
-    --card-foreground: #fafafa;
-    --popover: #27272a;
-    --popover-foreground: #fafafa;
-    --primary: #fb923c;
-    --primary-foreground: #431407;
-    --secondary: #27272a;
-    --secondary-foreground: #fafafa;
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
-    --accent: #431407;
-    --accent-foreground: #fed7aa;
+    --background: #020617;
+    --foreground: #f8fafc;
+    --card: #0f172a;
+    --card-foreground: #f8fafc;
+    --popover: #0f172a;
+    --popover-foreground: #f8fafc;
+
+    --primary: #22d3ee;
+    --primary-foreground: #042f2e;
+
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+
+    --accent: #042f2e;
+    --accent-foreground: #a5f3fc;
+
     --destructive: #f87171;
     --destructive-foreground: #450a0a;
-    --border: #3f3f46;
-    --input: #3f3f46;
-    --ring: #fb923c;
-    --sidebar: #1c1917;
-    --sidebar-foreground: #fafafa;
-    --sidebar-primary: #fb923c;
-    --sidebar-primary-foreground: #431407;
-    --sidebar-accent: #431407;
-    --sidebar-accent-foreground: #fed7aa;
-    --sidebar-border: #57534e;
-    --sidebar-ring: #fb923c;
+
+    --border: #334155;
+    --input: #334155;
+    --ring: #22d3ee;
+
+    --sidebar: #0f172a;
+    --sidebar-foreground: #f8fafc;
+    --sidebar-primary: #22d3ee;
+    --sidebar-primary-foreground: #042f2e;
+    --sidebar-accent: #042f2e;
+    --sidebar-accent-foreground: #a5f3fc;
+    --sidebar-border: #334155;
+    --sidebar-ring: #22d3ee;
 }
 
 @theme inline {
@@ -69,19 +82,26 @@
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
+
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
+
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
+
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
+
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
+
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -90,11 +110,25 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
-    --font-sans: var(--font-plus-jakarta-sans);
+
+    --font-sans: "Plus Jakarta Sans", sans-serif;
+    --font-mono: "Fira Code", monospace;
+}
+
+html,
+body {
+    min-height: 100%;
 }
 
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+code,
+pre,
+kbd,
+samp {
+    font-family: "Fira Code", monospace;
 }
