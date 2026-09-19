@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import {
     Sidebar,
     SidebarContent,
@@ -92,21 +93,22 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton
-                                tooltip="Sign out"
-                                onClick={() => {
-                                    authClient.signOut({
-                                        fetchOptions: {
-                                            onSuccess: () => {
-                                                router.push("/");
-                                            },
-                                        },
-                                    });
+                            <ConfirmActionDialog
+                                trigger={
+                                    <SidebarMenuButton tooltip="Sign out">
+                                        <LogOut />
+                                        <span>Sign out</span>
+                                    </SidebarMenuButton>
+                                }
+                                title="Sign out?"
+                                description="You will need to sign in again to access this workspace."
+                                confirmLabel="Sign out"
+                                pendingLabel="Signing out..."
+                                onConfirm={async () => {
+                                    await authClient.signOut();
+                                    router.push("/");
                                 }}
-                            >
-                                <LogOut />
-                                <span>Sign out</span>
-                            </SidebarMenuButton>
+                            />
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarFooter>

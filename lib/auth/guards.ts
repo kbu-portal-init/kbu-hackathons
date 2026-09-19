@@ -52,7 +52,7 @@ export async function requireAdmin() {
     return session;
 }
 
-export async function requireApprovedTeam() {
+export async function requireTeamSession() {
     const session = await requireAuth();
 
     if (session.user.role !== "team") {
@@ -64,7 +64,17 @@ export async function requireApprovedTeam() {
         include: { registration: true },
     });
 
-    if (!team || team.archivedAt || team.registration?.status !== "APPROVED") {
+    if (!team || team.archivedAt) {
+        redirect("/login");
+    }
+
+    return { ...session, team };
+}
+
+export async function requireApprovedTeam() {
+    const { team, ...session } = await requireTeamSession();
+
+    if (team.registration?.status !== "APPROVED") {
         redirect("/login");
     }
 

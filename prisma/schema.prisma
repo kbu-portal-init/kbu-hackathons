@@ -37,6 +37,12 @@ enum TeamMemberRole {
   OTHER
 }
 
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 // Migration must enforce id = 1 and valid dates/team-size bounds.
 model EventSettings {
   id                   Int      @id @default(1)
@@ -58,6 +64,25 @@ model EventSettings {
   updatedAt            DateTime @updatedAt @db.Timestamptz(3)
 
   @@map("event_settings")
+}
+
+model Announcement {
+  id          String             @id @default(cuid())
+  title       String
+  body        String
+  imageUrl    String?
+  status      AnnouncementStatus @default(DRAFT)
+  pinned      Boolean            @default(false)
+  publishedAt DateTime?          @db.Timestamptz(3)
+  authorId    String
+  author      User               @relation("AnnouncementCreator", fields: [authorId], references: [id], onDelete: Restrict)
+  createdAt   DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime           @updatedAt @db.Timestamptz(3)
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("announcement")
 }
 
 model Team {
@@ -191,6 +216,7 @@ model User {
   username        String?              @unique
   displayUsername String?
   team            Team?
+  announcements   Announcement[]       @relation("AnnouncementCreator")
   reviews         RegistrationReview[]
   auditLogs       AuditLog[]
 

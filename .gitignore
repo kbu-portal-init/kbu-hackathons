@@ -60,3 +60,6 @@ foldder-local/
 .vscode/
 .github/instructions/
 package-lock.json
+
+# OpenCode Config File
+opencode.json

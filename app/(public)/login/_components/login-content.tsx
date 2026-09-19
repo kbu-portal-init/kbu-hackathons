@@ -4,24 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { type FieldValues, type Path, type SubmitHandler, type UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { loginAsStaff, loginAsTeam } from "@/actions/auth/login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
 import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
-import Loader from "../../../../components/loader";
 
 type LoginContentProps = { audience: "participant" | "management"; title: string; description: string };
 
 export function LoginContent({ audience, title, description }: LoginContentProps) {
     const router = useRouter();
 
-    const { isPending } = authClient.useSession();
-
     const isParticipant = audience === "participant";
-    if (isPending) return <Loader />;
 
     const onSuccess = () => {
         router.push(isParticipant ? "/teams" : "/panel");
@@ -54,13 +50,19 @@ export function LoginContent({ audience, title, description }: LoginContentProps
 }
 
 function TeamLoginForm({ onSuccess }: { onSuccess: () => void }) {
+    const [loginError, setLoginError] = useState<string>();
     const form = useForm<TeamLoginInput>({
         resolver: zodResolver(teamLoginSchema),
         defaultValues: { username: "", password: "" },
     });
     const onSubmit = async (values: TeamLoginInput) => {
-        const result = await loginAsTeam(values, loginCallbacks(onSuccess));
-        if (result?.error) toast.error(typeof result.error === "string" ? result.error : result.error.message);
+        setLoginError(undefined);
+        const result = await loginAsTeam(values);
+        if (!result.ok) {
+            setLoginError(result.error.message);
+            return;
+        }
+        onSuccess();
     };
     return (
         <LoginFields
@@ -70,19 +72,26 @@ function TeamLoginForm({ onSuccess }: { onSuccess: () => void }) {
             identifierType="text"
             autoComplete="username"
             placeholder="Enter your team name we sent you in the email"
+            formError={loginError}
             onSubmit={onSubmit}
         />
     );
 }
 
 function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
+    const [loginError, setLoginError] = useState<string>();
     const form = useForm<StaffLoginInput>({
         resolver: zodResolver(staffLoginSchema),
         defaultValues: { email: "", password: "" },
     });
     const onSubmit = async (values: StaffLoginInput) => {
-        const result = await loginAsStaff(values, loginCallbacks(onSuccess));
-        if (result?.error) toast.error(typeof result.error === "string" ? result.error : result.error.message);
+        setLoginError(undefined);
+        const result = await loginAsStaff(values);
+        if (!result.ok) {
+            setLoginError(result.error.message);
+            return;
+        }
+        onSuccess();
     };
     return (
         <LoginFields
@@ -92,6 +101,7 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
             identifierType="email"
             autoComplete="email"
             placeholder="you@example.com"
+            formError={loginError}
             onSubmit={onSubmit}
         />
     );
@@ -104,6 +114,7 @@ function LoginFields<TFieldValues extends FieldValues>({
     identifierType,
     autoComplete,
     placeholder,
+    formError,
     onSubmit,
 }: {
     form: UseFormReturn<TFieldValues>;
@@ -112,11 +123,13 @@ function LoginFields<TFieldValues extends FieldValues>({
     identifierType: "email" | "text";
     autoComplete: string;
     placeholder: string;
+    formError?: string;
     onSubmit: SubmitHandler<TFieldValues>;
 }) {
     const identifierError = getErrorMessage(form.formState.errors[identifierName]);
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
+            <FormError message={formError} />
             <div className="space-y-2">
                 <label htmlFor={identifierName} className="text-sm font-medium">
                     {identifierLabel}
@@ -153,15 +166,6 @@ function LoginFields<TFieldValues extends FieldValues>({
             </Button>
         </form>
     );
-}
-
-function loginCallbacks(onSuccess: () => void) {
-    return {
-        onSuccess,
-        onError: (error: { error: { message?: string; statusText?: string } }) => {
-            toast.error(error.error.message || error.error.statusText);
-        },
-    };
 }
 
 function FormError({ message }: { message?: string }) {
