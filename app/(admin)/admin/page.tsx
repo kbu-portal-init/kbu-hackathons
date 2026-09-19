@@ -6,7 +6,7 @@ export default async function AdminPage() {
     const overview = await getAdminOverview();
     const cards = [
         ["Organizers", overview.organizerCount, "/admin/organizers"],
-        ["Team accounts", overview.teamCount, "/admin/organizers"],
+        ["Team accounts", overview.teamCount, "/panel/teams"],
         ["Banned accounts", overview.bannedAccountCount, "/admin/organizers"],
         ["Team members", overview.teamMemberCount, "/panel/teams"],
         ["Registrations", overview.registrationCount, "/panel/registrations"],
