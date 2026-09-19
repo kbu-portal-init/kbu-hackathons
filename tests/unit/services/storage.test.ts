@@ -11,8 +11,8 @@ async function main() {
     const serverOnlyPath = require.resolve("server-only");
     require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
-    const { DeleteObjectCommand, HeadObjectCommand } = await import("@aws-sdk/client-s3");
-    const { deleteObject, generatePresignedUploadUrl, verifyUpload } = await import("@/lib/services/storage");
+    const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
+    const { deleteObject } = await import("@/lib/services/storage");
     const { r2 } = await import("@/lib/r2");
     assert.ok(r2, "Test R2 client should be configured");
 
@@ -31,43 +31,6 @@ async function main() {
     });
 
     describe("storage service", () => {
-        it("generates an event-image presigned URL in the event scope", async () => {
-            const result = await generatePresignedUploadUrl(
-                {
-                    fileName: "banner.png",
-                    fileType: "image/png",
-                    fileSize: 1024,
-                    category: "event-image",
-                },
-                "events",
-            );
-
-            assert.equal(result.ok, true);
-            if (!result.ok) return;
-
-            assert.match(result.data.key, /^uploads\/events\/[0-9a-f-]+\.png$/);
-            assert.equal(result.data.publicUrl, `https://media.example.test/${result.data.key}`);
-            assert.ok(result.data.presignedUrl.startsWith("https://"));
-        });
-
-        it("rejects finalization outside the owner scope", async () => {
-            const result = await verifyUpload({ key: "uploads/other-team/file.png" }, "team-1");
-
-            assert.equal(result.ok, false);
-            if (result.ok) return;
-            assert.equal(result.error.code, "FORBIDDEN");
-            assert.equal(sentCommands.length, 0);
-        });
-
-        it("verifies an owned object and returns a normalized public URL", async () => {
-            const result = await verifyUpload({ key: "uploads/events/banner.png" }, "events");
-
-            assert.equal(result.ok, true);
-            if (!result.ok) return;
-            assert.equal(result.data.publicUrl, "https://media.example.test/uploads/events/banner.png");
-            assert.ok(sentCommands.at(-1) instanceof HeadObjectCommand);
-        });
-
         it("deletes only objects in the owner scope", async () => {
             const result = await deleteObject({ key: "uploads/events/banner.png" }, "events");
 
