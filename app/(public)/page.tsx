@@ -91,12 +91,9 @@ export default async function Home() {
                                 ./sign-in
                             </Link>
                         </div>
-                        <p data-reveal className="mt-8 font-mono text-xs text-muted-foreground">
-                            next.js · prisma · better-auth · three.js
-                        </p>
                     </div>
                     <div className="relative">
-                        <div className="absolute -inset-4 rounded-[2rem] bg-violet-500/10 blur-2xl" aria-hidden />
+                        <div className="absolute -inset-4 rounded-4xl bg-violet-500/10 blur-2xl" aria-hidden />
                         <div data-reveal className="relative">
                             <RoomExperience />
                         </div>
@@ -229,7 +226,7 @@ export default async function Home() {
             </section>
 
             {/* Final CTA */}
-            <section className="relative bg-background dot-grid [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent)]">
+            <section className="relative bg-background dot-grid mask-[radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent)]">
                 <div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
                     <p data-reveal className="font-mono text-sm font-medium text-cyan-400">
                         $ ready_to_build --join

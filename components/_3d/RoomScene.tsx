@@ -105,7 +105,7 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.05;
         renderer.shadowMap.enabled = !isMobile;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.type = THREE.PCFShadowMap;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
