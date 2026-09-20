@@ -1,3 +1,8 @@
+export const dynamic = "force-dynamic";
+
+// because eventSettings is database-driven.
+// If /register is statically generated, the page may contain the old value until revalidation/rebuild.
+
 import { getEventSettings } from "@/lib/data/event-settings";
 import { RegistrationForm } from "./_components/registration-form";
 
