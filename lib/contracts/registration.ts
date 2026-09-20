@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { PageInput } from "@/lib/contracts/common";
 
 const teamMemberRoleEnum = z.enum([
-    "LEADER",
     "DEVELOPER",
     "DESIGNER",
     "PRODUCT_MANAGER",
@@ -14,23 +13,22 @@ const teamMemberRoleEnum = z.enum([
 ]);
 
 const kbuEmail = z
-    .string()
+    .email("Invalid email address")
     .trim()
     .toLowerCase()
-    .email("Invalid email address")
     .refine((e) => e.endsWith("@ms.kbu.ac.th"), "Email must use the @ms.kbu.ac.th domain");
 
 // ── Public submission ──────────────────────────────────────────────
 
 export const submitRegistrationSchema = z.object({
-    teamName: z.string().trim().min(1, "Team name is required"),
-    leaderName: z.string().trim().min(1, "Leader name is required"),
+    teamName: z.string().trim().min(2, "Team name must be at least 2 characters"),
+    leaderName: z.string().trim().min(2, "Leader name must be at least 2 characters"),
     leaderEmail: kbuEmail,
-    leaderRole: teamMemberRoleEnum.default("LEADER"),
+    leaderRole: z.literal("LEADER").default("LEADER"),
     members: z
         .array(
             z.object({
-                name: z.string().trim().min(1, "Member name is required"),
+                name: z.string().trim().min(2, "Member name must be at least 2 characters"),
                 role: teamMemberRoleEnum,
                 email: kbuEmail,
             }),
@@ -51,6 +49,7 @@ export type ApproveRegistrationInput = z.infer<typeof approveRegistrationSchema>
 export type ApproveRegistrationData = {
     registrationId: string;
     teamLoginName: string;
+    magicLinkSent: boolean;
 };
 
 export const rejectRegistrationSchema = z.object({

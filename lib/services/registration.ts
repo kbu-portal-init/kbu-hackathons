@@ -40,7 +40,7 @@ async function uniqueLoginName(base: string): Promise<string> {
     }
 }
 
-// ── Internal: create team account and send magic link ──────────────
+// ── Internal: create team account and send sign-in link ────────────
 
 async function provisionTeamAccount(
     registrationId: string,
@@ -104,7 +104,15 @@ async function provisionTeamAccount(
                 },
             });
         });
+    } catch {
+        return {
+            ok: false,
+            error: { code: "APPROVAL_FAILED", message: "Failed to approve registration" },
+        };
+    }
 
+    let magicLinkSent = true;
+    try {
         await auth.api.signInMagicLink({
             body: {
                 email: leader.studentEmail,
@@ -113,10 +121,7 @@ async function provisionTeamAccount(
             headers: await headers(),
         });
     } catch {
-        return {
-            ok: false,
-            error: { code: "APPROVAL_FAILED", message: "Failed to approve registration" },
-        };
+        magicLinkSent = false;
     }
 
     return {
@@ -124,6 +129,7 @@ async function provisionTeamAccount(
         data: {
             registrationId,
             teamLoginName,
+            magicLinkSent,
         },
     };
 }

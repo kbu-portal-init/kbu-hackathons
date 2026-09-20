@@ -1,11 +1,22 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Loader2, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { type Control, Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import type { z } from "zod";
 import { submitTeamRegistration } from "@/actions/management/registrations";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
     Field,
@@ -17,32 +28,17 @@ import {
     FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 
-type Role =
-    | "LEADER"
-    | "DEVELOPER"
-    | "DESIGNER"
-    | "PRODUCT_MANAGER"
-    | "MARKETER"
-    | "PRESENTER"
-    | "RESEARCHER"
-    | "TESTER"
-    | "OTHER";
+type Role = "DEVELOPER" | "DESIGNER" | "PRODUCT_MANAGER" | "MARKETER" | "PRESENTER" | "RESEARCHER" | "TESTER" | "OTHER";
 
-type FormValues = {
-    teamName: string;
-    leaderName: string;
-    leaderEmail: string;
-    leaderRole?: Role;
-    members: { name: string; role: Role; email: string }[];
-};
+type FormValues = z.input<typeof submitRegistrationSchema>;
+type SubmittedFormValues = z.output<typeof submitRegistrationSchema>;
 
 const roleOptions = [
-    { value: "LEADER", label: "Leader" },
     { value: "DEVELOPER", label: "Developer" },
     { value: "DESIGNER", label: "Designer" },
     { value: "PRODUCT_MANAGER", label: "Product Manager" },
@@ -55,27 +51,53 @@ const roleOptions = [
 
 export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: number; maxTeamSize: number }) {
     const [submitted, setSubmitted] = useState(false);
-    const maxAdditionalMembers = maxTeamSize - 1;
+    const [selectedTeamSize, setSelectedTeamSize] = useState(minTeamSize);
+    const [informationOpen, setInformationOpen] = useState(false);
+    const [acknowledged, setAcknowledged] = useState(false);
 
-    const form = useForm<FormValues>({
+    const form = useForm<FormValues, unknown, SubmittedFormValues>({
         resolver: zodResolver(submitRegistrationSchema),
         defaultValues: {
             teamName: "",
             leaderName: "",
             leaderEmail: "",
-            leaderRole: "LEADER" as Role,
-            members: [] as { name: string; role: Role; email: string }[],
+            leaderRole: "LEADER",
+            members: Array.from({ length: Math.max(0, minTeamSize - 1) }, () => ({
+                name: "",
+                role: "DEVELOPER" as Role,
+                email: "",
+            })),
         },
     });
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields, replace } = useFieldArray({
         control: form.control,
         name: "members",
     });
 
-    const teamSize = 1 + fields.length;
+    const teamSize = selectedTeamSize;
 
-    const onSubmit = async (values: FormValues) => {
+    const changeTeamSize = (value: string | null) => {
+        if (!value) return;
+        const nextTeamSize = Number(value);
+        setSelectedTeamSize(nextTeamSize);
+        replace(
+            Array.from(
+                { length: Math.max(0, nextTeamSize - 1) },
+                (_, index) => fields[index] ?? { name: "", role: "DEVELOPER" as Role, email: "" },
+            ),
+        );
+    };
+
+    const onSubmit = (values: SubmittedFormValues) => {
+        if (!acknowledged) {
+            setInformationOpen(true);
+            return;
+        }
+        void completeSubmission(values);
+    };
+
+    const completeSubmission = async (values: SubmittedFormValues) => {
         const result = await submitTeamRegistration({ ...values, leaderRole: values.leaderRole ?? "LEADER" });
         if (!result.ok) {
             applyActionFieldErrors(result.error.fieldErrors, form.setError);
@@ -105,11 +127,13 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
     }
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {/* Team Information */}
-            <div className="rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="space-y-8 rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
+                {/* Team Information */}
                 <FieldSet>
-                    <FieldLegend>Team information</FieldLegend>
+                    <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
+                        About your team
+                    </FieldLegend>
                     <FieldGroup>
                         <Controller
                             name="teamName"
@@ -128,17 +152,35 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                 </Field>
                             )}
                         />
+                        <Field>
+                            <FieldLabel htmlFor="team-size">Team size</FieldLabel>
+                            <Select value={String(selectedTeamSize)} onValueChange={changeTeamSize}>
+                                <SelectTrigger id="team-size" className="w-full">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Array.from({ length: maxTeamSize - minTeamSize + 1 }, (_, index) => {
+                                        const size = minTeamSize + index;
+                                        return (
+                                            <SelectItem key={size} value={String(size)}>
+                                                {size} members
+                                            </SelectItem>
+                                        );
+                                    })}
+                                </SelectContent>
+                            </Select>
+                            <FieldDescription>
+                                Choose between {minTeamSize} and {maxTeamSize} total members, including the leader.
+                            </FieldDescription>
+                        </Field>
                     </FieldGroup>
                 </FieldSet>
-            </div>
 
-            {/* Team Leader */}
-            <div className="rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
+                {/* Team Leader */}
                 <FieldSet>
-                    <FieldLegend>Team leader</FieldLegend>
-                    <FieldDescription>
-                        The leader will receive the magic link to access the team dashboard.
-                    </FieldDescription>
+                    <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
+                        Team leader details
+                    </FieldLegend>
                     <FieldGroup>
                         <div className="grid gap-5 sm:grid-cols-2">
                             <Controller
@@ -157,32 +199,12 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                     </Field>
                                 )}
                             />
-                            <Controller
-                                name="leaderRole"
-                                control={form.control}
-                                render={({ field, fieldState }) => (
-                                    <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Role</FieldLabel>
-                                        <Select value={field.value} onValueChange={field.onChange}>
-                                            <SelectTrigger
-                                                id={field.name}
-                                                aria-invalid={fieldState.invalid}
-                                                className="w-full"
-                                            >
-                                                <SelectValue placeholder="Select a role" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {roleOptions.map((opt) => (
-                                                    <SelectItem key={opt.value} value={opt.value}>
-                                                        {opt.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                    </Field>
-                                )}
-                            />
+                            <Field>
+                                <FieldLabel>Role</FieldLabel>
+                                <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
+                                    Leader
+                                </div>
+                            </Field>
                         </div>
                         <Controller
                             name="leaderEmail"
@@ -204,82 +226,79 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                         />
                     </FieldGroup>
                 </FieldSet>
-            </div>
 
-            {/* Team Members */}
-            <div className="rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
+                {/* Team Members */}
                 <FieldSet>
-                    <div className="flex items-center justify-between">
-                        <FieldLegend>Team members</FieldLegend>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm text-zinc-500">
-                                {teamSize} / {maxTeamSize} members
-                            </span>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                disabled={fields.length >= maxAdditionalMembers}
-                                onClick={() => append({ name: "", role: "DEVELOPER", email: "" })}
-                            >
-                                <Plus className="size-4" />
-                                Add member
-                            </Button>
-                        </div>
-                    </div>
-                    <FieldDescription>
-                        Add your team members (excluding the leader). All members must verify their email.
-                        {minTeamSize > 1 && ` Minimum team size is ${minTeamSize}.`}
-                    </FieldDescription>
-
-                    {fields.length === 0 && (
-                        <p className="text-center text-sm text-zinc-400 dark:text-zinc-500">
-                            No members added yet. Click &quot;Add member&quot; to begin.
-                        </p>
-                    )}
-
+                    <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
+                        Other team members ({teamSize - 1})
+                    </FieldLegend>
                     <FieldGroup className="gap-3">
                         {fields.map((field, index) => (
-                            <MemberRow
-                                key={field.id}
-                                index={index}
-                                control={form.control}
-                                onRemove={() => remove(index)}
-                            />
+                            <MemberRow key={field.id} index={index} control={form.control} />
                         ))}
                     </FieldGroup>
                 </FieldSet>
-            </div>
 
-            <div className="flex justify-end">
-                <Button type="submit" disabled={form.formState.isSubmitting} className="min-w-40">
-                    {form.formState.isSubmitting ? (
-                        <>
-                            <Loader2 className="size-4 animate-spin" />
-                            Submitting...
-                        </>
-                    ) : (
-                        "Submit registration"
-                    )}
-                </Button>
+                <div className="flex items-center justify-between gap-4">
+                    <Button type="button" variant="outline" size="sm" onClick={() => setInformationOpen(true)}>
+                        Read before submitting
+                    </Button>
+                    <Button type="submit" disabled={form.formState.isSubmitting || !acknowledged} className="min-w-40">
+                        {form.formState.isSubmitting ? (
+                            <>
+                                <Loader2 className="size-4 animate-spin" />
+                                Submitting...
+                            </>
+                        ) : (
+                            "Submit registration"
+                        )}
+                    </Button>
+                </div>
             </div>
+            <AlertDialog open={informationOpen} onOpenChange={setInformationOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Before you submit</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            <div className="flex flex-col gap-3">
+                                <p>
+                                    We will send verification links to all team members, and each member must verify
+                                    their student email address.
+                                </p>
+                                <p>After everyone verifies, the team will be reviewed.</p>
+                                <p>The leader will receive a sign-in link when the registration is approved.</p>
+                            </div>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <label className="flex items-start gap-3 text-sm leading-5">
+                        <input
+                            type="checkbox"
+                            checked={acknowledged}
+                            onChange={(event) => setAcknowledged(event.target.checked)}
+                            className="mt-1 size-4 accent-orange-600"
+                        />
+                        <span>
+                            I acknowledge that the information I provided is accurate and understand the registration
+                            requirements.
+                        </span>
+                    </label>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Close</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => setInformationOpen(false)} disabled={!acknowledged}>
+                            I understand
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </form>
     );
 }
 
-function MemberRow({
-    index,
-    control,
-    onRemove,
-}: {
-    index: number;
-    control: ReturnType<typeof useForm<FormValues>>["control"];
-    onRemove: () => void;
-}) {
+function MemberRow({ index, control }: { index: number; control: Control<FormValues, unknown, SubmittedFormValues> }) {
     return (
         <FieldGroup>
             <div className="flex gap-3 rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
-                <div className="flex-1 grid gap-4 sm:grid-cols-3">
+                <div className="grid flex-1 gap-4 sm:grid-cols-3">
                     <Controller
                         name={`members.${index}.name`}
                         control={control}
@@ -306,7 +325,9 @@ function MemberRow({
                                 <FieldLabel htmlFor={field.name}>Role</FieldLabel>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
-                                        <SelectValue />
+                                        <SelectValue>
+                                            {roleOptions.find((option) => option.value === field.value)?.label}
+                                        </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
                                         {roleOptions.map((opt) => (
@@ -339,19 +360,6 @@ function MemberRow({
                             </Field>
                         )}
                     />
-                </div>
-                <div className="flex items-start pt-7">
-                    <InputGroupAddon align="inline-end">
-                        <InputGroupButton
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            onClick={onRemove}
-                            aria-label={`Remove member ${index + 1}`}
-                        >
-                            <Trash2 className="size-3.5" />
-                        </InputGroupButton>
-                    </InputGroupAddon>
                 </div>
             </div>
         </FieldGroup>
