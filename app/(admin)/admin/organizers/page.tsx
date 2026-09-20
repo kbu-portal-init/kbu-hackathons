@@ -16,7 +16,7 @@ export default async function AdminOrganizersPage({
     const pageHref = (page: number) => `/admin/organizers?page=${page}&pageSize=${meta.pageSize}`;
 
     return (
-        <main className="flex-1 space-y-8 p-6 lg:p-8">
+        <main className="space-y-8">
             <div className="flex items-end justify-between gap-4">
                 <div>
                     <Link href="/admin" className="text-sm font-medium text-orange-600">
