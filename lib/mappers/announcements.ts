@@ -1,37 +1,28 @@
-import type { AnnouncementListItem, AnnouncementStatus, AnnouncementSummary } from "@/lib/contracts/announcements";
+import type { Announcement } from "@/generated/prisma/client";
+import type { AnnouncementDTO, AnnouncementStatus, PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 
-type AnnouncementRecord = {
-    id: string;
-    title: string;
-    body: string;
-    status: AnnouncementStatus;
-    pinned: boolean;
-    publishedAt: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
-    author: { name: string } | null;
-};
-
-export function toAnnouncementListItem(record: AnnouncementRecord): AnnouncementListItem {
+export function mapAnnouncementToDTO(announcement: Announcement): AnnouncementDTO {
     return {
-        id: record.id,
-        title: record.title,
-        body: record.body,
-        status: record.status,
-        pinned: record.pinned,
-        authorName: record.author?.name ?? null,
-        publishedAt: record.publishedAt ? record.publishedAt.toISOString() : null,
-        createdAt: record.createdAt.toISOString(),
-        updatedAt: record.updatedAt.toISOString(),
+        id: announcement.id,
+        title: announcement.title,
+        content: announcement.content,
+        imageUrl: announcement.imageUrl,
+        status: announcement.status as AnnouncementStatus,
+        publishedAt: announcement.publishedAt ? announcement.publishedAt.toISOString() : null,
+        createdById: announcement.createdById,
+        createdAt: announcement.createdAt.toISOString(),
+        updatedAt: announcement.updatedAt.toISOString(),
     };
 }
 
-export function toAnnouncementSummary(record: AnnouncementRecord): AnnouncementSummary {
+export function mapAnnouncementToPublicDTO(announcement: Announcement): PublicAnnouncementDTO {
     return {
-        id: record.id,
-        title: record.title,
-        excerpt: record.body.length > 160 ? `${record.body.slice(0, 160).trimEnd()}…` : record.body,
-        pinned: record.pinned,
-        publishedAt: (record.publishedAt ?? record.createdAt).toISOString(),
+        id: announcement.id,
+        title: announcement.title,
+        content: announcement.content,
+        imageUrl: announcement.imageUrl,
+        publishedAt: announcement.publishedAt ? announcement.publishedAt.toISOString() : null,
+        createdAt: announcement.createdAt.toISOString(),
+        updatedAt: announcement.updatedAt.toISOString(),
     };
 }

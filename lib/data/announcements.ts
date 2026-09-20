@@ -1,75 +1,139 @@
 import "server-only";
 
 import type {
-    AnnouncementListItem,
-    AnnouncementStatus,
-    AnnouncementSummary,
-    ListAnnouncementsInput,
+    AnnouncementDTO,
+    ListAnnouncementInput,
+    ListPublicAnnouncementInput,
+    PublicAnnouncementDTO,
 } from "@/lib/contracts/announcements";
 import type { ListResult } from "@/lib/contracts/common";
-import { toAnnouncementListItem, toAnnouncementSummary } from "@/lib/mappers/announcements";
+import { DEFAULT_PAGE_SIZE } from "@/lib/contracts/common";
+import { mapAnnouncementToDTO, mapAnnouncementToPublicDTO } from "@/lib/mappers/announcements";
 import prisma from "@/lib/prisma";
 
-export async function listAnnouncements(input: ListAnnouncementsInput): Promise<ListResult<AnnouncementListItem>> {
+export async function listAnnouncements(input: ListAnnouncementInput): Promise<ListResult<AnnouncementDTO>> {
     const page = input.page ?? 1;
-    const pageSize = input.pageSize ?? 20;
-    const where = input.status ? { status: input.status } : {};
+    const pageSize = input.pageSize ?? DEFAULT_PAGE_SIZE;
+    const skip = (page - 1) * pageSize;
+    const search = input.search ? input.search.trim() : null;
 
-    const [total, records] = await Promise.all([
-        prisma.announcement.count({ where }),
+    const where = {
+        ...(input.status
+            ? {
+                  status: input.status,
+              }
+            : {}),
+        ...(search
+            ? {
+                  OR: [
+                      {
+                          title: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          content: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                  ],
+              }
+            : {}),
+    };
+
+    const [announcements, total] = await prisma.$transaction([
         prisma.announcement.findMany({
             where,
-            orderBy: [{ pinned: "desc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
-            skip: (page - 1) * pageSize,
+            orderBy: {
+                createdAt: "desc",
+            },
+            skip,
             take: pageSize,
-            include: { author: { select: { name: true } } },
         }),
+        prisma.announcement.count({ where }),
     ]);
 
     return {
-        items: records.map(toAnnouncementListItem),
+        items: announcements.map(mapAnnouncementToDTO),
         meta: {
             total,
             page,
             pageSize,
-            hasNextPage: page * pageSize < total,
+            hasNextPage: skip + announcements.length < total,
         },
     };
 }
 
-export async function listPublishedAnnouncementSummaries(
-    input: ListAnnouncementsInput,
-): Promise<ListResult<AnnouncementSummary>> {
-    const page = input.page ?? 1;
-    const pageSize = input.pageSize ?? 20;
-    const where = { status: "PUBLISHED" as AnnouncementStatus };
-
-    const [total, records] = await Promise.all([
-        prisma.announcement.count({ where }),
-        prisma.announcement.findMany({
-            where,
-            orderBy: [{ pinned: "desc" }, { publishedAt: "desc" }],
-            skip: (page - 1) * pageSize,
-            take: pageSize,
-            include: { author: { select: { name: true } } },
-        }),
-    ]);
-
-    return {
-        items: records.map(toAnnouncementSummary),
-        meta: {
-            total,
-            page,
-            pageSize,
-            hasNextPage: page * pageSize < total,
+export async function getAnnouncementById(announcementId: string): Promise<AnnouncementDTO | null> {
+    const announcement = await prisma.announcement.findUnique({
+        where: {
+            id: announcementId,
         },
-    };
-}
-
-export async function getPublishedAnnouncement(id: string): Promise<AnnouncementListItem | null> {
-    const record = await prisma.announcement.findFirst({
-        where: { id, status: "PUBLISHED" },
-        include: { author: { select: { name: true } } },
     });
-    return record ? toAnnouncementListItem(record) : null;
+
+    if (!announcement) {
+        return null;
+    }
+
+    return mapAnnouncementToDTO(announcement);
+}
+
+export async function listPublicAnnouncements(
+    input: ListPublicAnnouncementInput,
+): Promise<ListResult<PublicAnnouncementDTO>> {
+    const page = input.page ?? 1;
+    const pageSize = input.pageSize ?? DEFAULT_PAGE_SIZE;
+    const skip = (page - 1) * pageSize;
+    const search = input.search ? input.search.trim() : null;
+
+    const where = {
+        status: "PUBLISHED" as const,
+        ...(search
+            ? {
+                  OR: [
+                      {
+                          title: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          content: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                  ],
+              }
+            : {}),
+    };
+
+    const [announcements, total] = await prisma.$transaction([
+        prisma.announcement.findMany({
+            where,
+            orderBy: [
+                {
+                    publishedAt: "desc",
+                },
+                {
+                    createdAt: "desc",
+                },
+            ],
+            skip,
+            take: pageSize,
+        }),
+        prisma.announcement.count({ where }),
+    ]);
+
+    return {
+        items: announcements.map(mapAnnouncementToPublicDTO),
+        meta: {
+            total,
+            page,
+            pageSize,
+            hasNextPage: skip + announcements.length < total,
+        },
+    };
 }

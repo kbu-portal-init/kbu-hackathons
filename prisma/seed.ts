@@ -1,11 +1,11 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import { Pool } from "pg";
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient, TeamMemberRole } from "@/generated/prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
@@ -23,13 +23,27 @@ const auth = betterAuth({
     user: { additionalFields: { role: { type: "string", required: false, defaultValue: "team", input: false } } },
 });
 
+const now = Date.now();
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 const eventDates = {
-    registrationOpensAt: new Date("2026-01-01T00:00:00.000Z"),
-    registrationClosesAt: new Date("2026-02-15T23:59:59.000Z"),
-    startsAt: new Date("2026-03-01T09:00:00.000Z"),
-    endsAt: new Date("2026-03-03T17:00:00.000Z"),
-    submissionOpensAt: new Date("2026-03-01T09:00:00.000Z"),
-    submissionDeadline: new Date("2026-03-03T12:00:00.000Z"),
+    // Opened exactly 7 days ago
+    registrationOpensAt: new Date(now - 7 * MS_PER_DAY),
+
+    // Closes in 35 days (5 weeks from today)
+    registrationClosesAt: new Date(now + 35 * MS_PER_DAY),
+
+    // Event starts 13 days after registration closes (48 days from now)
+    startsAt: new Date(now + 48 * MS_PER_DAY),
+
+    // 3-day event ending on day 50
+    endsAt: new Date(now + 50 * MS_PER_DAY),
+
+    // Submissions open when event starts
+    submissionOpensAt: new Date(now + 48 * MS_PER_DAY),
+
+    // Submission deadline 5 hours before event ends
+    submissionDeadline: new Date(now + 50 * MS_PER_DAY - 5 * 60 * 60 * 1000),
 };
 
 async function main() {
@@ -71,26 +85,27 @@ async function main() {
         data: [
             {
                 title: "KBU Innovation Sprint 2026 is open",
-                body: "Registration is now open. Form your team, review the challenge details, and submit your application before the registration deadline.",
+                content:
+                    "Registration is now open. Form your team, review the challenge details, and submit your application before the registration deadline.",
                 imageUrl: "https://images.example.com/kbu-innovation-sprint-2026.jpg",
                 status: "PUBLISHED",
-                pinned: true,
                 publishedAt: new Date("2026-01-01T00:00:00.000Z"),
-                authorId: adminUser.id,
+                createdById: adminUser.id,
             },
             {
                 title: "Important registration reminder",
-                body: "Teams must have between 2 and 5 members. Make sure every member is listed with a valid student email before submitting your registration.",
+                content:
+                    "Teams must have between 2 and 5 members. Make sure every member is listed with a valid student email before submitting your registration.",
                 imageUrl: "https://images.example.com/registration-reminder.jpg",
                 status: "PUBLISHED",
                 publishedAt: new Date("2026-01-15T09:00:00.000Z"),
-                authorId: adminUser.id,
+                createdById: adminUser.id,
             },
             {
                 title: "Hackathon orientation details",
-                body: "Orientation details will be shared with approved teams before the event begins.",
+                content: "Orientation details will be shared with approved teams before the event begins.",
                 status: "DRAFT",
-                authorId: adminUser.id,
+                createdById: adminUser.id,
             },
         ],
     });
@@ -119,6 +134,40 @@ async function main() {
         }),
     ]);
 
+    // console.log(`✅ Seeded admin, event settings, and ${teams.length} teams.`);
+    const teamUsers = await prisma.user.findMany({ where: { role: "team" }, select: { id: true } });
+    const teamMembers = await prisma.teamMember.findMany({ select: { id: true } });
+    const auditActions = [
+        "ACCOUNT_BANNED",
+        "ACCOUNT_UNBANNED",
+        "EMAIL_SENT",
+        "EMAIL_SEND_FAILED",
+        "EVENT_SETTINGS_UPSERTED",
+        "ORGANIZER_ACCOUNT_CREATED",
+        "STUDENT_EMAIL_VERIFICATION",
+    ];
+    await prisma.auditLog.createMany({
+        data: Array.from({ length: 40 }, (_, index) => {
+            const action = auditActions[index % auditActions.length];
+            const actorId =
+                index % 4 === 0 ? adminUser.id : (teamUsers[(index - 1) % teamUsers.length]?.id ?? adminUser.id);
+            const member = teamMembers[index % teamMembers.length];
+            const target =
+                index % 5 === 0
+                    ? { targetType: "EventSettings", targetId: "1" }
+                    : index % 3 === 0
+                      ? { targetType: "TeamMember", targetId: member.id }
+                      : { targetType: "User", targetId: teamUsers[index % teamUsers.length]?.id ?? adminUser.id };
+            return {
+                actorId,
+                action,
+                targetType: target.targetType,
+                targetId: target.targetId,
+                details: { seeded: true, sequence: index + 1, source: "development-seed" },
+                createdAt: new Date(Date.UTC(2026, 1, 1, 9, index, 0)),
+            };
+        }),
+    });
     console.log(`✅ Seeded admin, event settings, and ${teams.length} teams.`);
     console.log("🔐 Admin login: admin@ms.kbu.ac.th / adminpassword");
     console.log("🔐 Team login password for all fixtures: teampassword");
@@ -162,7 +211,7 @@ async function createTeam(input: {
             teamId: team.id,
             name: `${input.displayName} Leader`,
             studentEmail: `${input.loginName}.leader@ms.kbu.ac.th`,
-            role: "LEADER",
+            role: TeamMemberRole.LEADER,
             studentEmailVerifiedAt: verifiedAt,
         },
     });

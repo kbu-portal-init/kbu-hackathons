@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { requireApprovedTeam } from "@/lib/auth/guards";
-import { getUserRole } from "@/types/auth";
+import { getUserRole, requireApprovedTeam } from "@/lib/auth/guards";
 
 export default async function TeamsLayout({ children }: Readonly<{ children: ReactNode }>) {
     const session = await requireApprovedTeam();

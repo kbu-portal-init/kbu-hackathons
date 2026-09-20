@@ -1,16 +1,16 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LockKeyhole } from "lucide-react";
+import { ArrowLeft, LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { type FieldValues, type Path, type SubmitHandler, type UseFormReturn, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
-import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
+import { loginAsStaff, sendTeamMagicLink } from "@/lib/auth/login-client";
+import { type StaffLoginInput, staffLoginSchema, teamMagicLinkSchema } from "@/lib/contracts/auth";
 
 type LoginContentProps = { audience: "participant" | "management"; title: string; description: string };
 
@@ -35,46 +35,61 @@ export function LoginContent({ audience, title, description }: LoginContentProps
                 </Link>
                 <div className="rounded-2xl border border-cyan-100 bg-white p-7 shadow-xl shadow-cyan-100/40 dark:border-cyan-950 dark:bg-zinc-900 dark:shadow-none">
                     <div className="flex size-11 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300">
-                        <LockKeyhole className="size-5" />
+                        {isParticipant ? <Mail className="size-5" /> : <LockKeyhole className="size-5" />}
                     </div>
                     <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-cyan-600">
                         {isParticipant ? "Participant access" : "Management access"}
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">{title}</h1>
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{description}</p>
-                    {isParticipant ? <TeamLoginForm onSuccess={onSuccess} /> : <StaffLoginForm onSuccess={onSuccess} />}
+                    {isParticipant ? <TeamMagicLinkForm /> : <StaffLoginForm onSuccess={onSuccess} />}
                 </div>
             </div>
         </main>
     );
 }
 
-function TeamLoginForm({ onSuccess }: { onSuccess: () => void }) {
+function TeamMagicLinkForm() {
     const [loginError, setLoginError] = useState<string>();
-    const form = useForm<TeamLoginInput>({
-        resolver: zodResolver(teamLoginSchema),
-        defaultValues: { username: "", password: "" },
+
+    const form = useForm<{ email: string }>({
+        resolver: zodResolver(teamMagicLinkSchema),
+        defaultValues: { email: "" },
     });
-    const onSubmit = async (values: TeamLoginInput) => {
+
+    const onSubmit = async (values: { email: string }) => {
         setLoginError(undefined);
-        const result = await loginAsTeam(values);
+        const result = await sendTeamMagicLink(values);
         if (!result.ok) {
             setLoginError(result.error.message);
             return;
         }
-        onSuccess();
+        toast.success("Magic link sent to your email");
     };
+
     return (
-        <LoginFields
-            form={form}
-            identifierName="username"
-            identifierLabel="Team name"
-            identifierType="text"
-            autoComplete="username"
-            placeholder="Enter your team name we sent you in the email"
-            formError={loginError}
-            onSubmit={onSubmit}
-        />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
+            {loginError && <p className="text-sm text-red-500">{loginError}</p>}
+            <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">
+                    Leader email
+                </label>
+                <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="leader@ms.kbu.ac.th"
+                    aria-invalid={!!form.formState.errors.email}
+                    {...form.register("email")}
+                />
+                {form.formState.errors.email && (
+                    <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
+                )}
+            </div>
+            <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Sending..." : "Send magic link"}
+            </Button>
+        </form>
     );
 }
 
@@ -93,56 +108,26 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
         }
         onSuccess();
     };
-    return (
-        <LoginFields
-            form={form}
-            identifierName="email"
-            identifierLabel="Email address"
-            identifierType="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            formError={loginError}
-            onSubmit={onSubmit}
-        />
-    );
-}
 
-function LoginFields<TFieldValues extends FieldValues>({
-    form,
-    identifierName,
-    identifierLabel,
-    identifierType,
-    autoComplete,
-    placeholder,
-    formError,
-    onSubmit,
-}: {
-    form: UseFormReturn<TFieldValues>;
-    identifierName: Path<TFieldValues>;
-    identifierLabel: string;
-    identifierType: "email" | "text";
-    autoComplete: string;
-    placeholder: string;
-    formError?: string;
-    onSubmit: SubmitHandler<TFieldValues>;
-}) {
-    const identifierError = getErrorMessage(form.formState.errors[identifierName]);
+    const emailError = form.formState.errors.email;
+    const passwordError = form.formState.errors.password;
+
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            <FormError message={formError} />
+            {loginError && <p className="text-sm text-red-500">{loginError}</p>}
             <div className="space-y-2">
-                <label htmlFor={identifierName} className="text-sm font-medium">
-                    {identifierLabel}
+                <label htmlFor="email" className="text-sm font-medium">
+                    Email address
                 </label>
                 <Input
-                    id={identifierName}
-                    type={identifierType}
-                    autoComplete={autoComplete}
-                    placeholder={placeholder}
-                    aria-invalid={!!identifierError}
-                    {...form.register(identifierName)}
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    aria-invalid={!!emailError}
+                    {...form.register("email")}
                 />
-                <FormError message={identifierError} />
+                {emailError && <p className="text-sm text-red-500">{emailError.message}</p>}
             </div>
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -156,24 +141,14 @@ function LoginFields<TFieldValues extends FieldValues>({
                     type="password"
                     autoComplete="current-password"
                     placeholder="Enter your password"
-                    aria-invalid={!!form.formState.errors.password}
-                    {...form.register("password" as Path<TFieldValues>)}
+                    aria-invalid={!!passwordError}
+                    {...form.register("password")}
                 />
-                <FormError message={getErrorMessage(form.formState.errors.password)} />
+                {passwordError && <p className="text-sm text-red-500">{passwordError.message}</p>}
             </div>
             <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
         </form>
     );
-}
-
-function FormError({ message }: { message?: string }) {
-    return message ? <p className="text-sm text-red-500">{message}</p> : null;
-}
-
-function getErrorMessage(error: unknown) {
-    return typeof error === "object" && error && "message" in error && typeof error.message === "string"
-        ? error.message
-        : undefined;
 }

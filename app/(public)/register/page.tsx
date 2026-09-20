@@ -1,52 +1,56 @@
-import { ArrowRight, CheckCircle2 } from "lucide-react";
-import Link from "next/link";
+export const dynamic = "force-dynamic";
 
-const steps = [
-    "Choose a hackathon event and review its requirements.",
-    "Prepare your team details and registration information.",
-    "Wait for the organizers to review and approve your team.",
-];
+// because eventSettings is database-driven.
+// If /register is statically generated, the page may contain the old value until revalidation/rebuild.
 
-export default function TeamRegistrationPage() {
+import { getEventSettings } from "@/lib/data/event-settings";
+import { RegistrationForm } from "./_components/registration-form";
+
+export default async function TeamRegistrationPage() {
+    const settings = await getEventSettings();
+
+    const now = Date.now();
+    const registrationOpen =
+        settings !== null &&
+        now >= new Date(settings.registrationOpensAt).getTime() &&
+        now <= new Date(settings.registrationClosesAt).getTime();
+    const registrationNotStarted = settings !== null && now < new Date(settings.registrationOpensAt).getTime();
+    const registrationUnavailable = settings === null;
+
     return (
-        <main className="flex-1 bg-cyan-50/60 dark:bg-cyan-950/10">
-            <section className="mx-auto max-w-3xl px-6 py-20 text-center lg:px-8 lg:py-28">
-                <p className="text-sm font-semibold uppercase tracking-widest text-cyan-600">Join the community</p>
-                <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">Register your team</h1>
-                <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-300">
-                    Team registration will open when an event is announced. Once your registration is reviewed and
-                    approved, your team will receive access to its participant dashboard.
-                </p>
-                <div className="mx-auto mt-12 max-w-xl rounded-2xl border border-cyan-100 bg-white p-7 text-left shadow-xl shadow-cyan-100/40 dark:border-cyan-950 dark:bg-zinc-900 dark:shadow-none">
-                    <h2 className="text-xl font-bold">How it works</h2>
-                    <div className="mt-6 space-y-5">
-                        {steps.map((step, index) => (
-                            <div key={step} className="flex gap-4">
-                                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-cyan-600" />
-                                <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                                    <span className="font-semibold text-zinc-950 dark:text-white">
-                                        Step {index + 1}.{" "}
-                                    </span>
-                                    {step}
-                                </p>
-                            </div>
-                        ))}
+        <main className="flex-1 bg-background dot-grid">
+            <section className="mx-auto max-w-3xl px-6 py-12 text-left lg:px-8 lg:py-20">
+                <p className="text-sm font-semibold uppercase tracking-widest text-cyan-500">Join KBU Hackathon 2026</p>
+                <h1 className="mt-3 text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+                    Register your team
+                </h1>
+                {registrationOpen ? (
+                    <>
+                        <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-muted-foreground">
+                            Fill out the form below to register your team for the hackathon.
+                        </p>
+                        <div className="mt-6">
+                            <RegistrationForm minTeamSize={settings.minTeamSize} maxTeamSize={settings.maxTeamSize} />
+                        </div>
+                    </>
+                ) : (
+                    <div className="mt-8 rounded-2xl glass-violet p-8">
+                        <h2 className="text-xl font-semibold text-foreground">
+                            {registrationUnavailable
+                                ? "Registration is unavailable"
+                                : registrationNotStarted
+                                  ? "Registration has not opened yet"
+                                  : "Registration is closed"}
+                        </h2>
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                            {registrationUnavailable
+                                ? "Registration details are not available right now. Please try again later."
+                                : registrationNotStarted
+                                  ? "Registration has not started yet. Please return during the registration period to submit your team."
+                                  : "The registration period has ended. Please contact the organizers if you have any questions."}
+                        </p>
                     </div>
-                </div>
-                <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-                    <Link
-                        href="/events"
-                        className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-600 px-6 py-3 font-semibold text-white hover:bg-cyan-700"
-                    >
-                        Explore events <ArrowRight className="size-4" />
-                    </Link>
-                    <Link
-                        href="/login"
-                        className="inline-flex items-center justify-center rounded-full border border-cyan-200 bg-white px-6 py-3 font-semibold text-cyan-700 dark:border-cyan-900 dark:bg-zinc-950 dark:text-cyan-300"
-                    >
-                        Login
-                    </Link>
-                </div>
+                )}
             </section>
         </main>
     );

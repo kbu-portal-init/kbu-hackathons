@@ -1,10 +1,10 @@
 import type { ListResult, PageInput } from "@/lib/contracts/common";
-import type { RegistrationListItem, RegistrationStatus } from "@/lib/contracts/registration";
+import type { RegistrationListItem } from "@/lib/contracts/registration";
 
 export type RegistrationRecord = {
     id: string;
     teamId: string;
-    status: RegistrationStatus;
+    status: string;
     applicationNotes: string | null;
     submittedAt: Date | null;
     withdrawnAt: Date | null;
@@ -20,16 +20,14 @@ export type RegistrationRecord = {
 export function toRegistrationListItem(record: RegistrationRecord): RegistrationListItem {
     return {
         id: record.id,
-        teamId: record.teamId,
         teamName: record.team.displayName,
         loginName: record.team.loginName,
-        memberCount: record.team._count.members,
         status: record.status,
-        applicationNotes: record.applicationNotes,
+        memberCount: record.team._count.members,
+        leaderName: record.team.displayName,
+        leaderEmail: record.team.loginName,
         submittedAt: record.submittedAt?.toISOString() ?? null,
-        withdrawnAt: record.withdrawnAt?.toISOString() ?? null,
         createdAt: record.createdAt.toISOString(),
-        updatedAt: record.updatedAt.toISOString(),
     };
 }
 

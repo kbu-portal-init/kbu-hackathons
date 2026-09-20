@@ -4,7 +4,15 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import prisma from "@/lib/prisma";
-import { getUserRole } from "@/types/auth";
+
+export type UserRole = "team" | "organizer" | "admin";
+
+export function getUserRole(role: string | null | undefined): UserRole | null {
+    if (role === "team" || role === "organizer" || role === "admin") {
+        return role;
+    }
+    return null;
+}
 
 export async function requireAuth() {
     const session = await auth.api.getSession({

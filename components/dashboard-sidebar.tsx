@@ -4,7 +4,6 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import {
     Sidebar,
     SidebarContent,
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
+import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
 
 type DashboardSidebarProps = {
     area: "participant" | "management" | "admin";
@@ -93,7 +93,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <ConfirmActionDialog
+                            <ConfirmActionAlertDialog
                                 trigger={
                                     <SidebarMenuButton tooltip="Sign out">
                                         <LogOut />

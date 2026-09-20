@@ -10,6 +10,7 @@
         "lint": "biome check .",
         "lint:fix": "biome check --write .",
         "format": "biome format --write .",
+        "check-types": "tsc --noEmit",
         "prepare": "husky",
         "postinstall": "prisma generate",
         "prebuild": "prisma generate",
@@ -23,13 +24,13 @@
         "db:watch": "docker compose -f docker-compose.local.yml up postgres",
         "db:stop": "docker compose -f docker-compose.local.yml stop postgres",
         "db:down": "docker compose -f docker-compose.local.yml down postgres",
-        "test:storage": "tsx tests/storage.test.ts",
-        "test:storage:live": "tsx tests/storage-live.test.ts",
-        "test:env": "tsx tests/env.test.ts"
+        "test:env": "tsx tests/env.test.ts",
+        "test:unit": "tsx --test tests/unit/**/*.test.ts tests/env.test.ts",
+        "test:unit:watch": "tsx --test --watch tests/unit/**/*.test.ts tests/env.test.ts",
+        "test:announcements": "tsx --test tests/announcements*.test.ts"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1134.0",
-        "@aws-sdk/s3-request-presigner": "^3.1134.0",
         "@base-ui/react": "^1.0.0",
         "@hookform/resolvers": "^5.9.1",
         "@prisma/adapter-pg": "^7.10.0",
@@ -37,7 +38,6 @@
         "@sentry/nextjs": "^10.74.0",
         "better-auth": "^1.7.5",
         "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
         "cn": "^0.3.0",
         "date-fns": "^4.4.0",
         "dotenv": "^17.4.2",

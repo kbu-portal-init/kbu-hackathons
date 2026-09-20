@@ -69,18 +69,17 @@ model EventSettings {
 model Announcement {
   id          String             @id @default(cuid())
   title       String
-  body        String
+  content     String
   imageUrl    String?
   status      AnnouncementStatus @default(DRAFT)
-  pinned      Boolean            @default(false)
   publishedAt DateTime?          @db.Timestamptz(3)
-  authorId    String
-  author      User               @relation("AnnouncementCreator", fields: [authorId], references: [id], onDelete: Restrict)
+  createdById String
+  createdBy   User               @relation("AnnouncementCreator", fields: [createdById], references: [id], onDelete: Restrict)
   createdAt   DateTime           @default(now()) @db.Timestamptz(3)
   updatedAt   DateTime           @updatedAt @db.Timestamptz(3)
 
   @@index([status, publishedAt])
-  @@index([authorId])
+  @@index([createdById])
   @@index([createdAt])
   @@map("announcement")
 }
@@ -111,6 +110,7 @@ model TeamMember {
   // Contact and verification address; not an auth identity.
   studentEmail              String
   studentEmailVerifiedAt    DateTime?
+  imageUrl                  String?
   role                      TeamMemberRole             @default(OTHER)
   createdAt                 DateTime                   @default(now()) @db.Timestamptz(3)
   updatedAt                 DateTime                   @updatedAt @db.Timestamptz(3)

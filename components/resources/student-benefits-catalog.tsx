@@ -18,7 +18,7 @@ import {
     type StudentBenefitCategory,
     studentBenefitCategories,
     studentBenefits,
-} from "@/lib/data/student-benefits";
+} from "@/lib/public-data/student-benefits";
 
 function renderCardIcon(iconName: StudentBenefit["iconName"]) {
     const iconClass = "h-6 w-6 sm:h-7 sm:w-7";
