@@ -9,8 +9,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { loginAsStaff, sendTeamMagicLink } from "@/lib/auth/login-client";
-import { type StaffLoginInput, staffLoginSchema, teamMagicLinkSchema } from "@/lib/contracts/auth";
+import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
+import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
 
 type LoginContentProps = { audience: "participant" | "management"; title: string; description: string };
 
@@ -20,7 +20,7 @@ export function LoginContent({ audience, title, description }: LoginContentProps
     const isParticipant = audience === "participant";
 
     const onSuccess = () => {
-        router.push(isParticipant ? "/teams" : "/panel");
+        router.push(isParticipant ? "/team" : "/panel");
         toast.success("Sign in successful");
     };
 
@@ -42,52 +42,68 @@ export function LoginContent({ audience, title, description }: LoginContentProps
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">{title}</h1>
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{description}</p>
-                    {isParticipant ? <TeamMagicLinkForm /> : <StaffLoginForm onSuccess={onSuccess} />}
+                    {isParticipant ? <TeamLoginForm /> : <StaffLoginForm onSuccess={onSuccess} />}
                 </div>
             </div>
         </main>
     );
 }
 
-function TeamMagicLinkForm() {
+function TeamLoginForm() {
     const [loginError, setLoginError] = useState<string>();
 
-    const form = useForm<{ email: string }>({
-        resolver: zodResolver(teamMagicLinkSchema),
-        defaultValues: { email: "" },
+    const form = useForm<TeamLoginInput>({
+        resolver: zodResolver(teamLoginSchema),
+        defaultValues: { username: "", password: "" },
     });
 
-    const onSubmit = async (values: { email: string }) => {
+    const onSubmit = async (values: TeamLoginInput) => {
         setLoginError(undefined);
-        const result = await sendTeamMagicLink(values);
+        const result = await loginAsTeam(values);
         if (!result.ok) {
             setLoginError(result.error.message);
             return;
         }
-        toast.success("Magic link sent to your email");
+        toast.success("Sign in successful");
+        window.location.href = "/team";
     };
+
+    const usernameError = form.formState.errors.username;
+    const passwordError = form.formState.errors.password;
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
             {loginError && <p className="text-sm text-red-500">{loginError}</p>}
             <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                    Leader email
+                <label htmlFor="username" className="text-sm font-medium">
+                    Team username
                 </label>
                 <Input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="leader@ms.kbu.ac.th"
-                    aria-invalid={!!form.formState.errors.email}
-                    {...form.register("email")}
+                    id="username"
+                    type="text"
+                    autoComplete="username"
+                    placeholder="kbu-ai-builders"
+                    aria-invalid={!!usernameError}
+                    {...form.register("username")}
                 />
-                {form.formState.errors.email && (
-                    <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-                )}
+                {usernameError && <p className="text-sm text-red-500">{usernameError.message}</p>}
+            </div>
+            <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium">
+                    Password
+                </label>
+                <Input
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    aria-invalid={!!passwordError}
+                    {...form.register("password")}
+                />
+                {passwordError && <p className="text-sm text-red-500">{passwordError.message}</p>}
             </div>
             <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Sending..." : "Send magic link"}
+                {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
         </form>
     );

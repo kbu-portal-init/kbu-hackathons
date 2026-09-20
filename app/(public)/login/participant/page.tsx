@@ -7,7 +7,7 @@ export default async function ParticipantLoginPage() {
         <LoginContent
             audience="participant"
             title="Welcome back, builder"
-            description="Enter your verified leader email to receive a magic link and access your team workspace."
+            description="Enter your team username and password to access your team workspace."
         />
     );
 }

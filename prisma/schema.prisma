@@ -108,15 +108,17 @@ model TeamMember {
   team                      Team                       @relation(fields: [teamId], references: [id], onDelete: Restrict)
   name                      String
   // Contact and verification address; not an auth identity.
-  studentEmail              String
+  studentEmail              String                     @unique(map: "team_member_student_email_key")
   studentEmailVerifiedAt    DateTime?
   imageUrl                  String?
+  cardUrl                   String?
+  cardKey                   String?
+  cardShareToken            String?                    @unique
   role                      TeamMemberRole             @default(OTHER)
   createdAt                 DateTime                   @default(now()) @db.Timestamptz(3)
   updatedAt                 DateTime                   @updatedAt @db.Timestamptz(3)
   studentEmailVerifications StudentEmailVerification[]
 
-  @@unique([teamId, studentEmail])
   @@map("team_member")
 }
 

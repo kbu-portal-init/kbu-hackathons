@@ -30,23 +30,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TeamMemberRole } from "@/generated/prisma/enums";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
+import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
-
-type Role = "DEVELOPER" | "DESIGNER" | "PRODUCT_MANAGER" | "MARKETER" | "PRESENTER" | "RESEARCHER" | "TESTER" | "OTHER";
 
 type FormValues = z.input<typeof submitRegistrationSchema>;
 type SubmittedFormValues = z.output<typeof submitRegistrationSchema>;
 
 const roleOptions = [
-    { value: "DEVELOPER", label: "Developer" },
-    { value: "DESIGNER", label: "Designer" },
-    { value: "PRODUCT_MANAGER", label: "Product Manager" },
-    { value: "MARKETER", label: "Marketer" },
-    { value: "PRESENTER", label: "Presenter" },
-    { value: "RESEARCHER", label: "Researcher" },
-    { value: "TESTER", label: "Tester" },
-    { value: "OTHER", label: "Other" },
+    { value: TeamMemberRole.DEVELOPER, label: formatRole(TeamMemberRole.DEVELOPER) },
+    { value: TeamMemberRole.DESIGNER, label: formatRole(TeamMemberRole.DESIGNER) },
+    { value: TeamMemberRole.PRODUCT_MANAGER, label: formatRole(TeamMemberRole.PRODUCT_MANAGER) },
+    { value: TeamMemberRole.MARKETER, label: formatRole(TeamMemberRole.MARKETER) },
+    { value: TeamMemberRole.PRESENTER, label: formatRole(TeamMemberRole.PRESENTER) },
+    { value: TeamMemberRole.RESEARCHER, label: formatRole(TeamMemberRole.RESEARCHER) },
+    { value: TeamMemberRole.TESTER, label: formatRole(TeamMemberRole.TESTER) },
+    { value: TeamMemberRole.OTHER, label: formatRole(TeamMemberRole.OTHER) },
 ] as const;
 
 export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: number; maxTeamSize: number }) {
@@ -62,10 +62,10 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
             teamName: "",
             leaderName: "",
             leaderEmail: "",
-            leaderRole: "LEADER",
+            leaderRole: TeamMemberRole.LEADER,
             members: Array.from({ length: Math.max(0, minTeamSize - 1) }, () => ({
                 name: "",
-                role: "DEVELOPER" as Role,
+                role: TeamMemberRole.DEVELOPER,
                 email: "",
             })),
         },
@@ -85,7 +85,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
         replace(
             Array.from(
                 { length: Math.max(0, nextTeamSize - 1) },
-                (_, index) => fields[index] ?? { name: "", role: "DEVELOPER" as Role, email: "" },
+                (_, index) => fields[index] ?? { name: "", role: TeamMemberRole.DEVELOPER, email: "" },
             ),
         );
     };
@@ -99,7 +99,10 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
     };
 
     const completeSubmission = async (values: SubmittedFormValues) => {
-        const result = await submitTeamRegistration({ ...values, leaderRole: values.leaderRole ?? "LEADER" });
+        const result = await submitTeamRegistration({
+            ...values,
+            leaderRole: values.leaderRole ?? TeamMemberRole.LEADER,
+        });
         if (!result.ok) {
             applyActionFieldErrors(result.error.fieldErrors, form.setError);
             toast.error(result.error.message);
@@ -165,7 +168,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                 <SelectTrigger id="team-size" className="w-full">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent alignItemWithTrigger={false}>
                                     {Array.from({ length: maxTeamSize - minTeamSize + 1 }, (_, index) => {
                                         const size = minTeamSize + index;
                                         return (
@@ -200,7 +203,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="e.g. Jane Doe"
+                                            placeholder="Jane Doe"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -224,7 +227,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                         id={field.name}
                                         type="email"
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="e.g. jane@ms.kbu.ac.th"
+                                        placeholder="u...@ms.kbu.ac.th"
                                     />
                                     <FieldDescription>Must be a valid @ms.kbu.ac.th email address.</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -339,7 +342,7 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                                             {roleOptions.find((option) => option.value === field.value)?.label}
                                         </SelectValue>
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent alignItemWithTrigger={false}>
                                         {roleOptions.map((opt) => (
                                             <SelectItem key={opt.value} value={opt.value}>
                                                 {opt.label}
@@ -363,7 +366,7 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                                         id={field.name}
                                         type="email"
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="e.g. name@ms.kbu.ac.th"
+                                        placeholder="u...@ms.kbu.ac.th"
                                     />
                                 </InputGroup>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

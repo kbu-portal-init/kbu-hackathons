@@ -9,7 +9,6 @@ export type EmailMessage = {
 
 export const notificationTypes = [
     "PASSWORD_RESET",
-    "SIGN_IN_LINK",
     "STUDENT_EMAIL_VERIFICATION",
     "TEAM_REGISTRATION_APPROVED",
     "TEAM_REGISTRATION_REJECTED",
@@ -20,7 +19,6 @@ export const notificationTypes = [
 ] as const;
 
 export type NotificationType = (typeof notificationTypes)[number];
-
 export type NotificationData = {
     verificationUrl?: string;
     teamName?: string;
@@ -30,7 +28,6 @@ export type NotificationData = {
     expiresAt?: string | null;
     loginEmail?: string;
 };
-
 export type NotificationInput = {
     type: NotificationType;
     recipients: string[];
@@ -39,7 +36,6 @@ export type NotificationInput = {
     targetType?: string;
     targetId?: string;
 };
-
 export type StudentEmailVerificationData = {
     teamMemberId: string;
     verifiedAt: string;
@@ -51,5 +47,6 @@ export const studentEmailSchema = z
     .trim()
     .toLowerCase()
     .email("Enter a valid student email")
-    .refine((email) => email.endsWith("@ms.kbu.ac.th"), "Student email must use the @ms.kbu.ac.th domain");
+    .regex(/^u\d{12}@ms\.kbu\.ac\.th$/, "Student email must match uXXXXXXXXXXXX@ms.kbu.ac.th");
+
 export const studentEmailVerificationSchema = z.object({ teamMemberId: z.string().min(1) });
