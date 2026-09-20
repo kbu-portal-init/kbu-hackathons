@@ -15,6 +15,7 @@ export default async function TeamRegistrationPage() {
         now >= new Date(settings.registrationOpensAt).getTime() &&
         now <= new Date(settings.registrationClosesAt).getTime();
     const registrationNotStarted = settings !== null && now < new Date(settings.registrationOpensAt).getTime();
+    const registrationUnavailable = settings === null;
 
     return (
         <main className="flex-1 bg-orange-50/60 dark:bg-orange-950/10">
@@ -35,12 +36,18 @@ export default async function TeamRegistrationPage() {
                 ) : (
                     <div className="mt-8 rounded-2xl border border-orange-100 bg-white p-8 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
                         <h2 className="text-xl font-semibold">
-                            {registrationNotStarted ? "Registration has not opened yet" : "Registration is closed"}
+                            {registrationUnavailable
+                                ? "Registration is unavailable"
+                                : registrationNotStarted
+                                  ? "Registration has not opened yet"
+                                  : "Registration is closed"}
                         </h2>
                         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                            {registrationNotStarted
-                                ? "Please return during the registration period to submit your team."
-                                : "The registration period has ended. Please contact the organizers if you have any questions."}
+                            {registrationUnavailable
+                                ? "Registration details are not available right now. Please try again later."
+                                : registrationNotStarted
+                                  ? "Registration has not started yet. Please return during the registration period to submit your team."
+                                  : "The registration period has ended. Please contact the organizers if you have any questions."}
                         </p>
                     </div>
                 )}
