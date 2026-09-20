@@ -3,7 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     ApproveRegistrationInput,
@@ -145,7 +145,7 @@ async function provisionTeamAccount(
                 ok: false,
                 error: {
                     code: ErrorCodes.MAX_TEAMS_REACHED,
-                    message: ErrorMessages[ErrorCodes.MAX_TEAMS_REACHED],
+                    message: "Maximum number of teams has been reached",
                 },
             };
         }
@@ -155,7 +155,7 @@ async function provisionTeamAccount(
                 ok: false,
                 error: {
                     code: ErrorCodes.INVALID_STATUS,
-                    message: ErrorMessages[ErrorCodes.INVALID_STATUS],
+                    message: "Invalid status",
                 },
             };
         }
@@ -179,7 +179,7 @@ async function provisionTeamAccount(
             ok: false,
             error: {
                 code: ErrorCodes.APPROVAL_FAILED,
-                message: ErrorMessages[ErrorCodes.APPROVAL_FAILED],
+                message: "Failed to approve registration",
             },
         };
     }
@@ -218,7 +218,7 @@ export async function submitRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.EVENT_NOT_CONFIGURED,
-                message: ErrorMessages[ErrorCodes.EVENT_NOT_CONFIGURED],
+                message: "Event settings are not configured",
             },
         };
     }
@@ -229,7 +229,7 @@ export async function submitRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.REGISTRATION_CLOSED,
-                message: ErrorMessages[ErrorCodes.REGISTRATION_CLOSED],
+                message: "Registration is not currently open",
             },
         };
     }
@@ -251,7 +251,7 @@ export async function submitRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.MAX_TEAMS_REACHED,
-                message: ErrorMessages[ErrorCodes.MAX_TEAMS_REACHED],
+                message: "Maximum number of teams has been reached",
             },
         };
     }
@@ -341,7 +341,7 @@ export async function verifyTeamMemberEmail(token: string): Promise<
             ok: false,
             error: {
                 code: ErrorCodes.TEAM_MEMBER_NOT_FOUND,
-                message: ErrorMessages[ErrorCodes.TEAM_MEMBER_NOT_FOUND],
+                message: "Team member not found",
             },
         };
     }
@@ -425,7 +425,7 @@ export async function approveRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.REGISTRATION_NOT_FOUND,
-                message: ErrorMessages[ErrorCodes.REGISTRATION_NOT_FOUND],
+                message: "Registration not found",
             },
         };
     }
@@ -434,7 +434,7 @@ export async function approveRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.INVALID_STATUS,
-                message: ErrorMessages[ErrorCodes.INVALID_STATUS],
+                message: "Invalid status",
             },
         };
     }
@@ -457,7 +457,7 @@ export async function approveRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.TEAM_LEADER_NOT_FOUND,
-                message: ErrorMessages[ErrorCodes.TEAM_LEADER_NOT_FOUND],
+                message: "Team leader not found",
             },
         };
     }
@@ -484,7 +484,7 @@ export async function rejectRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.REGISTRATION_NOT_FOUND,
-                message: ErrorMessages[ErrorCodes.REGISTRATION_NOT_FOUND],
+                message: "Registration not found",
             },
         };
     }
@@ -493,7 +493,7 @@ export async function rejectRegistration(
             ok: false,
             error: {
                 code: ErrorCodes.INVALID_STATUS,
-                message: ErrorMessages[ErrorCodes.INVALID_STATUS],
+                message: "Invalid status",
             },
         };
     }

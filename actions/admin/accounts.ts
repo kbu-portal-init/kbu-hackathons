@@ -4,7 +4,7 @@ import { getUserRole, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { AccountActionData } from "@/lib/contracts/accounts";
 import { banAccountSchema, unbanAccountSchema } from "@/lib/contracts/accounts";
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import { banAccount as banAccountService, unbanAccount as unbanAccountService } from "@/lib/services/account-banning";
 import { toFieldErrors } from "@/lib/validation/zod";
 
@@ -16,7 +16,7 @@ export async function banAccount(input: unknown): Promise<ActionResult<AccountAc
             ok: false,
             error: {
                 code: ErrorCodes.VALIDATION_ERROR,
-                message: ErrorMessages[ErrorCodes.VALIDATION_ERROR],
+                message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };
@@ -36,7 +36,7 @@ export async function unbanAccount(input: unknown): Promise<ActionResult<Account
             ok: false,
             error: {
                 code: ErrorCodes.VALIDATION_ERROR,
-                message: ErrorMessages[ErrorCodes.VALIDATION_ERROR],
+                message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };

@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import { teamMagicLinkSchema } from "@/lib/contracts/auth";
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 import { verifyTeamMemberEmail as verifyTeamMemberEmailService } from "@/lib/services/registration";
 
@@ -15,7 +15,7 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
             ok: false,
             error: {
                 code: ErrorCodes.VALIDATION_ERROR,
-                message: parsed.error.issues[0]?.message ?? ErrorMessages[ErrorCodes.VALIDATION_ERROR],
+                message: parsed.error.issues[0]?.message ?? "Some fields are invalid",
             },
         };
     }
@@ -38,7 +38,7 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
     if (member.team.registration?.status !== "APPROVED") {
         return {
             ok: false,
-            error: { code: ErrorCodes.TEAM_NOT_APPROVED, message: ErrorMessages[ErrorCodes.TEAM_NOT_APPROVED] },
+            error: { code: ErrorCodes.TEAM_NOT_APPROVED, message: "Your team must be approved before you can sign in" },
         };
     }
 
@@ -51,7 +51,7 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.AUTHENTICATION_FAILED, message: ErrorMessages[ErrorCodes.AUTHENTICATION_FAILED] },
+            error: { code: ErrorCodes.AUTHENTICATION_FAILED, message: "Unable to authenticate. Please try again." },
         };
     }
 }

@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { UpdateTeamLogoData, UpdateTeamLogoInput } from "@/lib/contracts/team-settings";
 import prisma from "@/lib/prisma";
 
@@ -18,7 +18,7 @@ export async function updateTeamLogo(
         if (!team) {
             return {
                 ok: false,
-                error: { code: ErrorCodes.TEAM_NOT_FOUND, message: ErrorMessages[ErrorCodes.TEAM_NOT_FOUND] },
+                error: { code: ErrorCodes.TEAM_NOT_FOUND, message: "Team not found" },
             };
         }
 
@@ -31,7 +31,7 @@ export async function updateTeamLogo(
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.UPDATE_FAILED, message: ErrorMessages[ErrorCodes.UPDATE_FAILED] },
+            error: { code: ErrorCodes.UPDATE_FAILED, message: "Failed to update team logo" },
         };
     }
 }

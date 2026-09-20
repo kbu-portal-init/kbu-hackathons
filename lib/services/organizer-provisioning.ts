@@ -3,7 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { CreateOrganizerData, CreateOrganizerInput, UpdateOrganizerInput } from "@/lib/contracts/organizers";
 import prisma from "@/lib/prisma";
 import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
@@ -14,7 +14,7 @@ export async function updateOrganizer(input: UpdateOrganizerInput): Promise<Acti
     if (!user)
         return {
             ok: false,
-            error: { code: ErrorCodes.ORGANIZER_NOT_FOUND, message: ErrorMessages[ErrorCodes.ORGANIZER_NOT_FOUND] },
+            error: { code: ErrorCodes.ORGANIZER_NOT_FOUND, message: "Organizer not found" },
         };
     const { userId, ...data } = input;
     try {
@@ -23,7 +23,7 @@ export async function updateOrganizer(input: UpdateOrganizerInput): Promise<Acti
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.UPDATE_FAILED, message: ErrorMessages[ErrorCodes.UPDATE_FAILED] },
+            error: { code: ErrorCodes.UPDATE_FAILED, message: "Failed to update organizer" },
         };
     }
 }
@@ -31,7 +31,10 @@ export async function updateOrganizer(input: UpdateOrganizerInput): Promise<Acti
 export async function provisionOrganizer(input: CreateOrganizerInput): Promise<ActionResult<CreateOrganizerData>> {
     const existing = await prisma.user.findUnique({ where: { email: input.email } });
     if (existing) {
-        return { ok: false, error: { code: ErrorCodes.EMAIL_EXISTS, message: ErrorMessages[ErrorCodes.EMAIL_EXISTS] } };
+        return {
+            ok: false,
+            error: { code: ErrorCodes.EMAIL_EXISTS, message: "A user with this email already exists" },
+        };
     }
 
     try {
@@ -72,7 +75,7 @@ export async function provisionOrganizer(input: CreateOrganizerInput): Promise<A
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.CREATE_FAILED, message: ErrorMessages[ErrorCodes.CREATE_FAILED] },
+            error: { code: ErrorCodes.CREATE_FAILED, message: "Failed to create organizer account" },
         };
     }
 }

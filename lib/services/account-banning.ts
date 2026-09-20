@@ -3,7 +3,7 @@ import "server-only";
 import type { UserRole } from "@/lib/auth/guards";
 import type { AccountActionData, BanAccountInput, UnbanAccountInput } from "@/lib/contracts/accounts";
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
 
@@ -26,7 +26,7 @@ export async function banAccount(
     if (!user || user.role === "admin" || (actorRole === "organizer" && user.role !== "team")) {
         return {
             ok: false,
-            error: { code: ErrorCodes.ACCOUNT_NOT_BANNABLE, message: "The account cannot be banned." },
+            error: { code: ErrorCodes.ACCOUNT_NOT_BANNABLE, message: "This account cannot be banned" },
         };
     }
 
@@ -56,7 +56,7 @@ export async function banAccount(
                 ok: false,
                 error: {
                     code: ErrorCodes.ACCOUNT_NOT_BANNABLE,
-                    message: ErrorMessages[ErrorCodes.ACCOUNT_NOT_BANNABLE],
+                    message: "This account cannot be banned",
                 },
             };
         throw error;
@@ -105,7 +105,7 @@ export async function unbanAccount(
             ok: false,
             error: {
                 code: ErrorCodes.ACCOUNT_NOT_MANAGEABLE,
-                message: ErrorMessages[ErrorCodes.ACCOUNT_NOT_MANAGEABLE],
+                message: "This account cannot be managed",
             },
         };
     try {
@@ -127,7 +127,7 @@ export async function unbanAccount(
                 ok: false,
                 error: {
                     code: ErrorCodes.ACCOUNT_NOT_MANAGEABLE,
-                    message: ErrorMessages[ErrorCodes.ACCOUNT_NOT_MANAGEABLE],
+                    message: "This account cannot be managed",
                 },
             };
         throw error;

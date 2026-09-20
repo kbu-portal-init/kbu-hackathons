@@ -9,7 +9,7 @@ import {
     updateAdminProfileSchema,
 } from "@/lib/contracts/admin-profile";
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import { getAdminProfile } from "@/lib/data/admin-profile";
 import prisma from "@/lib/prisma";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
@@ -33,7 +33,7 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
             ok: false,
             error: {
                 code: ErrorCodes.VALIDATION_ERROR,
-                message: ErrorMessages[ErrorCodes.VALIDATION_ERROR],
+                message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };
@@ -56,7 +56,7 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
         if (existing)
             return {
                 ok: false,
-                error: { code: ErrorCodes.EMAIL_EXISTS, message: ErrorMessages[ErrorCodes.EMAIL_EXISTS] },
+                error: { code: ErrorCodes.EMAIL_EXISTS, message: "A user with this email already exists" },
             };
         await auth.api.updateUser({
             headers: await headers(),
@@ -70,7 +70,7 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.PROFILE_UPDATE_FAILED, message: ErrorMessages[ErrorCodes.PROFILE_UPDATE_FAILED] },
+            error: { code: ErrorCodes.PROFILE_UPDATE_FAILED, message: "Failed to update profile" },
         };
     }
 }
@@ -84,7 +84,7 @@ export async function changeAdminPassword(input: unknown): Promise<ActionResult<
             ok: false,
             error: {
                 code: ErrorCodes.VALIDATION_ERROR,
-                message: ErrorMessages[ErrorCodes.VALIDATION_ERROR],
+                message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };
@@ -104,7 +104,7 @@ export async function changeAdminPassword(input: unknown): Promise<ActionResult<
             ok: false,
             error: {
                 code: ErrorCodes.PASSWORD_CHANGE_FAILED,
-                message: ErrorMessages[ErrorCodes.PASSWORD_CHANGE_FAILED],
+                message: "Current password is incorrect or password could not be changed",
             },
         };
     }

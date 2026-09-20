@@ -1,7 +1,7 @@
 ﻿import "server-only";
 
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { UpdateMemberImageData, UpdateMemberImageInput } from "@/lib/contracts/team-members";
 import prisma from "@/lib/prisma";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
@@ -31,7 +31,7 @@ export async function updateMemberImage(
                 ok: false,
                 error: {
                     code: ErrorCodes.TEAM_MEMBER_NOT_FOUND,
-                    message: ErrorMessages[ErrorCodes.TEAM_MEMBER_NOT_FOUND],
+                    message: "Team member not found",
                 },
             };
         }
@@ -45,7 +45,7 @@ export async function updateMemberImage(
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.UPDATE_FAILED, message: ErrorMessages[ErrorCodes.UPDATE_FAILED] },
+            error: { code: ErrorCodes.UPDATE_FAILED, message: "Failed to update" },
         };
     }
 }

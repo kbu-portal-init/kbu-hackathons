@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { ActionResult } from "@/lib/contracts/common";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     EventSettingsDTO,
     UpsertEventSettingsData,
@@ -75,7 +75,7 @@ export async function upsertEventSettings(
     } catch {
         return {
             ok: false,
-            error: { code: ErrorCodes.UPSERT_FAILED, message: ErrorMessages[ErrorCodes.UPSERT_FAILED] },
+            error: { code: ErrorCodes.UPSERT_FAILED, message: "Failed to save event settings." },
         };
     }
 

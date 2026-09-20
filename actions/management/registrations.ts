@@ -3,7 +3,7 @@
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
 import { studentEmailVerificationSchema } from "@/lib/contracts/email";
-import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     RegistrationDetailDTO,
@@ -83,7 +83,7 @@ export async function getRegistrationRequest(input: unknown): Promise<ActionResu
               ok: false,
               error: {
                   code: ErrorCodes.REGISTRATION_NOT_FOUND,
-                  message: ErrorMessages[ErrorCodes.REGISTRATION_NOT_FOUND],
+                  message: "Registration not found",
               },
           };
 }
