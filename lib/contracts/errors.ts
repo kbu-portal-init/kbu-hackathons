@@ -86,5 +86,3 @@ export const ErrorCodes = {
     UPSERT_FAILED: "UPSERT_FAILED",
     APPROVAL_FAILED: "APPROVAL_FAILED",
 } as const;
-
-export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
