@@ -54,6 +54,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
     const [selectedTeamSize, setSelectedTeamSize] = useState(minTeamSize);
     const [informationOpen, setInformationOpen] = useState(false);
     const [acknowledged, setAcknowledged] = useState(false);
+    const [verificationEmailsSent, setVerificationEmailsSent] = useState(true);
 
     const form = useForm<FormValues, unknown, SubmittedFormValues>({
         resolver: zodResolver(submitRegistrationSchema),
@@ -104,7 +105,12 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
             toast.error(result.error.message);
             return;
         }
-        toast.success("Registration submitted!");
+        toast.success(
+            result.data.verificationEmailsSent
+                ? "Registration submitted!"
+                : "Registration saved, but some verification emails could not be sent.",
+        );
+        setVerificationEmailsSent(result.data.verificationEmailsSent);
         setSubmitted(true);
     };
 
@@ -116,8 +122,9 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 </div>
                 <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
                 <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                    Verification links have been sent to all team members. Once everyone verifies their email, your team
-                    will be automatically approved and the leader will receive a login link.
+                    {verificationEmailsSent
+                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a login link."
+                        : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
                 </p>
                 <Button variant="outline" className="mt-8" onClick={() => setSubmitted(false)}>
                     Register another team
@@ -270,18 +277,21 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                             </div>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <label className="flex items-start gap-3 text-sm leading-5">
-                        <input
-                            type="checkbox"
-                            checked={acknowledged}
-                            onChange={(event) => setAcknowledged(event.target.checked)}
-                            className="mt-1 size-4 accent-orange-600"
-                        />
-                        <span>
-                            I acknowledge that the information I provided is accurate and understand the registration
-                            requirements.
-                        </span>
-                    </label>
+                    <FieldSet className="border-t pt-4">
+                        <Field orientation="horizontal" className="items-start">
+                            <input
+                                id="registration-acknowledgment"
+                                type="checkbox"
+                                checked={acknowledged}
+                                onChange={(event) => setAcknowledged(event.target.checked)}
+                                className="mt-1 size-4 accent-orange-600"
+                            />
+                            <FieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
+                                I acknowledge that the information I provided is accurate and understand the
+                                registration requirements.
+                            </FieldLabel>
+                        </Field>
+                    </FieldSet>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Close</AlertDialogCancel>
                         <AlertDialogAction onClick={() => setInformationOpen(false)} disabled={!acknowledged}>

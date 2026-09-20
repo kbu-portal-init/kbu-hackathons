@@ -52,8 +52,13 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
     }
 }
 
-export async function verifyTeamMemberEmail(
-    token: string,
-): Promise<ActionResult<{ verified: boolean; allVerified: boolean; alreadyVerified: boolean }>> {
+export async function verifyTeamMemberEmail(token: string): Promise<
+    ActionResult<{
+        verified: boolean;
+        allVerified: boolean;
+        alreadyVerified: boolean;
+        approvalPending?: boolean;
+    }>
+> {
     return verifyTeamMemberEmailService(token);
 }

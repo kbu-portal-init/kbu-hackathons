@@ -104,7 +104,22 @@ async function provisionTeamAccount(
                 },
             });
         });
-    } catch {
+    } catch (error) {
+        try {
+            await prisma.auditLog.create({
+                data: {
+                    action: "REGISTRATION_APPROVAL_FAILED",
+                    targetType: "Registration",
+                    targetId: registrationId,
+                    details: {
+                        method: actorId ? "manual" : "auto",
+                        error: error instanceof Error ? error.message : "Unknown approval failure",
+                    },
+                },
+            });
+        } catch {
+            // Failure auditing must not hide the original approval failure.
+        }
         return {
             ok: false,
             error: { code: "APPROVAL_FAILED", message: "Failed to approve registration" },
@@ -218,13 +233,21 @@ export async function submitRegistration(
         };
     });
 
+    let verificationEmailsSent = true;
     for (const memberId of result.memberIds) {
         await sendStudentEmailVerification(memberId).catch(() => {
-            // Don't fail the whole registration if one email fails
+            verificationEmailsSent = false;
         });
     }
 
-    return { ok: true, data: { registrationId: result.registrationId, teamName: result.teamName } };
+    return {
+        ok: true,
+        data: {
+            registrationId: result.registrationId,
+            teamName: result.teamName,
+            verificationEmailsSent,
+        },
+    };
 }
 
 // ── Verify team member email (public, no auth) ─────────────────────
@@ -234,6 +257,7 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         verified: boolean;
         allVerified: boolean;
         alreadyVerified: boolean;
+        approvalPending?: boolean;
     }>
 > {
     const consumeResult = await consumeStudentEmailVerification(token);
@@ -288,7 +312,7 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         };
     }
 
-    await provisionTeamAccount(
+    const provisionResult = await provisionTeamAccount(
         registration.id,
         registration.teamId,
         registration.team.displayName,
@@ -296,6 +320,18 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         { name: leader.name, studentEmail: leader.studentEmail },
         null,
     );
+
+    if (!provisionResult.ok) {
+        return {
+            ok: true,
+            data: {
+                verified: true,
+                allVerified: true,
+                alreadyVerified: consumeResult.data.alreadyVerified,
+                approvalPending: true,
+            },
+        };
+    }
 
     return {
         ok: true,

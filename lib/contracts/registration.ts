@@ -37,7 +37,11 @@ export const submitRegistrationSchema = z.object({
 });
 
 export type SubmitRegistrationInput = z.infer<typeof submitRegistrationSchema>;
-export type SubmitRegistrationData = { registrationId: string; teamName: string };
+export type SubmitRegistrationData = {
+    registrationId: string;
+    teamName: string;
+    verificationEmailsSent: boolean;
+};
 
 // ── Management approve / reject ────────────────────────────────────
 

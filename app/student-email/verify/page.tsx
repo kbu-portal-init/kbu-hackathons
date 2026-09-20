@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { verifyTeamMemberEmail } from "@/actions/auth";
 
-type VerifyState = "loading" | "success" | "already" | "error";
+type VerifyState = "loading" | "success" | "pending" | "already" | "error";
 
 function VerifyContent() {
     const searchParams = useSearchParams();
@@ -29,7 +29,13 @@ function VerifyContent() {
                 return;
             }
             setAllVerified(result.data.allVerified);
-            setState(result.data.verified && !result.data.allVerified ? "success" : "already");
+            setState(
+                result.data.approvalPending
+                    ? "pending"
+                    : result.data.verified && !result.data.allVerified
+                      ? "success"
+                      : "already",
+            );
         });
     }, [token]);
 
@@ -89,6 +95,19 @@ function VerifyContent() {
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Already verified</h1>
                         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                             This email has already been verified. No further action is needed.
+                        </p>
+                    </>
+                )}
+
+                {state === "pending" && (
+                    <>
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+                            <CheckCircle2 className="size-7" />
+                        </div>
+                        <h1 className="mt-6 text-2xl font-bold tracking-tight">Email verified</h1>
+                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                            Your email has been verified, but the team approval is still being processed. Please contact
+                            the organizers if you do not receive your sign-in link.
                         </p>
                     </>
                 )}
