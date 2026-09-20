@@ -9,6 +9,7 @@ export type EmailMessage = {
 
 export const notificationTypes = [
     "PASSWORD_RESET",
+    "SIGN_IN_LINK",
     "STUDENT_EMAIL_VERIFICATION",
     "TEAM_REGISTRATION_APPROVED",
     "TEAM_REGISTRATION_REJECTED",
@@ -39,7 +40,12 @@ export type NotificationInput = {
     targetId?: string;
 };
 
-export type StudentEmailVerificationData = { teamMemberId: string; verifiedAt: string };
+export type StudentEmailVerificationData = {
+    teamMemberId: string;
+    verifiedAt: string;
+    alreadyVerified: boolean;
+};
+
 export const studentEmailSchema = z
     .string()
     .trim()

@@ -55,4 +55,4 @@ foldder-local/
 .env.sentry-build-plugin
 
 # OpenCode Config File
-opencode.json
+opencode.local.json

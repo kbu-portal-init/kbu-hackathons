@@ -1,11 +1,12 @@
 import "server-only";
 
+import type { UserRole } from "@/lib/auth/guards";
 import type { AccountActionData, BanAccountInput, UnbanAccountInput } from "@/lib/contracts/accounts";
 import type { ActionResult } from "@/lib/contracts/common";
-import { toAccountActionData } from "@/lib/mappers/accounts";
 import prisma from "@/lib/prisma";
 import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
-import type { ManagementRole } from "@/types/auth";
+
+type ManagementRole = Extract<UserRole, "organizer" | "admin">;
 
 export async function banAccount(
     input: BanAccountInput,
@@ -72,7 +73,7 @@ export async function banAccount(
         }
         throw error;
     }
-    return { ok: true, data: toAccountActionData(user) };
+    return { ok: true, data: { userId: user.id } };
 }
 
 export async function unbanAccount(
@@ -131,5 +132,5 @@ export async function unbanAccount(
         }
         throw error;
     }
-    return { ok: true, data: toAccountActionData(user) };
+    return { ok: true, data: { userId: user.id } };
 }
