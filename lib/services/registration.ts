@@ -1,6 +1,7 @@
 import "server-only";
 
 import { randomBytes } from "node:crypto";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -14,9 +15,9 @@ import type {
 } from "@/lib/contracts/registration";
 import { countApprovedTeams, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
-import { checkRegistrationRateLimit } from "@/lib/services/rate-limit";
 import { sendTeamRegistrationNotification } from "@/lib/services/notifications";
 import { createPasswordSetupUrl } from "@/lib/services/password-reset";
+import { checkRegistrationRateLimit } from "@/lib/services/rate-limit";
 import {
     allMembersVerified,
     consumeStudentEmailVerification,
