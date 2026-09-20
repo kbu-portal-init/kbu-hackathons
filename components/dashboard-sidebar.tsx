@@ -4,7 +4,17 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
     Sidebar,
     SidebarContent,
@@ -93,22 +103,35 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <ConfirmActionDialog
-                                trigger={
-                                    <SidebarMenuButton tooltip="Sign out">
-                                        <LogOut />
-                                        <span>Sign out</span>
-                                    </SidebarMenuButton>
-                                }
-                                title="Sign out?"
-                                description="You will need to sign in again to access this workspace."
-                                confirmLabel="Sign out"
-                                pendingLabel="Signing out..."
-                                onConfirm={async () => {
-                                    await authClient.signOut();
-                                    router.push("/");
-                                }}
-                            />
+                            <AlertDialog>
+                                <AlertDialogTrigger
+                                    render={
+                                        <SidebarMenuButton tooltip="Sign out">
+                                            <LogOut />
+                                            <span>Sign out</span>
+                                        </SidebarMenuButton>
+                                    }
+                                />
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Sign out?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            You will need to sign in again to access this workspace.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={async () => {
+                                                await authClient.signOut();
+                                                router.push("/");
+                                            }}
+                                        >
+                                            Sign out
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarFooter>

@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { format } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -7,7 +8,6 @@ import { buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
-import { cn } from "@/lib/utils";
 import { MemberRow } from "./_components/member-row";
 import { RegistrationActions } from "./_components/registration-actions";
 

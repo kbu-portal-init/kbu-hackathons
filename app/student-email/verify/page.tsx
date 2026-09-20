@@ -4,7 +4,7 @@ import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { verifyTeamMemberEmail } from "@/actions/auth/verify-email";
+import { verifyTeamMemberEmail } from "@/actions/auth";
 
 type VerifyState = "loading" | "success" | "already" | "error";
 

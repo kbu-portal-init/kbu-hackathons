@@ -1,9 +1,9 @@
 import { z } from "zod";
 import type { PageInput } from "@/lib/contracts/common";
 
-export const organizerNameSchema = z.string().trim().min(1, "Name is required");
-export const organizerEmailSchema = z.email("Invalid email address");
-export const organizerPasswordSchema = z.string().min(8, "Password must be at least 8 characters");
+const organizerNameSchema = z.string().trim().min(1, "Name is required");
+const organizerEmailSchema = z.email("Invalid email address");
+const organizerPasswordSchema = z.string().min(8, "Password must be at least 8 characters");
 
 export const createOrganizerSchema = z.object({
     name: organizerNameSchema,

@@ -1,6 +1,6 @@
 "use client";
 
-import { sendTeamMagicLink as sendTeamMagicLinkAction } from "@/actions/auth/magic-link";
+import { sendTeamMagicLink as sendTeamMagicLinkAction } from "@/actions/auth";
 import { authClient } from "@/lib/auth-client";
 import { type LoginResult, staffLoginSchema, teamMagicLinkSchema } from "@/lib/contracts/auth";
 

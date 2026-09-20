@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/config";
 import { teamMagicLinkSchema } from "@/lib/contracts/auth";
 import type { ActionResult } from "@/lib/contracts/common";
 import prisma from "@/lib/prisma";
+import { verifyTeamMemberEmail as verifyTeamMemberEmailService } from "@/lib/services/registration";
 
 export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ sent: boolean }>> {
     const parsed = teamMagicLinkSchema.safeParse(input);
@@ -49,4 +50,10 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
             error: { code: "AUTHENTICATION_FAILED", message: "Unable to send magic link. Please try again." },
         };
     }
+}
+
+export async function verifyTeamMemberEmail(
+    token: string,
+): Promise<ActionResult<{ verified: boolean; allVerified: boolean; alreadyVerified: boolean }>> {
+    return verifyTeamMemberEmailService(token);
 }

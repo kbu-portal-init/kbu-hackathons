@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
-import { getUserRole } from "@/types/auth";
+import { getUserRole, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 
 export default async function PanelLayout({ children }: Readonly<{ children: ReactNode }>) {
     const session = await requireOrganizerOrAdmin();
