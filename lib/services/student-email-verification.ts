@@ -3,6 +3,7 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import type { ActionResult } from "@/lib/contracts/common";
 import { type StudentEmailVerificationData, studentEmailSchema } from "@/lib/contracts/email";
+import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 
@@ -45,8 +46,8 @@ export async function consumeStudentEmailVerification(
         return {
             ok: false,
             error: {
-                code: "INVALID_VERIFICATION_TOKEN",
-                message: "This verification link is invalid or expired",
+                code: ErrorCodes.INVALID_VERIFICATION_TOKEN,
+                message: ErrorMessages[ErrorCodes.INVALID_VERIFICATION_TOKEN],
             },
         };
     }
@@ -66,8 +67,8 @@ export async function consumeStudentEmailVerification(
         return {
             ok: false,
             error: {
-                code: "INVALID_VERIFICATION_TOKEN",
-                message: "This verification link is invalid or expired",
+                code: ErrorCodes.INVALID_VERIFICATION_TOKEN,
+                message: ErrorMessages[ErrorCodes.INVALID_VERIFICATION_TOKEN],
             },
         };
     }
@@ -86,8 +87,8 @@ export async function consumeStudentEmailVerification(
         return {
             ok: false,
             error: {
-                code: "INVALID_VERIFICATION_TOKEN",
-                message: "This verification link is invalid or expired",
+                code: ErrorCodes.INVALID_VERIFICATION_TOKEN,
+                message: ErrorMessages[ErrorCodes.INVALID_VERIFICATION_TOKEN],
             },
         };
     }

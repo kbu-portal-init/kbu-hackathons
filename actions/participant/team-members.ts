@@ -2,6 +2,7 @@
 
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { UpdateMemberImageData } from "@/lib/contracts/team-members";
 import { updateMemberImageSchema } from "@/lib/contracts/team-members";
 import { updateMemberImage as updateMemberImageService } from "@/lib/services/team-members";
@@ -15,7 +16,7 @@ export async function updateMemberImage(input: unknown): Promise<ActionResult<Up
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid member image data",
                 fieldErrors: toFieldErrors(parsed.error),
             },

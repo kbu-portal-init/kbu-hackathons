@@ -3,6 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
 import type { CreateOrganizerData, CreateOrganizerInput, UpdateOrganizerInput } from "@/lib/contracts/organizers";
 import prisma from "@/lib/prisma";
 import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
@@ -10,20 +11,27 @@ import { createPasswordSetupUrl } from "@/lib/services/password-reset";
 
 export async function updateOrganizer(input: UpdateOrganizerInput): Promise<ActionResult<{ id: string }>> {
     const user = await prisma.user.findFirst({ where: { id: input.userId, role: "organizer" } });
-    if (!user) return { ok: false, error: { code: "ORGANIZER_NOT_FOUND", message: "Organizer not found" } };
+    if (!user)
+        return {
+            ok: false,
+            error: { code: ErrorCodes.ORGANIZER_NOT_FOUND, message: ErrorMessages[ErrorCodes.ORGANIZER_NOT_FOUND] },
+        };
     const { userId, ...data } = input;
     try {
         await auth.api.adminUpdateUser({ body: { userId, data }, headers: await headers() });
         return { ok: true, data: { id: userId } };
     } catch {
-        return { ok: false, error: { code: "UPDATE_FAILED", message: "Failed to update organizer" } };
+        return {
+            ok: false,
+            error: { code: ErrorCodes.UPDATE_FAILED, message: ErrorMessages[ErrorCodes.UPDATE_FAILED] },
+        };
     }
 }
 
 export async function provisionOrganizer(input: CreateOrganizerInput): Promise<ActionResult<CreateOrganizerData>> {
     const existing = await prisma.user.findUnique({ where: { email: input.email } });
     if (existing) {
-        return { ok: false, error: { code: "EMAIL_EXISTS", message: "A user with this email already exists" } };
+        return { ok: false, error: { code: ErrorCodes.EMAIL_EXISTS, message: ErrorMessages[ErrorCodes.EMAIL_EXISTS] } };
     }
 
     try {
@@ -41,12 +49,12 @@ export async function provisionOrganizer(input: CreateOrganizerInput): Promise<A
                 targetType: "User",
                 targetId: user.id,
             });
-        } catch (error) {
-            if (isNotificationDeliveryError(error)) {
+        } catch (err) {
+            if (isNotificationDeliveryError(err)) {
                 return {
                     ok: false,
                     error: {
-                        code: "EMAIL_SEND_FAILED",
+                        code: ErrorCodes.EMAIL_SEND_FAILED,
                         message:
                             "The organizer account was created, but the password setup email could not be delivered.",
                     },
@@ -55,13 +63,16 @@ export async function provisionOrganizer(input: CreateOrganizerInput): Promise<A
             return {
                 ok: false,
                 error: {
-                    code: "PASSWORD_SETUP_FAILED",
+                    code: ErrorCodes.PASSWORD_SETUP_FAILED,
                     message: "The organizer account was created, but its password setup link could not be prepared.",
                 },
             };
         }
         return { ok: true, data: { id: user.id } };
     } catch {
-        return { ok: false, error: { code: "CREATE_FAILED", message: "Failed to create organizer account" } };
+        return {
+            ok: false,
+            error: { code: ErrorCodes.CREATE_FAILED, message: ErrorMessages[ErrorCodes.CREATE_FAILED] },
+        };
     }
 }

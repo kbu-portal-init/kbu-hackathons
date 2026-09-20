@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import type { DeleteAuditLogData } from "@/lib/contracts/audits";
 import { deleteAuditLogSchema } from "@/lib/contracts/audits";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
 import { deleteAuditLog as deleteAuditLogService } from "@/lib/services/audits";
 import { toFieldErrors } from "@/lib/validation/zod";
 
@@ -14,8 +15,8 @@ export async function deleteAuditLog(input: unknown): Promise<ActionResult<Delet
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
-                message: "Some fields are invalid",
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: ErrorMessages[ErrorCodes.VALIDATION_ERROR],
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };

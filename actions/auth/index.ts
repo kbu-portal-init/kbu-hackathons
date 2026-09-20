@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import { teamMagicLinkSchema } from "@/lib/contracts/auth";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes, ErrorMessages } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 import { verifyTeamMemberEmail as verifyTeamMemberEmailService } from "@/lib/services/registration";
 
@@ -12,7 +13,10 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
     if (!parsed.success) {
         return {
             ok: false,
-            error: { code: "VALIDATION_ERROR", message: parsed.error.issues[0]?.message ?? "Invalid email" },
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: parsed.error.issues[0]?.message ?? ErrorMessages[ErrorCodes.VALIDATION_ERROR],
+            },
         };
     }
 
@@ -25,7 +29,7 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
         return {
             ok: false,
             error: {
-                code: "NOT_AUTHORIZED",
+                code: ErrorCodes.NOT_AUTHORIZED,
                 message: "Only verified team leaders of approved teams can request magic links",
             },
         };
@@ -34,7 +38,7 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
     if (member.team.registration?.status !== "APPROVED") {
         return {
             ok: false,
-            error: { code: "TEAM_NOT_APPROVED", message: "Your team must be approved before you can sign in" },
+            error: { code: ErrorCodes.TEAM_NOT_APPROVED, message: ErrorMessages[ErrorCodes.TEAM_NOT_APPROVED] },
         };
     }
 
@@ -47,7 +51,7 @@ export async function sendTeamMagicLink(input: unknown): Promise<ActionResult<{ 
     } catch {
         return {
             ok: false,
-            error: { code: "AUTHENTICATION_FAILED", message: "Unable to send magic link. Please try again." },
+            error: { code: ErrorCodes.AUTHENTICATION_FAILED, message: ErrorMessages[ErrorCodes.AUTHENTICATION_FAILED] },
         };
     }
 }

@@ -2,6 +2,7 @@
 
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { EventSettingsDTO, UpsertEventSettingsData } from "@/lib/contracts/event-settings";
 import { upsertEventSettingsSchema } from "@/lib/contracts/event-settings";
 import { fetchEventSettings, upsertEventSettings as upsertEventSettingsService } from "@/lib/services/event-settings";
@@ -20,7 +21,7 @@ export async function upsertEventSettings(input: unknown): Promise<ActionResult<
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid event settings",
                 fieldErrors: toFieldErrors(parsed.error),
             },
