@@ -46,7 +46,7 @@ export function RegistrationActions({
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved \u2014 magic link sent to leader");
+            toast.success("Registration approved \u2014 password setup link sent to leader");
             router.refresh();
         });
     };

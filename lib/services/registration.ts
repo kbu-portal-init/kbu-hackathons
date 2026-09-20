@@ -1,6 +1,6 @@
 import "server-only";
 
-import { headers } from "next/headers";
+import { randomBytes } from "node:crypto";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -12,7 +12,7 @@ import type {
     SubmitRegistrationData,
     SubmitRegistrationInput,
 } from "@/lib/contracts/registration";
-import { countApprovedTeams, getRegistrationByTeamId, getRegistrationWithTeam } from "@/lib/data/registrations";
+import { countApprovedTeams, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
 import {
     allMembersVerified,
@@ -55,7 +55,7 @@ class RegistrationStatusChangedError extends Error {
     }
 }
 
-// ── Internal: create team account and send sign-in link ────────────
+// ── Internal: create team account and send password setup link ─────
 
 async function provisionTeamAccount(
     registrationId: string,
@@ -66,28 +66,41 @@ async function provisionTeamAccount(
     actorId: string | null,
 ): Promise<ActionResult<ApproveRegistrationData>> {
     const teamEmail = leader.studentEmail;
-    const tempPassword = crypto.randomUUID();
+    const password = randomBytes(24).toString("base64url");
+
+    let userId: string;
 
     try {
-        const existingUser = await prisma.user.findUnique({ where: { email: teamEmail } });
-        if (!existingUser) {
-            try {
+        const existingTeamUser = await prisma.team.findUnique({
+            where: { id: teamId },
+            select: { userId: true },
+        });
+
+        if (existingTeamUser?.userId) {
+            userId = existingTeamUser.userId;
+        } else {
+            const existingUser = await prisma.user.findUnique({ where: { email: teamEmail } });
+            if (existingUser) {
+                userId = existingUser.id;
+            } else {
                 await auth.api.signUpEmail({
                     body: {
                         email: teamEmail,
-                        password: tempPassword,
+                        password,
                         name: teamDisplayName,
                     },
                 });
-            } catch {
-                // Another approval attempt may have created the same account.
+                const user = await prisma.user.update({
+                    where: { email: teamEmail },
+                    data: { role: "team" },
+                });
+                userId = user.id;
             }
         }
 
-        const user = await prisma.user.update({
-            where: { email: teamEmail },
+        await prisma.user.update({
+            where: { id: userId },
             data: {
-                role: "team",
                 emailVerified: true,
                 username: teamLoginName,
                 displayUsername: teamLoginName,
@@ -115,7 +128,7 @@ async function provisionTeamAccount(
 
             await tx.team.update({
                 where: { id: teamId },
-                data: { userId: user.id },
+                data: { userId },
             });
 
             await tx.registrationReview.create({
@@ -184,17 +197,21 @@ async function provisionTeamAccount(
         };
     }
 
-    let magicLinkSent = true;
+    const { createPasswordSetupUrl } = await import("@/lib/services/password-reset");
+    const { sendTeamRegistrationNotification } = await import("@/lib/services/notifications");
+
+    let passwordSetupSent = true;
     try {
-        await auth.api.signInMagicLink({
-            body: {
-                email: leader.studentEmail,
-                callbackURL: "/teams",
-            },
-            headers: await headers(),
+        const setupUrl = await createPasswordSetupUrl(userId);
+        await sendTeamRegistrationNotification({
+            type: "TEAM_REGISTRATION_APPROVED",
+            teamId,
+            registrationId,
+            data: { teamName: teamDisplayName, resetUrl: setupUrl },
+            actorId: actorId ?? undefined,
         });
     } catch {
-        magicLinkSent = false;
+        passwordSetupSent = false;
     }
 
     return {
@@ -202,7 +219,7 @@ async function provisionTeamAccount(
         data: {
             registrationId,
             teamLoginName,
-            magicLinkSent,
+            passwordSetupSent,
         },
     };
 }
@@ -324,7 +341,6 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         verified: boolean;
         allVerified: boolean;
         alreadyVerified: boolean;
-        approvalPending?: boolean;
     }>
 > {
     const consumeResult = await consumeStudentEmailVerification(token);
@@ -347,67 +363,12 @@ export async function verifyTeamMemberEmail(token: string): Promise<
     }
 
     const allVerified = await allMembersVerified(member.teamId);
-    if (!allVerified) {
-        return {
-            ok: true,
-            data: {
-                verified: true,
-                allVerified: false,
-                alreadyVerified: consumeResult.data.alreadyVerified,
-            },
-        };
-    }
-
-    const registration = await getRegistrationByTeamId(member.teamId);
-    if (registration?.status !== "PENDING") {
-        return {
-            ok: true,
-            data: {
-                verified: true,
-                allVerified: true,
-                alreadyVerified: consumeResult.data.alreadyVerified,
-            },
-        };
-    }
-
-    const leader = registration.team.members.find((m) => m.role === "LEADER") ?? registration.team.members[0];
-    if (!leader) {
-        return {
-            ok: true,
-            data: {
-                verified: true,
-                allVerified: true,
-                alreadyVerified: consumeResult.data.alreadyVerified,
-            },
-        };
-    }
-
-    const provisionResult = await provisionTeamAccount(
-        registration.id,
-        registration.teamId,
-        registration.team.displayName,
-        registration.team.loginName,
-        { name: leader.name, studentEmail: leader.studentEmail },
-        null,
-    );
-
-    if (!provisionResult.ok) {
-        return {
-            ok: true,
-            data: {
-                verified: true,
-                allVerified: true,
-                alreadyVerified: consumeResult.data.alreadyVerified,
-                approvalPending: true,
-            },
-        };
-    }
 
     return {
         ok: true,
         data: {
             verified: true,
-            allVerified: true,
+            allVerified,
             alreadyVerified: consumeResult.data.alreadyVerified,
         },
     };

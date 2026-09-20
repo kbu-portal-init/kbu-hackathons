@@ -56,13 +56,6 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
                 text: `Reset your KBU Hub password using this link: ${data.resetUrl}`,
                 html: `<p>Reset your KBU Hub password using the link below.</p><p><a href="${escapeHtml(data.resetUrl)}">Reset password</a></p>`,
             };
-        case "SIGN_IN_LINK":
-            return {
-                type,
-                subject: "Your KBU Hub sign-in link",
-                text: `Sign in to KBU Hub using this link: ${data.resetUrl}`,
-                html: `<p>Sign in to KBU Hub using the link below.</p><p><a href="${escapeHtml(data.resetUrl)}">Sign in</a></p>`,
-            };
         case "STUDENT_EMAIL_VERIFICATION":
             return {
                 type,
@@ -74,8 +67,8 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
             return {
                 type,
                 subject: `${data.teamName ?? "Your team"} registration approved`,
-                text: `Your team registration has been approved.\n\nTeam: ${data.teamName ?? "Not provided"}\n\nSign in using this link: ${data.resetUrl}`,
-                html: `<p>Your team registration has been approved.</p><p><strong>Team:</strong> ${escapeHtml(data.teamName) || "Not provided"}</p><p><a href="${escapeHtml(data.resetUrl)}">Sign in to your team</a></p>`,
+                text: `Your team registration has been approved.\n\nTeam: ${data.teamName ?? "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`,
+                html: `<p>Your team registration has been approved.</p><p><strong>Team:</strong> ${escapeHtml(data.teamName) || "Not provided"}</p><p><a href="${escapeHtml(data.resetUrl)}">Set your team password</a></p>`,
             };
         case "TEAM_REGISTRATION_REJECTED":
             return {
