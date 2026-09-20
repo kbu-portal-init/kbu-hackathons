@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { heroParallax } from "./hero-parallax";
 import RoomOverlay, { type RoomPhase } from "./RoomOverlay";
 import RoomScene, { type RoomSceneHandle } from "./RoomScene";
 import { roomObjects } from "./room-objects";
@@ -40,7 +41,7 @@ export default function RoomExperience() {
     }, [selected]);
 
     return (
-        <div className="relative h-72 w-full overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-950 to-slate-900 shadow-xl shadow-cyan-500/10 sm:h-80 lg:h-[30rem] dark:border-slate-800 dark:from-slate-950 dark:to-black dark:shadow-cyan-500/10">
+        <div className="relative h-72 w-full overflow-hidden rounded-3xl border border-white/10 bg-transparent shadow-xl shadow-violet-500/10 sm:h-80 lg:h-120">
             <RoomScene
                 ref={sceneRef}
                 objects={roomObjects}
@@ -51,6 +52,7 @@ export default function RoomExperience() {
                 onProgress={(_loaded, total) => setProgress(total ? _loaded / total : 0)}
                 onReady={() => setPhase("ready")}
                 onError={() => setPhase("error")}
+                parallaxRef={heroParallax}
                 className="absolute inset-0 h-full w-full"
             />
             <RoomOverlay

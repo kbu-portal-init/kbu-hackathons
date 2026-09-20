@@ -24,6 +24,8 @@ type RoomSceneProps = {
     onProgress?: (loaded: number, total: number) => void;
     onReady?: () => void;
     onError?: () => void;
+    /** Scroll progress 0..1 driving a subtle parallax; leave unset to disable. */
+    parallaxRef?: { current: number };
     className?: string;
 };
 
@@ -32,12 +34,25 @@ const MODEL_URL = "/models/office-desk.glb";
 const DEFAULT_CAMERA = new THREE.Vector3(5.0, 6.4, 10.6);
 const DEFAULT_TARGET = new THREE.Vector3(0, 4.4, 3.6);
 const HOVER_EMISSIVE = new THREE.Color(0x22d3ee);
-const COLOR_BLACK = new THREE.Color(0x000000);
 const HOVER_INTENSITY = 0.45;
+/** Subtle violet glow every themed object carries; hover still overrides to cyan. */
+const BASE_EMISSIVE = new THREE.Color(0x7c3aed);
+const BASE_INTENSITY = 0.16;
 const LAMP_HEAD = new THREE.Vector3(2.7, 8.0, 4.5);
 
 const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene(
-    { objects, active, onHover, onSelect, onAction, onProgress, onReady, onError, className }: RoomSceneProps,
+    {
+        objects,
+        active,
+        onHover,
+        onSelect,
+        onAction,
+        onProgress,
+        onReady,
+        onError,
+        parallaxRef,
+        className,
+    }: RoomSceneProps,
     ref: ForwardedRef<RoomSceneHandle>,
 ) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,6 +71,11 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
     const onProgressRef = useRef(onProgress);
     const onReadyRef = useRef(onReady);
     const onErrorRef = useRef(onError);
+    // The parallax ref is read inside the render loop; it is deliberately not
+    // an effect dependency — rebuilding the scene on every progress tick would
+    // reload the GLB and reset the camera.
+    const parallaxValueRef = useRef(parallaxRef);
+    parallaxValueRef.current = parallaxRef;
     activeRef.current = active;
     onHoverRef.current = onHover;
     onSelectRef.current = onSelect;
@@ -141,6 +161,19 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         const emissiveTargets = new Map<THREE.Mesh, { color: THREE.Color; intensity: number }>();
         const hoveredState = { id: null as string | null };
 
+        /** Tech Dark Mode: give every standard material a low-intensity violet glow. */
+        function applyThemeGlow(mesh: THREE.Mesh) {
+            const apply = (material: THREE.Material) => {
+                if (material instanceof THREE.MeshStandardMaterial) {
+                    material.emissive.copy(BASE_EMISSIVE);
+                    material.emissiveIntensity = BASE_INTENSITY;
+                }
+            };
+            const material = mesh.material;
+            if (Array.isArray(material)) material.forEach(apply);
+            else apply(material);
+        }
+
         function tagMesh(mesh: THREE.Mesh, id: string) {
             if (mesh.userData.roomObjectId) return;
             mesh.userData.roomObjectId = id;
@@ -169,6 +202,9 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         const loader = new GLTFLoader(manager);
 
         let mixer: THREE.AnimationMixer | null = null;
+        let modelRoot: THREE.Group | null = null;
+        let baseRotationY = 0;
+        let basePositionY = 0;
         const disposables: { dispose: () => void }[] = [];
 
         loader.load(
@@ -179,8 +215,12 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
                     if (child instanceof THREE.Mesh) {
                         child.castShadow = true;
                         child.receiveShadow = true;
+                        applyThemeGlow(child);
                     }
                 });
+                modelRoot = model;
+                baseRotationY = model.rotation.y;
+                basePositionY = model.position.y;
                 scene.add(model);
                 disposables.push(model);
 
@@ -202,6 +242,7 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
                         if (meshes.length > 0) registerObject(object.id, meshes);
                     } else {
                         const built = buildPrimitive(object.anchor.shape, object.anchor.position);
+                        for (const mesh of built.meshes) applyThemeGlow(mesh);
                         model.add(built.group);
                         disposables.push(built.group);
                         registerObject(object.id, built.meshes);
@@ -239,8 +280,8 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
                 const material = mesh.material;
                 if (material instanceof THREE.MeshStandardMaterial) {
                     emissiveTargets.set(mesh, {
-                        color: mesh.userData.roomObjectId === id ? HOVER_EMISSIVE : COLOR_BLACK,
-                        intensity: mesh.userData.roomObjectId === id ? HOVER_INTENSITY : 0,
+                        color: mesh.userData.roomObjectId === id ? HOVER_EMISSIVE : BASE_EMISSIVE,
+                        intensity: mesh.userData.roomObjectId === id ? HOVER_INTENSITY : BASE_INTENSITY,
                     });
                 }
             }
@@ -365,6 +406,13 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
             timer.update();
             const delta = timer.getDelta();
             mixer?.update(delta);
+
+            // Scroll-linked parallax: a small turn and drift of the room model.
+            if (modelRoot) {
+                const parallax = parallaxValueRef.current?.current ?? 0;
+                modelRoot.rotation.y = baseRotationY + parallax * 0.22;
+                modelRoot.position.y = basePositionY - parallax * 0.12;
+            }
 
             // Slow drift while the visitor decides to enter; stops on entry.
             controls.autoRotate = !activeRef.current && !reducedMotion;

@@ -1,78 +1,88 @@
 @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
+/*
+ * Tech Dark Mode. Dark is the product default (forced on <html> in
+ * app/layout.tsx): the public site is a dark experience and the app shells are
+ * dark-first. Light mode keeps the violet/cyan accents on a near-white canvas
+ * so the two modes stay consistent.
+ */
 :root {
-    --background: #ffffff;
-    --foreground: #18181b;
+    --background: #f7f7f9;
+    --foreground: #0a0a0f;
     --card: #ffffff;
-    --card-foreground: #18181b;
+    --card-foreground: #0a0a0f;
     --popover: #ffffff;
-    --popover-foreground: #18181b;
+    --popover-foreground: #0a0a0f;
 
-    --primary: #0891b2;
+    --primary: #7c3aed;
     --primary-foreground: #ffffff;
 
-    --secondary: #f1f5f9;
-    --secondary-foreground: #1e293b;
+    --secondary: #eef0f4;
+    --secondary-foreground: #1c1f27;
 
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
+    --muted: #eef0f4;
+    --muted-foreground: #6b7280;
 
-    --accent: #ecfeff;
-    --accent-foreground: #155e75;
+    --accent: #f1ebfe;
+    --accent-foreground: #5b21b6;
 
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
 
-    --border: #e2e8f0;
-    --input: #e2e8f0;
-    --ring: #0891b2;
+    --border: #e2e5ec;
+    --input: #e2e5ec;
+    --ring: #7c3aed;
 
-    --sidebar: #f8fafc;
-    --sidebar-foreground: #1e293b;
-    --sidebar-primary: #0891b2;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #0a0a0f;
+    --sidebar-primary: #7c3aed;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ecfeff;
-    --sidebar-accent-foreground: #155e75;
-    --sidebar-border: #cbd5e1;
-    --sidebar-ring: #0891b2;
+    --sidebar-accent: #f1ebfe;
+    --sidebar-accent-foreground: #5b21b6;
+    --sidebar-border: #d8dce5;
+    --sidebar-ring: #7c3aed;
+
+    --success: #34d399;
 }
 
 .dark {
-    --background: #020617;
-    --foreground: #f8fafc;
-    --card: #0f172a;
-    --card-foreground: #f8fafc;
-    --popover: #0f172a;
-    --popover-foreground: #f8fafc;
+    --background: #0a0a0f;
+    --foreground: #f5f5f7;
+    --card: #161b22;
+    --card-foreground: #f5f5f7;
+    --popover: #161b22;
+    --popover-foreground: #f5f5f7;
 
-    --primary: #22d3ee;
-    --primary-foreground: #042f2e;
+    --primary: #7c3aed;
+    --primary-foreground: #ffffff;
 
-    --secondary: #1e293b;
-    --secondary-foreground: #f8fafc;
+    --secondary: #1a2029;
+    --secondary-foreground: #f5f5f7;
 
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
+    --muted: #1a2029;
+    --muted-foreground: #9ca3af;
 
-    --accent: #042f2e;
-    --accent-foreground: #a5f3fc;
+    --accent: #1b1530;
+    --accent-foreground: #c4b5fd;
 
     --destructive: #f87171;
     --destructive-foreground: #450a0a;
 
-    --border: #334155;
-    --input: #334155;
-    --ring: #22d3ee;
+    --border: rgba(148, 163, 184, 0.14);
+    --input: rgba(148, 163, 184, 0.16);
+    --ring: #7c3aed;
 
-    --sidebar: #0f172a;
-    --sidebar-foreground: #f8fafc;
-    --sidebar-primary: #22d3ee;
-    --sidebar-primary-foreground: #042f2e;
-    --sidebar-accent: #042f2e;
-    --sidebar-accent-foreground: #a5f3fc;
-    --sidebar-border: #334155;
-    --sidebar-ring: #22d3ee;
+    --sidebar: #0d1117;
+    --sidebar-foreground: #f5f5f7;
+    --sidebar-primary: #7c3aed;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #1b1530;
+    --sidebar-accent-foreground: #c4b5fd;
+    --sidebar-border: rgba(148, 163, 184, 0.14);
+    --sidebar-ring: #7c3aed;
+
+    --success: #34d399;
 }
 
 @theme inline {
@@ -111,6 +121,8 @@
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 
+    --color-success: var(--success);
+
     --font-sans: "Plus Jakarta Sans", sans-serif;
     --font-mono: "Fira Code", monospace;
 }
@@ -131,4 +143,61 @@ pre,
 kbd,
 samp {
     font-family: "Fira Code", monospace;
+}
+
+/*
+ * Tech Dark Mode utilities. The violet→cyan gradient is reserved for primary
+ * CTAs, key headline text, and section dividers only — everything else uses
+ * flat accents so accent use stays minimal and consistent.
+ */
+
+/* Violet→cyan gradient. Usable as gradient text (transparent color) or as a
+ * background fill for primary CTAs and section dividers. */
+.text-gradient {
+    background-image: linear-gradient(90deg, #7c3aed, #22d3ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.bg-gradient-accent {
+    background-image: linear-gradient(90deg, #7c3aed, #22d3ee);
+}
+
+/* Glassmorphism for cards and panels. */
+.glass {
+    background-color: rgba(22, 27, 34, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-violet {
+    background-color: rgba(22, 27, 34, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+/* Dot-grid texture used behind the hero and final-CTA bands. */
+.dot-grid {
+    background-image: radial-gradient(circle, rgba(148, 163, 184, 0.16) 1px, transparent 1px);
+    background-size: 25px 25px;
+}
+
+/*
+ * Scroll reveal. Elements carrying [data-reveal] are hidden only after the
+ * ScrollFx client module arms the page (adds .fx-armed to <html>), so no-JS
+ * and prefers-reduced-motion visitors see the final state instead of
+ * permanently invisible content. GSAP sets inline opacity/transform on reveal,
+ * so no CSS transition is needed here.
+ */
+.fx-armed [data-reveal] {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fx-armed [data-reveal] {
+        opacity: 1;
+    }
 }
