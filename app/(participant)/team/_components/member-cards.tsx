@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { generateMemberCard } from "@/actions/participant/member-cards";
+import { CardImageViewer } from "@/components/card-image-viewer";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
 
@@ -19,7 +19,13 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
         if (result.ok) {
             setItems((current) =>
                 current.map((member) =>
-                    member.id === result.data.id ? { ...member, cardUrl: result.data.cardUrl } : member,
+                    member.id === result.data.id
+                        ? {
+                              ...member,
+                              cardUrl: result.data.cardUrl,
+                              cardShareToken: result.data.cardShareToken,
+                          }
+                        : member,
                 ),
             );
         } else {
@@ -87,13 +93,10 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                 Generating new card...
                             </div>
                         ) : member.cardUrl ? (
-                            <Image
+                            <CardImageViewer
                                 alt={`${member.name} digital card`}
                                 className="aspect-1200/630 w-full object-cover"
-                                height={630}
                                 src={member.cardUrl}
-                                unoptimized
-                                width={1200}
                             />
                         ) : (
                             <div className="flex aspect-1200/630 items-center justify-center bg-orange-50 text-sm text-orange-900">

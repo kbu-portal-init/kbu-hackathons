@@ -33,12 +33,12 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     const config = {
         participant: {
-            label: "Team workspace",
+            label: "Team",
             title: "Team dashboard",
             links: participantDashboardLinks,
         },
         management: {
-            label: "Management workspace",
+            label: "Management panel",
             title: "Management panel",
             links: managementDashboardLinks,
         },

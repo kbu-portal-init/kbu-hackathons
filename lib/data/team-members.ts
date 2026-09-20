@@ -18,3 +18,13 @@ export async function getTeamMembersForCards(teamId: string): Promise<TeamMember
 
     return members;
 }
+
+export async function getTeamApprovalDate(teamId: string): Promise<string | null> {
+    const review = await prisma.registrationReview.findFirst({
+        where: { registration: { teamId }, decision: "APPROVED" },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+    });
+
+    return review?.createdAt.toISOString() ?? null;
+}

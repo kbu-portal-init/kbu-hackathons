@@ -25,4 +25,4 @@ export type TeamMemberCard = {
     cardShareToken: string | null;
 };
 
-export type GenerateMemberCardData = Pick<TeamMemberCard, "id" | "cardUrl">;
+export type GenerateMemberCardData = Pick<TeamMemberCard, "id" | "cardUrl" | "cardShareToken">;

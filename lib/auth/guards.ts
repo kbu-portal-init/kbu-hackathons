@@ -36,7 +36,7 @@ export async function redirectAuthenticatedUser() {
     const session = await auth.api.getSession({ headers: await headers() });
     const role = getUserRole(session?.user?.role);
 
-    if (role === "team") redirect("/teams");
+    if (role === "team") redirect("/team");
     if (role === "organizer") redirect("/panel");
     if (role === "admin") redirect("/admin");
 }

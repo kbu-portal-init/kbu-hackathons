@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CardImageViewer } from "@/components/card-image-viewer";
 import { getPublicMemberCard } from "@/lib/data/public-member-cards";
 import { ShareCardButton } from "./_components/share-card-button";
 
@@ -27,15 +27,7 @@ export default async function PublicMemberCardPage({ params }: PublicCardPagePro
     return (
         <main className="flex min-h-screen items-center justify-center bg-orange-50 px-6 py-12">
             <section className="w-full max-w-3xl overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-xl shadow-orange-100/60">
-                <Image
-                    alt="KBU Hackathon participant card"
-                    className="h-auto w-full"
-                    height={630}
-                    priority
-                    src={cardUrl}
-                    unoptimized
-                    width={1200}
-                />
+                <CardImageViewer alt="KBU Hackathon participant card" className="h-auto w-full" src={cardUrl} />
                 <div className="border-t border-orange-100 bg-orange-50/60 p-6 text-center">
                     <ShareCardButton />
                 </div>

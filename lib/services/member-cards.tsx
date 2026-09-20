@@ -32,7 +32,9 @@ async function renderMemberCard(
                 flexDirection: "column",
                 height: "100%",
                 justifyContent: "space-between",
+                overflow: "hidden",
                 padding: "72px",
+                borderRadius: 32,
                 width: "100%",
             }}
         >
@@ -110,7 +112,7 @@ export async function generateMemberCard(
             await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: member.cardKey }));
         }
 
-        return { ok: true, data: { id: member.id, cardUrl } };
+        return { ok: true, data: { id: member.id, cardUrl, cardShareToken } };
     } catch {
         if (uploadedKey) {
             try {

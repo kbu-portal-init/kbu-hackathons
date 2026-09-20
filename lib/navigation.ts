@@ -19,11 +19,10 @@ export const publicLinks = [
 ] as const;
 
 export const participantDashboardLinks = [
-    { href: "/teams", label: "Overview", icon: LayoutDashboard },
-    { href: "/teams/references", label: "References", icon: FileText },
-    { href: "/teams/members", label: "Team members", icon: Users },
-    { href: "/teams/submit", label: "Submit", icon: Upload },
-    { href: "/teams/settings", label: "Settings", icon: Settings },
+    { href: "/team", label: "Our Team", icon: Users },
+    { href: "/team/references", label: "References", icon: FileText },
+    { href: "/team/submit", label: "Submit", icon: Upload },
+    { href: "/team/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export const managementDashboardLinks = [
@@ -46,5 +45,3 @@ export const adminDashboardLinks = [
     { href: "/admin/settings", label: "Settings", icon: Settings },
     { href: "/panel", label: "Management panel", icon: ShieldCheck },
 ] as const;
-
-export const toAdminDashboardLink = { href: "/admin", label: "Admin dashboard", icon: LayoutDashboard };
