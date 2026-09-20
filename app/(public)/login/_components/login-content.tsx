@@ -20,7 +20,7 @@ export function LoginContent({ audience, title, description }: LoginContentProps
     const isParticipant = audience === "participant";
 
     const onSuccess = () => {
-        router.push(isParticipant ? "/teams" : "/panel");
+        router.push(isParticipant ? "/team" : "/panel");
         toast.success("Sign in successful");
     };
 
@@ -65,7 +65,7 @@ function TeamLoginForm() {
             return;
         }
         toast.success("Sign in successful");
-        window.location.href = "/teams";
+        window.location.href = "/team";
     };
 
     const usernameError = form.formState.errors.username;

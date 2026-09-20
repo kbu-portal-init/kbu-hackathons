@@ -59,7 +59,7 @@ export const studentEmailGuide: StudentEmailGuideData = {
         {
             stepNumber: "02",
             title: "Enter Your KBU Email",
-            detail: "Input your student email address formatted as u[StudentID]@ms.kbu.ac.th (for example: u66130500123@ms.kbu.ac.th).",
+            detail: "Input your student email address formatted as u[12-digit StudentID]@ms.kbu.ac.th (for example: u661305001234@ms.kbu.ac.th).",
         },
         {
             stepNumber: "03",
