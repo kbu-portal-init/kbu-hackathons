@@ -10,7 +10,7 @@ export default async function AdminSettingsPage() {
     if (!profile) return null;
 
     return (
-        <main className="flex-1 space-y-8 p-6 lg:p-8">
+        <main className="space-y-8">
             <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">
                     Administrator workspace

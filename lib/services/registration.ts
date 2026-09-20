@@ -3,6 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     ApproveRegistrationInput,
@@ -143,14 +144,20 @@ async function provisionTeamAccount(
         if (error instanceof RegistrationLimitReachedError) {
             return {
                 ok: false,
-                error: { code: "MAX_TEAMS_REACHED", message: error.message },
+                error: {
+                    code: ErrorCodes.MAX_TEAMS_REACHED,
+                    message: "Maximum number of teams has been reached",
+                },
             };
         }
 
         if (error instanceof RegistrationStatusChangedError) {
             return {
                 ok: false,
-                error: { code: "INVALID_STATUS", message: error.message },
+                error: {
+                    code: ErrorCodes.INVALID_STATUS,
+                    message: "Invalid status",
+                },
             };
         }
 
@@ -171,7 +178,10 @@ async function provisionTeamAccount(
         }
         return {
             ok: false,
-            error: { code: "APPROVAL_FAILED", message: "Failed to approve registration" },
+            error: {
+                code: ErrorCodes.APPROVAL_FAILED,
+                message: "Failed to approve registration",
+            },
         };
     }
 
@@ -215,7 +225,10 @@ export async function submitRegistration(
     if (!eventSettings) {
         return {
             ok: false,
-            error: { code: "EVENT_NOT_CONFIGURED", message: "Event settings are not configured" },
+            error: {
+                code: ErrorCodes.EVENT_NOT_CONFIGURED,
+                message: "Event settings are not configured",
+            },
         };
     }
 
@@ -223,7 +236,10 @@ export async function submitRegistration(
     if (now < eventSettings.registrationOpensAt || now > eventSettings.registrationClosesAt) {
         return {
             ok: false,
-            error: { code: "REGISTRATION_CLOSED", message: "Registration is not currently open" },
+            error: {
+                code: ErrorCodes.REGISTRATION_CLOSED,
+                message: "Registration is not currently open",
+            },
         };
     }
 
@@ -232,7 +248,7 @@ export async function submitRegistration(
         return {
             ok: false,
             error: {
-                code: "INVALID_TEAM_SIZE",
+                code: ErrorCodes.INVALID_TEAM_SIZE,
                 message: `Team must have ${eventSettings.minTeamSize} to ${eventSettings.maxTeamSize} members`,
             },
         };
@@ -242,7 +258,10 @@ export async function submitRegistration(
     if (approvedCount >= eventSettings.maxTeams) {
         return {
             ok: false,
-            error: { code: "MAX_TEAMS_REACHED", message: "Maximum number of teams has been reached" },
+            error: {
+                code: ErrorCodes.MAX_TEAMS_REACHED,
+                message: "Maximum number of teams has been reached",
+            },
         };
     }
 
@@ -329,7 +348,10 @@ export async function verifyTeamMemberEmail(token: string): Promise<
     if (!member) {
         return {
             ok: false,
-            error: { code: "TEAM_MEMBER_NOT_FOUND", message: "Team member not found" },
+            error: {
+                code: ErrorCodes.TEAM_MEMBER_NOT_FOUND,
+                message: "Team member not found",
+            },
         };
     }
 
@@ -410,13 +432,19 @@ export async function approveRegistration(
     if (!record) {
         return {
             ok: false,
-            error: { code: "REGISTRATION_NOT_FOUND", message: "Registration not found" },
+            error: {
+                code: ErrorCodes.REGISTRATION_NOT_FOUND,
+                message: "Registration not found",
+            },
         };
     }
     if (record.status !== "PENDING") {
         return {
             ok: false,
-            error: { code: "INVALID_STATUS", message: "Registration is not pending" },
+            error: {
+                code: ErrorCodes.INVALID_STATUS,
+                message: "Invalid status",
+            },
         };
     }
 
@@ -425,7 +453,7 @@ export async function approveRegistration(
         return {
             ok: false,
             error: {
-                code: "EMAIL_VERIFICATION_PENDING",
+                code: ErrorCodes.EMAIL_VERIFICATION_PENDING,
                 message:
                     "All team members must verify their email before approval. Unverified members can be manually verified in the detail view.",
             },
@@ -436,7 +464,10 @@ export async function approveRegistration(
     if (!leader) {
         return {
             ok: false,
-            error: { code: "NO_LEADER", message: "No team leader found" },
+            error: {
+                code: ErrorCodes.TEAM_LEADER_NOT_FOUND,
+                message: "Team leader not found",
+            },
         };
     }
 
@@ -460,13 +491,19 @@ export async function rejectRegistration(
     if (!record) {
         return {
             ok: false,
-            error: { code: "REGISTRATION_NOT_FOUND", message: "Registration not found" },
+            error: {
+                code: ErrorCodes.REGISTRATION_NOT_FOUND,
+                message: "Registration not found",
+            },
         };
     }
     if (record.status !== "PENDING") {
         return {
             ok: false,
-            error: { code: "INVALID_STATUS", message: "Registration is not pending" },
+            error: {
+                code: ErrorCodes.INVALID_STATUS,
+                message: "Invalid status",
+            },
         };
     }
 

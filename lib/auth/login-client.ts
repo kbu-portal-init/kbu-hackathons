@@ -3,6 +3,7 @@
 import { sendTeamMagicLink as sendTeamMagicLinkAction } from "@/actions/auth";
 import { authClient } from "@/lib/auth-client";
 import { type LoginResult, staffLoginSchema, teamMagicLinkSchema } from "@/lib/contracts/auth";
+import { ErrorCodes } from "@/lib/contracts/errors";
 
 const success = (): LoginResult => ({ ok: true, data: { authenticated: true } });
 const failure = (code: string, message: string): LoginResult => ({ ok: false, error: { code, message } });
@@ -10,22 +11,26 @@ const failure = (code: string, message: string): LoginResult => ({ ok: false, er
 export async function loginAsStaff(input: unknown): Promise<LoginResult> {
     const parsed = staffLoginSchema.safeParse(input);
     if (!parsed.success) {
-        return failure("VALIDATION_ERROR", parsed.error.issues[0]?.message ?? "Invalid login");
+        return failure(ErrorCodes.VALIDATION_ERROR, parsed.error.issues[0]?.message ?? "Some fields are invalid");
     }
 
     try {
         const result = await authClient.signIn.email(parsed.data);
-        if (result.error) return failure("AUTHENTICATION_FAILED", result.error.message ?? "Unable to sign in");
+        if (result.error)
+            return failure(
+                ErrorCodes.AUTHENTICATION_FAILED,
+                result.error.message ?? "Unable to authenticate. Please try again.",
+            );
         return success();
     } catch {
-        return failure("AUTHENTICATION_FAILED", "Unable to sign in. Please try again.");
+        return failure(ErrorCodes.AUTHENTICATION_FAILED, "Unable to authenticate. Please try again.");
     }
 }
 
 export async function sendTeamMagicLink(input: unknown): Promise<LoginResult> {
     const parsed = teamMagicLinkSchema.safeParse(input);
     if (!parsed.success) {
-        return failure("VALIDATION_ERROR", parsed.error.issues[0]?.message ?? "Invalid email");
+        return failure(ErrorCodes.VALIDATION_ERROR, parsed.error.issues[0]?.message ?? "Some fields are invalid");
     }
 
     const result = await sendTeamMagicLinkAction(parsed.data);

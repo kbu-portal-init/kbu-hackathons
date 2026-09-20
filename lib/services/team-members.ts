@@ -1,6 +1,7 @@
 ﻿import "server-only";
 
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { UpdateMemberImageData, UpdateMemberImageInput } from "@/lib/contracts/team-members";
 import prisma from "@/lib/prisma";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
@@ -12,7 +13,10 @@ export async function updateMemberImage(
     if (input.imageUrl && !isOwnedR2PublicUrl(input.imageUrl, `uploads/${teamId}`)) {
         return {
             ok: false,
-            error: { code: "IMAGE_NOT_OWNED", message: "Member image must be uploaded to your team storage area" },
+            error: {
+                code: ErrorCodes.IMAGE_NOT_OWNED,
+                message: "Member image must be uploaded to your team storage area",
+            },
         };
     }
 
@@ -25,7 +29,10 @@ export async function updateMemberImage(
         if (!member) {
             return {
                 ok: false,
-                error: { code: "MEMBER_NOT_FOUND", message: "Team member not found" },
+                error: {
+                    code: ErrorCodes.TEAM_MEMBER_NOT_FOUND,
+                    message: "Team member not found",
+                },
             };
         }
 
@@ -38,7 +45,7 @@ export async function updateMemberImage(
     } catch {
         return {
             ok: false,
-            error: { code: "UPDATE_FAILED", message: "Failed to update member image" },
+            error: { code: ErrorCodes.UPDATE_FAILED, message: "Failed to update" },
         };
     }
 }

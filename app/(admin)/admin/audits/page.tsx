@@ -33,7 +33,7 @@ export default async function AdminAuditsPage({
     };
 
     return (
-        <main className="flex-1 space-y-8 p-6 lg:p-8">
+        <main className="space-y-8">
             <div>
                 <Link href="/admin" className="text-sm font-medium text-orange-600">
                     ← Dashboard
