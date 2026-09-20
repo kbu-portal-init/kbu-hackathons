@@ -45,10 +45,22 @@ export async function listAnnouncements(input: unknown): Promise<AnnouncementLis
         };
     }
 
-    return {
-        ok: true,
-        data: await listAnnouncementsData(parsed.data as ListAnnouncementInput),
-    };
+    try {
+        return {
+            ok: true,
+            data: await listAnnouncementsData(parsed.data as ListAnnouncementInput),
+        };
+    } catch (error) {
+        console.error("[announcements] list failed", error);
+
+        return {
+            ok: false,
+            error: {
+                code: "ANNOUNCEMENT_LIST_FAILED",
+                message: "Failed to load announcements.",
+            },
+        };
+    }
 }
 
 export async function getAnnouncement(input: unknown): Promise<AnnouncementActionResult> {
@@ -67,7 +79,21 @@ export async function getAnnouncement(input: unknown): Promise<AnnouncementActio
         };
     }
 
-    const announcement = await getAnnouncementById(parsed.data.announcementId);
+    let announcement: Awaited<ReturnType<typeof getAnnouncementById>>;
+
+    try {
+        announcement = await getAnnouncementById(parsed.data.announcementId);
+    } catch (error) {
+        console.error("[announcements] fetch failed", error);
+
+        return {
+            ok: false,
+            error: {
+                code: "ANNOUNCEMENT_FETCH_FAILED",
+                message: "Failed to load announcement.",
+            },
+        };
+    }
 
     if (!announcement) {
         return {
@@ -194,8 +220,20 @@ export async function listPublishedAnnouncements(input: unknown): Promise<Public
         };
     }
 
-    return {
-        ok: true,
-        data: await listPublicAnnouncementsData(parsed.data as ListPublicAnnouncementInput),
-    };
+    try {
+        return {
+            ok: true,
+            data: await listPublicAnnouncementsData(parsed.data as ListPublicAnnouncementInput),
+        };
+    } catch (error) {
+        console.error("[announcements] public list failed", error);
+
+        return {
+            ok: false,
+            error: {
+                code: "ANNOUNCEMENT_LIST_FAILED",
+                message: "Failed to load announcements.",
+            },
+        };
+    }
 }
