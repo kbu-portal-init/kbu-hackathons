@@ -213,7 +213,9 @@ describe("announcement data", () => {
             false,
         );
 
-        assert.ok(result.items.every((announcement) => announcement.status === "PUBLISHED"));
+        assert.ok(
+            result.items.every((announcement) => !("createdById" in announcement) && !("status" in announcement)),
+        );
     });
 
     it("orders public announcements newest first", async () => {

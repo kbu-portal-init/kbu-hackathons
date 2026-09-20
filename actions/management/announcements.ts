@@ -6,6 +6,7 @@ import type {
     AnnouncementListActionResult,
     ListAnnouncementInput,
     ListPublicAnnouncementInput,
+    PublicAnnouncementListActionResult,
 } from "@/lib/contracts/announcements";
 import {
     announcementIdSchema,
@@ -179,7 +180,7 @@ export async function deleteAnnouncement(input: unknown): Promise<AnnouncementAc
     return deleteAnnouncementService(parsed.data, session.user.id);
 }
 
-export async function listPublishedAnnouncements(input: unknown): Promise<AnnouncementListActionResult> {
+export async function listPublishedAnnouncements(input: unknown): Promise<PublicAnnouncementListActionResult> {
     const parsed = ListPublicAnnouncementSchema.safeParse(input);
 
     if (!parsed.success) {

@@ -71,6 +71,8 @@ export type AnnouncementDTO = {
     updatedAt: string;
 };
 
+export type PublicAnnouncementDTO = Omit<AnnouncementDTO, "createdById" | "status">;
+
 export const ListPublicAnnouncementSchema = z.object({
     page: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(100).default(20),
@@ -82,3 +84,5 @@ export type ListPublicAnnouncementInput = z.infer<typeof ListPublicAnnouncementS
 export type AnnouncementActionResult = ActionResult<AnnouncementDTO>;
 
 export type AnnouncementListActionResult = ListActionResult<AnnouncementDTO>;
+
+export type PublicAnnouncementListActionResult = ListActionResult<PublicAnnouncementDTO>;

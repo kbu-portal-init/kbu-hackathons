@@ -4,6 +4,7 @@ import type {
     AnnouncementDTO,
     ListAnnouncementInput,
     ListPublicAnnouncementInput,
+    PublicAnnouncementDTO,
 } from "@/lib/contracts/announcements";
 import type { ListResult } from "@/lib/contracts/common";
 import { DEFAULT_PAGE_SIZE } from "@/lib/contracts/common";
@@ -81,7 +82,7 @@ export async function getAnnouncementById(announcementId: string): Promise<Annou
 
 export async function listPublicAnnouncements(
     input: ListPublicAnnouncementInput,
-): Promise<ListResult<AnnouncementDTO>> {
+): Promise<ListResult<PublicAnnouncementDTO>> {
     const page = input.page ?? 1;
     const pageSize = input.pageSize ?? DEFAULT_PAGE_SIZE;
     const skip = (page - 1) * pageSize;
