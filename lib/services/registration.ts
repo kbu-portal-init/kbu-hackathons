@@ -40,6 +40,13 @@ async function uniqueLoginName(base: string): Promise<string> {
     }
 }
 
+class RegistrationLimitReachedError extends Error {
+    constructor() {
+        super("Maximum number of teams has been reached");
+        this.name = "RegistrationLimitReachedError";
+    }
+}
+
 // ── Internal: create team account and send sign-in link ────────────
 
 async function provisionTeamAccount(
@@ -73,6 +80,16 @@ async function provisionTeamAccount(
         });
 
         await prisma.$transaction(async (tx) => {
+            await tx.$queryRaw`SELECT id FROM "event_settings" WHERE id = 1 FOR UPDATE`;
+            const eventSettings = await tx.eventSettings.findUnique({
+                where: { id: 1 },
+                select: { maxTeams: true },
+            });
+            const approvedCount = await tx.registration.count({ where: { status: "APPROVED" } });
+            if (!eventSettings || approvedCount >= eventSettings.maxTeams) {
+                throw new RegistrationLimitReachedError();
+            }
+
             await tx.team.update({
                 where: { id: teamId },
                 data: { userId: user.id },
@@ -105,6 +122,13 @@ async function provisionTeamAccount(
             });
         });
     } catch (error) {
+        if (error instanceof RegistrationLimitReachedError) {
+            return {
+                ok: false,
+                error: { code: "MAX_TEAMS_REACHED", message: error.message },
+            };
+        }
+
         try {
             await prisma.auditLog.create({
                 data: {
