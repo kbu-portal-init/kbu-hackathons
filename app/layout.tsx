@@ -11,7 +11,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-    title: "KBU Hub | Hackathons that move ideas forward",
+    title: "KBU Hackathon 2026",
     description: "Discover hackathons, join a team, and keep up with the KBU community.",
 };
 

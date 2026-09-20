@@ -62,7 +62,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         <span className="flex size-7 items-center justify-center rounded-lg bg-orange-600 text-xs text-white">
                             K
                         </span>
-                        <span className="group-data-[collapsible=icon]:hidden">KBU Hub</span>
+                        <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
                     </Link>
                 </SidebarHeader>
                 <SidebarContent>
