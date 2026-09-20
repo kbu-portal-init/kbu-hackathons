@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { banAccount, unbanAccount } from "@/actions/admin/accounts";
 import { createOrganizer, updateOrganizer } from "@/actions/admin/organizers";
-import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
+import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -361,7 +361,7 @@ function OrganizerTable({
                                             Edit
                                         </Button>
                                         {item.banned ? (
-                                            <ConfirmActionDialog
+                                            <ConfirmActionAlertDialog
                                                 trigger={
                                                     <Button variant="outline" size="sm">
                                                         Unban

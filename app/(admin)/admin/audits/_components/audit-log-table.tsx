@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { deleteAuditLog } from "@/actions/admin/audits";
-import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
+import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AuditLogListItem } from "@/lib/contracts/audits";
@@ -69,7 +69,7 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
                                     {item.details == null ? "—" : JSON.stringify(item.details)}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <ConfirmActionDialog
+                                    <ConfirmActionAlertDialog
                                         trigger={
                                             <Button variant="destructive" size="sm" disabled={deletingId !== null}>
                                                 Delete
