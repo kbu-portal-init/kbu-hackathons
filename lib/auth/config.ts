@@ -6,8 +6,14 @@ import { username } from "better-auth/plugins/username";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
+import { checkMagicLinkRateLimit, upstashSecondaryStorage } from "@/lib/services/rate-limit";
 
 export const auth = betterAuth({
+    secondaryStorage: upstashSecondaryStorage,
+    rateLimit: {
+        enabled: true,
+        storage: upstashSecondaryStorage ? "secondary-storage" : "memory",
+    },
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
@@ -55,7 +61,9 @@ export const auth = betterAuth({
         }),
         admin(),
         magicLink({
-            sendMagicLink: async ({ email, url }, _ctx) => {
+            sendMagicLink: async ({ email, url }, ctx) => {
+                const rateLimit = await checkMagicLinkRateLimit(email, ctx?.request);
+                if (!rateLimit.success) throw new Error("Too many sign-in link requests");
                 const user = await prisma.user.findUnique({
                     where: { email },
                     select: {

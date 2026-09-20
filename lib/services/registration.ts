@@ -13,6 +13,7 @@ import type {
 } from "@/lib/contracts/registration";
 import { countApprovedTeams, getRegistrationByTeamId, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
+import { checkRegistrationRateLimit } from "@/lib/services/rate-limit";
 import {
     allMembersVerified,
     consumeStudentEmailVerification,
@@ -202,6 +203,14 @@ async function provisionTeamAccount(
 export async function submitRegistration(
     input: SubmitRegistrationInput,
 ): Promise<ActionResult<SubmitRegistrationData>> {
+    const registrationRateLimit = await checkRegistrationRateLimit(input.leaderEmail, await headers());
+    if (!registrationRateLimit.success) {
+        return {
+            ok: false,
+            error: { code: "RATE_LIMITED", message: "Too many registration attempts. Please try again later." },
+        };
+    }
+
     const eventSettings = await prisma.eventSettings.findUnique({ where: { id: 1 } });
     if (!eventSettings) {
         return {
@@ -283,7 +292,7 @@ export async function submitRegistration(
 
     let verificationEmailsSent = true;
     for (const memberId of result.memberIds) {
-        await sendStudentEmailVerification(memberId).catch(() => {
+        await sendStudentEmailVerification(memberId, { rateLimit: false }).catch(() => {
             verificationEmailsSent = false;
         });
     }

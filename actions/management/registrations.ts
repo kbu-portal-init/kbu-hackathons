@@ -126,7 +126,17 @@ export async function resendStudentEmailVerification(input: unknown): Promise<Ac
             },
         };
     }
-    await sendStudentEmailVerification(parsed.data.teamMemberId);
+    try {
+        await sendStudentEmailVerification(parsed.data.teamMemberId);
+    } catch (error) {
+        if (error instanceof Error && error.message === "Too many verification email requests") {
+            return {
+                ok: false,
+                error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later." },
+            };
+        }
+        throw error;
+    }
     return { ok: true, data: { sent: true } };
 }
 

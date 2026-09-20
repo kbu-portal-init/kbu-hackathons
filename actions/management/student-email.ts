@@ -26,6 +26,11 @@ export async function requestStudentEmailVerification(input: unknown): Promise<A
             return { ok: false, error: { code: "TEAM_MEMBER_NOT_FOUND", message: "Team member not found" } };
         if (error instanceof Error && error.message === "Invalid student email domain")
             return { ok: false, error: { code: "INVALID_STUDENT_EMAIL", message: "Student email is invalid" } };
+        if (error instanceof Error && error.message === "Too many verification email requests")
+            return {
+                ok: false,
+                error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later." },
+            };
         if (isNotificationDeliveryError(error))
             return { ok: false, error: { code: "EMAIL_SEND_FAILED", message: "Unable to send verification email" } };
         return {
