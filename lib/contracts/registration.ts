@@ -53,7 +53,7 @@ export type ApproveRegistrationInput = z.infer<typeof approveRegistrationSchema>
 export type ApproveRegistrationData = {
     registrationId: string;
     teamLoginName: string;
-    magicLinkSent: boolean;
+    passwordSetupSent: boolean;
 };
 
 export const rejectRegistrationSchema = z.object({

@@ -165,7 +165,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                 <SelectTrigger id="team-size" className="w-full">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent alignItemWithTrigger={false}>
                                     {Array.from({ length: maxTeamSize - minTeamSize + 1 }, (_, index) => {
                                         const size = minTeamSize + index;
                                         return (
@@ -339,7 +339,7 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                                             {roleOptions.find((option) => option.value === field.value)?.label}
                                         </SelectValue>
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent alignItemWithTrigger={false}>
                                         {roleOptions.map((opt) => (
                                             <SelectItem key={opt.value} value={opt.value}>
                                                 {opt.label}

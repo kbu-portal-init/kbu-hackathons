@@ -1,15 +1,9 @@
 import { z } from "zod";
 import type { ActionResult } from "./common";
 
-const kbuEmail = z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email("Enter a valid email address")
-    .refine((e) => e.endsWith("@ms.kbu.ac.th"), "Email must use the @ms.kbu.ac.th domain");
-
-export const teamMagicLinkSchema = z.object({
-    email: kbuEmail,
+export const teamLoginSchema = z.object({
+    username: z.string().trim().min(1, "Username is required"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const staffLoginSchema = z.object({
@@ -27,6 +21,7 @@ export const passwordResetSchema = z
         path: ["confirmPassword"],
     });
 
+export type TeamLoginInput = z.infer<typeof teamLoginSchema>;
 export type StaffLoginInput = z.infer<typeof staffLoginSchema>;
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>;
 

@@ -29,7 +29,7 @@ export default async function LoginChoicePage() {
                     Choose how you want to sign in
                 </h1>
                 <p className="mx-auto mt-5 max-w-xl text-center text-zinc-600">
-                    Select the workspace that matches your role. Authentication will be connected in a future phase.
+                    Select the workspace that matches your role.
                 </p>
                 <div className="mt-10 grid gap-5 md:grid-cols-2">
                     {loginOptions.map(({ href, icon: Icon, label, description }) => (
