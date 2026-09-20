@@ -315,4 +315,30 @@ describe("announcement service", () => {
 
         assert.equal(result.error.code, "ANNOUNCEMENT_NOT_FOUND");
     });
+
+    it("allows only one of two concurrent publishes to succeed", async () => {
+        const announcement = await createTestAnnouncement("DRAFT");
+
+        const results = await Promise.all([
+            publishAnnouncement({ announcementId: announcement.id }, testUserId),
+            publishAnnouncement({ announcementId: announcement.id }, testUserId),
+        ]);
+
+        assert.equal(results.filter((result) => result.ok).length, 1);
+
+        const failure = results.find((result) => !result.ok);
+
+        assert.ok(failure && !failure.ok);
+        assert.equal(failure.error.code, "ANNOUNCEMENT_INVALID_TRANSITION");
+
+        const auditCount = await prisma.auditLog.count({
+            where: {
+                action: "ANNOUNCEMENT_PUBLISHED",
+                targetType: "Announcement",
+                targetId: announcement.id,
+            },
+        });
+
+        assert.equal(auditCount, 1);
+    });
 });
