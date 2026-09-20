@@ -14,6 +14,8 @@ import type {
 } from "@/lib/contracts/registration";
 import { countApprovedTeams, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
+import { sendTeamRegistrationNotification } from "@/lib/services/notifications";
+import { createPasswordSetupUrl } from "@/lib/services/password-reset";
 import {
     allMembersVerified,
     consumeStudentEmailVerification,
@@ -196,9 +198,6 @@ async function provisionTeamAccount(
             },
         };
     }
-
-    const { createPasswordSetupUrl } = await import("@/lib/services/password-reset");
-    const { sendTeamRegistrationNotification } = await import("@/lib/services/notifications");
 
     let passwordSetupSent = true;
     try {
