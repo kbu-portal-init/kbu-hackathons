@@ -27,6 +27,8 @@ function announcementError(error: unknown, fallbackCode: string, fallbackMessage
         }
     }
 
+    console.error(`[announcements] ${fallbackCode}`, error);
+
     return {
         code: fallbackCode,
         message: fallbackMessage,
@@ -81,7 +83,9 @@ export async function createAnnouncement(
             ok: true,
             data: mapAnnouncementToDTO(announcement),
         };
-    } catch {
+    } catch (error) {
+        console.error("[announcements] ANNOUNCEMENT_CREATION_FAILED", error);
+
         return {
             ok: false,
             error: {
