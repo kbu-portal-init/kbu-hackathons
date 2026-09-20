@@ -6,13 +6,12 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { verifyTeamMemberEmail } from "@/actions/auth";
 
-type VerifyState = "loading" | "success" | "pending" | "already" | "error";
+type VerifyState = "loading" | "success" | "allVerified" | "already" | "error";
 
 function VerifyContent() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
     const [state, setState] = useState<VerifyState>("loading");
-    const [, setAllVerified] = useState(false);
 
     useEffect(() => {
         if (!token) {
@@ -21,21 +20,17 @@ function VerifyContent() {
         }
 
         verifyTeamMemberEmail(token).then((result) => {
-            console.log("Verification result:", result);
-
             if (!result.ok) {
-                console.log("Verification result:", result);
                 setState("error");
                 return;
             }
-            setAllVerified(result.data.allVerified);
-            setState(
-                result.data.approvalPending
-                    ? "pending"
-                    : result.data.verified && !result.data.allVerified
-                      ? "success"
-                      : "already",
-            );
+            if (result.data.alreadyVerified) {
+                setState("already");
+            } else if (result.data.allVerified) {
+                setState("allVerified");
+            } else {
+                setState("success");
+            }
         });
     }, [token]);
 
@@ -81,8 +76,21 @@ function VerifyContent() {
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Email verified!</h1>
                         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                            Your student email has been confirmed. Once all team members have verified their emails,
-                            your team will be automatically approved and you will receive your login credentials.
+                            Your student email has been confirmed. Once all team members have verified their emails, an
+                            organizer will review and approve your registration.
+                        </p>
+                    </>
+                )}
+
+                {state === "allVerified" && (
+                    <>
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+                            <CheckCircle2 className="size-7" />
+                        </div>
+                        <h1 className="mt-6 text-2xl font-bold tracking-tight">All emails verified!</h1>
+                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                            All team members have verified their emails. An organizer will review and approve your
+                            registration. You will receive your login credentials once approved.
                         </p>
                     </>
                 )}
@@ -95,19 +103,6 @@ function VerifyContent() {
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Already verified</h1>
                         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                             This email has already been verified. No further action is needed.
-                        </p>
-                    </>
-                )}
-
-                {state === "pending" && (
-                    <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
-                            <CheckCircle2 className="size-7" />
-                        </div>
-                        <h1 className="mt-6 text-2xl font-bold tracking-tight">Email verified</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                            Your email has been verified, but the team approval is still being processed. Please contact
-                            the organizers if you do not receive your sign-in link.
                         </p>
                     </>
                 )}

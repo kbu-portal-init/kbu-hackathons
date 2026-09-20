@@ -9,7 +9,6 @@ export type EmailMessage = {
 
 export const notificationTypes = [
     "PASSWORD_RESET",
-    "SIGN_IN_LINK",
     "STUDENT_EMAIL_VERIFICATION",
     "TEAM_REGISTRATION_APPROVED",
     "TEAM_REGISTRATION_REJECTED",
