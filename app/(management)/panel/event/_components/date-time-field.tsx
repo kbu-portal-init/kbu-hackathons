@@ -12,16 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 
-type DateTimeFieldName =
-    | "registrationOpensAt"
-    | "registrationClosesAt"
-    | "startsAt"
-    | "endsAt"
-    | "submissionOpensAt"
-    | "submissionDeadline";
-
 type Props = {
-    name: DateTimeFieldName;
+    name:
+        | "registrationOpensAt"
+        | "registrationClosesAt"
+        | "startsAt"
+        | "endsAt"
+        | "submissionOpensAt"
+        | "submissionDeadline";
     label: string;
     control: Control<UpsertEventSettingsInput>;
     defaultDate: Date;
@@ -35,19 +33,12 @@ export function combineDateTime(date: Date, time: string): Date {
     return d;
 }
 
-const timePresets = [
-    { label: "9:00 AM", value: "09:00" },
-    { label: "12:00 PM", value: "12:00" },
-    { label: "5:00 PM", value: "17:00" },
-    { label: "6:00 PM", value: "18:00" },
-    { label: "9:00 PM", value: "21:00" },
-];
-
-function formatDisplayTime(time: string): string {
+function formatTime12(time: string): string {
     const [h, m] = time.split(":").map(Number);
-    const period = h >= 12 ? "PM" : "AM";
-    const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-    return `${hour12}:${String(m).padStart(2, "0")} ${period}`;
+    return new Date(0, 0, 0, h, m).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+    });
 }
 
 export function DateTimeField({ name, label, control, defaultDate, defaultTime }: Props) {
@@ -75,7 +66,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                             <span className="flex-1 truncate">
                                 {date ? format(date, "MMM d, yyyy") : "Pick a date"}
                             </span>
-                            <span className="shrink-0 text-muted-foreground">{formatDisplayTime(time)}</span>
+                            <span className="shrink-0 text-muted-foreground">{formatTime12(time)}</span>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                             <div className="sm:flex">
@@ -104,25 +95,6 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                         }}
                                         className="mt-2 h-8 text-xs"
                                     />
-                                    <div className="mt-2 flex flex-wrap gap-1">
-                                        {timePresets.map((preset) => (
-                                            <button
-                                                key={preset.value}
-                                                type="button"
-                                                className={`rounded-md px-2 py-1 text-xs transition-colors ${
-                                                    time === preset.value
-                                                        ? "bg-primary text-primary-foreground"
-                                                        : "bg-muted text-muted-foreground hover:bg-muted/80"
-                                                }`}
-                                                onClick={() => {
-                                                    setTime(preset.value);
-                                                    field.onChange(combineDateTime(date, preset.value));
-                                                }}
-                                            >
-                                                {preset.label}
-                                            </button>
-                                        ))}
-                                    </div>
                                 </div>
                             </div>
                         </PopoverContent>

@@ -1,23 +1,24 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { upsertEventSettings } from "@/actions/management/event-settings";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
     type EventSettingsDTO,
     type UpsertEventSettingsInput,
     upsertEventSettingsSchema,
 } from "@/lib/contracts/event-settings";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
+import { DateSection } from "./date-section";
+import { combineDateTime } from "./date-time-field";
 import { EventImagesSection } from "./event-images-section";
-import { EventScheduleSection } from "./event-schedule-section";
-import { FormSubmitButton } from "./form-submit-button";
 import { GeneralInfoSection } from "./general-info-section";
-import { RegistrationPeriodSection } from "./registration-period-section";
-import { SubmissionPeriodSection } from "./submission-period-section";
 import { TeamConfigurationSection } from "./team-configuration-section";
 
 type Props = {
@@ -30,13 +31,6 @@ function toDateTime(iso: string) {
         date: d,
         time: `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`,
     };
-}
-
-function combineDateTime(date: Date, time: string): Date {
-    const [h, m] = time.split(":").map(Number);
-    const d = new Date(date);
-    d.setHours(h, m, 0, 0);
-    return d;
 }
 
 export function EventSettingsForm({ settings }: Props) {
@@ -96,13 +90,55 @@ export function EventSettingsForm({ settings }: Props) {
             />
 
             <div className="grid gap-8 lg:grid-cols-2">
-                <RegistrationPeriodSection control={form.control} regOpen={regOpen} regClose={regClose} />
-                <EventScheduleSection control={form.control} evtStart={evtStart} evtEnd={evtEnd} />
-                <SubmissionPeriodSection control={form.control} subOpen={subOpen} subDeadline={subDeadline} />
+                <DateSection
+                    title="Registration period"
+                    control={form.control}
+                    fields={[
+                        { name: "registrationOpensAt", label: "Opens at", date: regOpen.date, time: regOpen.time },
+                        { name: "registrationClosesAt", label: "Closes at", date: regClose.date, time: regClose.time },
+                    ]}
+                />
+                <DateSection
+                    title="Event schedule"
+                    control={form.control}
+                    fields={[
+                        { name: "startsAt", label: "Starts at", date: evtStart.date, time: evtStart.time },
+                        { name: "endsAt", label: "Ends at", date: evtEnd.date, time: evtEnd.time },
+                    ]}
+                />
+                <DateSection
+                    title="Submission period"
+                    control={form.control}
+                    fields={[
+                        { name: "submissionOpensAt", label: "Opens at", date: subOpen.date, time: subOpen.time },
+                        {
+                            name: "submissionDeadline",
+                            label: "Deadline",
+                            date: subDeadline.date,
+                            time: subDeadline.time,
+                        },
+                    ]}
+                />
                 <TeamConfigurationSection control={form.control} />
             </div>
 
-            <FormSubmitButton isPending={isPending} isDirty={form.formState.isDirty} isEditing={!!settings} />
+            <Separator />
+            <div className="flex items-center gap-3">
+                <Button type="submit" disabled={isPending}>
+                    {isPending ? (
+                        <>
+                            <Loader2 className="mr-2 size-4 animate-spin" />
+                            Saving...
+                        </>
+                    ) : (
+                        <>
+                            <Save className="mr-2 size-4" />
+                            {settings ? "Save changes" : "Create event settings"}
+                        </>
+                    )}
+                </Button>
+                {form.formState.isDirty && <p className="text-sm text-zinc-500">You have unsaved changes.</p>}
+            </div>
         </form>
     );
 }
