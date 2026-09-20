@@ -9,6 +9,7 @@ import {
     updateAdminProfileSchema,
 } from "@/lib/contracts/admin-profile";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import { getAdminProfile } from "@/lib/data/admin-profile";
 import prisma from "@/lib/prisma";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
@@ -20,7 +21,7 @@ export async function getCurrentAdminProfile(): Promise<ActionResult<AdminProfil
 
     return profile
         ? { ok: true, data: { profile } }
-        : { ok: false, error: { code: "PROFILE_NOT_FOUND", message: "Admin profile not found" } };
+        : { ok: false, error: { code: ErrorCodes.PROFILE_NOT_FOUND, message: "Admin profile not found" } };
 }
 
 export async function updateAdminProfile(input: unknown): Promise<ActionResult<AdminProfileActionData>> {
@@ -31,7 +32,7 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -40,7 +41,10 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
     if (parsed.data.image && !isOwnedR2PublicUrl(parsed.data.image, `uploads/admins/${session.user.id}`)) {
         return {
             ok: false,
-            error: { code: "IMAGE_NOT_OWNED", message: "Profile image must be uploaded to your admin storage area" },
+            error: {
+                code: ErrorCodes.IMAGE_NOT_OWNED,
+                message: "Profile image must be uploaded to your admin storage area",
+            },
         };
     }
 
@@ -50,7 +54,10 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
             select: { id: true },
         });
         if (existing)
-            return { ok: false, error: { code: "EMAIL_EXISTS", message: "A user with this email already exists" } };
+            return {
+                ok: false,
+                error: { code: ErrorCodes.EMAIL_EXISTS, message: "A user with this email already exists" },
+            };
         await auth.api.updateUser({
             headers: await headers(),
             body: { name: parsed.data.name, image: parsed.data.image ?? null },
@@ -59,9 +66,12 @@ export async function updateAdminProfile(input: unknown): Promise<ActionResult<A
         const profile = await getAdminProfile(session.user.id);
         return profile
             ? { ok: true, data: { profile } }
-            : { ok: false, error: { code: "PROFILE_NOT_FOUND", message: "Admin profile not found" } };
+            : { ok: false, error: { code: ErrorCodes.PROFILE_NOT_FOUND, message: "Admin profile not found" } };
     } catch {
-        return { ok: false, error: { code: "PROFILE_UPDATE_FAILED", message: "Failed to update profile" } };
+        return {
+            ok: false,
+            error: { code: ErrorCodes.PROFILE_UPDATE_FAILED, message: "Failed to update profile" },
+        };
     }
 }
 
@@ -73,7 +83,7 @@ export async function changeAdminPassword(input: unknown): Promise<ActionResult<
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -93,7 +103,7 @@ export async function changeAdminPassword(input: unknown): Promise<ActionResult<
         return {
             ok: false,
             error: {
-                code: "PASSWORD_CHANGE_FAILED",
+                code: ErrorCodes.PASSWORD_CHANGE_FAILED,
                 message: "Current password is incorrect or password could not be changed",
             },
         };

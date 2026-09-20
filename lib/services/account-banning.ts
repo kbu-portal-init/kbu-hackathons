@@ -3,6 +3,7 @@ import "server-only";
 import type { UserRole } from "@/lib/auth/guards";
 import type { AccountActionData, BanAccountInput, UnbanAccountInput } from "@/lib/contracts/accounts";
 import type { ActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
 
@@ -23,7 +24,10 @@ export async function banAccount(
         },
     });
     if (!user || user.role === "admin" || (actorRole === "organizer" && user.role !== "team")) {
-        return { ok: false, error: { code: "ACCOUNT_NOT_BANNABLE", message: "This account cannot be banned" } };
+        return {
+            ok: false,
+            error: { code: ErrorCodes.ACCOUNT_NOT_BANNABLE, message: "This account cannot be banned" },
+        };
     }
 
     try {
@@ -48,7 +52,13 @@ export async function banAccount(
         });
     } catch (error) {
         if (error instanceof Error && error.message === "ACCOUNT_NOT_BANNABLE")
-            return { ok: false, error: { code: "ACCOUNT_NOT_BANNABLE", message: "This account cannot be banned" } };
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.ACCOUNT_NOT_BANNABLE,
+                    message: "This account cannot be banned",
+                },
+            };
         throw error;
     }
     const recipients = user.team?.members.map((member) => member.studentEmail) ?? [];
@@ -66,7 +76,7 @@ export async function banAccount(
             return {
                 ok: false,
                 error: {
-                    code: "EMAIL_SEND_FAILED",
+                    code: ErrorCodes.EMAIL_SEND_FAILED,
                     message: "The account was banned, but the notification email could not be delivered.",
                 },
             };
@@ -91,7 +101,13 @@ export async function unbanAccount(
         },
     });
     if (!user || user.role === "admin" || (actorRole === "organizer" && user.role !== "team"))
-        return { ok: false, error: { code: "ACCOUNT_NOT_MANAGEABLE", message: "This account cannot be managed" } };
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.ACCOUNT_NOT_MANAGEABLE,
+                message: "This account cannot be managed",
+            },
+        };
     try {
         await prisma.$transaction(async (tx) => {
             const current = await tx.user.findUnique({ where: { id: input.userId }, select: { id: true, role: true } });
@@ -107,7 +123,13 @@ export async function unbanAccount(
         });
     } catch (error) {
         if (error instanceof Error && error.message === "ACCOUNT_NOT_MANAGEABLE")
-            return { ok: false, error: { code: "ACCOUNT_NOT_MANAGEABLE", message: "This account cannot be managed" } };
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.ACCOUNT_NOT_MANAGEABLE,
+                    message: "This account cannot be managed",
+                },
+            };
         throw error;
     }
     const recipients = user.team?.members.map((member) => member.studentEmail) ?? [];
@@ -125,7 +147,7 @@ export async function unbanAccount(
             return {
                 ok: false,
                 error: {
-                    code: "EMAIL_SEND_FAILED",
+                    code: ErrorCodes.EMAIL_SEND_FAILED,
                     message: "The account was restored, but the notification email could not be delivered.",
                 },
             };

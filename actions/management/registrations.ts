@@ -3,6 +3,7 @@
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
 import { studentEmailVerificationSchema } from "@/lib/contracts/email";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     RegistrationDetailDTO,
@@ -35,7 +36,7 @@ export async function submitTeamRegistration(input: unknown): Promise<ActionResu
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid registration details",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -53,7 +54,7 @@ export async function listRegistrationRequests(input: unknown): Promise<ListActi
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid filters",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -69,7 +70,7 @@ export async function getRegistrationRequest(input: unknown): Promise<ActionResu
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid registration ID",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -78,7 +79,13 @@ export async function getRegistrationRequest(input: unknown): Promise<ActionResu
     const detail = await getRegistrationDetail(parsed.data.registrationId);
     return detail
         ? { ok: true, data: detail }
-        : { ok: false, error: { code: "REGISTRATION_NOT_FOUND", message: "Registration not found" } };
+        : {
+              ok: false,
+              error: {
+                  code: ErrorCodes.REGISTRATION_NOT_FOUND,
+                  message: "Registration not found",
+              },
+          };
 }
 
 export async function approveRegistrationRequest(input: unknown): Promise<ActionResult<ApproveRegistrationData>> {
@@ -88,7 +95,7 @@ export async function approveRegistrationRequest(input: unknown): Promise<Action
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid input",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -104,7 +111,7 @@ export async function rejectRegistrationRequest(input: unknown): Promise<ActionR
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid input",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -120,7 +127,7 @@ export async function resendStudentEmailVerification(input: unknown): Promise<Ac
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid team member ID",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -137,7 +144,7 @@ export async function manuallyVerifyStudentEmail(input: unknown): Promise<Action
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid team member ID",
                 fieldErrors: toFieldErrors(parsed.error),
             },
