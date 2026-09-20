@@ -1,4 +1,4 @@
-# KBU Hub
+﻿# KBU Hub
 
 KBU Hub is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
 
@@ -22,7 +22,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
 | Participant | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Protected workspace foundation; feature workflows continue in later branches |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
-| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audits/settings remain placeholders |
+| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 
 ## Architecture boundaries
@@ -44,10 +44,10 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
 - SMTP delivery is provider-neutral through `sendEmail`; named notification templates route password resets, student verification, account ban/unban, and organizer account-created messages through `sendNotification`. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
-- File storage uses Cloudflare R2 presigned uploads. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated, finalized through authenticated API routes, and read from their public R2 URLs.
+- File storage uses authenticated server-side proxy uploads to Cloudflare R2. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated by the proxy and returned as public R2 URLs.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
 
-Participant registration, broader organizer operational workflows, audit browsing, and general account-management UI are intentionally deferred.
+Participant registration, broader organizer operational workflows, and general account-management UI are intentionally deferred. Admins can browse and permanently delete audit records individually. The audit browser provides a manually opened, paginated user/team-member picker through `/api/admin/users`.
 
 ## Getting started
 
@@ -62,19 +62,33 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Copy the required values from `.env.example`. The application expects `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, provider-neutral `SMTP_*` settings, Cloudflare R2 values (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`), and `NEXT_PUBLIC_SENTRY_DSN` when Sentry error reporting is enabled. Production Node.js startup validates the required application, authentication, SMTP, and R2 values and stops when they are missing or invalid. Sentry DSNs are public project identifiers; set the variable at build time so browser bundles receive it.
+Copy `.env.example` to `.env` and fill in the variables for your environment.
+
+Required for local development:
+
+- Application: `PORT`, `NODE_ENV`, and `NEXT_PUBLIC_APP_URL`.
+- Authentication: `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`.
+- Database: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, and `DATABASE_URL`.
+
+Optional feature-specific settings:
+
+- SMTP email delivery: `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM_EMAIL`.
+- Sentry error monitoring: `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_AUTH_TOKEN`.
+- Cloudflare Turnstile: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
+- Cloudflare R2 storage: `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`.
+
+Production startup requires the SMTP and Cloudflare R2 settings in addition to the local-development settings, and stops when required values are missing or invalid. Sentry DSNs are public project identifiers; set `NEXT_PUBLIC_SENTRY_DSN` at build time so browser bundles receive it.
 
 ## File storage
 
-Uploads use three authenticated API requests:
+Uploads use authenticated API requests:
 
 | Endpoint | Access | Purpose |
 | --- | --- | --- |
-| `POST /api/upload/presigned-url` | Approved team or organizer/admin | Validate metadata and create a short-lived R2 upload URL. |
-| `POST /api/upload/finalize` | Owner of the upload scope | Confirm the object exists and return its public URL. |
+| `POST /api/upload/proxy` | Approved team or organizer/admin | Validate and upload the multipart file to R2. |
 | `POST /api/upload/delete` | Owner of the upload scope | Delete an object from R2. |
 
-Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser uploads directly to R2; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
+Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser sends the file to the authenticated proxy; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
 
 ## Prisma workflow
 
@@ -215,3 +229,17 @@ pnpm dlx shadcn@latest add <component>
 ## Keeping documentation current
 
 Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
+
+<<<<<<< HEAD
+## Unit testing
+
+Run the non-UI unit-test suite with Node's built-in test runner:
+
+    pnpm test:unit
+    pnpm test:unit:watch
+
+Unit tests live under tests/unit and use helpers from tests/helpers. External boundaries are mocked; database integration tests are separate workflows.
+=======
+
+
+>>>>>>> aa4e37e (docs: add audit fixtures and update admin docs)

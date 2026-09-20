@@ -7,7 +7,7 @@ export default async function ParticipantLoginPage() {
         <LoginContent
             audience="participant"
             title="Welcome back, builder"
-            description="Sign in to access your approved team workspace and participate in KBU hackathons."
+            description="Enter your verified leader email to receive a magic link and access your team workspace."
         />
     );
 }

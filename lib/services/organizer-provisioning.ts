@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
 import type { CreateOrganizerData, CreateOrganizerInput, UpdateOrganizerInput } from "@/lib/contracts/organizers";
-import { toAccountActionData } from "@/lib/mappers/accounts";
 import prisma from "@/lib/prisma";
 import { isNotificationDeliveryError, sendNotification } from "@/lib/services/notifications";
 import { createPasswordSetupUrl } from "@/lib/services/password-reset";
@@ -15,7 +14,7 @@ export async function updateOrganizer(input: UpdateOrganizerInput): Promise<Acti
     const { userId, ...data } = input;
     try {
         await auth.api.adminUpdateUser({ body: { userId, data }, headers: await headers() });
-        return { ok: true, data: { id: toAccountActionData({ id: userId }).userId } };
+        return { ok: true, data: { id: userId } };
     } catch {
         return { ok: false, error: { code: "UPDATE_FAILED", message: "Failed to update organizer" } };
     }
@@ -61,7 +60,7 @@ export async function provisionOrganizer(input: CreateOrganizerInput): Promise<A
                 },
             };
         }
-        return { ok: true, data: { id: toAccountActionData(user).userId } };
+        return { ok: true, data: { id: user.id } };
     } catch {
         return { ok: false, error: { code: "CREATE_FAILED", message: "Failed to create organizer account" } };
     }

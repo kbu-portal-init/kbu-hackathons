@@ -4,5 +4,6 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - '@prisma/engines'
+  - '@sentry/cli'
   - esbuild
   - prisma
