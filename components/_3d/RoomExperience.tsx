@@ -9,7 +9,14 @@ import { roomObjects } from "./room-objects";
 
 type Toast = { id: string; message: string };
 
-export default function RoomExperience() {
+type RoomExperienceProps = {
+    /** Overrides the framed homepage sizing; the canvas fills the wrapper. */
+    className?: string;
+    /** Scroll progress 0..1 for the parallax; defaults to the homepage singleton. */
+    parallaxRef?: { current: number };
+};
+
+export default function RoomExperience({ className, parallaxRef = heroParallax }: RoomExperienceProps) {
     const router = useRouter();
     const sceneRef = useRef<RoomSceneHandle>(null);
     const [phase, setPhase] = useState<RoomPhase>("loading");
@@ -41,7 +48,12 @@ export default function RoomExperience() {
     }, [selected]);
 
     return (
-        <div className="relative h-72 w-full overflow-hidden rounded-3xl border border-white/10 bg-transparent shadow-xl shadow-violet-500/10 sm:h-80 lg:h-120">
+        <div
+            className={
+                className ??
+                "relative h-72 w-full overflow-hidden rounded-3xl border border-white/10 bg-transparent shadow-xl shadow-violet-500/10 sm:h-80 lg:h-120"
+            }
+        >
             <RoomScene
                 ref={sceneRef}
                 objects={roomObjects}
@@ -52,7 +64,7 @@ export default function RoomExperience() {
                 onProgress={(_loaded, total) => setProgress(total ? _loaded / total : 0)}
                 onReady={() => setPhase("ready")}
                 onError={() => setPhase("error")}
-                parallaxRef={heroParallax}
+                parallaxRef={parallaxRef}
                 className="absolute inset-0 h-full w-full"
             />
             <RoomOverlay
