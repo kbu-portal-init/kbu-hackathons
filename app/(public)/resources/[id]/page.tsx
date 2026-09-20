@@ -23,7 +23,7 @@ import {
     JetBrainsIcon,
     NotionIcon,
 } from "@/components/resources/brand-icons";
-import { type StudentBenefit, studentBenefits } from "@/lib/data/student-benefits";
+import { type StudentBenefit, studentBenefits } from "@/lib/public-data/student-benefits";
 
 function renderBrandIcon(iconName: StudentBenefit["iconName"], className = "h-8 w-8 sm:h-10 sm:w-10") {
     switch (iconName) {
