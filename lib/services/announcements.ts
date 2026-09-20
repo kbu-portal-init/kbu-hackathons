@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Prisma } from "@/generated/prisma/client";
 import type {
     AnnouncementActionResult,
     AnnouncementIdInput,
@@ -30,6 +31,19 @@ function announcementError(error: unknown, fallbackCode: string, fallbackMessage
         code: fallbackCode,
         message: fallbackMessage,
     };
+}
+
+async function transitionError(tx: Prisma.TransactionClient, id: string): Promise<Error> {
+    const exists = await tx.announcement.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            id: true,
+        },
+    });
+
+    return new Error(exists ? "ANNOUNCEMENT_INVALID_TRANSITION" : "ANNOUNCEMENT_NOT_FOUND");
 }
 
 export async function createAnnouncement(
@@ -141,27 +155,24 @@ export async function publishAnnouncement(
 ): Promise<AnnouncementActionResult> {
     try {
         const announcement = await prisma.$transaction(async (tx) => {
-            const current = await tx.announcement.findUnique({
+            const { count } = await tx.announcement.updateMany({
                 where: {
                     id: input.announcementId,
-                },
-            });
-
-            if (!current) {
-                throw new Error("ANNOUNCEMENT_NOT_FOUND");
-            }
-
-            if (current.status !== "DRAFT") {
-                throw new Error("ANNOUNCEMENT_INVALID_TRANSITION");
-            }
-
-            const published = await tx.announcement.update({
-                where: {
-                    id: current.id,
+                    status: "DRAFT",
                 },
                 data: {
                     status: "PUBLISHED",
                     publishedAt: new Date(),
+                },
+            });
+
+            if (count === 0) {
+                throw await transitionError(tx, input.announcementId);
+            }
+
+            const published = await tx.announcement.findUniqueOrThrow({
+                where: {
+                    id: input.announcementId,
                 },
             });
 
@@ -195,26 +206,23 @@ export async function archiveAnnouncement(
 ): Promise<AnnouncementActionResult> {
     try {
         const announcement = await prisma.$transaction(async (tx) => {
-            const current = await tx.announcement.findUnique({
+            const { count } = await tx.announcement.updateMany({
                 where: {
                     id: input.announcementId,
-                },
-            });
-
-            if (!current) {
-                throw new Error("ANNOUNCEMENT_NOT_FOUND");
-            }
-
-            if (current.status !== "PUBLISHED") {
-                throw new Error("ANNOUNCEMENT_INVALID_TRANSITION");
-            }
-
-            const archived = await tx.announcement.update({
-                where: {
-                    id: current.id,
+                    status: "PUBLISHED",
                 },
                 data: {
                     status: "ARCHIVED",
+                },
+            });
+
+            if (count === 0) {
+                throw await transitionError(tx, input.announcementId);
+            }
+
+            const archived = await tx.announcement.findUniqueOrThrow({
+                where: {
+                    id: input.announcementId,
                 },
             });
 
@@ -262,22 +270,27 @@ export async function deleteAnnouncement(
                 throw new Error("ANNOUNCEMENT_INVALID_TRANSITION");
             }
 
-            const deleted = await tx.announcement.delete({
+            const { count } = await tx.announcement.deleteMany({
                 where: {
                     id: current.id,
+                    status: "DRAFT",
                 },
             });
+
+            if (count === 0) {
+                throw new Error("ANNOUNCEMENT_INVALID_TRANSITION");
+            }
 
             await tx.auditLog.create({
                 data: {
                     actorId,
                     action: "ANNOUNCEMENT_DELETED",
                     targetType: "Announcement",
-                    targetId: deleted.id,
+                    targetId: current.id,
                 },
             });
 
-            return deleted;
+            return current;
         });
 
         return {
