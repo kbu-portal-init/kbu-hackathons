@@ -2,12 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { approveRegistrationRequest, rejectRegistrationRequest } from "@/actions/management/registrations";
+import { PaginationFooter } from "@/components/pagination-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,13 +33,14 @@ import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 type Props = {
     items: RegistrationListItem[];
     meta: PaginationMeta;
+    status?: "PENDING" | "APPROVED" | "REJECTED";
 };
 
 const statusFilters = ["ALL", "PENDING", "APPROVED", "REJECTED"] as const;
 
-export function RegistrationManagement({ items, meta }: Props) {
+export function RegistrationManagement({ items, meta, status }: Props) {
     const router = useRouter();
-    const [statusFilter, setStatusFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">("ALL");
+    const [statusFilter, setStatusFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">(status ?? "ALL");
     const [rejectItem, setRejectItem] = useState<RegistrationListItem | null>(null);
     const [isPending, startTransition] = useTransition();
 
@@ -172,7 +174,18 @@ export function RegistrationManagement({ items, meta }: Props) {
                 </Table>
             </div>
 
-            <Pagination meta={meta} />
+            <PaginationFooter
+                page={meta.page}
+                pageSize={meta.pageSize}
+                total={meta.total}
+                itemsShown={items.length}
+                hasNextPage={meta.hasNextPage}
+                getPageHref={(page) => {
+                    const params = new URLSearchParams({ page: String(page), pageSize: String(meta.pageSize) });
+                    if (status) params.set("status", status);
+                    return `/panel/registrations?${params.toString()}`;
+                }}
+            />
 
             <Dialog open={!!rejectItem} onOpenChange={(open) => !open && setRejectItem(null)}>
                 <DialogContent>
@@ -248,39 +261,4 @@ function StatusBadge({ status }: { status: string }) {
         default:
             return <Badge variant="secondary">{status}</Badge>;
     }
-}
-
-function Pagination({ meta }: { meta: PaginationMeta }) {
-    const router = useRouter();
-    if (meta.total <= meta.pageSize) return null;
-
-    const goToPage = (page: number) => {
-        const params = new URLSearchParams();
-        params.set("page", String(page));
-        params.set("pageSize", String(meta.pageSize));
-        router.push(`/panel/registrations?${params.toString()}`);
-    };
-
-    return (
-        <div className="flex items-center justify-between">
-            <p className="text-sm text-zinc-500">
-                Page {meta.page} of {Math.ceil(meta.total / meta.pageSize)} ({meta.total} total)
-            </p>
-            <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => goToPage(meta.page - 1)} disabled={meta.page <= 1}>
-                    <ChevronLeft className="size-4" />
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => goToPage(meta.page + 1)}
-                    disabled={!meta.hasNextPage}
-                >
-                    Next
-                    <ChevronRight className="size-4" />
-                </Button>
-            </div>
-        </div>
-    );
 }

@@ -24,5 +24,11 @@ export default async function PanelRegistrationsPage({
         );
     }
 
-    return <RegistrationManagement items={result.data.items} meta={result.data.meta} />;
+    return (
+        <RegistrationManagement
+            items={result.data.items}
+            meta={result.data.meta}
+            status={params.status as "PENDING" | "APPROVED" | "REJECTED" | undefined}
+        />
+    );
 }
