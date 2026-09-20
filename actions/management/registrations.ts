@@ -18,6 +18,7 @@ import {
     submitRegistrationSchema,
 } from "@/lib/contracts/registration";
 import { getRegistrationDetail, listRegistrations } from "@/lib/data/registrations";
+import prisma from "@/lib/prisma";
 import {
     approveRegistration as approveRegistrationService,
     rejectRegistration as rejectRegistrationService,
@@ -127,4 +128,39 @@ export async function resendStudentEmailVerification(input: unknown): Promise<Ac
     }
     await sendStudentEmailVerification(parsed.data.teamMemberId);
     return { ok: true, data: { sent: true } };
+}
+
+export async function manuallyVerifyStudentEmail(input: unknown): Promise<ActionResult<{ verifiedAt: string }>> {
+    const session = await requireOrganizerOrAdmin();
+    const parsed = studentEmailVerificationSchema.safeParse(input);
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: "VALIDATION_ERROR",
+                message: "Invalid team member ID",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+    const now = new Date();
+    await prisma.$transaction(async (tx) => {
+        await tx.teamMember.update({
+            where: { id: parsed.data.teamMemberId },
+            data: { studentEmailVerifiedAt: now },
+        });
+        await tx.studentEmailVerification.deleteMany({
+            where: { teamMemberId: parsed.data.teamMemberId, verifiedAt: null },
+        });
+        await tx.auditLog.create({
+            data: {
+                actorId: session.user.id,
+                action: "STUDENT_EMAIL_MANUALLY_VERIFIED",
+                targetType: "TeamMember",
+                targetId: parsed.data.teamMemberId,
+                details: { method: "manual" },
+            },
+        });
+    });
+    return { ok: true, data: { verifiedAt: now.toISOString() } };
 }

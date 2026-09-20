@@ -39,7 +39,12 @@ export type NotificationInput = {
     targetId?: string;
 };
 
-export type StudentEmailVerificationData = { teamMemberId: string; verifiedAt: string };
+export type StudentEmailVerificationData = {
+    teamMemberId: string;
+    verifiedAt: string;
+    alreadyVerified: boolean;
+};
+
 export const studentEmailSchema = z
     .string()
     .trim()

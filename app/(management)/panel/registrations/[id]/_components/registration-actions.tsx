@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -18,11 +18,18 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { RejectRegistrationInput } from "@/lib/contracts/registration";
 import { rejectRegistrationSchema } from "@/lib/contracts/registration";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 
-export function RegistrationActions({ registrationId }: { registrationId: string }) {
+export function RegistrationActions({
+    registrationId,
+    unverifiedCount = 0,
+}: {
+    registrationId: string;
+    unverifiedCount?: number;
+}) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [rejectOpen, setRejectOpen] = useState(false);
@@ -59,19 +66,38 @@ export function RegistrationActions({ registrationId }: { registrationId: string
         });
     };
 
+    const hasUnverified = unverifiedCount > 0;
+    const approveDisabled = isPending || hasUnverified;
+
     return (
-        <>
+        <TooltipProvider>
             <div className="flex gap-2">
-                <Button onClick={onApprove} disabled={isPending}>
-                    {isPending ? (
-                        <>
-                            <Loader2 className="size-4 animate-spin" />
-                            Approving...
-                        </>
-                    ) : (
-                        "Approve registration"
+                <Tooltip>
+                    <TooltipTrigger
+                        render={
+                            <Button onClick={onApprove} disabled={approveDisabled}>
+                                {isPending ? (
+                                    <>
+                                        <Loader2 className="size-4 animate-spin" />
+                                        Approving...
+                                    </>
+                                ) : (
+                                    "Approve registration"
+                                )}
+                            </Button>
+                        }
+                    />
+                    {hasUnverified && (
+                        <TooltipContent side="top" align="center">
+                            <div className="flex items-center gap-1">
+                                <AlertCircle className="size-3.5" />
+                                <span>
+                                    {unverifiedCount} member{unverifiedCount > 1 ? "s" : ""} need email verification
+                                </span>
+                            </div>
+                        </TooltipContent>
                     )}
-                </Button>
+                </Tooltip>
                 <Button variant="destructive" onClick={() => setRejectOpen(true)} disabled={isPending}>
                     Reject
                 </Button>
@@ -118,6 +144,6 @@ export function RegistrationActions({ registrationId }: { registrationId: string
                     </form>
                 </DialogContent>
             </Dialog>
-        </>
+        </TooltipProvider>
     );
 }

@@ -3,7 +3,7 @@
 import { CheckCircle2, Loader2, Mail } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { resendStudentEmailVerification } from "@/actions/management/registrations";
+import { manuallyVerifyStudentEmail, resendStudentEmailVerification } from "@/actions/management/registrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -22,7 +22,7 @@ type MemberRowProps = {
 
 export function MemberRow({ member }: MemberRowProps) {
     const [isPending, startTransition] = useTransition();
-    const [isVerified, _setIsVerified] = useState(member.verifiedAt !== null);
+    const [isVerified, setIsVerified] = useState(member.verifiedAt !== null);
 
     const handleResend = () => {
         startTransition(async () => {
@@ -32,6 +32,18 @@ export function MemberRow({ member }: MemberRowProps) {
                 return;
             }
             toast.success("Verification email sent");
+        });
+    };
+
+    const handleManualVerify = () => {
+        startTransition(async () => {
+            const result = await manuallyVerifyStudentEmail({ teamMemberId: member.id });
+            if (!result.ok) {
+                toast.error(result.error.message);
+                return;
+            }
+            setIsVerified(true);
+            toast.success("Email manually verified");
         });
     };
 
@@ -55,6 +67,9 @@ export function MemberRow({ member }: MemberRowProps) {
                             </Badge>
                             <Button variant="outline" size="sm" onClick={handleResend} disabled={isPending}>
                                 {isPending ? <Loader2 className="size-4 animate-spin" /> : "Resend"}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={handleManualVerify} disabled={isPending}>
+                                {isPending ? <Loader2 className="size-4 animate-spin" /> : "Manually Verify"}
                             </Button>
                         </>
                     )}

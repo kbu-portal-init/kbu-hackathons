@@ -5,6 +5,6 @@ import { verifyTeamMemberEmail as verifyTeamMemberEmailService } from "@/lib/ser
 
 export async function verifyTeamMemberEmail(
     token: string,
-): Promise<ActionResult<{ verified: boolean; allVerified: boolean }>> {
+): Promise<ActionResult<{ verified: boolean; allVerified: boolean; alreadyVerified: boolean }>> {
     return verifyTeamMemberEmailService(token);
 }

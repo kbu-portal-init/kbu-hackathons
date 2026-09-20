@@ -50,7 +50,7 @@ async function provisionTeamAccount(
     leader: { name: string; studentEmail: string },
     actorId: string | null,
 ): Promise<ActionResult<ApproveRegistrationData>> {
-    const teamEmail = `${teamLoginName}@team.kbu.internal`;
+    const teamEmail = leader.studentEmail;
     const tempPassword = crypto.randomUUID();
 
     try {
@@ -223,9 +223,13 @@ export async function submitRegistration(
 
 // ── Verify team member email (public, no auth) ─────────────────────
 
-export async function verifyTeamMemberEmail(
-    token: string,
-): Promise<ActionResult<{ verified: boolean; allVerified: boolean }>> {
+export async function verifyTeamMemberEmail(token: string): Promise<
+    ActionResult<{
+        verified: boolean;
+        allVerified: boolean;
+        alreadyVerified: boolean;
+    }>
+> {
     const consumeResult = await consumeStudentEmailVerification(token);
     if (!consumeResult.ok) {
         return consumeResult;
@@ -244,17 +248,38 @@ export async function verifyTeamMemberEmail(
 
     const allVerified = await allMembersVerified(member.teamId);
     if (!allVerified) {
-        return { ok: true, data: { verified: true, allVerified: false } };
+        return {
+            ok: true,
+            data: {
+                verified: true,
+                allVerified: false,
+                alreadyVerified: consumeResult.data.alreadyVerified,
+            },
+        };
     }
 
     const registration = await getRegistrationByTeamId(member.teamId);
     if (registration?.status !== "PENDING") {
-        return { ok: true, data: { verified: true, allVerified: true } };
+        return {
+            ok: true,
+            data: {
+                verified: true,
+                allVerified: true,
+                alreadyVerified: consumeResult.data.alreadyVerified,
+            },
+        };
     }
 
     const leader = registration.team.members.find((m) => m.role === "LEADER") ?? registration.team.members[0];
     if (!leader) {
-        return { ok: true, data: { verified: true, allVerified: true } };
+        return {
+            ok: true,
+            data: {
+                verified: true,
+                allVerified: true,
+                alreadyVerified: consumeResult.data.alreadyVerified,
+            },
+        };
     }
 
     await provisionTeamAccount(
@@ -266,7 +291,14 @@ export async function verifyTeamMemberEmail(
         null,
     );
 
-    return { ok: true, data: { verified: true, allVerified: true } };
+    return {
+        ok: true,
+        data: {
+            verified: true,
+            allVerified: true,
+            alreadyVerified: consumeResult.data.alreadyVerified,
+        },
+    };
 }
 
 // ── Approve (management) ───────────────────────────────────────────
@@ -286,6 +318,18 @@ export async function approveRegistration(
         return {
             ok: false,
             error: { code: "INVALID_STATUS", message: "Registration is not pending" },
+        };
+    }
+
+    const allVerified = await allMembersVerified(record.teamId);
+    if (!allVerified) {
+        return {
+            ok: false,
+            error: {
+                code: "EMAIL_VERIFICATION_PENDING",
+                message:
+                    "All team members must verify their email before approval. Unverified members can be manually verified in the detail view.",
+            },
         };
     }
 

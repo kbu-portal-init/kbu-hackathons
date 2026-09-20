@@ -120,7 +120,12 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
                 <span>Created {format(new Date(item.createdAt), "PPP")}</span>
             </div>
 
-            {item.status === "PENDING" && <RegistrationActions registrationId={item.id} />}
+            {item.status === "PENDING" && (
+                <RegistrationActions
+                    registrationId={item.id}
+                    unverifiedCount={item.members.filter((m) => !m.verifiedAt).length}
+                />
+            )}
         </div>
     );
 }

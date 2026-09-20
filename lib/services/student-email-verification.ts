@@ -18,6 +18,7 @@ export async function sendStudentEmailVerification(teamMemberId: string) {
     const expiresAt = new Date(Date.now() + TOKEN_TTL_MS);
 
     await prisma.$transaction(async (tx) => {
+        // delete any existing unverified verifications for this team member
         await tx.studentEmailVerification.deleteMany({ where: { teamMemberId, verifiedAt: null } });
         await tx.studentEmailVerification.create({ data: { teamMemberId, tokenHash, expiresAt } });
     });
@@ -39,12 +40,38 @@ export async function consumeStudentEmailVerification(
     const tokenHash = createHash("sha256").update(token).digest("hex");
     const now = new Date();
     const verification = await prisma.studentEmailVerification.findUnique({ where: { tokenHash } });
-    if (!verification || verification.verifiedAt || verification.expiresAt <= now) {
+
+    if (!verification) {
         return {
             ok: false,
-            error: { code: "INVALID_VERIFICATION_TOKEN", message: "This verification link is invalid or expired" },
+            error: {
+                code: "INVALID_VERIFICATION_TOKEN",
+                message: "This verification link is invalid or expired",
+            },
         };
     }
+
+    if (verification.verifiedAt) {
+        return {
+            ok: true,
+            data: {
+                teamMemberId: verification.teamMemberId,
+                verifiedAt: verification.verifiedAt.toISOString(),
+                alreadyVerified: true,
+            },
+        };
+    }
+
+    if (verification.expiresAt <= now) {
+        return {
+            ok: false,
+            error: {
+                code: "INVALID_VERIFICATION_TOKEN",
+                message: "This verification link is invalid or expired",
+            },
+        };
+    }
+
     const updated = await prisma.$transaction(async (tx) => {
         const claimed = await tx.studentEmailVerification.updateMany({
             where: { id: verification.id, verifiedAt: null, expiresAt: { gt: now } },
@@ -54,12 +81,25 @@ export async function consumeStudentEmailVerification(
         await tx.teamMember.update({ where: { id: verification.teamMemberId }, data: { studentEmailVerifiedAt: now } });
         return true;
     });
-    if (!updated)
+
+    if (!updated) {
         return {
             ok: false,
-            error: { code: "INVALID_VERIFICATION_TOKEN", message: "This verification link is invalid or expired" },
+            error: {
+                code: "INVALID_VERIFICATION_TOKEN",
+                message: "This verification link is invalid or expired",
+            },
         };
-    return { ok: true, data: { teamMemberId: verification.teamMemberId, verifiedAt: now.toISOString() } };
+    }
+
+    return {
+        ok: true,
+        data: {
+            teamMemberId: verification.teamMemberId,
+            verifiedAt: now.toISOString(),
+            alreadyVerified: false,
+        },
+    };
 }
 
 export async function allMembersVerified(teamId: string): Promise<boolean> {

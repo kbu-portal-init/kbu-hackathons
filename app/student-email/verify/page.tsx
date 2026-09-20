@@ -21,7 +21,10 @@ function VerifyContent() {
         }
 
         verifyTeamMemberEmail(token).then((result) => {
+            console.log("Verification result:", result);
+
             if (!result.ok) {
+                console.log("Verification result:", result);
                 setState("error");
                 return;
             }

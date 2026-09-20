@@ -55,7 +55,7 @@ export const auth = betterAuth({
         }),
         admin(),
         magicLink({
-            sendMagicLink: async ({ email, url }) => {
+            sendMagicLink: async ({ email, url }, _ctx) => {
                 const team = await prisma.team.findFirst({
                     where: {
                         members: { some: { studentEmail: email, role: "LEADER" } },
