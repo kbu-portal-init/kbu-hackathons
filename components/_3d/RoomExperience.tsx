@@ -51,7 +51,7 @@ export default function RoomExperience({ className, parallaxRef = heroParallax }
         <div
             className={
                 className ??
-                "relative h-72 w-full overflow-hidden rounded-3xl border border-white/10 bg-transparent shadow-xl shadow-violet-500/10 sm:h-80 lg:h-120"
+                "relative h-72 w-full overflow-hidden rounded-3xl border border-slate-200 bg-white/40 shadow-xl shadow-violet-500/10 sm:h-80 lg:h-120"
             }
         >
             <RoomScene
@@ -84,7 +84,7 @@ export default function RoomExperience({ className, parallaxRef = heroParallax }
             {toast ? (
                 <p
                     role="status"
-                    className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/90 px-4 py-1.5 text-sm font-medium text-white shadow-md"
+                    className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/85 px-4 py-1.5 text-sm font-medium text-white shadow-md"
                 >
                     {toast.message}
                 </p>

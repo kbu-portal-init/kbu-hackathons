@@ -3,7 +3,7 @@ import { publicLinks } from "@/lib/navigation";
 
 export function SiteFooter() {
     return (
-        <footer className="border-t border-white/10 bg-secondary/30 text-muted-foreground">
+        <footer className="border-t border-slate-200 bg-secondary/40 text-muted-foreground">
             <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
                 <div className="sm:col-span-2">
                     <p className="text-lg font-bold text-foreground">KBU Hub</p>
@@ -16,7 +16,7 @@ export function SiteFooter() {
                     <p className="text-sm font-semibold text-foreground">Explore</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
                         {publicLinks.map(({ href, label }) => (
-                            <Link key={href} href={href} className="transition hover:text-cyan-400">
+                            <Link key={href} href={href} className="transition hover:text-cyan-700">
                                 {label}
                             </Link>
                         ))}
@@ -25,13 +25,13 @@ export function SiteFooter() {
                 <div>
                     <p className="text-sm font-semibold text-foreground">Account</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
-                        <Link href="/login" className="transition hover:text-cyan-400">
+                        <Link href="/login" className="transition hover:text-cyan-700">
                             Login
                         </Link>
                     </div>
                 </div>
             </div>
-            <div className="border-t border-white/10 px-6 py-5 text-center text-xs">
+            <div className="border-t border-slate-200 px-6 py-5 text-center text-xs">
                 Copyright {new Date().getFullYear()} KBU Hub. Built for the next big idea.
             </div>
         </footer>

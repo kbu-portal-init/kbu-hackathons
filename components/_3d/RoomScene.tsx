@@ -36,8 +36,8 @@ const DEFAULT_TARGET = new THREE.Vector3(0, 4.4, 3.6);
 const HOVER_EMISSIVE = new THREE.Color(0x22d3ee);
 const HOVER_INTENSITY = 0.45;
 /** Subtle violet glow every themed object carries; hover still overrides to cyan. */
-const BASE_EMISSIVE = new THREE.Color(0x7c3aed);
-const BASE_INTENSITY = 0.16;
+const BASE_EMISSIVE = new THREE.Color(0x6d28d9);
+const BASE_INTENSITY = 0.06;
 /**
  * Bulb position, measured from the GLB (`Object_130` centre). Intensity is in
  * candela: three.js r186 defaults to physically-correct lighting, so a
@@ -47,7 +47,7 @@ const BASE_INTENSITY = 0.16;
 const LAMP_HEAD = new THREE.Vector3(2.65, 8.03, 3.85);
 const LAMP_ON_INTENSITY = 14;
 const LAMP_BULB_NODE = "Object_130";
-const LAMP_BULB_EMISSIVE = new THREE.Color(0xffb45e);
+const LAMP_BULB_EMISSIVE = new THREE.Color(0xffa94d);
 
 const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene(
     {
@@ -111,7 +111,10 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
             return;
         }
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+        // Brighter than the dark theme: the canvas is transparent and the light
+        // page behind it now has to blend with the lit scene.
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
         renderer.toneMappingExposure = 1.05;
         renderer.shadowMap.enabled = !isMobile;
         renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -131,13 +134,13 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         controls.maxPolarAngle = Math.PI * 0.52;
         controls.rotateSpeed = 0.55;
 
-        // Cool "developer studio" lighting: a daylight key with soft shadows,
-        // a cyan-tinted fill, and a dim hemispherical bounce. The desk lamp
-        // below stays warm amber as an intentional accent.
-        const hemisphere = new THREE.HemisphereLight(0xd6ecf7, 0x0b1220, 0.55);
+        // Bright "daylit studio" lighting tuned for a light theme: a warm
+        // daylight key with soft shadows, a sky-blue fill, and a warm ground
+        // bounce. The desk lamp below adds a cosy amber accent.
+        const hemisphere = new THREE.HemisphereLight(0xeaf2ff, 0x6b7a99, 0.9);
         scene.add(hemisphere);
 
-        const keyLight = new THREE.DirectionalLight(0xeaf4ff, 1.5);
+        const keyLight = new THREE.DirectionalLight(0xfff4e0, 2.2);
         keyLight.position.set(6, 9.5, 7.5);
         if (renderer.shadowMap.enabled) {
             keyLight.castShadow = true;
@@ -154,12 +157,13 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         }
         scene.add(keyLight);
 
-        const fillLight = new THREE.DirectionalLight(0x7dd3fc, 0.4);
+        const fillLight = new THREE.DirectionalLight(0xbfe0ff, 0.8);
         fillLight.position.set(-7, 5, -4);
         scene.add(fillLight);
 
-        // Desk lamp light, off until the lamp object is toggled.
-        const lampLight = new THREE.PointLight(0xffb45e, 0, 12, 2);
+        // Desk lamp light, off until the lamp object is toggled. Warm amber so
+        // it reads as a cosy accent against the daylit base lighting.
+        const lampLight = new THREE.PointLight(0xffa94d, 0, 12, 2);
         lampLight.position.copy(LAMP_HEAD);
         scene.add(lampLight);
 

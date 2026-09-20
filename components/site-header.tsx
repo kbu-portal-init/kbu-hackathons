@@ -19,7 +19,7 @@ export async function SiteHeader() {
     const cta = role ? consoleEntry[role] : { href: "/login", label: "Login" };
 
     return (
-        <header className="sticky top-0 z-50 border-b border-white/10 bg-background/80 backdrop-blur-lg">
+        <header className="sticky top-0 z-50 border-b border-slate-200 bg-background/80 backdrop-blur-lg">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
                 <Link href="/" className="flex items-center gap-2">
                     <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-accent text-lg font-black text-white">

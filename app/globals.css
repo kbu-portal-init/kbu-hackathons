@@ -2,48 +2,47 @@
 @import "tailwindcss";
 
 /*
- * Tech Dark Mode. Dark is the product default (forced on <html> in
- * app/layout.tsx): the public site is a dark experience and the app shells are
- * dark-first. Light mode keeps the violet/cyan accents on a near-white canvas
- * so the two modes stay consistent.
+ * Youthful Light Mode. Light is the product default: a bright, airy canvas with
+ * saturated violet/cyan accents. The dark block is kept as the invert for
+ * prefers-dark dashboards, but the public site is a light experience.
  */
 :root {
-    --background: #f7f7f9;
-    --foreground: #0a0a0f;
+    --background: #f6f8fc;
+    --foreground: #14162b;
     --card: #ffffff;
-    --card-foreground: #0a0a0f;
+    --card-foreground: #14162b;
     --popover: #ffffff;
-    --popover-foreground: #0a0a0f;
+    --popover-foreground: #14162b;
 
-    --primary: #7c3aed;
+    --primary: #6d28d9;
     --primary-foreground: #ffffff;
 
-    --secondary: #eef0f4;
-    --secondary-foreground: #1c1f27;
+    --secondary: #eef1fb;
+    --secondary-foreground: #23264a;
 
-    --muted: #eef0f4;
-    --muted-foreground: #6b7280;
+    --muted: #eef1fb;
+    --muted-foreground: #5b6178;
 
-    --accent: #f1ebfe;
+    --accent: #ece7fd;
     --accent-foreground: #5b21b6;
 
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
 
-    --border: #e2e5ec;
-    --input: #e2e5ec;
-    --ring: #7c3aed;
+    --border: #dfe4f0;
+    --input: #dfe4f0;
+    --ring: #6d28d9;
 
     --sidebar: #ffffff;
-    --sidebar-foreground: #0a0a0f;
-    --sidebar-primary: #7c3aed;
+    --sidebar-foreground: #14162b;
+    --sidebar-primary: #6d28d9;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f1ebfe;
+    --sidebar-accent: #ece7fd;
     --sidebar-accent-foreground: #5b21b6;
-    --sidebar-border: #d8dce5;
-    --sidebar-ring: #7c3aed;
+    --sidebar-border: #d8dcee;
+    --sidebar-ring: #6d28d9;
 
-    --success: #34d399;
+    --success: #059669;
 }
 
 .dark {
@@ -146,42 +145,42 @@ samp {
 }
 
 /*
- * Tech Dark Mode utilities. The violet→cyan gradient is reserved for primary
- * CTAs, key headline text, and section dividers only — everything else uses
- * flat accents so accent use stays minimal and consistent.
+ * Youthful Light Mode utilities. The violet→cyan gradient is reserved for
+ * primary CTAs, key headline text, and section dividers only — everything
+ * else uses flat accents so accent use stays minimal and consistent.
  */
 
 /* Violet→cyan gradient. Usable as gradient text (transparent color) or as a
  * background fill for primary CTAs and section dividers. */
 .text-gradient {
-    background-image: linear-gradient(90deg, #7c3aed, #22d3ee);
+    background-image: linear-gradient(90deg, #6d28d9, #0891b2);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 
 .bg-gradient-accent {
-    background-image: linear-gradient(90deg, #7c3aed, #22d3ee);
+    background-image: linear-gradient(90deg, #6d28d9, #0891b2);
 }
 
-/* Glassmorphism for cards and panels. */
+/* Glassmorphism for cards and panels. Frosted white on the light canvas. */
 .glass {
-    background-color: rgba(22, 27, 34, 0.6);
+    background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .glass-violet {
-    background-color: rgba(22, 27, 34, 0.6);
+    background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(109, 40, 217, 0.22);
 }
 
 /* Dot-grid texture used behind the hero and final-CTA bands. */
 .dot-grid {
-    background-image: radial-gradient(circle, rgba(148, 163, 184, 0.16) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(100, 116, 139, 0.18) 1px, transparent 1px);
     background-size: 25px 25px;
 }
 

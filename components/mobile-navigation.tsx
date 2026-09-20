@@ -25,7 +25,7 @@ export function MobileNavigation() {
         <>
             <button
                 type="button"
-                className="flex size-10 items-center justify-center rounded-lg text-foreground transition hover:bg-white/5"
+                className="flex size-10 items-center justify-center rounded-lg text-foreground transition hover:bg-slate-100"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? "Close menu" : "Open menu"}
@@ -45,13 +45,13 @@ export function MobileNavigation() {
                                 key={href}
                                 href={href}
                                 onClick={() => setOpen(false)}
-                                className="rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition hover:bg-white/5 hover:text-foreground"
+                                className="rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition hover:bg-slate-100 hover:text-foreground"
                             >
                                 {label}
                             </Link>
                         ))}
                     </div>
-                    <div className="mt-auto border-t border-white/10 pt-6">
+                    <div className="mt-auto border-t border-slate-200 pt-6">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}

@@ -20,7 +20,7 @@ export default async function TeamRegistrationPage() {
     return (
         <main className="flex-1 bg-background dot-grid">
             <section className="mx-auto max-w-3xl px-6 py-12 text-left lg:px-8 lg:py-20">
-                <p className="text-sm font-semibold uppercase tracking-widest text-cyan-500">Join KBU Hackathon 2026</p>
+                <p className="text-sm font-semibold uppercase tracking-widest text-cyan-700">Join KBU Hackathon 2026</p>
                 <h1 className="mt-3 text-4xl font-black tracking-tight text-foreground sm:text-5xl">
                     Register your team
                 </h1>
