@@ -2,6 +2,7 @@
 
 import { requireAdmin } from "@/lib/auth/guards";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
+import { ErrorCodes } from "@/lib/contracts/errors";
 import type { OrganizerListItem } from "@/lib/contracts/organizers";
 import {
     type CreateOrganizerData,
@@ -21,7 +22,7 @@ export async function createOrganizer(input: unknown): Promise<ActionResult<Crea
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid organizer details",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -37,7 +38,7 @@ export async function updateOrganizer(input: unknown): Promise<ActionResult<Crea
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Some fields are invalid",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -52,7 +53,7 @@ export async function listOrganizerAccounts(input: unknown): Promise<ListActionR
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid pagination",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -67,7 +68,7 @@ export async function getOrganizerAccount(input: unknown): Promise<ActionResult<
         return {
             ok: false,
             error: {
-                code: "VALIDATION_ERROR",
+                code: ErrorCodes.VALIDATION_ERROR,
                 message: "Invalid organizer ID",
                 fieldErrors: toFieldErrors(parsed.error),
             },
@@ -75,5 +76,8 @@ export async function getOrganizerAccount(input: unknown): Promise<ActionResult<
     const organizer = await getOrganizer(parsed.data.userId);
     return organizer
         ? { ok: true, data: organizer }
-        : { ok: false, error: { code: "ORGANIZER_NOT_FOUND", message: "Organizer not found" } };
+        : {
+              ok: false,
+              error: { code: ErrorCodes.ORGANIZER_NOT_FOUND, message: "Organizer not found" },
+          };
 }
