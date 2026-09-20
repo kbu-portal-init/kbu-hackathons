@@ -1,9 +1,23 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
+import { auth } from "@/lib/auth/config";
+import { getUserRole } from "@/lib/auth/guards";
 import { publicLinks } from "@/lib/navigation";
 
-export function SiteHeader() {
+/** Where an authenticated user lands, and what the button reads, by role. */
+const consoleEntry = {
+    team: { href: "/teams", label: "Go to Console" },
+    organizer: { href: "/panel", label: "Go to Panel" },
+    admin: { href: "/admin", label: "Go to Console" },
+} as const;
+
+export async function SiteHeader() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const role = getUserRole(session?.user?.role);
+    const cta = role ? consoleEntry[role] : { href: "/login", label: "Login" };
+
     return (
         <header className="sticky top-0 z-50 border-b border-white/10 bg-background/80 backdrop-blur-lg">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
@@ -24,12 +38,15 @@ export function SiteHeader() {
                         </Link>
                     ))}
                 </nav>
-                <Link
-                    href="/login"
-                    className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-foreground transition hover:border-violet-500/50 md:inline-flex"
-                >
-                    Login
-                </Link>
+                {/* Authenticated users go to their console; guests go to login. */}
+                <div className="hidden items-center gap-4 md:flex">
+                    <Link
+                        href={cta.href}
+                        className="rounded-md bg-gradient-accent px-3 py-2 text-sm font-medium text-white transition hover:bg-gradient-accent/80"
+                    >
+                        {cta.label}
+                    </Link>
+                </div>
                 <div className="md:hidden">
                     <MobileNavigation />
                 </div>
