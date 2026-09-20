@@ -8,7 +8,7 @@ import type {
 } from "@/lib/contracts/announcements";
 import type { ListResult } from "@/lib/contracts/common";
 import { DEFAULT_PAGE_SIZE } from "@/lib/contracts/common";
-import { mapAnnouncementToDTO } from "@/lib/mappers/announcements";
+import { mapAnnouncementToDTO, mapAnnouncementToPublicDTO } from "@/lib/mappers/announcements";
 import prisma from "@/lib/prisma";
 
 export async function listAnnouncements(input: ListAnnouncementInput): Promise<ListResult<AnnouncementDTO>> {
@@ -128,7 +128,7 @@ export async function listPublicAnnouncements(
     ]);
 
     return {
-        items: announcements.map(mapAnnouncementToDTO),
+        items: announcements.map(mapAnnouncementToPublicDTO),
         meta: {
             total,
             page,
