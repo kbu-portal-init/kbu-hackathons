@@ -7,7 +7,7 @@ export default async function PanelLayout({ children }: Readonly<{ children: Rea
 
     return (
         <DashboardSidebar area="management" role={getUserRole(session.user.role)}>
-            {children}
+            <div className="flex-1 space-y-8 p-6 lg:p-8">{children}</div>
         </DashboardSidebar>
     );
 }

@@ -17,7 +17,7 @@ export default async function AdminPage() {
         ["Pending verifications", overview.pendingVerificationCount, "/panel/teams"],
     ] as const;
     return (
-        <main className="flex-1 space-y-8 p-6 lg:p-8">
+        <main className="space-y-8">
             <header>
                 <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Administrator access</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight">Administrator workspace</h1>
