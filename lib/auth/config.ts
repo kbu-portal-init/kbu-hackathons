@@ -56,16 +56,43 @@ export const auth = betterAuth({
         admin(),
         magicLink({
             sendMagicLink: async ({ email, url }, _ctx) => {
-                const team = await prisma.team.findFirst({
-                    where: {
-                        members: { some: { studentEmail: email, role: "LEADER" } },
+                const user = await prisma.user.findUnique({
+                    where: { email },
+                    select: {
+                        role: true,
+                        team: {
+                            select: {
+                                displayName: true,
+                                archivedAt: true,
+                                registration: { select: { status: true } },
+                                members: {
+                                    where: {
+                                        studentEmail: email,
+                                        role: "LEADER",
+                                        studentEmailVerifiedAt: { not: null },
+                                    },
+                                    select: { id: true },
+                                },
+                            },
+                        },
                     },
-                    select: { displayName: true },
                 });
+
+                const isStaff = user?.role === "organizer" || user?.role === "admin";
+                const isEligibleTeam =
+                    user?.role === "team" &&
+                    user.team?.archivedAt === null &&
+                    user.team.registration?.status === "APPROVED" &&
+                    user.team.members.length > 0;
+
+                if (!isStaff && !isEligibleTeam) {
+                    throw new Error("Only verified leaders of approved teams may request sign-in links");
+                }
+
                 await sendNotification({
-                    type: "TEAM_REGISTRATION_APPROVED",
+                    type: isEligibleTeam ? "TEAM_REGISTRATION_APPROVED" : "SIGN_IN_LINK",
                     recipients: [email],
-                    data: { teamName: team?.displayName, resetUrl: url },
+                    data: { teamName: user?.team?.displayName, resetUrl: url },
                 });
             },
         }),
