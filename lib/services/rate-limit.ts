@@ -28,6 +28,12 @@ const magicLinkByEmail = redis
 const magicLinkByIp = redis
     ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(20, "1 h"), prefix: "kbu:magic-link:ip" })
     : null;
+const passwordResetByIp = redis
+    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "1 h"), prefix: "kbu:password-reset:ip" })
+    : null;
+const passwordResetByIdentifier = redis
+    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "1 h"), prefix: "kbu:password-reset:identifier" })
+    : null;
 
 export type RateLimitResult = { success: true } | { success: false; retryAfterSeconds: number };
 
@@ -80,6 +86,16 @@ export async function checkMagicLinkRateLimit(email: string, request?: Request):
     return ipResult.success && emailResult.success
         ? { success: true }
         : { success: false, retryAfterSeconds: Math.max(ipResult.retryAfter, emailResult.retryAfter) };
+}
+
+export async function checkPasswordResetRateLimit(identifier: string, request?: Request): Promise<RateLimitResult> {
+    const [ipResult, identifierResult] = await Promise.all([
+        check(passwordResetByIp, clientIp(request?.headers)),
+        check(passwordResetByIdentifier, hash(identifier.trim().toLowerCase())),
+    ]);
+    return ipResult.success && identifierResult.success
+        ? { success: true }
+        : { success: false, retryAfterSeconds: Math.max(ipResult.retryAfter, identifierResult.retryAfter) };
 }
 
 export const upstashSecondaryStorage = redis
