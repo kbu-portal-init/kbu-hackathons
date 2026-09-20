@@ -51,7 +51,7 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove }: Props) {
                                     className="absolute right-2 top-2 size-8 opacity-0 transition-opacity group-hover:opacity-100"
                                     onClick={() => onRemove(index)}
                                 >
-                                    <Trash2 className="size-4" />
+                                    <Trash2 />
                                 </Button>
                             </div>
                             {index === 0 && (

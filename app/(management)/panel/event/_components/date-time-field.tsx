@@ -62,7 +62,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                 />
                             }
                         >
-                            <CalendarIcon className="size-4 shrink-0 text-muted-foreground" />
+                            <CalendarIcon data-icon="inline-start" className="shrink-0 text-muted-foreground" />
                             <span className="flex-1 truncate">
                                 {date ? format(date, "MMM d, yyyy") : "Pick a date"}
                             </span>

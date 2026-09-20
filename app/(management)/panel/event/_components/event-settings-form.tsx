@@ -127,12 +127,12 @@ export function EventSettingsForm({ settings }: Props) {
                 <Button type="submit" disabled={isPending}>
                     {isPending ? (
                         <>
-                            <Loader2 className="mr-2 size-4 animate-spin" />
+                            <Loader2 data-icon="inline-start" className="animate-spin" />
                             Saving...
                         </>
                     ) : (
                         <>
-                            <Save className="mr-2 size-4" />
+                            <Save data-icon="inline-start" />
                             {settings ? "Save changes" : "Create event settings"}
                         </>
                     )}
