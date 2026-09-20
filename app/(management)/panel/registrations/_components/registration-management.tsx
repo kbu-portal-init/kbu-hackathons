@@ -56,7 +56,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved — magic link sent to leader");
+            toast.success("Registration approved — password setup link sent to leader");
             router.refresh();
         });
     };
