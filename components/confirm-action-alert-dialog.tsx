@@ -13,7 +13,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-type ConfirmActionDialogProps = {
+type ConfirmActionAlertDialogProps = {
     trigger: ReactElement;
     title: string;
     description: string;
@@ -22,14 +22,14 @@ type ConfirmActionDialogProps = {
     onConfirm: () => Promise<void>;
 };
 
-export function ConfirmActionDialog({
+export function ConfirmActionAlertDialog({
     trigger,
     title,
     description,
     confirmLabel = "Confirm",
     pendingLabel = "Please wait...",
     onConfirm,
-}: ConfirmActionDialogProps) {
+}: ConfirmActionAlertDialogProps) {
     const [open, setOpen] = useState(false);
     const [isPending, setIsPending] = useState(false);
 

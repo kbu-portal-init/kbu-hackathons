@@ -1,12 +1,11 @@
 "use server";
 
-import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
+import { getUserRole, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import type { AccountActionData } from "@/lib/contracts/accounts";
 import { banAccountSchema, unbanAccountSchema } from "@/lib/contracts/accounts";
 import type { ActionResult } from "@/lib/contracts/common";
 import { banAccount as banAccountService, unbanAccount as unbanAccountService } from "@/lib/services/account-banning";
 import { toFieldErrors } from "@/lib/validation/zod";
-import { getUserRole } from "@/types/auth";
 
 export async function banAccount(input: unknown): Promise<ActionResult<AccountActionData>> {
     const session = await requireOrganizerOrAdmin();
