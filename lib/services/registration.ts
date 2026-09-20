@@ -47,6 +47,13 @@ class RegistrationLimitReachedError extends Error {
     }
 }
 
+class RegistrationStatusChangedError extends Error {
+    constructor() {
+        super("Registration is no longer pending");
+        this.name = "RegistrationStatusChangedError";
+    }
+}
+
 // ── Internal: create team account and send sign-in link ────────────
 
 async function provisionTeamAccount(
@@ -61,13 +68,20 @@ async function provisionTeamAccount(
     const tempPassword = crypto.randomUUID();
 
     try {
-        await auth.api.signUpEmail({
-            body: {
-                email: teamEmail,
-                password: tempPassword,
-                name: teamDisplayName,
-            },
-        });
+        const existingUser = await prisma.user.findUnique({ where: { email: teamEmail } });
+        if (!existingUser) {
+            try {
+                await auth.api.signUpEmail({
+                    body: {
+                        email: teamEmail,
+                        password: tempPassword,
+                        name: teamDisplayName,
+                    },
+                });
+            } catch {
+                // Another approval attempt may have created the same account.
+            }
+        }
 
         const user = await prisma.user.update({
             where: { email: teamEmail },
@@ -90,14 +104,17 @@ async function provisionTeamAccount(
                 throw new RegistrationLimitReachedError();
             }
 
+            const claimed = await tx.registration.updateMany({
+                where: { id: registrationId, status: "PENDING" },
+                data: { status: "APPROVED" },
+            });
+            if (claimed.count !== 1) {
+                throw new RegistrationStatusChangedError();
+            }
+
             await tx.team.update({
                 where: { id: teamId },
                 data: { userId: user.id },
-            });
-
-            await tx.registration.update({
-                where: { id: registrationId },
-                data: { status: "APPROVED" },
             });
 
             await tx.registrationReview.create({
@@ -126,6 +143,13 @@ async function provisionTeamAccount(
             return {
                 ok: false,
                 error: { code: "MAX_TEAMS_REACHED", message: error.message },
+            };
+        }
+
+        if (error instanceof RegistrationStatusChangedError) {
+            return {
+                ok: false,
+                error: { code: "INVALID_STATUS", message: error.message },
             };
         }
 
