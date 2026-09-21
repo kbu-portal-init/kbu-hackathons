@@ -80,6 +80,21 @@ export async function getAnnouncementById(announcementId: string): Promise<Annou
     return mapAnnouncementToDTO(announcement);
 }
 
+export async function getPublishedAnnouncementById(announcementId: string): Promise<PublicAnnouncementDTO | null> {
+    const announcement = await prisma.announcement.findFirst({
+        where: {
+            id: announcementId,
+            status: "PUBLISHED",
+        },
+    });
+
+    if (!announcement) {
+        return null;
+    }
+
+    return mapAnnouncementToPublicDTO(announcement);
+}
+
 export async function listPublicAnnouncements(
     input: ListPublicAnnouncementInput,
 ): Promise<ListResult<PublicAnnouncementDTO>> {

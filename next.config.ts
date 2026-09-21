@@ -3,8 +3,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
     output: "standalone",
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "pub-2695dd9a36b640069530ec01d4ad81c5.r2.dev",
+                pathname: "/uploads/**",
+            },
+        ],
+    },
 };
-
 export default withSentryConfig(nextConfig, {
     // For all available options, see:
     // https://www.npmjs.com/package/@sentry/webpack-plugin#options
