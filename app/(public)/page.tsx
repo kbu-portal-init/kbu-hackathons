@@ -1,6 +1,6 @@
 import { ArrowRight, CalendarDays, Megaphone, Users } from "lucide-react";
 import Link from "next/link";
-import { redirectAuthenticatedUser } from "@/lib/auth/guards";
+import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
 
 const events = [
     ["KBU Innovation Sprint", "Coming soon", "Campus hackathon"],
@@ -9,10 +9,9 @@ const events = [
 ] as const;
 
 export default async function Home() {
-    await redirectAuthenticatedUser();
-
     return (
         <main>
+            <HomeAuthRedirect />
             <section className="overflow-hidden border-b border-orange-100 bg-orange-50 dark:border-orange-950/50 dark:bg-orange-950/20">
                 <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8">
                     <div>
