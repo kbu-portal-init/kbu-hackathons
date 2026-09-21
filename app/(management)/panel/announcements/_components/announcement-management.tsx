@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
+import { Megaphone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ import {
     updateAnnouncement,
 } from "@/actions/management/announcements";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
+import { FileUpload } from "@/components/file-upload";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -125,6 +127,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 }
 
                 toast.success("Announcement created");
+
                 createForm.reset();
                 setCreateOpen(false);
                 router.refresh();
@@ -146,6 +149,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 }
 
                 toast.success("Announcement updated");
+
                 editForm.reset();
                 setEditOpen(false);
                 router.refresh();
@@ -228,6 +232,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
 
     return (
         <>
+            {/* Filters + Create */}
             <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                     <Input
@@ -264,6 +269,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 </Button>
             </div>
 
+            {/* Announcement table */}
             <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                 <Table>
                     <TableHeader>
@@ -363,6 +369,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 </Table>
             </div>
 
+            {/* Pagination */}
             <PaginationFooter
                 page={meta.page}
                 pageSize={meta.pageSize}
@@ -387,6 +394,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 }}
             />
 
+            {/* Create dialog */}
             <Dialog
                 open={createOpen}
                 onOpenChange={(open) => {
@@ -397,84 +405,117 @@ export function AnnouncementManagement({ items, meta }: Props) {
                     }
                 }}
             >
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Create announcement</DialogTitle>
+                <DialogContent className="overflow-hidden p-0 sm:max-w-lg">
+                    <div className="border-l-4 border-l-primary">
+                        <DialogHeader className="px-6 pb-2 pt-6">
+                            <div className="flex items-start gap-3">
+                                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                    <Megaphone className="size-5" />
+                                </div>
 
-                        <DialogDescription>
-                            Create a new announcement. It will remain a draft until you publish it.
-                        </DialogDescription>
-                    </DialogHeader>
+                                <div className="min-w-0">
+                                    <DialogTitle className="text-xl font-semibold tracking-tight">
+                                        Create announcement
+                                    </DialogTitle>
 
-                    <form onSubmit={createForm.handleSubmit(handleCreate)}>
-                        <FieldGroup>
-                            <Field data-invalid={!!createForm.formState.errors.title}>
-                                <FieldLabel htmlFor="announcement-title">Title</FieldLabel>
+                                    <DialogDescription className="mt-1.5 text-sm leading-6">
+                                        Share important news, updates, and events with the KBU community.
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
 
-                                <Input
-                                    id="announcement-title"
-                                    {...createForm.register("title")}
-                                    aria-invalid={!!createForm.formState.errors.title}
-                                    placeholder="Enter announcement title"
-                                />
+                        <form onSubmit={createForm.handleSubmit(handleCreate)} className="px-6 pb-6 pt-5">
+                            <FieldGroup className="gap-5">
+                                <Field data-invalid={!!createForm.formState.errors.title}>
+                                    <FieldLabel htmlFor="announcement-title">
+                                        Title <span className="text-destructive">*</span>
+                                    </FieldLabel>
 
-                                {createForm.formState.errors.title && (
-                                    <FieldError errors={[createForm.formState.errors.title]} />
-                                )}
-                            </Field>
+                                    <Input
+                                        id="announcement-title"
+                                        {...createForm.register("title")}
+                                        aria-invalid={!!createForm.formState.errors.title}
+                                        placeholder="Enter announcement title"
+                                        className="h-11"
+                                    />
 
-                            <Field data-invalid={!!createForm.formState.errors.content}>
-                                <FieldLabel htmlFor="announcement-content">Content</FieldLabel>
+                                    {createForm.formState.errors.title && (
+                                        <FieldError errors={[createForm.formState.errors.title]} />
+                                    )}
+                                </Field>
 
-                                <Textarea
-                                    id="announcement-content"
-                                    {...createForm.register("content")}
-                                    aria-invalid={!!createForm.formState.errors.content}
-                                    placeholder="Write the announcement content..."
-                                    rows={6}
-                                />
+                                <Field data-invalid={!!createForm.formState.errors.content}>
+                                    <FieldLabel htmlFor="announcement-content">
+                                        Content <span className="text-destructive">*</span>
+                                    </FieldLabel>
 
-                                {createForm.formState.errors.content && (
-                                    <FieldError errors={[createForm.formState.errors.content]} />
-                                )}
-                            </Field>
+                                    <Textarea
+                                        id="announcement-content"
+                                        {...createForm.register("content")}
+                                        aria-invalid={!!createForm.formState.errors.content}
+                                        placeholder="Write the announcement content..."
+                                        rows={5}
+                                        className="resize-none"
+                                    />
 
-                            <Field data-invalid={!!createForm.formState.errors.imageUrl}>
-                                <FieldLabel htmlFor="announcement-image-url">
-                                    Image URL <span className="font-normal text-zinc-500">(optional)</span>
-                                </FieldLabel>
+                                    {createForm.formState.errors.content && (
+                                        <FieldError errors={[createForm.formState.errors.content]} />
+                                    )}
+                                </Field>
 
-                                <Input
-                                    id="announcement-image-url"
-                                    {...createForm.register("imageUrl")}
-                                    aria-invalid={!!createForm.formState.errors.imageUrl}
-                                    placeholder="https://example.com/image.jpg"
-                                />
+                                <Field data-invalid={!!createForm.formState.errors.imageUrl}>
+                                    <FieldLabel>
+                                        Announcement image{" "}
+                                        <span className="font-normal text-muted-foreground">(optional)</span>
+                                    </FieldLabel>
 
-                                {createForm.formState.errors.imageUrl && (
-                                    <FieldError errors={[createForm.formState.errors.imageUrl]} />
-                                )}
-                            </Field>
-                        </FieldGroup>
+                                    <FileUpload
+                                        category="announcement-image"
+                                        accept="image/jpeg,image/png,image/webp,image/gif"
+                                        currentFile={createForm.watch("imageUrl")}
+                                        onUploadComplete={(url) => {
+                                            createForm.setValue("imageUrl", url, {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                            });
+                                        }}
+                                        onRemove={() => {
+                                            createForm.setValue("imageUrl", "", {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                            });
+                                        }}
+                                        label="Upload announcement image"
+                                        inputId="announcement-image-upload"
+                                    />
 
-                        <DialogFooter className="mt-4">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setCreateOpen(false)}
-                                disabled={isPending}
-                            >
-                                Cancel
-                            </Button>
+                                    {createForm.formState.errors.imageUrl && (
+                                        <FieldError errors={[createForm.formState.errors.imageUrl]} />
+                                    )}
+                                </Field>
+                            </FieldGroup>
 
-                            <Button type="submit" disabled={isPending}>
-                                {isPending ? "Creating..." : "Create announcement"}
-                            </Button>
-                        </DialogFooter>
-                    </form>
+                            <DialogFooter className="mt-6 -mx-6 border-t px-6 pt-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setCreateOpen(false)}
+                                    disabled={isPending}
+                                >
+                                    Cancel
+                                </Button>
+
+                                <Button type="submit" disabled={isPending}>
+                                    {isPending ? "Creating..." : "Create announcement"}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </div>
                 </DialogContent>
             </Dialog>
 
+            {/* Edit dialog */}
             <Dialog
                 open={editOpen}
                 onOpenChange={(open) => {
@@ -485,79 +526,113 @@ export function AnnouncementManagement({ items, meta }: Props) {
                     }
                 }}
             >
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Edit announcement</DialogTitle>
+                <DialogContent className="overflow-hidden p-0 sm:max-w-lg">
+                    <div className="border-l-4 border-l-primary">
+                        <DialogHeader className="px-6 pb-2 pt-6">
+                            <div className="flex items-start gap-3">
+                                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                    <Megaphone className="size-5" />
+                                </div>
 
-                        <DialogDescription>Update the announcement details.</DialogDescription>
-                    </DialogHeader>
+                                <div className="min-w-0">
+                                    <DialogTitle className="text-xl font-semibold tracking-tight">
+                                        Edit announcement
+                                    </DialogTitle>
 
-                    <form onSubmit={editForm.handleSubmit(handleUpdate)}>
-                        <FieldGroup>
-                            <Field data-invalid={!!editForm.formState.errors.title}>
-                                <FieldLabel htmlFor="edit-announcement-title">Title</FieldLabel>
+                                    <DialogDescription className="mt-1.5 text-sm leading-6">
+                                        Update the announcement details and image.
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
 
-                                <Input
-                                    id="edit-announcement-title"
-                                    {...editForm.register("title")}
-                                    aria-invalid={!!editForm.formState.errors.title}
-                                    placeholder="Enter announcement title"
-                                />
+                        <form onSubmit={editForm.handleSubmit(handleUpdate)} className="px-6 pb-6 pt-5">
+                            <FieldGroup className="gap-5">
+                                <Field data-invalid={!!editForm.formState.errors.title}>
+                                    <FieldLabel htmlFor="edit-announcement-title">
+                                        Title <span className="text-destructive">*</span>
+                                    </FieldLabel>
 
-                                {editForm.formState.errors.title && (
-                                    <FieldError errors={[editForm.formState.errors.title]} />
-                                )}
-                            </Field>
+                                    <Input
+                                        id="edit-announcement-title"
+                                        {...editForm.register("title")}
+                                        aria-invalid={!!editForm.formState.errors.title}
+                                        placeholder="Enter announcement title"
+                                        className="h-11"
+                                    />
 
-                            <Field data-invalid={!!editForm.formState.errors.content}>
-                                <FieldLabel htmlFor="edit-announcement-content">Content</FieldLabel>
+                                    {editForm.formState.errors.title && (
+                                        <FieldError errors={[editForm.formState.errors.title]} />
+                                    )}
+                                </Field>
 
-                                <Textarea
-                                    id="edit-announcement-content"
-                                    {...editForm.register("content")}
-                                    aria-invalid={!!editForm.formState.errors.content}
-                                    placeholder="Write the announcement content..."
-                                    rows={6}
-                                />
+                                <Field data-invalid={!!editForm.formState.errors.content}>
+                                    <FieldLabel htmlFor="edit-announcement-content">
+                                        Content <span className="text-destructive">*</span>
+                                    </FieldLabel>
 
-                                {editForm.formState.errors.content && (
-                                    <FieldError errors={[editForm.formState.errors.content]} />
-                                )}
-                            </Field>
+                                    <Textarea
+                                        id="edit-announcement-content"
+                                        {...editForm.register("content")}
+                                        aria-invalid={!!editForm.formState.errors.content}
+                                        placeholder="Write the announcement content..."
+                                        rows={5}
+                                        className="resize-none"
+                                    />
 
-                            <Field data-invalid={!!editForm.formState.errors.imageUrl}>
-                                <FieldLabel htmlFor="edit-announcement-image-url">
-                                    Image URL <span className="font-normal text-zinc-500">(optional)</span>
-                                </FieldLabel>
+                                    {editForm.formState.errors.content && (
+                                        <FieldError errors={[editForm.formState.errors.content]} />
+                                    )}
+                                </Field>
 
-                                <Input
-                                    id="edit-announcement-image-url"
-                                    {...editForm.register("imageUrl")}
-                                    aria-invalid={!!editForm.formState.errors.imageUrl}
-                                    placeholder="https://example.com/image.jpg"
-                                />
+                                <Field data-invalid={!!editForm.formState.errors.imageUrl}>
+                                    <FieldLabel>
+                                        Announcement image{" "}
+                                        <span className="font-normal text-muted-foreground">(optional)</span>
+                                    </FieldLabel>
 
-                                {editForm.formState.errors.imageUrl && (
-                                    <FieldError errors={[editForm.formState.errors.imageUrl]} />
-                                )}
-                            </Field>
-                        </FieldGroup>
+                                    <FileUpload
+                                        category="announcement-image"
+                                        accept="image/jpeg,image/png,image/webp,image/gif"
+                                        currentFile={editForm.watch("imageUrl")}
+                                        onUploadComplete={(url) => {
+                                            editForm.setValue("imageUrl", url, {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                            });
+                                        }}
+                                        onRemove={() => {
+                                            editForm.setValue("imageUrl", "", {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                            });
+                                        }}
+                                        label="Upload announcement image"
+                                        inputId="edit-announcement-image-upload"
+                                    />
 
-                        <DialogFooter className="mt-4">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setEditOpen(false)}
-                                disabled={isPending}
-                            >
-                                Cancel
-                            </Button>
+                                    {editForm.formState.errors.imageUrl && (
+                                        <FieldError errors={[editForm.formState.errors.imageUrl]} />
+                                    )}
+                                </Field>
+                            </FieldGroup>
 
-                            <Button type="submit" disabled={isPending}>
-                                {isPending ? "Saving..." : "Save changes"}
-                            </Button>
-                        </DialogFooter>
-                    </form>
+                            <DialogFooter className="mt-6 -mx-6 border-t px-6 pt-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setEditOpen(false)}
+                                    disabled={isPending}
+                                >
+                                    Cancel
+                                </Button>
+
+                                <Button type="submit" disabled={isPending}>
+                                    {isPending ? "Saving..." : "Save changes"}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </div>
                 </DialogContent>
             </Dialog>
         </>
