@@ -119,12 +119,12 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
 
     if (submitted) {
         return (
-            <div className="mx-auto max-w-xl rounded-2xl border border-green-200 bg-white p-8 text-center shadow-xl shadow-green-100/40 dark:border-green-900 dark:bg-zinc-900 dark:shadow-none">
-                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+            <div className="mx-auto max-w-xl rounded-2xl border border-emerald-200 bg-white p-8 text-center shadow-xl shadow-emerald-100/40">
+                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
                     <CheckCircle2 className="size-7" />
                 </div>
                 <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
-                <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                <p className="mt-3 text-sm leading-6 text-slate-600">
                     {verificationEmailsSent
                         ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a login link."
                         : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
@@ -138,7 +138,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-8 rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
+            <div className="space-y-8 rounded-2xl border border-violet-200 bg-white p-6 shadow-xl shadow-violet-100/40">
                 {/* Team Information */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
@@ -310,7 +310,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
 function MemberRow({ index, control }: { index: number; control: Control<FormValues, unknown, SubmittedFormValues> }) {
     return (
         <FieldGroup>
-            <div className="flex gap-3 rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
+            <div className="flex gap-3 rounded-lg border border-slate-200 p-3">
                 <div className="grid flex-1 gap-4 sm:grid-cols-3">
                     <Controller
                         name={`members.${index}.name`}

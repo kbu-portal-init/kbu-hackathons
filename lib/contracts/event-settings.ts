@@ -42,6 +42,7 @@ export const upsertEventSettingsSchema = z
     });
 
 export type UpsertEventSettingsInput = z.infer<typeof upsertEventSettingsSchema>;
+export type UpsertEventSettingsFormInput = z.input<typeof upsertEventSettingsSchema>;
 export type UpsertEventSettingsData = { id: 1 };
 
 export type EventSettingsDTO = {

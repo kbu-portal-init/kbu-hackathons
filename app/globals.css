@@ -1,65 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
+/*
+ * Youthful Light Mode. Light is the product default: a bright, airy canvas with
+ * saturated violet/cyan accents. The dark block is kept as the invert for
+ * prefers-dark dashboards, but the public site is a light experience.
+ */
 :root {
-    --background: #ffffff;
-    --foreground: #18181b;
+    --background: #f6f8fc;
+    --foreground: #14162b;
     --card: #ffffff;
-    --card-foreground: #18181b;
+    --card-foreground: #14162b;
     --popover: #ffffff;
-    --popover-foreground: #18181b;
-    --primary: #ea580c;
+    --popover-foreground: #14162b;
+
+    --primary: #6d28d9;
     --primary-foreground: #ffffff;
-    --secondary: #f4f4f5;
-    --secondary-foreground: #27272a;
-    --muted: #f4f4f5;
-    --muted-foreground: #71717a;
-    --accent: #ffedd5;
-    --accent-foreground: #9a3412;
+
+    --secondary: #eef1fb;
+    --secondary-foreground: #23264a;
+
+    --muted: #eef1fb;
+    --muted-foreground: #5b6178;
+
+    --accent: #ece7fd;
+    --accent-foreground: #5b21b6;
+
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
-    --border: #e4e4e7;
-    --input: #e4e4e7;
-    --ring: #ea580c;
-    --sidebar: #fff7ed;
-    --sidebar-foreground: #27272a;
-    --sidebar-primary: #ea580c;
+
+    --border: #dfe4f0;
+    --input: #dfe4f0;
+    --ring: #6d28d9;
+
+    --sidebar: #ffffff;
+    --sidebar-foreground: #14162b;
+    --sidebar-primary: #6d28d9;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ffedd5;
-    --sidebar-accent-foreground: #9a3412;
-    --sidebar-border: #fed7aa;
-    --sidebar-ring: #ea580c;
+    --sidebar-accent: #ece7fd;
+    --sidebar-accent-foreground: #5b21b6;
+    --sidebar-border: #d8dcee;
+    --sidebar-ring: #6d28d9;
+
+    --success: #059669;
 }
 
 .dark {
-    --background: #18181b;
-    --foreground: #fafafa;
-    --card: #27272a;
-    --card-foreground: #fafafa;
-    --popover: #27272a;
-    --popover-foreground: #fafafa;
-    --primary: #fb923c;
-    --primary-foreground: #431407;
-    --secondary: #27272a;
-    --secondary-foreground: #fafafa;
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
-    --accent: #431407;
-    --accent-foreground: #fed7aa;
+    --background: #0a0a0f;
+    --foreground: #f5f5f7;
+    --card: #161b22;
+    --card-foreground: #f5f5f7;
+    --popover: #161b22;
+    --popover-foreground: #f5f5f7;
+
+    --primary: #7c3aed;
+    --primary-foreground: #ffffff;
+
+    --secondary: #1a2029;
+    --secondary-foreground: #f5f5f7;
+
+    --muted: #1a2029;
+    --muted-foreground: #9ca3af;
+
+    --accent: #1b1530;
+    --accent-foreground: #c4b5fd;
+
     --destructive: #f87171;
     --destructive-foreground: #450a0a;
-    --border: #3f3f46;
-    --input: #3f3f46;
-    --ring: #fb923c;
-    --sidebar: #1c1917;
-    --sidebar-foreground: #fafafa;
-    --sidebar-primary: #fb923c;
-    --sidebar-primary-foreground: #431407;
-    --sidebar-accent: #431407;
-    --sidebar-accent-foreground: #fed7aa;
-    --sidebar-border: #57534e;
-    --sidebar-ring: #fb923c;
+
+    --border: rgba(148, 163, 184, 0.14);
+    --input: rgba(148, 163, 184, 0.16);
+    --ring: #7c3aed;
+
+    --sidebar: #0d1117;
+    --sidebar-foreground: #f5f5f7;
+    --sidebar-primary: #7c3aed;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #1b1530;
+    --sidebar-accent-foreground: #c4b5fd;
+    --sidebar-border: rgba(148, 163, 184, 0.14);
+    --sidebar-ring: #7c3aed;
+
+    --success: #34d399;
 }
 
 @theme inline {
@@ -69,19 +91,26 @@
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
+
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
+
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
+
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
+
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
+
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -90,11 +119,84 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
-    --font-sans: var(--font-plus-jakarta-sans);
+
+    --color-success: var(--success);
+
+    --font-sans: "Plus Jakarta Sans", sans-serif;
+    --font-mono: "Fira Code", monospace;
+}
+
+html,
+body {
+    min-height: 100%;
 }
 
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+code,
+pre,
+kbd,
+samp {
+    font-family: "Fira Code", monospace;
+}
+
+/*
+ * Youthful Light Mode utilities. The violet→cyan gradient is reserved for
+ * primary CTAs, key headline text, and section dividers only — everything
+ * else uses flat accents so accent use stays minimal and consistent.
+ */
+
+/* Violet→cyan gradient. Usable as gradient text (transparent color) or as a
+ * background fill for primary CTAs and section dividers. */
+.text-gradient {
+    background-image: linear-gradient(90deg, #6d28d9, #0891b2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.bg-gradient-accent {
+    background-image: linear-gradient(90deg, #6d28d9, #0891b2);
+}
+
+/* Glassmorphism for cards and panels. Frosted white on the light canvas. */
+.glass {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.glass-violet {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(109, 40, 217, 0.22);
+}
+
+/* Dot-grid texture used behind the hero and final-CTA bands. */
+.dot-grid {
+    background-image: radial-gradient(circle, rgba(100, 116, 139, 0.18) 1px, transparent 1px);
+    background-size: 25px 25px;
+}
+
+/*
+ * Scroll reveal. Elements carrying [data-reveal] are hidden only after the
+ * ScrollFx client module arms the page (adds .fx-armed to <html>), so no-JS
+ * and prefers-reduced-motion visitors see the final state instead of
+ * permanently invisible content. GSAP sets inline opacity/transform on reveal,
+ * so no CSS transition is needed here.
+ */
+.fx-armed [data-reveal] {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fx-armed [data-reveal] {
+        opacity: 1;
+    }
 }
