@@ -18,6 +18,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
 import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
 import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
@@ -106,6 +107,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                                 pendingLabel="Signing out..."
                                 onConfirm={async () => {
                                     await authClient.signOut();
+                                    clearSessionHint();
                                     router.push("/");
                                 }}
                             />
