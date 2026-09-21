@@ -119,7 +119,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 const result = await createAnnouncement(values);
 
                 if (!result.ok) {
-                    applyActionFieldErrors(createForm, result.error);
+                    applyActionFieldErrors(result.error.fieldErrors, createForm.setError);
                     toast.error(result.error.message);
                     return;
                 }
@@ -140,7 +140,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 const result = await updateAnnouncement(values);
 
                 if (!result.ok) {
-                    applyActionFieldErrors(editForm, result.error);
+                    applyActionFieldErrors(result.error.fieldErrors, editForm.setError);
                     toast.error(result.error.message);
                     return;
                 }
