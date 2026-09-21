@@ -18,6 +18,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
 import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
 import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
@@ -33,12 +34,12 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     const config = {
         participant: {
-            label: "Team workspace",
+            label: "Team",
             title: "Team dashboard",
             links: participantDashboardLinks,
         },
         management: {
-            label: "Management workspace",
+            label: "Management panel",
             title: "Management panel",
             links: managementDashboardLinks,
         },
@@ -62,7 +63,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         <span className="flex size-7 items-center justify-center rounded-lg bg-cyan-600 text-xs text-white">
                             K
                         </span>
-                        <span className="group-data-[collapsible=icon]:hidden">KBU Hub</span>
+                        <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
                     </Link>
                 </SidebarHeader>
                 <SidebarContent>
@@ -106,6 +107,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                                 pendingLabel="Signing out..."
                                 onConfirm={async () => {
                                     await authClient.signOut();
+                                    clearSessionHint();
                                     router.push("/");
                                 }}
                             />

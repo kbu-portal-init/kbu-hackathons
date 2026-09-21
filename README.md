@@ -20,7 +20,8 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | --- | --- | --- |
 | Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Available without authentication |
 | Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
-| Participant | `/teams`, `/teams/references`, `/teams/members`, `/teams/submit`, `/teams/settings` | Protected workspace foundation; feature workflows continue in later branches |
+| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
+| Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
@@ -230,7 +231,6 @@ pnpm dlx shadcn@latest add <component>
 
 Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
 
-<<<<<<< HEAD
 ## Unit testing
 
 Run the non-UI unit-test suite with Node's built-in test runner:
@@ -239,7 +239,3 @@ Run the non-UI unit-test suite with Node's built-in test runner:
     pnpm test:unit:watch
 
 Unit tests live under tests/unit and use helpers from tests/helpers. External boundaries are mocked; database integration tests are separate workflows.
-=======
-
-
->>>>>>> aa4e37e (docs: add audit fixtures and update admin docs)
