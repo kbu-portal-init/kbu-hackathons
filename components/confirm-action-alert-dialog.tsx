@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactElement, useState } from "react";
+import { toast } from "sonner";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,7 +20,7 @@ type ConfirmActionAlertDialogProps = {
     description: string;
     confirmLabel?: string;
     pendingLabel?: string;
-    onConfirm: () => Promise<void>;
+    onConfirm: () => Promise<boolean>;
 };
 
 export function ConfirmActionAlertDialog({
@@ -35,9 +36,15 @@ export function ConfirmActionAlertDialog({
 
     const handleConfirm = async () => {
         setIsPending(true);
+
         try {
-            await onConfirm();
-            setOpen(false);
+            const success = await onConfirm();
+
+            if (success) {
+                setOpen(false);
+            }
+        } catch {
+            toast.error("Something went wrong. Please try again.");
         } finally {
             setIsPending(false);
         }
@@ -46,13 +53,16 @@ export function ConfirmActionAlertDialog({
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger render={trigger} />
+
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
+
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+
                     <AlertDialogAction disabled={isPending} onClick={handleConfirm}>
                         {isPending ? pendingLabel : confirmLabel}
                     </AlertDialogAction>
