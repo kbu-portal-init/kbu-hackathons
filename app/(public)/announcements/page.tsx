@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { listPublishedAnnouncements } from "@/actions/management/announcements";
+import { BackButton } from "@/components/back-button";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,8 +12,8 @@ import { ListPublicAnnouncementSchema } from "@/lib/contracts/announcements";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
 
 export const metadata: Metadata = {
-    title: "Announcements | KBU Hub",
-    description: "Registration dates, community news, and important updates from the KBU Hub team.",
+    title: "Announcements | KBU Hackathon 2026",
+    description: "Registration dates, community news, and important updates from the KBU Hackathon 2026 team.",
 };
 
 const PAGE_SIZE = 10;
@@ -27,26 +28,26 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
     const publishedDate = announcement.publishedAt ?? announcement.createdAt;
 
     const imageUrl =
-        announcement.imageUrl && isOwnedR2PublicUrl(announcement.imageUrl, "uploads/announcements")
+        announcement.imageUrl &&
+        (isOwnedR2PublicUrl(announcement.imageUrl, "uploads/announcements") ||
+            isOwnedR2PublicUrl(announcement.imageUrl, "uploads/events"))
             ? announcement.imageUrl
-            : null;
+            : "/images/kbu.webp";
 
     return (
         <Link
             href={`/announcements/${announcement.id}`}
             className="group flex h-full flex-col overflow-hidden rounded-2xl border border-orange-200 hover:border-orange-300 transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-            {imageUrl && (
-                <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                    <Image
-                        src={imageUrl}
-                        alt={announcement.title}
-                        fill
-                        className="object-cover transition duration-300 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                </div>
-            )}
+            <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                <Image
+                    src={imageUrl}
+                    alt={announcement.title}
+                    fill
+                    className="object-cover transition duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+            </div>
 
             <article className="flex flex-1 flex-col p-5">
                 <time
@@ -113,16 +114,22 @@ export default async function AnnouncementsPage({
 
     return (
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-            <section className="mb-10">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Announcements</p>
+            <div className="mb-8">
+                <BackButton fallbackHref="/" />
+            </div>
 
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-                    Keep up with registration dates, community news, important updates, and everything happening at KBU
-                    Hub.
+            <section className="mb-8 max-w-3xl">
+                <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
+                    Announcements
+                </h1>
+
+                <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
+                    Stay up to date with registration deadlines, event news, and important updates from KBU Hackathon
+                    2026.
                 </p>
             </section>
 
-            <section className="mb-8">
+            <section className="mb-10">
                 <search>
                     <form action="/announcements" method="get" className="flex max-w-3xl items-center gap-2">
                         <Input

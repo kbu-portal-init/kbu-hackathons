@@ -81,7 +81,6 @@ async function main() {
             description: "Build practical solutions for the KBU community.",
             venue: "KBU Innovation Lab",
             imageUrls: [],
-            promoUrl: null,
             ...eventDates,
             maxTeams: 50,
             minTeamSize: 2,

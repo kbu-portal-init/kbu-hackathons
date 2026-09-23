@@ -3,6 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { Megaphone } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -55,7 +57,6 @@ export function AnnouncementManagement({ items, meta }: Props) {
     const router = useRouter();
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
-    const [search, setSearch] = useState("");
     const [isPending, startTransition] = useTransition();
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
@@ -89,27 +90,6 @@ export function AnnouncementManagement({ items, meta }: Props) {
 
         if (status !== "ALL") {
             params.set("status", status);
-        }
-
-        if (search.trim()) {
-            params.set("search", search.trim());
-        }
-
-        router.push(`/panel/announcements?${params.toString()}`);
-    };
-
-    const handleSearch = () => {
-        const params = new URLSearchParams({
-            page: "1",
-            pageSize: String(meta.pageSize),
-        });
-
-        if (statusFilter !== "ALL") {
-            params.set("status", statusFilter);
-        }
-
-        if (search.trim()) {
-            params.set("search", search.trim());
         }
 
         router.push(`/panel/announcements?${params.toString()}`);
@@ -235,23 +215,6 @@ export function AnnouncementManagement({ items, meta }: Props) {
             {/* Filters + Create */}
             <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                    <Input
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                                event.preventDefault();
-                                handleSearch();
-                            }
-                        }}
-                        placeholder="Search announcements..."
-                        className="w-64"
-                    />
-
-                    <Button variant="outline" size="sm" onClick={handleSearch} disabled={isPending}>
-                        Search
-                    </Button>
-
                     {statusFilters.map((status) => (
                         <Button
                             key={status}
@@ -274,6 +237,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead>Image</TableHead>
                             <TableHead>Title</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Published</TableHead>
@@ -285,13 +249,25 @@ export function AnnouncementManagement({ items, meta }: Props) {
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="h-24 text-center text-zinc-500">
+                                <TableCell colSpan={6} className="h-24 text-center text-zinc-500">
                                     No announcements found.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             items.map((item) => (
                                 <TableRow key={item.id}>
+                                    <TableCell>
+                                        <div className="relative size-14 overflow-hidden rounded-lg border bg-muted">
+                                            <Image
+                                                src={item.imageUrl ?? "/images/kbu.webp"}
+                                                alt=""
+                                                fill
+                                                className="object-cover"
+                                                sizes="56px"
+                                            />
+                                        </div>
+                                    </TableCell>
+
                                     <TableCell className="max-w-md font-medium">
                                         <div className="truncate">{item.title}</div>
                                     </TableCell>
@@ -308,6 +284,16 @@ export function AnnouncementManagement({ items, meta }: Props) {
 
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
+                                            {item.status === "PUBLISHED" && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    render={<Link href={`/announcements/${item.id}`} />}
+                                                >
+                                                    View
+                                                </Button>
+                                            )}
+
                                             {item.status === "DRAFT" && (
                                                 <>
                                                     <Button
@@ -347,18 +333,29 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                             )}
 
                                             {item.status === "PUBLISHED" && (
-                                                <ConfirmActionAlertDialog
-                                                    trigger={
-                                                        <Button variant="outline" size="sm" disabled={isPending}>
-                                                            Archive
-                                                        </Button>
-                                                    }
-                                                    title="Archive announcement?"
-                                                    description="The announcement will no longer be publicly visible after it is archived."
-                                                    confirmLabel="Archive"
-                                                    pendingLabel="Archiving..."
-                                                    onConfirm={() => handleArchive(item.id)}
-                                                />
+                                                <>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleEdit(item)}
+                                                        disabled={isPending}
+                                                    >
+                                                        Edit
+                                                    </Button>
+
+                                                    <ConfirmActionAlertDialog
+                                                        trigger={
+                                                            <Button variant="outline" size="sm" disabled={isPending}>
+                                                                Archive
+                                                            </Button>
+                                                        }
+                                                        title="Archive announcement?"
+                                                        description="The announcement will no longer be publicly visible after it is archived."
+                                                        confirmLabel="Archive"
+                                                        pendingLabel="Archiving..."
+                                                        onConfirm={() => handleArchive(item.id)}
+                                                    />
+                                                </>
                                             )}
                                         </div>
                                     </TableCell>
@@ -384,10 +381,6 @@ export function AnnouncementManagement({ items, meta }: Props) {
 
                     if (statusFilter !== "ALL") {
                         params.set("status", statusFilter);
-                    }
-
-                    if (search.trim()) {
-                        params.set("search", search.trim());
                     }
 
                     return `/panel/announcements?${params.toString()}`;
