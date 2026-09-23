@@ -1,5 +1,6 @@
 import { ArrowRight, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
+import { BackButton } from "@/components/back-button";
 import { redirectHomeIfAlreadyAuthenticated } from "@/lib/auth/guards";
 
 const loginOptions = [
@@ -50,12 +51,7 @@ export default async function LoginChoicePage() {
                         </Link>
                     ))}
                 </div>
-                <Link
-                    href="/"
-                    className="mx-auto mt-8 block w-fit text-sm font-medium text-zinc-600 hover:text-orange-600"
-                >
-                    Back to KBU Hackathon 2026
-                </Link>
+                <BackButton fallbackHref="/" label="Back to KBU Hackathon 2026" className="mt-8" />
             </section>
         </main>
     );

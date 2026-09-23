@@ -1,12 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LockKeyhole, Mail } from "lucide-react";
-import Link from "next/link";
+import { LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { BackButton } from "@/components/back-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
@@ -27,12 +27,7 @@ export function LoginContent({ audience, title, description }: LoginContentProps
     return (
         <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
             <div className="w-full max-w-md">
-                <Link
-                    href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-orange-600 dark:text-zinc-300"
-                >
-                    <ArrowLeft className="size-4" /> Back to KBU Hackathon 2026
-                </Link>
+                <BackButton fallbackHref="/" label="Back to KBU Hackathon 2026" className="mb-8" />
                 <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
                     <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">
                         {isParticipant ? <Mail className="size-5" /> : <LockKeyhole className="size-5" />}
