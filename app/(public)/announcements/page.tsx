@@ -34,10 +34,10 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
     return (
         <Link
             href={`/announcements/${announcement.id}`}
-            className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-orange-200 hover:border-orange-300 transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
             {imageUrl && (
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+                <div className="relative aspect-video w-full overflow-hidden bg-muted">
                     <Image
                         src={imageUrl}
                         alt={announcement.title}
@@ -61,12 +61,6 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
                 </h2>
 
                 <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">{announcement.content}</p>
-
-                <div className="mt-auto flex justify-end pt-5">
-                    <span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-lg font-medium text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
-                        →
-                    </span>
-                </div>
             </article>
         </Link>
     );
@@ -122,9 +116,7 @@ export default async function AnnouncementsPage({
             <section className="mb-10">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Announcements</p>
 
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Stay updated</h1>
-
-                <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
                     Keep up with registration dates, community news, important updates, and everything happening at KBU
                     Hub.
                 </p>
