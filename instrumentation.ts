@@ -8,7 +8,7 @@ export async function register() {
         }
 
         await import("./sentry.server.config");
-        Sentry.captureMessage("KBU Hub server started successfully", "info");
+        Sentry.captureMessage("KBU Hackathon 2026 server started successfully", "info");
     }
 
     if (process.env.NEXT_RUNTIME === "edge") {

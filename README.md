@@ -1,10 +1,10 @@
-﻿# KBU Hub
+﻿# KBU Hackathon 2026
 
-KBU Hub is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
+KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
 
 ## Current foundation
 
-The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, and Cloudflare R2 file storage.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
 
 The system uses three account roles:
 
@@ -25,6 +25,8 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
+
+Unknown routes and invalid public detail records use the branded global 404 page at `app/not-found.tsx`.
 
 ## Architecture boundaries
 

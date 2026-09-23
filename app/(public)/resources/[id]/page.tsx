@@ -58,12 +58,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     if (!benefit) {
         return {
-            title: "Student Benefit Not Found | KBU Hub",
+            title: "Student Benefit Not Found | KBU Hackathon 2026",
         };
     }
 
     return {
-        title: `${benefit.title} — Student Claim Guide | KBU Hub`,
+        title: `${benefit.title} — Student Claim Guide | KBU Hackathon 2026`,
         description: benefit.description,
     };
 }

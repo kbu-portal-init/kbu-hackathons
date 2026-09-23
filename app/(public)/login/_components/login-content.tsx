@@ -31,7 +31,7 @@ export function LoginContent({ audience, title, description }: LoginContentProps
                     href="/"
                     className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-orange-600 dark:text-zinc-300"
                 >
-                    <ArrowLeft className="size-4" /> Back to KBU Hub
+                    <ArrowLeft className="size-4" /> Back to KBU Hackathon 2026
                 </Link>
                 <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
                     <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">

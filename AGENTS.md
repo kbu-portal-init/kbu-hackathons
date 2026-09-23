@@ -1,8 +1,8 @@
-﻿# KBU Hub contributor guide
+﻿# KBU Hackathon 2026 contributor guide
 
 ## Architecture
 
-KBU Hub is a Next.js App Router application for a single KBU hackathon event. Route groups organize the workspaces without changing their URLs:
+KBU Hackathon 2026 is a Next.js App Router application for a single KBU hackathon event. Route groups organize the workspaces without changing their URLs:
 
 - `app/(public)` contains public discovery, registration, and login pages.
 - `app/(participant)/team` is the approved team workspace.
@@ -68,7 +68,7 @@ The branch currently provides:
 - Provider-neutral SMTP delivery through `sendEmail`, with typed notification templates and `sendNotification` for Better Auth password resets, student verification, account ban/unban, and organizer account-created messages. SMTP delivery is awaited; delivery outcomes are recorded asynchronously in `AuditLog` and never change the SMTP result. Organizer/team onboarding links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 
-Participant registration workflows, broader organizer management workflows, and broader account-management UI remain follow-up work. Admins can browse and permanently delete audit records individually; deletion does not create a replacement audit record. The admin audit browser loads user/team-member filter options manually through the paginated `/api/admin/users` route, defaulting to 200 records per request. Admin profile settings update name, email, password, and profile image; admin profile uploads use `uploads/admins/<admin-id>/`.
+Participant registration workflows, broader organizer management workflows, and broader account-management UI remain follow-up work. Announcement management supports editing both draft and published announcements; published announcements can also be archived. Admins can browse and permanently delete audit records individually; deletion does not create a replacement audit record. The admin audit browser loads user/team-member filter options manually through the paginated `/api/admin/users` route, defaulting to 200 records per request. Admin profile settings update name, email, password, and profile image; admin profile uploads use `uploads/admins/<admin-id>/`.
 
 ## Database and email workflow
 
@@ -168,4 +168,3 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
-

@@ -23,7 +23,7 @@ export default async function LoginChoicePage() {
         <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
             <section className="mx-auto w-full max-w-4xl">
                 <p className="text-center text-sm font-semibold uppercase tracking-widest text-orange-600">
-                    KBU Hub access
+                    KBU Hackathon 2026 access
                 </p>
                 <h1 className="mt-3 text-center text-4xl font-black tracking-tight sm:text-5xl">
                     Choose how you want to sign in
@@ -54,7 +54,7 @@ export default async function LoginChoicePage() {
                     href="/"
                     className="mx-auto mt-8 block w-fit text-sm font-medium text-zinc-600 hover:text-orange-600"
                 >
-                    Back to KBU Hub
+                    Back to KBU Hackathon 2026
                 </Link>
             </section>
         </main>
