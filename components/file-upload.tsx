@@ -207,7 +207,7 @@ export function FileUpload({
 
                     <span className="mb-1 text-sm font-medium">{label}</span>
 
-                    <span className="text-muted-foreground text-xs">JPG, PNG, WEBP, GIF • max 10MB</span>
+                    <span className="text-muted-foreground text-xs">JPG, PNG, or WEBP • optimized automatically</span>
                 </button>
             )}
 
