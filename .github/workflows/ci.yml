@@ -21,6 +21,22 @@ jobs:
     verify:
         name: Lint, Typecheck & Build
         runs-on: ubuntu-latest
+        env:
+            NEXT_PUBLIC_APP_URL: http://localhost:3000
+            BETTER_AUTH_URL: http://localhost:3000
+            BETTER_AUTH_SECRET: ci-only-build-secret-do-not-use-in-production
+            DATABASE_URL: postgresql://postgres:postgres@localhost:5432/kbu_ci
+            R2_ENDPOINT: https://ci.example.com
+            R2_ACCESS_KEY_ID: ci-access-key
+            R2_SECRET_ACCESS_KEY: ci-secret-key
+            R2_BUCKET_NAME: ci-bucket
+            NEXT_PUBLIC_R2_PUBLIC_URL: ""
+            SMTP_HOST: smtp.example.com
+            SMTP_PORT: "587"
+            SMTP_SECURE: "false"
+            SMTP_USER: ci-user
+            SMTP_PASSWORD: ci-password
+            SMTP_FROM_EMAIL: ci@example.com
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
