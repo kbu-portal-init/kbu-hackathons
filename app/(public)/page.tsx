@@ -23,7 +23,7 @@ export default async function Home() {
                         </h1>
                         <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-300">
                             Find your next challenge, meet ambitious builders, and turn bold ideas into something real
-                            with KBU Hub.
+                            with KBU Hackathon 2026.
                         </p>
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                             <Link

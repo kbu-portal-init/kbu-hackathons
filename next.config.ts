@@ -1,10 +1,31 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
+const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+const r2Hostname = (() => {
+    if (!r2PublicUrl) return null;
+
+    try {
+        return new URL(r2PublicUrl).hostname || null;
+    } catch {
+        return null;
+    }
+})();
+
 const nextConfig: NextConfig = {
     output: "standalone",
+    images: {
+        remotePatterns: r2Hostname
+            ? [
+                  {
+                      protocol: "https",
+                      hostname: r2Hostname,
+                      pathname: "/uploads/**",
+                  },
+              ]
+            : [],
+    },
 };
-
 export default withSentryConfig(nextConfig, {
     // For all available options, see:
     // https://www.npmjs.com/package/@sentry/webpack-plugin#options

@@ -1,10 +1,10 @@
 "use client";
 
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { verifyTeamMemberEmail } from "@/actions/auth";
+import { BackButton } from "@/components/back-button";
 
 type VerifyState = "loading" | "success" | "allVerified" | "already" | "error";
 
@@ -45,12 +45,7 @@ function VerifyContent() {
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                         This verification link is missing a token. Please check the email you received and try again.
                     </p>
-                    <Link
-                        href="/"
-                        className="mt-8 inline-flex items-center justify-center rounded-full bg-orange-600 px-6 py-3 font-semibold text-white hover:bg-orange-700"
-                    >
-                        Back to home
-                    </Link>
+                    <BackButton fallbackHref="/" label="Back to home" className="mt-8" />
                 </div>
             </main>
         );
@@ -120,12 +115,7 @@ function VerifyContent() {
                     </>
                 )}
 
-                <Link
-                    href="/"
-                    className="mt-8 inline-flex items-center justify-center rounded-full bg-orange-600 px-6 py-3 font-semibold text-white hover:bg-orange-700"
-                >
-                    Back to home
-                </Link>
+                <BackButton fallbackHref="/" label="Back to home" className="mt-8" />
             </div>
         </main>
     );

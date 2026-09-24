@@ -75,7 +75,9 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Promo URL</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>
+                                    Promo URL <span className="font-normal text-muted-foreground">(optional)</span>
+                                </FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
