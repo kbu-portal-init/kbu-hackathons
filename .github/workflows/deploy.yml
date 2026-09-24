@@ -73,4 +73,3 @@ jobs:
 
                     echo "✅ Health check passed."
                     docker image prune -f
-                    docker builder prune -f --filter "until=72h"

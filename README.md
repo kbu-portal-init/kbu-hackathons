@@ -151,6 +151,8 @@ curl --fail http://127.0.0.1:3000/
 
 Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a `/_next/static/` asset referenced by the returned HTML also responds successfully. The web port is bound to localhost for a host reverse proxy; PostgreSQL has no published port. A missing production environment file fails Compose validation. Use `config --quiet` to avoid printing credentials. Validate fresh database startup with a separate test volume; never remove the production `postgres_data` volume as part of testing.
 
+The deployment workflow performs only lightweight dangling-image cleanup after the health check. BuildKit cache cleanup is intentionally excluded from the deployment path because it can exceed the remote command timeout. Run it separately during maintenance after checking available disk space, for example with `docker builder prune -f --filter "until=168h"`.
+
 Environment files are excluded from image builds. `NEXT_PUBLIC_SENTRY_DSN` and other `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
 
 ## Branching
