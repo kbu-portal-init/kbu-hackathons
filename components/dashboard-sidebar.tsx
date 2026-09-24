@@ -60,7 +60,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         href="/"
                         className="flex items-center gap-2 rounded-md px-2 py-2 font-bold text-sidebar-foreground group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
                     >
-                        <span className="flex size-7 items-center justify-center rounded-lg bg-orange-600 text-xs text-white">
+                        <span className="flex size-7 items-center justify-center rounded-lg bg-cyan-600 text-xs text-white">
                             K
                         </span>
                         <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
@@ -116,7 +116,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                 </SidebarFooter>
             </Sidebar>
             <div className="flex min-w-0 flex-1 flex-col">
-                <header className="flex h-14 items-center gap-3 border-b border-orange-100 bg-white px-4">
+                <header className="flex h-14 items-center gap-3 border-b border-cyan-100 bg-white px-4">
                     <SidebarTrigger />
                     <p className="text-sm font-semibold text-zinc-700">{headerTitle}</p>
                 </header>

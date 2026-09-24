@@ -25,23 +25,23 @@ export function LoginContent({ audience, title, description }: LoginContentProps
     };
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+        <main className="flex flex-1 items-center justify-center bg-violet-50/70 px-6 py-16">
             <div className="w-full max-w-md">
                 <Link
                     href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-orange-600 dark:text-zinc-300"
+                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-violet-700"
                 >
                     <ArrowLeft className="size-4" /> Back to KBU Hub
                 </Link>
-                <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">
+                <div className="rounded-2xl border border-violet-200 bg-white p-7 shadow-xl shadow-violet-200/50">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
                         {isParticipant ? <Mail className="size-5" /> : <LockKeyhole className="size-5" />}
                     </div>
-                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-600">
+                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-violet-700">
                         {isParticipant ? "Participant access" : "Management access"}
                     </p>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight">{title}</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{description}</p>
+                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
                     {isParticipant ? <TeamLoginForm /> : <StaffLoginForm onSuccess={onSuccess} />}
                 </div>
             </div>
@@ -73,9 +73,9 @@ function TeamLoginForm() {
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            {loginError && <p className="text-sm text-red-500">{loginError}</p>}
+            {loginError && <p className="text-sm font-medium text-rose-600">{loginError}</p>}
             <div className="space-y-2">
-                <label htmlFor="username" className="text-sm font-medium">
+                <label htmlFor="username" className="text-sm font-medium text-slate-700">
                     Team username
                 </label>
                 <Input
@@ -86,10 +86,10 @@ function TeamLoginForm() {
                     aria-invalid={!!usernameError}
                     {...form.register("username")}
                 />
-                {usernameError && <p className="text-sm text-red-500">{usernameError.message}</p>}
+                {usernameError && <p className="text-sm font-medium text-rose-600">{usernameError.message}</p>}
             </div>
             <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium">
+                <label htmlFor="password" className="text-sm font-medium text-slate-700">
                     Password
                 </label>
                 <Input
@@ -100,7 +100,7 @@ function TeamLoginForm() {
                     aria-invalid={!!passwordError}
                     {...form.register("password")}
                 />
-                {passwordError && <p className="text-sm text-red-500">{passwordError.message}</p>}
+                {passwordError && <p className="text-sm font-medium text-rose-600">{passwordError.message}</p>}
             </div>
             <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
@@ -130,9 +130,9 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            {loginError && <p className="text-sm text-red-500">{loginError}</p>}
+            {loginError && <p className="text-sm font-medium text-rose-600">{loginError}</p>}
             <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
+                <label htmlFor="email" className="text-sm font-medium text-slate-700">
                     Email address
                 </label>
                 <Input
@@ -147,10 +147,10 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
             </div>
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="text-sm font-medium">
+                    <label htmlFor="password" className="text-sm font-medium text-slate-700">
                         Password
                     </label>
-                    <span className="text-xs text-zinc-500">Forgot password?</span>
+                    <span className="text-xs text-slate-500">Forgot password?</span>
                 </div>
                 <Input
                     id="password"
@@ -160,7 +160,7 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
                     aria-invalid={!!passwordError}
                     {...form.register("password")}
                 />
-                {passwordError && <p className="text-sm text-red-500">{passwordError.message}</p>}
+                {passwordError && <p className="text-sm font-medium text-rose-600">{passwordError.message}</p>}
             </div>
             <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Signing in..." : "Sign in"}

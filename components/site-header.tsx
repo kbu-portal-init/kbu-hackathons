@@ -1,14 +1,28 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
+import { auth } from "@/lib/auth/config";
+import { getUserRole } from "@/lib/auth/guards";
 import { publicLinks } from "@/lib/navigation";
 
-export function SiteHeader() {
+/** Where an authenticated user lands, and what the button reads, by role. */
+const consoleEntry = {
+    team: { href: "/teams", label: "Go to Console" },
+    organizer: { href: "/panel", label: "Go to Panel" },
+    admin: { href: "/admin", label: "Go to Console" },
+} as const;
+
+export async function SiteHeader() {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const role = getUserRole(session?.user?.role);
+    const cta = role ? consoleEntry[role] : { href: "/login", label: "Login" };
+
     return (
-        <header className="sticky top-0 z-50 border-b border-orange-100/80 bg-white/95 backdrop-blur dark:border-orange-950/50 dark:bg-zinc-950/95">
+        <header className="sticky top-0 z-50 border-b border-slate-200 bg-background/80 backdrop-blur-lg">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
                 <Link href="/" className="flex items-center gap-2">
-                    <span className="flex size-9 items-center justify-center rounded-xl bg-orange-600 text-lg font-black text-white">
+                    <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-accent text-lg font-black text-white">
                         K
                     </span>
                     <span className="text-lg font-bold tracking-tight text-zinc-950 dark:text-white">
@@ -20,18 +34,21 @@ export function SiteHeader() {
                         <Link
                             key={href}
                             href={href}
-                            className="text-sm font-medium text-zinc-600 hover:text-orange-600 dark:text-zinc-300 dark:hover:text-orange-400"
+                            className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
                         >
                             {label}
                         </Link>
                     ))}
                 </nav>
-                <Link
-                    href="/login"
-                    className="hidden rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 md:inline-flex"
-                >
-                    Login
-                </Link>
+                {/* Authenticated users go to their console; guests go to login. */}
+                <div className="hidden items-center gap-4 md:flex">
+                    <Link
+                        href={cta.href}
+                        className="rounded-md bg-gradient-accent px-3 py-2 text-sm font-medium text-white transition hover:bg-gradient-accent/80"
+                    >
+                        {cta.label}
+                    </Link>
+                </div>
                 <div className="md:hidden">
                     <MobileNavigation />
                 </div>
