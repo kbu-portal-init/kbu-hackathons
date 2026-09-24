@@ -1,10 +1,7 @@
-import { cn } from "cn";
 import { format } from "date-fns";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
@@ -48,10 +45,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/panel/registrations" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
-                    <ArrowLeft className="size-4" />
-                    Back
-                </Link>
+                <BackButton fallbackHref="/panel/registrations" />
                 <div>
                     <h1 className="text-2xl font-bold">{item.teamName}</h1>
                     <p className="text-sm text-zinc-500">{item.loginName}</p>

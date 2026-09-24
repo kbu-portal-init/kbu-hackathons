@@ -1,5 +1,6 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { type NextRequest, NextResponse } from "next/server";
+import sharp from "sharp";
 import { z } from "zod";
 import { requireAdmin, requireApprovedTeam, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { ALLOWED_IMAGE_TYPES, ALLOWED_SUBMISSION_TYPES, MAX_FILE_SIZE, MAX_IMAGE_SIZE } from "@/lib/contracts/storage";
@@ -24,6 +25,9 @@ const IMAGE_CATEGORIES = [
     "announcement-image",
     "member-profile-image",
 ] as const;
+
+const MAX_IMAGE_DIMENSION = 1600;
+const WEBP_QUALITY = 82;
 
 async function getUploadOwner(category: string) {
     try {
@@ -104,21 +108,50 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Storage not configured" }, { status: 500 });
         }
 
-        const ext = file.name.split(".").pop() ?? "bin";
+        const isImageCategory = IMAGE_CATEGORIES.includes(category as (typeof IMAGE_CATEGORIES)[number]);
+        let buffer: Buffer;
+        let extension: string;
+        let contentType = file.type;
+
+        if (isImageCategory) {
+            try {
+                const inputBuffer = Buffer.from(await file.arrayBuffer());
+                const metadata = await sharp(inputBuffer, { animated: true }).metadata();
+
+                if (metadata.pages && metadata.pages > 1) {
+                    return NextResponse.json({ error: "Animated GIF images are not supported" }, { status: 400 });
+                }
+
+                buffer = await sharp(inputBuffer)
+                    .resize({
+                        width: MAX_IMAGE_DIMENSION,
+                        height: MAX_IMAGE_DIMENSION,
+                        fit: "inside",
+                        withoutEnlargement: true,
+                    })
+                    .webp({ quality: WEBP_QUALITY })
+                    .toBuffer();
+                extension = "webp";
+                contentType = "image/webp";
+            } catch {
+                return NextResponse.json({ error: "Invalid image file" }, { status: 400 });
+            }
+        } else {
+            buffer = Buffer.from(await file.arrayBuffer());
+            extension = file.name.split(".").pop() ?? "bin";
+        }
 
         const key =
             category === "admin-profile-image"
-                ? `uploads/admins/${owner}/${crypto.randomUUID()}.${ext}`
-                : `uploads/${owner}/${crypto.randomUUID()}.${ext}`;
-
-        const buffer = Buffer.from(await file.arrayBuffer());
+                ? `uploads/admins/${owner}/${crypto.randomUUID()}.${extension}`
+                : `uploads/${owner}/${crypto.randomUUID()}.${extension}`;
 
         await r2.send(
             new PutObjectCommand({
                 Bucket: R2_BUCKET,
                 Key: key,
                 Body: buffer,
-                ContentType: file.type,
+                ContentType: contentType,
                 ContentLength: buffer.length,
             }),
         );

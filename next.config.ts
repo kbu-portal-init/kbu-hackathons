@@ -1,16 +1,29 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
+const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+const r2Hostname = (() => {
+    if (!r2PublicUrl) return null;
+
+    try {
+        return new URL(r2PublicUrl).hostname || null;
+    } catch {
+        return null;
+    }
+})();
+
 const nextConfig: NextConfig = {
     output: "standalone",
     images: {
-        remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "pub-2695dd9a36b640069530ec01d4ad81c5.r2.dev",
-                pathname: "/uploads/**",
-            },
-        ],
+        remotePatterns: r2Hostname
+            ? [
+                  {
+                      protocol: "https",
+                      hostname: r2Hostname,
+                      pathname: "/uploads/**",
+                  },
+              ]
+            : [],
     },
 };
 export default withSentryConfig(nextConfig, {
