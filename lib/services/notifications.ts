@@ -56,13 +56,6 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
                 text: `Reset your KBU Hackathon 2026 password using this link: ${data.resetUrl}`,
                 html: `<p>Reset your KBU Hackathon 2026 password using the link below.</p><p><a href="${escapeHtml(data.resetUrl)}">Reset password</a></p>`,
             };
-        case "SIGN_IN_LINK":
-            return {
-                type,
-                subject: "Your KBU Hub sign-in link",
-                text: `Sign in to KBU Hub using this link: ${data.resetUrl}`,
-                html: `<p>Sign in to KBU Hub using the link below.</p><p><a href="${escapeHtml(data.resetUrl)}">Sign in</a></p>`,
-            };
         case "STUDENT_EMAIL_VERIFICATION":
             return {
                 type,

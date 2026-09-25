@@ -1,12 +1,11 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
-import { magicLink } from "better-auth/plugins/magic-link";
 import { username } from "better-auth/plugins/username";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
-import { checkMagicLinkRateLimit, upstashSecondaryStorage } from "@/lib/services/rate-limit";
+import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
 
 export const auth = betterAuth({
     secondaryStorage: upstashSecondaryStorage,
@@ -60,50 +59,6 @@ export const auth = betterAuth({
             usernameValidator: (value) => /^[a-zA-Z0-9_.-]+$/.test(value),
         }),
         admin(),
-        magicLink({
-            sendMagicLink: async ({ email, url }, ctx) => {
-                const rateLimit = await checkMagicLinkRateLimit(email, ctx?.request);
-                if (!rateLimit.success) throw new Error("Too many sign-in link requests");
-                const user = await prisma.user.findUnique({
-                    where: { email },
-                    select: {
-                        role: true,
-                        team: {
-                            select: {
-                                displayName: true,
-                                archivedAt: true,
-                                registration: { select: { status: true } },
-                                members: {
-                                    where: {
-                                        studentEmail: email,
-                                        role: "LEADER",
-                                        studentEmailVerifiedAt: { not: null },
-                                    },
-                                    select: { id: true },
-                                },
-                            },
-                        },
-                    },
-                });
-
-                const isStaff = user?.role === "organizer" || user?.role === "admin";
-                const isEligibleTeam =
-                    user?.role === "team" &&
-                    user.team?.archivedAt === null &&
-                    user.team.registration?.status === "APPROVED" &&
-                    user.team.members.length > 0;
-
-                if (!isStaff && !isEligibleTeam) {
-                    throw new Error("Only verified leaders of approved teams may request sign-in links");
-                }
-
-                await sendNotification({
-                    type: isEligibleTeam ? "TEAM_REGISTRATION_APPROVED" : "SIGN_IN_LINK",
-                    recipients: [email],
-                    data: { teamName: user?.team?.displayName, resetUrl: url },
-                });
-            },
-        }),
     ],
     user: {
         additionalFields: {

@@ -22,12 +22,6 @@ const registrationByEmail = redis
 const verificationByMember = redis
     ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(3, "1 h"), prefix: "kbu:verification:member" })
     : null;
-const magicLinkByEmail = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "1 h"), prefix: "kbu:magic-link:email" })
-    : null;
-const magicLinkByIp = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(20, "1 h"), prefix: "kbu:magic-link:ip" })
-    : null;
 const passwordResetByIp = redis
     ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "1 h"), prefix: "kbu:password-reset:ip" })
     : null;
@@ -75,17 +69,6 @@ export async function checkRegistrationRateLimit(email: string, headers?: Header
 export async function checkVerificationRateLimit(memberId: string, email: string): Promise<RateLimitResult> {
     const result = await check(verificationByMember, `${memberId}:${hash(email.trim().toLowerCase())}`);
     return result.success ? { success: true } : { success: false, retryAfterSeconds: result.retryAfter };
-}
-
-export async function checkMagicLinkRateLimit(email: string, request?: Request): Promise<RateLimitResult> {
-    const headers = request?.headers;
-    const [ipResult, emailResult] = await Promise.all([
-        check(magicLinkByIp, clientIp(headers)),
-        check(magicLinkByEmail, hash(email.trim().toLowerCase())),
-    ]);
-    return ipResult.success && emailResult.success
-        ? { success: true }
-        : { success: false, retryAfterSeconds: Math.max(ipResult.retryAfter, emailResult.retryAfter) };
 }
 
 export async function checkPasswordResetRateLimit(identifier: string, request?: Request): Promise<RateLimitResult> {
