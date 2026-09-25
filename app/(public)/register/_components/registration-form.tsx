@@ -126,7 +126,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
                 <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                     {verificationEmailsSent
-                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a login link."
+                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
                         : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
                 </p>
                 <Button variant="outline" className="mt-8" onClick={() => setSubmitted(false)}>
@@ -275,8 +275,8 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                     We will send verification links to all team members, and each member must verify
                                     their student email address.
                                 </p>
-                                <p>After everyone verifies, the team will be reviewed.</p>
-                                <p>The leader will receive a sign-in link when the registration is approved.</p>
+                                <p>After everyone verifies, the team will be automatically approved.</p>
+                                <p>The leader will receive a password-reset link after approval.</p>
                             </div>
                         </AlertDialogDescription>
                     </AlertDialogHeader>

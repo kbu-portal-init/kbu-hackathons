@@ -8,13 +8,14 @@ type BackButtonProps = {
     fallbackHref?: string;
     label?: string;
     className?: string;
+    useHistory?: boolean;
 };
 
-export function BackButton({ fallbackHref = "/", label = "Back", className }: BackButtonProps) {
+export function BackButton({ fallbackHref = "/", label = "Back", className, useHistory = true }: BackButtonProps) {
     const router = useRouter();
 
     function handleBack() {
-        if (window.history.length > 1) {
+        if (useHistory && window.history.length > 1) {
             router.back();
             return;
         }
