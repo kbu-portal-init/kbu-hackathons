@@ -1,11 +1,10 @@
 import { format } from "date-fns";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { getTeam } from "@/actions/management/teams";
+import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { TeamActions } from "../_components/team-actions";
 
 export default async function PanelTeamDetailPage({ params }: { params: Promise<{ teamId: string }> }) {
@@ -16,13 +15,31 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                    <Button variant="ghost" size="sm" render={<Link href="/panel/teams" />}>
-                        ← All teams
-                    </Button>
-                    <p className="mt-4 text-sm font-medium text-zinc-500">Team detail</p>
-                    <h1 className="text-2xl font-semibold tracking-tight">{team.displayName}</h1>
-                    <p className="mt-1 text-sm text-zinc-500">@{team.loginName}</p>
+                <div className="space-y-4">
+                    <BackButton fallbackHref="/panel/teams" />
+                    <div className="flex items-center gap-3">
+                        {team.imageUrl ? (
+                            <Image
+                                src={team.imageUrl}
+                                alt={`${team.displayName} avatar`}
+                                width={40}
+                                height={40}
+                                className="size-10 rounded-full object-cover"
+                                unoptimized
+                            />
+                        ) : (
+                            <div
+                                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700 dark:bg-orange-950 dark:text-orange-300"
+                                aria-hidden="true"
+                            >
+                                {getInitials(team.displayName)}
+                            </div>
+                        )}
+                        <div className="min-w-0">
+                            <h1 className="truncate text-2xl font-semibold tracking-tight">{team.displayName}</h1>
+                            <p className="truncate text-sm text-zinc-500">@{team.loginName}</p>
+                        </div>
+                    </div>
                 </div>
                 <TeamActions team={team} />
             </div>
