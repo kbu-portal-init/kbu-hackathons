@@ -21,6 +21,7 @@ type TeamListRecord = {
 };
 
 export function toTeamListItem(record: TeamListRecord): TeamListItem {
+    const banned = Boolean(record.user?.banned && (!record.user.banExpires || record.user.banExpires > new Date()));
     return {
         id: record.id,
         userId: record.userId,
@@ -30,7 +31,7 @@ export function toTeamListItem(record: TeamListRecord): TeamListItem {
         memberCount: record.members.length,
         submissionCount: record.submission ? 1 : 0,
         registrationStatus: record.registration?.status ?? "UNKNOWN",
-        banned: record.user?.banned ?? false,
+        banned,
         banReason: record.user?.banReason ?? null,
         banExpires: record.user?.banExpires?.toISOString() ?? null,
         createdAt: record.createdAt.toISOString(),

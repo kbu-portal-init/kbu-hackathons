@@ -15,9 +15,14 @@ const teamListInclude = {
 export async function listTeams(input: ListTeamsInput): Promise<ListResult<TeamListItem>> {
     const page = input.page ?? 1;
     const pageSize = input.pageSize ?? 20;
+    const now = new Date();
     const where = {
         registration: { status: "APPROVED" as const },
-        ...(input.status ? { user: { banned: input.status === "BANNED" } } : {}),
+        ...(input.status === "BANNED"
+            ? { user: { banned: true, OR: [{ banExpires: null }, { banExpires: { gt: now } }] } }
+            : input.status === "ACTIVE"
+              ? { user: { OR: [{ banned: false }, { banned: true, banExpires: { lte: now } }] } }
+              : {}),
     };
 
     const [total, records] = await Promise.all([
