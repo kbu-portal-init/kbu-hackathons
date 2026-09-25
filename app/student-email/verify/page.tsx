@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { verifyTeamMemberEmail } from "@/actions/auth";
 import { BackButton } from "@/components/back-button";
 
-type VerifyState = "loading" | "success" | "allVerified" | "already" | "error";
+type VerifyState = "loading" | "success" | "approved" | "approvedNoEmail" | "allVerified" | "already" | "error";
 
 function VerifyContent() {
     const searchParams = useSearchParams();
@@ -26,6 +26,8 @@ function VerifyContent() {
             }
             if (result.data.alreadyVerified) {
                 setState("already");
+            } else if (result.data.autoApproved) {
+                setState(result.data.passwordSetupSent ? "approved" : "approvedNoEmail");
             } else if (result.data.allVerified) {
                 setState("allVerified");
             } else {
@@ -86,6 +88,32 @@ function VerifyContent() {
                         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                             All team members have verified their emails. An organizer will review and approve your
                             registration. You will receive your login credentials once approved.
+                        </p>
+                    </>
+                )}
+
+                {state === "approved" && (
+                    <>
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+                            <CheckCircle2 className="size-7" />
+                        </div>
+                        <h1 className="mt-6 text-2xl font-bold tracking-tight">Team approved!</h1>
+                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                            All team members have verified their emails. The team was automatically approved, and the
+                            leader received a password-reset link.
+                        </p>
+                    </>
+                )}
+
+                {state === "approvedNoEmail" && (
+                    <>
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-950/50 dark:text-yellow-400">
+                            <CheckCircle2 className="size-7" />
+                        </div>
+                        <h1 className="mt-6 text-2xl font-bold tracking-tight">Team approved</h1>
+                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                            Your team was automatically approved, but the leader&apos;s password-reset email could not
+                            be delivered. Please contact the organizers for help.
                         </p>
                     </>
                 )}

@@ -13,7 +13,7 @@ import type {
     SubmitRegistrationData,
     SubmitRegistrationInput,
 } from "@/lib/contracts/registration";
-import { countApprovedTeams, getRegistrationWithTeam } from "@/lib/data/registrations";
+import { countApprovedTeams, getRegistrationByTeamId, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
 import { sendTeamRegistrationNotification } from "@/lib/services/notifications";
 import { createPasswordSetupUrl } from "@/lib/services/password-reset";
@@ -350,6 +350,8 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         verified: boolean;
         allVerified: boolean;
         alreadyVerified: boolean;
+        autoApproved: boolean;
+        passwordSetupSent: boolean;
     }>
 > {
     const consumeResult = await consumeStudentEmailVerification(token);
@@ -373,12 +375,47 @@ export async function verifyTeamMemberEmail(token: string): Promise<
 
     const allVerified = await allMembersVerified(member.teamId);
 
+    let autoApproved = false;
+    let passwordSetupSent = false;
+    if (allVerified && !consumeResult.data.alreadyVerified) {
+        const record = await getRegistrationByTeamId(member.teamId);
+        if (record?.status === "PENDING") {
+            const leader = record.team.members.find((m) => m.role === "LEADER") ?? record.team.members[0];
+            if (!leader) {
+                return {
+                    ok: false,
+                    error: {
+                        code: ErrorCodes.TEAM_LEADER_NOT_FOUND,
+                        message: "Team leader not found",
+                    },
+                };
+            }
+
+            const approvalResult = await provisionTeamAccount(
+                record.id,
+                record.teamId,
+                record.team.displayName,
+                record.team.loginName,
+                { name: leader.name, studentEmail: leader.studentEmail },
+                null,
+            );
+            if (!approvalResult.ok) {
+                if (approvalResult.error.code !== ErrorCodes.MAX_TEAMS_REACHED) return approvalResult;
+            } else {
+                autoApproved = true;
+                passwordSetupSent = approvalResult.data.passwordSetupSent;
+            }
+        }
+    }
+
     return {
         ok: true,
         data: {
             verified: true,
             allVerified,
             alreadyVerified: consumeResult.data.alreadyVerified,
+            autoApproved,
+            passwordSetupSent,
         },
     };
 }

@@ -8,6 +8,8 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         verified: boolean;
         allVerified: boolean;
         alreadyVerified: boolean;
+        autoApproved: boolean;
+        passwordSetupSent: boolean;
     }>
 > {
     return verifyTeamMemberEmailService(token);
