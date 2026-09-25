@@ -449,7 +449,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                         aria-invalid={!!createForm.formState.errors.content}
                                         placeholder="Write the announcement content..."
                                         rows={5}
-                                        className="resize-none"
+                                        className="max-h-48 resize-none overflow-y-auto"
                                     />
 
                                     {createForm.formState.errors.content && (
@@ -519,7 +519,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                     }
                 }}
             >
-                <DialogContent className="overflow-hidden p-0 sm:max-w-lg">
+                <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-lg">
                     <div className="border-l-4 border-l-primary">
                         <DialogHeader className="px-6 pb-2 pt-6">
                             <div className="flex items-start gap-3">
@@ -570,7 +570,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                         aria-invalid={!!editForm.formState.errors.content}
                                         placeholder="Write the announcement content..."
                                         rows={5}
-                                        className="resize-none"
+                                        className="max-h-48 resize-none overflow-y-auto"
                                     />
 
                                     {editForm.formState.errors.content && (
