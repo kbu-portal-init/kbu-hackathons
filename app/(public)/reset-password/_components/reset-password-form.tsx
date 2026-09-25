@@ -46,7 +46,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                         Your password has been saved. You can now sign in with your team username and new password.
                     </p>
-                    <Button className="mt-6 w-full" onClick={() => router.push("/login/participant")}>
+                    <Button className="mt-6 w-full" onClick={() => router.push("/login")}>
                         Go to participant login
                     </Button>
                 </div>

@@ -27,9 +27,15 @@ export async function POST(request: Request) {
 
         const result = await requestPasswordReset(parsed.data);
         if (!result.found || !result.sent) {
-            return NextResponse.json({ message: "If the account exists, check the email inbox" });
+            return NextResponse.json({
+                message:
+                    "Check your inbox for password reset instructions. If you do not see an email, check your spam folder.",
+            });
         }
-        return NextResponse.json({ message: "If the account exists, check the email inbox" });
+        return NextResponse.json({
+            message:
+                "Check your inbox for password reset instructions. If you do not see an email, check your spam folder.",
+        });
     } catch (error) {
         if (isNotificationDeliveryError(error)) {
             return NextResponse.json({ message: "Unable to deliver password-reset email" }, { status: 503 });

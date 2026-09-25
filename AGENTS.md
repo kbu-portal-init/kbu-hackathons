@@ -4,7 +4,7 @@
 
 KBU Hackathon 2026 is a Next.js App Router application for a single KBU hackathon event. Route groups organize the workspaces without changing their URLs:
 
-- `app/(public)` contains public discovery, registration, and login pages.
+- `app/(public)` contains public discovery, registration, and login pages. `/login` is the single login route and switches between participant and management access with tabs.
 - `app/(participant)/team` is the approved team workspace.
 - `app/(management)/panel` is the organizer workspace.
 - `app/(admin)/admin` is the elevated administrator workspace.
