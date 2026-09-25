@@ -66,6 +66,14 @@ async function main() {
 
     const adminUser = await createUser({ email: "admin@ms.kbu.ac.th", password: "adminpassword", name: "Super Admin" });
     await prisma.user.update({ where: { id: adminUser.id }, data: { role: "admin", emailVerified: true } });
+    const organizerUsers = await Promise.all([
+        createUser({ email: "organizer@ms.kbu.ac.th", password: "organizerpassword", name: "Primary Organizer" }),
+        createUser({ email: "organizer2@ms.kbu.ac.th", password: "organizerpassword", name: "Secondary Organizer" }),
+    ]);
+    await prisma.user.updateMany({
+        where: { id: { in: organizerUsers.map((user) => user.id) } },
+        data: { role: "organizer", emailVerified: true },
+    });
 
     await prisma.eventSettings.create({
         data: {
@@ -73,7 +81,6 @@ async function main() {
             description: "Build practical solutions for the KBU community.",
             venue: "KBU Innovation Lab",
             imageUrls: [],
-            promoUrl: "https://example.com/kbu-innovation-sprint",
             ...eventDates,
             maxTeams: 50,
             minTeamSize: 2,
@@ -87,7 +94,8 @@ async function main() {
                 title: "KBU Innovation Sprint 2026 is open",
                 content:
                     "Registration is now open. Form your team, review the challenge details, and submit your application before the registration deadline.",
-                imageUrl: "https://images.example.com/kbu-innovation-sprint-2026.jpg",
+                imageUrl:
+                    "https://pub-ab7b105929754ba195b59fb0082dca50.r2.dev/uploads/events/72e392a0-9fce-405e-99dc-01d93e4fd51f.webp",
                 status: "PUBLISHED",
                 publishedAt: new Date("2026-01-01T00:00:00.000Z"),
                 createdById: adminUser.id,
@@ -96,7 +104,8 @@ async function main() {
                 title: "Important registration reminder",
                 content:
                     "Teams must have between 2 and 5 members. Make sure every member is listed with a valid student email before submitting your registration.",
-                imageUrl: "https://images.example.com/registration-reminder.jpg",
+                imageUrl:
+                    "https://pub-ab7b105929754ba195b59fb0082dca50.r2.dev/uploads/events/72e392a0-9fce-405e-99dc-01d93e4fd51f.webp",
                 status: "PUBLISHED",
                 publishedAt: new Date("2026-01-15T09:00:00.000Z"),
                 createdById: adminUser.id,
@@ -104,9 +113,106 @@ async function main() {
             {
                 title: "Hackathon orientation details",
                 content: "Orientation details will be shared with approved teams before the event begins.",
-                status: "DRAFT",
+                imageUrl:
+                    "https://pub-ab7b105929754ba195b59fb0082dca50.r2.dev/uploads/events/72e392a0-9fce-405e-99dc-01d93e4fd51f.webp",
+                status: "PUBLISHED",
+                publishedAt: new Date("2026-01-20T09:00:00.000Z"),
                 createdById: adminUser.id,
             },
+            ...[
+                [
+                    "Challenge theme announcement",
+                    "This year's challenge focuses on practical solutions that improve the KBU community experience.",
+                ],
+                [
+                    "How to form a strong team",
+                    "Bring together complementary skills in technology, design, research, and presentation to build a well-rounded team.",
+                ],
+                [
+                    "Student eligibility reminder",
+                    "All team members should review the eligibility requirements and keep their student information up to date.",
+                ],
+                [
+                    "Registration checklist",
+                    "Before submitting, verify your team name, member roster, application notes, and contact details.",
+                ],
+                [
+                    "Meet the organizing team",
+                    "Our organizers are ready to help teams understand the rules, schedule, and submission requirements.",
+                ],
+                [
+                    "Workshop schedule coming soon",
+                    "Practical workshops and mentoring sessions will be announced ahead of the main event.",
+                ],
+                [
+                    "Prepare your project idea",
+                    "Start by identifying a real problem, understanding its users, and defining a measurable outcome.",
+                ],
+                [
+                    "Mentor support for teams",
+                    "Approved teams will have opportunities to receive feedback from mentors during the sprint.",
+                ],
+                [
+                    "Design for the KBU community",
+                    "Keep accessibility, usability, and the needs of diverse KBU users at the center of your solution.",
+                ],
+                [
+                    "Submission requirements",
+                    "Teams should prepare a clear project description, repository link, and final presentation before the deadline.",
+                ],
+                [
+                    "Registration deadline reminder",
+                    "Do not wait until the last day. Submit your complete team registration before registration closes.",
+                ],
+                [
+                    "What happens after registration",
+                    "Organizers will review applications and notify teams about their registration status.",
+                ],
+                [
+                    "Build week preparation",
+                    "Set up your tools, divide responsibilities, and agree on a communication plan before the event starts.",
+                ],
+                [
+                    "Bring your best ideas",
+                    "The sprint is an opportunity to turn a thoughtful idea into a useful prototype with your teammates.",
+                ],
+                [
+                    "Event venue information",
+                    "The KBU Innovation Lab will host the main activities, workshops, and final presentations.",
+                ],
+                [
+                    "Team account reminder",
+                    "Use your team account to review your registration, manage your roster, and access participant updates.",
+                ],
+                [
+                    "Final presentation guidance",
+                    "Tell a clear story: explain the problem, demonstrate your solution, and share what you learned.",
+                ],
+                [
+                    "Keep your roster updated",
+                    "Make sure every participating member is listed correctly and completes the required verification.",
+                ],
+                [
+                    "Community impact matters",
+                    "Strong projects connect technical decisions to meaningful benefits for students and the wider KBU community.",
+                ],
+                [
+                    "Countdown to the sprint",
+                    "The event is approaching. Review the schedule and make sure your team is ready to collaborate.",
+                ],
+                [
+                    "Good luck to all teams",
+                    "We look forward to seeing the creativity, teamwork, and practical impact of every participating team.",
+                ],
+            ].map(([title, content], index) => ({
+                title,
+                content,
+                imageUrl:
+                    "https://pub-ab7b105929754ba195b59fb0082dca50.r2.dev/uploads/events/72e392a0-9fce-405e-99dc-01d93e4fd51f.webp",
+                status: "PUBLISHED" as const,
+                publishedAt: new Date(Date.UTC(2026, 1, 1 + index, 9, 0, 0)),
+                createdById: adminUser.id,
+            })),
         ],
     });
 
@@ -117,6 +223,7 @@ async function main() {
             status: "APPROVED",
             adminUserId: adminUser.id,
             submission: true,
+            studentEmailIds: ["660000000001", "660000000002", "660000000003"],
         }),
         createTeam({
             loginName: "team-pulse",
@@ -124,6 +231,7 @@ async function main() {
             status: "PENDING",
             adminUserId: adminUser.id,
             submission: false,
+            studentEmailIds: ["660000000004", "660000000005", "660000000006"],
         }),
         createTeam({
             loginName: "team-nova",
@@ -131,6 +239,7 @@ async function main() {
             status: "REJECTED",
             adminUserId: adminUser.id,
             submission: false,
+            studentEmailIds: ["660000000007", "660000000008", "660000000009"],
         }),
     ]);
 
@@ -150,7 +259,11 @@ async function main() {
         data: Array.from({ length: 40 }, (_, index) => {
             const action = auditActions[index % auditActions.length];
             const actorId =
-                index % 4 === 0 ? adminUser.id : (teamUsers[(index - 1) % teamUsers.length]?.id ?? adminUser.id);
+                index % 4 === 0
+                    ? adminUser.id
+                    : index % 4 === 1
+                      ? (organizerUsers[(index - 1) % organizerUsers.length]?.id ?? adminUser.id)
+                      : (teamUsers[(index - 1) % teamUsers.length]?.id ?? adminUser.id);
             const member = teamMembers[index % teamMembers.length];
             const target =
                 index % 5 === 0
@@ -170,6 +283,8 @@ async function main() {
     });
     console.log(`✅ Seeded admin, event settings, and ${teams.length} teams.`);
     console.log("🔐 Admin login: admin@ms.kbu.ac.th / adminpassword");
+    console.log("🔐 Organizer login: organizer@ms.kbu.ac.th / organizerpassword");
+    console.log("🔐 Organizer login: organizer2@ms.kbu.ac.th / organizerpassword");
     console.log("🔐 Team login password for all fixtures: teampassword");
     console.log("🎉 Seed finished!");
 }
@@ -191,6 +306,7 @@ async function createTeam(input: {
     status: "APPROVED" | "PENDING" | "REJECTED";
     adminUserId: string;
     submission: boolean;
+    studentEmailIds: [string, string, string];
 }) {
     const user = await createUser({
         email: `${input.loginName}@team.kbu.internal`,
@@ -210,7 +326,7 @@ async function createTeam(input: {
         data: {
             teamId: team.id,
             name: `${input.displayName} Leader`,
-            studentEmail: `${input.loginName}.leader@ms.kbu.ac.th`,
+            studentEmail: `u${input.studentEmailIds[0]}@ms.kbu.ac.th`,
             role: TeamMemberRole.LEADER,
             studentEmailVerifiedAt: verifiedAt,
         },
@@ -220,14 +336,14 @@ async function createTeam(input: {
             {
                 teamId: team.id,
                 name: `${input.displayName} Developer`,
-                studentEmail: `${input.loginName}.developer@ms.kbu.ac.th`,
+                studentEmail: `u${input.studentEmailIds[1]}@ms.kbu.ac.th`,
                 role: "DEVELOPER",
                 studentEmailVerifiedAt: verifiedAt,
             },
             {
                 teamId: team.id,
                 name: `${input.displayName} Designer`,
-                studentEmail: `${input.loginName}.designer@ms.kbu.ac.th`,
+                studentEmail: `u${input.studentEmailIds[2]}@ms.kbu.ac.th`,
                 role: "DESIGNER",
                 studentEmailVerifiedAt: verifiedAt,
             },

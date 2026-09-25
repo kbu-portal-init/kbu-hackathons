@@ -4,7 +4,7 @@ import Link from "next/link";
 import { StudentBenefitsCatalog } from "@/components/resources/student-benefits-catalog";
 
 export const metadata: Metadata = {
-    title: "Student Benefits & Developer Packs | KBU Hub",
+    title: "Student Benefits & Developer Packs | KBU Hackathon 2026",
     description:
         "Unlock over $200,000+ in free industry-standard software, AI coding assistants, cloud credits, and developer tools using your official KBU student credentials.",
 };

@@ -52,9 +52,9 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
         case "PASSWORD_RESET":
             return {
                 type,
-                subject: "Reset your KBU Hub password",
-                text: `Reset your KBU Hub password using this link: ${data.resetUrl}`,
-                html: `<p>Reset your KBU Hub password using the link below.</p><p><a href="${escapeHtml(data.resetUrl)}">Reset password</a></p>`,
+                subject: "Reset your KBU Hackathon 2026 password",
+                text: `Reset your KBU Hackathon 2026 password using this link: ${data.resetUrl}`,
+                html: `<p>Reset your KBU Hackathon 2026 password using the link below.</p><p><a href="${escapeHtml(data.resetUrl)}">Reset password</a></p>`,
             };
         case "SIGN_IN_LINK":
             return {
@@ -66,7 +66,7 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
         case "STUDENT_EMAIL_VERIFICATION":
             return {
                 type,
-                subject: "Verify your KBU Hub student email",
+                subject: "Verify your KBU Hackathon 2026 student email",
                 text: `Verify your student email using this link: ${data.verificationUrl}`,
                 html: `<p>Verify your student email using the link below.</p><p><a href="${escapeHtml(data.verificationUrl)}">Verify email</a></p>`,
             };
@@ -94,21 +94,21 @@ function renderNotification(type: NotificationType, data: NotificationData): Ren
         case "ACCOUNT_BANNED":
             return {
                 type,
-                subject: "Your KBU Hub account has been restricted",
+                subject: "Your KBU Hackathon 2026 account has been restricted",
                 text: `Your account has been restricted.${data.reason ? ` Reason: ${data.reason}` : ""}${data.expiresAt ? ` Until: ${data.expiresAt}` : ""}`,
                 html: `<p>Your account has been restricted.</p>${data.reason ? `<p>Reason: ${escapeHtml(data.reason)}</p>` : ""}${data.expiresAt ? `<p>Until: ${escapeHtml(data.expiresAt)}</p>` : ""}`,
             };
         case "ACCOUNT_UNBANNED":
             return {
                 type,
-                subject: "Your KBU Hub account has been restored",
-                text: "Your KBU Hub account restriction has been removed.",
-                html: "<p>Your KBU Hub account restriction has been removed.</p>",
+                subject: "Your KBU Hackathon 2026 account has been restored",
+                text: "Your KBU Hackathon 2026 account restriction has been removed.",
+                html: "<p>Your KBU Hackathon 2026 account restriction has been removed.</p>",
             };
         case "ORGANIZER_ACCOUNT_CREATED":
             return {
                 type,
-                subject: "Your KBU Hub organizer account is ready",
+                subject: "Your KBU Hackathon 2026 organizer account is ready",
                 text: `Your organizer account has been created. Set your password using this link: ${data.resetUrl}`,
                 html: `<p>Your organizer account has been created.</p><p><a href="${escapeHtml(data.resetUrl)}">Set your password</a></p>`,
             };

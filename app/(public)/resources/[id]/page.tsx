@@ -1,5 +1,4 @@
 import {
-    ArrowLeft,
     ArrowRight,
     CheckCircle2,
     ChevronRight,
@@ -14,6 +13,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/back-button";
 import {
     AwsIcon,
     AzureIcon,
@@ -58,12 +58,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     if (!benefit) {
         return {
-            title: "Student Benefit Not Found | KBU Hub",
+            title: "Student Benefit Not Found | KBU Hackathon 2026",
         };
     }
 
     return {
-        title: `${benefit.title} — Student Claim Guide | KBU Hub`,
+        title: `${benefit.title} — Student Claim Guide | KBU Hackathon 2026`,
         description: benefit.description,
     };
 }
@@ -112,13 +112,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     </ol>
                 </nav>
 
-                <Link
-                    href="/resources"
-                    className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-zinc-600 transition hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400"
-                >
-                    <ArrowLeft className="h-3.5 w-3.5" />
-                    <span>Back to all benefits</span>
-                </Link>
+                <BackButton fallbackHref="/resources" label="Back to all benefits" className="self-start" />
             </div>
 
             {/* Hero Header Card */}

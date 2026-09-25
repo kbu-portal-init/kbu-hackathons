@@ -1,10 +1,10 @@
-﻿# KBU Hub
+﻿# KBU Hackathon 2026
 
-KBU Hub is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
+KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
 
 ## Current foundation
 
-The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, and Cloudflare R2 file storage.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
 
 The system uses three account roles:
 
@@ -25,6 +25,8 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
+
+Unknown routes and invalid public detail records use the branded global 404 page at `app/not-found.tsx`.
 
 ## Architecture boundaries
 
@@ -150,6 +152,8 @@ curl --fail http://127.0.0.1:3000/
 
 Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a `/_next/static/` asset referenced by the returned HTML also responds successfully. The web port is bound to localhost for a host reverse proxy; PostgreSQL has no published port. A missing production environment file fails Compose validation. Use `config --quiet` to avoid printing credentials. Validate fresh database startup with a separate test volume; never remove the production `postgres_data` volume as part of testing.
 
+The deployment workflow performs only lightweight dangling-image cleanup after the health check. BuildKit cache cleanup is intentionally excluded from the deployment path because it can exceed the remote command timeout. Run it separately during maintenance after checking available disk space, for example with `docker builder prune -f --filter "until=168h"`.
+
 Environment files are excluded from image builds. `NEXT_PUBLIC_SENTRY_DSN` and other `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
 
 ## Branching
@@ -232,7 +236,6 @@ pnpm dlx shadcn@latest add <component>
 
 Update this README and `AGENTS.md` whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Update `lib/navigation.ts` with the same change when it affects a navigable route.
 
-<<<<<<< HEAD
 ## Unit testing
 
 Run the non-UI unit-test suite with Node's built-in test runner:
@@ -241,7 +244,3 @@ Run the non-UI unit-test suite with Node's built-in test runner:
     pnpm test:unit:watch
 
 Unit tests live under tests/unit and use helpers from tests/helpers. External boundaries are mocked; database integration tests are separate workflows.
-=======
-
-
->>>>>>> aa4e37e (docs: add audit fixtures and update admin docs)

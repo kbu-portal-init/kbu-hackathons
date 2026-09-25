@@ -13,7 +13,7 @@ export const upsertEventSettingsSchema = z
         description: z.string().trim().optional(),
         venue: z.string().trim().optional(),
         imageUrls: z.array(z.url("Invalid URL")).optional(),
-        promoUrl: z.url("Invalid URL").optional(),
+        promoUrl: z.preprocess((value) => (value === "" ? undefined : value), z.url("Invalid URL").optional()),
         registrationOpensAt: eventDateSchema,
         registrationClosesAt: eventDateSchema,
         startsAt: eventDateSchema,

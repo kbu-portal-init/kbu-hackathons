@@ -16,7 +16,13 @@ export function useUpload() {
     const upload = useCallback(
         async (
             file: File,
-            category: "image" | "submission" | "event-image" | "admin-profile-image" | "member-profile-image",
+            category:
+                | "image"
+                | "submission"
+                | "event-image"
+                | "admin-profile-image"
+                | "announcement-image"
+                | "member-profile-image",
         ): Promise<UploadResult | null> => {
             setState("uploading");
             setError(null);
