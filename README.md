@@ -4,7 +4,7 @@ KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It prov
 
 ## Current foundation
 
-The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer and team management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
 
 The system uses three account roles:
 
@@ -22,7 +22,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
-| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
+| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 
@@ -43,6 +43,7 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 ## Implemented backend capabilities
 
 - Create, list/read, update, ban, and unban organizer accounts.
+- Browse approved teams with pagination, submission counts, roster/submission detail views, and team ban/unban actions.
 - Admins can ban organizers and teams; organizers can ban teams only. Bans revoke active sessions and create audit records.
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
 - SMTP delivery is provider-neutral through `sendEmail`; named notification templates route password resets, student verification, account ban/unban, and organizer account-created messages through `sendNotification`. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
