@@ -38,23 +38,24 @@ function VerifyContent() {
 
     if (!token) {
         return (
-            <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+            <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
                 <div className="w-full max-w-md text-center">
                     <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400">
                         <XCircle className="size-7" />
                     </div>
                     <h1 className="mt-6 text-2xl font-bold tracking-tight">Invalid link</h1>
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                        This verification link is missing a token. Please check the email you received and try again.
+                        This verification link is incomplete or invalid. Please open the link directly from your email,
+                        or contact your team leader or the event organizers for a new link.
                     </p>
-                    <BackButton fallbackHref="/" label="Back to home" className="mt-8" />
+                    <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
                 </div>
             </main>
         );
     }
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+        <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
             <div className="w-full max-w-md text-center">
                 {state === "loading" && (
                     <>
@@ -137,13 +138,13 @@ function VerifyContent() {
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Verification failed</h1>
                         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                            This verification link is invalid or has expired. Please contact your team leader or the
-                            event organizers to request a new link.
+                            We couldn&apos;t verify this email because the link is invalid or has expired. Please
+                            contact your team leader or the event organizers to request a new verification link.
                         </p>
                     </>
                 )}
 
-                <BackButton fallbackHref="/" label="Back to home" className="mt-8" />
+                <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
             </div>
         </main>
     );
@@ -153,7 +154,7 @@ export default function VerifyEmailPage() {
     return (
         <Suspense
             fallback={
-                <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+                <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
                     <Loader2 className="size-10 animate-spin text-orange-600" />
                 </main>
             }
