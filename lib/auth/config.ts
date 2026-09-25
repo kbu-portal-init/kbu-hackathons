@@ -5,8 +5,14 @@ import { username } from "better-auth/plugins/username";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
+import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
 
 export const auth = betterAuth({
+    secondaryStorage: upstashSecondaryStorage,
+    rateLimit: {
+        enabled: true,
+        storage: upstashSecondaryStorage ? "secondary-storage" : "memory",
+    },
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),

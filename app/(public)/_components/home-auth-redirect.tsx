@@ -39,6 +39,17 @@ export function HomeAuthRedirect() {
         }
     }, [isPending, role, router, sessionHint]);
 
+    useEffect(() => {
+        if (!(sessionHint && isPending)) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isPending, sessionHint]);
+
     if (sessionHint && isPending) {
         return (
             <div

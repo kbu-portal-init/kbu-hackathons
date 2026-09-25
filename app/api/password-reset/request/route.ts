@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isNotificationDeliveryError } from "@/lib/services/notifications";
 import { requestPasswordReset } from "@/lib/services/password-reset-request";
+import { checkPasswordResetRateLimit } from "@/lib/services/rate-limit";
 
 const requestSchema = z
     .object({
@@ -15,11 +16,20 @@ export async function POST(request: Request) {
     if (!parsed.success) return NextResponse.json({ message: "Invalid password-reset request" }, { status: 400 });
 
     try {
+        const identifier = parsed.data.email ?? parsed.data.username ?? "";
+        const rateLimit = await checkPasswordResetRateLimit(identifier, request);
+        if (!rateLimit.success) {
+            return NextResponse.json(
+                { message: "Too many password-reset requests. Please try again later." },
+                { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+            );
+        }
+
         const result = await requestPasswordReset(parsed.data);
-        if (!result.found) return NextResponse.json({ message: "If the account exists, check the email inbox" });
-        if (!result.sent)
-            return NextResponse.json({ message: "No verified leader email is available" }, { status: 409 });
-        return NextResponse.json({ message: "Password-reset email sent" });
+        if (!result.found || !result.sent) {
+            return NextResponse.json({ message: "If the account exists, check the email inbox" });
+        }
+        return NextResponse.json({ message: "If the account exists, check the email inbox" });
     } catch (error) {
         if (isNotificationDeliveryError(error)) {
             return NextResponse.json({ message: "Unable to deliver password-reset email" }, { status: 503 });
