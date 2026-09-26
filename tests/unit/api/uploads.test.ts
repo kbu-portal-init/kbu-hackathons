@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
+import { mockModule as mock } from "@/tests/helpers/mocks";
 
 let access: "none" | "team" | "staff" | "admin" = "none";
 let deleteResult: { ok: true; data: { ok: true } } | { ok: false; error: { message: string } } = {
@@ -7,16 +8,24 @@ let deleteResult: { ok: true; data: { ok: true } } | { ok: false; error: { messa
     data: { ok: true },
 };
 let deletedOwner: string | undefined;
+let uploadedKey: string | undefined;
 
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
-function mock(path: string, exports: object) {
-    const filename = require.resolve(path);
-    require.cache[filename] = { id: filename, filename, loaded: true, exports } as NodeJS.Module;
-}
+mock("@/lib/r2", {
+    isR2Configured: () => true,
+    R2_BUCKET: "bucket-test",
+    R2_PUBLIC_URL: "https://cdn.example.test",
+    r2: {
+        send: async (command: { input: { Key: string } }) => {
+            uploadedKey = command.input.Key;
+            return {};
+        },
+    },
+});
 
-mock("../../../lib/auth/guards", {
+mock("@/lib/auth/guards", {
     requireAdmin: async () => {
         if (access !== "admin") throw new Error("denied");
         return { user: { id: "admin-1" } };
@@ -31,7 +40,7 @@ mock("../../../lib/auth/guards", {
     },
 });
 
-mock("../../../lib/services/storage", {
+mock("@/lib/services/storage", {
     deleteObject: async (_input: unknown, owner: string) => {
         deletedOwner = owner;
         return deleteResult;
@@ -49,6 +58,7 @@ before(async () => {
 beforeEach(() => {
     access = "none";
     deletedOwner = undefined;
+    uploadedKey = undefined;
     deleteResult = { ok: true, data: { ok: true } };
 });
 
@@ -57,6 +67,17 @@ function uploadRequest(file?: File, category?: string) {
     if (file) body.set("file", file);
     if (category) body.set("category", category);
     return new Request("https://example.test/api/upload/proxy", { method: "POST", body });
+}
+
+const TINY_PNG = new Uint8Array(
+    Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        "base64",
+    ),
+);
+
+function tinyPng(): Uint8Array<ArrayBuffer> {
+    return TINY_PNG;
 }
 
 describe("upload API routes", () => {
@@ -90,9 +111,54 @@ describe("upload API routes", () => {
 
     it("requires the role associated with each upload category", async () => {
         const submission = new File(["data"], "project.pdf", { type: "application/pdf" });
-        const response = await uploadPost(uploadRequest(submission, "submission") as never);
+        let response = await uploadPost(uploadRequest(submission, "submission") as never);
         assert.equal(response.status, 401);
         assert.deepEqual(await response.json(), { error: "Unauthorized" });
+
+        const png = new File([tinyPng()], "avatar.png", { type: "image/png" });
+        for (const [category, allowed] of [
+            ["admin-profile-image", "admin"],
+            ["event-image", "staff"],
+            ["announcement-image", "staff"],
+            ["member-profile-image", "team"],
+            ["image", "team"],
+        ] as const) {
+            access = allowed === "team" ? "staff" : "team";
+            response = await uploadPost(uploadRequest(png, category) as never);
+            assert.equal(response.status, 401, `${category} should reject role ${access}`);
+        }
+        assert.equal(uploadedKey, undefined);
+    });
+
+    it("derives the storage key from the session owner, never the client", async () => {
+        const png = () => new File([tinyPng()], "avatar.png", { type: "image/png" });
+        const pdf = new File(["data"], "project.pdf", { type: "application/pdf" });
+
+        access = "team";
+        let response = await uploadPost(uploadRequest(pdf, "submission") as never);
+        assert.equal(response.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/team-1\/[0-9a-f-]+\.pdf$/);
+
+        uploadedKey = undefined;
+        response = await uploadPost(uploadRequest(png(), "member-profile-image") as never);
+        assert.equal(response.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/team-1\/[0-9a-f-]+\.webp$/);
+
+        uploadedKey = undefined;
+        access = "staff";
+        response = await uploadPost(uploadRequest(png(), "event-image") as never);
+        assert.equal(response.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/events\/[0-9a-f-]+\.webp$/);
+
+        uploadedKey = undefined;
+        access = "admin";
+        response = await uploadPost(uploadRequest(png(), "admin-profile-image") as never);
+        assert.equal(response.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/admins\/admin-1\/[0-9a-f-]+\.webp$/);
+
+        const body = (await response.json()) as { key: string; publicUrl: string };
+        assert.equal(body.key, uploadedKey);
+        assert.equal(body.publicUrl, `https://cdn.example.test/${uploadedKey}`);
     });
 
     it("validates delete payloads and enforces key-prefix ownership", async () => {
