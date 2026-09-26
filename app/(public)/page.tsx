@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, Megaphone, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Megaphone, NotebookPen, Users } from "lucide-react";
 import Link from "next/link";
 import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
 
@@ -15,7 +15,7 @@ export default async function Home() {
             <section className="overflow-hidden border-b border-orange-100 bg-orange-50 dark:border-orange-950/50 dark:bg-orange-950/20">
                 <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8">
                     <div>
-                        <p className="mb-5 inline-flex rounded-full border border-orange-200 bg-white px-3 py-1 text-sm font-semibold text-orange-700 dark:border-orange-900 dark:bg-zinc-950 dark:text-orange-300">
+                        <p className="mb-5 inline-flex rounded-full border border-orange-200 bg-white px-3 py-1 text-sm font-semibold text-orange-700">
                             The KBU hackathon community
                         </p>
                         <h1 className="max-w-3xl text-5xl font-black tracking-tight text-zinc-950 sm:text-7xl dark:text-white">
@@ -28,13 +28,14 @@ export default async function Home() {
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                             <Link
                                 href="/events"
-                                className="inline-flex items-center justify-center gap-2 rounded-full bg-orange-600 px-6 py-3 font-semibold text-white hover:bg-orange-700"
+                                className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
                             >
-                                Explore events <ArrowRight className="size-4" />
+                                <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
+                                Register Your Team
                             </Link>
                             <Link
                                 href="/login"
-                                className="inline-flex items-center justify-center rounded-full border border-orange-200 bg-white px-6 py-3 font-semibold text-orange-700 dark:border-orange-900 dark:bg-zinc-950 dark:text-orange-300"
+                                className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
                             >
                                 Login
                             </Link>
@@ -42,7 +43,7 @@ export default async function Home() {
                     </div>
                     <div className="relative hidden min-h-72 lg:block">
                         <div className="absolute right-8 top-4 size-56 rounded-full bg-orange-300/50 blur-3xl dark:bg-orange-600/30" />
-                        <div className="relative ml-auto max-w-sm rounded-3xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/40 dark:border-orange-900 dark:bg-zinc-900 dark:shadow-none">
+                        <div className="relative ml-auto max-w-sm rounded-3xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/40">
                             <p className="text-sm font-semibold text-orange-600">What’s happening</p>
                             <p className="mt-4 text-3xl font-bold tracking-tight">Ideas start here.</p>
                             <div className="mt-8 space-y-4 text-sm text-zinc-600 dark:text-zinc-300">

@@ -96,7 +96,10 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         <SidebarMenuItem>
                             <ConfirmActionAlertDialog
                                 trigger={
-                                    <SidebarMenuButton tooltip="Sign out">
+                                    <SidebarMenuButton
+                                        tooltip="Sign out"
+                                        className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white cursor-pointer"
+                                    >
                                         <LogOut />
                                         <span>Sign out</span>
                                     </SidebarMenuButton>
