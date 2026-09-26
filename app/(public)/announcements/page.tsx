@@ -37,7 +37,7 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
     return (
         <Link
             href={`/announcements/${announcement.id}`}
-            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-orange-200 hover:border-orange-300 transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 hover:border-orange-300 transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
             <div className="relative aspect-video w-full overflow-hidden bg-muted">
                 <Image
