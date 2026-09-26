@@ -118,6 +118,9 @@ describe("server action boundaries", () => {
     });
 
     it("verifies member email tokens through the session-free auth action", async () => {
+        teamSession = null;
+        organizerSession = null;
+        adminSession = null;
         const result = await verifyTeamMemberEmail("token-1");
         assert.deepEqual(result, { ok: true, data: { token: "token-1" } });
     });
