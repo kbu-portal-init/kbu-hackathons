@@ -28,7 +28,8 @@ export function SiteHeader() {
                 </nav>
                 <Link
                     href="/login"
-                    className="hidden rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 md:inline-flex"
+                    className="hidden rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white md:inline-flex"
+                    aria-hidden="true"
                 >
                     Login
                 </Link>
