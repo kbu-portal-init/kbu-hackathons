@@ -7,6 +7,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
@@ -91,7 +100,11 @@ function TeamLoginForm() {
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
                         <FieldLabel htmlFor="team-password">Password</FieldLabel>
-                        <ForgotPasswordButton identifier="username" getValue={() => form.getValues("username")} />
+                        <ForgotPasswordButton
+                            identifier="username"
+                            getValue={() => form.getValues("username")}
+                            focusInput={() => form.setFocus("username")}
+                        />
                     </div>
                     <InputGroup>
                         <InputGroupInput
@@ -161,7 +174,11 @@ function StaffLoginForm() {
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
                         <FieldLabel htmlFor="staff-password">Password</FieldLabel>
-                        <ForgotPasswordButton identifier="email" getValue={() => form.getValues("email")} />
+                        <ForgotPasswordButton
+                            identifier="email"
+                            getValue={() => form.getValues("email")}
+                            focusInput={() => form.setFocus("email")}
+                        />
                     </div>
                     <InputGroup>
                         <InputGroupInput
@@ -190,16 +207,40 @@ function StaffLoginForm() {
     );
 }
 
-function ForgotPasswordButton({ identifier, getValue }: { identifier: "email" | "username"; getValue: () => string }) {
+function ForgotPasswordButton({
+    identifier,
+    getValue,
+    focusInput,
+}: {
+    identifier: "email" | "username";
+    getValue: () => string;
+    focusInput: () => void;
+}) {
+    const [open, setOpen] = useState(false);
     const [isRequesting, setIsRequesting] = useState(false);
+    const [message, setMessage] = useState<string>();
+    const [messageType, setMessageType] = useState<"info" | "error" | "success">("info");
+    const isTeam = identifier === "username";
+
+    const openDialog = () => {
+        if (!getValue().trim()) {
+            focusInput();
+            return;
+        }
+        setMessage(undefined);
+        setMessageType("info");
+        setOpen(true);
+    };
 
     const requestReset = async () => {
         const normalizedValue = getValue().trim();
         if (!normalizedValue) {
-            toast.error(`Enter your ${identifier === "email" ? "email address" : "team username"} first.`);
+            setMessage(`Enter your ${isTeam ? "team username" : "email address"} first.`);
+            setMessageType("error");
             return;
         }
 
+        setMessage(undefined);
         setIsRequesting(true);
         try {
             const response = await fetch("/api/password-reset/request", {
@@ -209,30 +250,72 @@ function ForgotPasswordButton({ identifier, getValue }: { identifier: "email" | 
             });
             const result = (await response.json()) as { message?: string };
             if (!response.ok) {
-                toast.error(result.message ?? "Unable to request a password reset.");
+                setMessage(result.message ?? "Unable to request a password reset.");
+                setMessageType("error");
                 return;
             }
-            toast.success(
+            setMessage(
                 result.message ??
                     "Check your inbox for password reset instructions. If you do not see an email, check your spam folder.",
             );
+            setMessageType("success");
         } catch {
-            toast.error("Unable to request a password reset. Please try again.");
+            setMessage("Unable to request a password reset. Please try again.");
+            setMessageType("error");
         } finally {
             setIsRequesting(false);
         }
     };
 
     return (
-        <Button
-            type="button"
-            variant="link"
-            size="sm"
-            className="h-auto px-0 text-xs"
-            onClick={requestReset}
-            disabled={isRequesting}
-        >
-            {isRequesting ? "Sending..." : "Forgot password?"}
-        </Button>
+        <>
+            <Button type="button" variant="link" size="sm" className="h-auto px-0 text-xs" onClick={openDialog}>
+                Forgot password?
+            </Button>
+            <Dialog
+                open={open}
+                onOpenChange={(nextOpen) => {
+                    if (!isRequesting) setOpen(nextOpen);
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Reset your password</DialogTitle>
+                        <DialogDescription>
+                            {isTeam
+                                ? "We will send password-reset instructions to the verified leader email for this team."
+                                : "We will send password-reset instructions to the email address on your account."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-3">
+                        <p className="text-sm text-muted-foreground">
+                            {isTeam ? "Team username" : "Email address"}: {getValue().trim() || "Not provided"}
+                        </p>
+                        {message && (
+                            <p
+                                className={
+                                    messageType === "error"
+                                        ? "text-sm font-medium text-red-600"
+                                        : messageType === "success"
+                                          ? "text-sm font-medium text-green-600"
+                                          : "text-sm text-muted-foreground"
+                                }
+                                role={messageType === "error" ? "alert" : "status"}
+                            >
+                                {message}
+                            </p>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose render={<Button variant="outline" disabled={isRequesting} />}>Close</DialogClose>
+                        {messageType !== "success" && (
+                            <Button type="button" onClick={requestReset} disabled={isRequesting}>
+                                {isRequesting ? "Sending..." : "Send reset link"}
+                            </Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }

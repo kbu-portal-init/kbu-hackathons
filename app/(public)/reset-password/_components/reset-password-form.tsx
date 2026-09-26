@@ -1,13 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LockKeyhole } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BackButton } from "@/components/back-button";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { authClient } from "@/lib/auth-client";
 import { type PasswordResetInput, passwordResetSchema } from "@/lib/contracts/auth";
 
@@ -15,6 +15,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
     const router = useRouter();
     const [submitError, setSubmitError] = useState<string>();
     const [completed, setCompleted] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const form = useForm<PasswordResetInput>({
         resolver: zodResolver(passwordResetSchema),
         defaultValues: { newPassword: "", confirmPassword: "" },
@@ -44,10 +46,11 @@ export function ResetPasswordForm({ token }: { token: string }) {
                 <div className="w-full max-w-md rounded-2xl border border-orange-100 bg-white p-7 shadow-xl dark:border-orange-950 dark:bg-zinc-900">
                     <h1 className="text-3xl font-bold tracking-tight">Password set</h1>
                     <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                        Your password has been saved. You can now sign in with your team username and new password.
+                        Your password has been saved. You can now sign in with the account credentials associated with
+                        this reset link.
                     </p>
                     <Button className="mt-6 w-full" onClick={() => router.push("/login")}>
-                        Go to participant login
+                        Go to login
                     </Button>
                 </div>
             </main>
@@ -75,24 +78,52 @@ export function ResetPasswordForm({ token }: { token: string }) {
                             <label htmlFor="newPassword" className="text-sm font-medium">
                                 New password
                             </label>
-                            <Input
-                                id="newPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                {...form.register("newPassword")}
-                            />
+                            <InputGroup>
+                                <InputGroupInput
+                                    id="newPassword"
+                                    type={showNewPassword ? "text" : "password"}
+                                    autoComplete="new-password"
+                                    {...form.register("newPassword")}
+                                />
+                                <InputGroupButton
+                                    type="button"
+                                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                                    onClick={() => setShowNewPassword((visible) => !visible)}
+                                    size="icon-sm"
+                                >
+                                    {showNewPassword ? (
+                                        <EyeOff data-icon="inline-start" />
+                                    ) : (
+                                        <Eye data-icon="inline-start" />
+                                    )}
+                                </InputGroupButton>
+                            </InputGroup>
                             <FormError message={form.formState.errors.newPassword?.message} />
                         </div>
                         <div className="space-y-2">
                             <label htmlFor="confirmPassword" className="text-sm font-medium">
                                 Confirm password
                             </label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                {...form.register("confirmPassword")}
-                            />
+                            <InputGroup>
+                                <InputGroupInput
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    autoComplete="new-password"
+                                    {...form.register("confirmPassword")}
+                                />
+                                <InputGroupButton
+                                    type="button"
+                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                    onClick={() => setShowConfirmPassword((visible) => !visible)}
+                                    size="icon-sm"
+                                >
+                                    {showConfirmPassword ? (
+                                        <EyeOff data-icon="inline-start" />
+                                    ) : (
+                                        <Eye data-icon="inline-start" />
+                                    )}
+                                </InputGroupButton>
+                            </InputGroup>
                             <FormError message={form.formState.errors.confirmPassword?.message} />
                         </div>
                         <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
