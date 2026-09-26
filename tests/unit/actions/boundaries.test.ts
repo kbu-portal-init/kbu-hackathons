@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
+import { mockModule as mock } from "@/tests/helpers/mocks";
 
 let adminSession: unknown = { user: { id: "admin-1", role: "admin" } };
 let teamSession: unknown = { team: { id: "team-1" }, user: { id: "user-1", role: "team" } };
@@ -9,15 +10,10 @@ let logoServiceArgs: unknown[] | undefined;
 let submitServiceInput: unknown;
 let validationFailure: { issues: { path: (string | number)[]; message: string }[] } | undefined;
 
-function mock(path: string, exports: object) {
-    const filename = require.resolve(path);
-    require.cache[filename] = { id: filename, filename, loaded: true, exports } as NodeJS.Module;
-}
-
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
-mock("../../../lib/auth/guards", {
+mock("@/lib/auth/guards", {
     requireAdmin: async () => {
         if (!adminSession) throw new Error("redirect:/login");
         return adminSession;
@@ -31,26 +27,26 @@ mock("../../../lib/auth/guards", {
         return organizerSession;
     },
 });
-mock("../../../lib/services/audits", {
+mock("@/lib/services/audits", {
     deleteAuditLog: async (input: unknown) => {
         deleteServiceInput = input;
         return { ok: true, data: { id: (input as { id: string }).id } };
     },
 });
-mock("../../../lib/services/team-settings", {
+mock("@/lib/services/team-settings", {
     updateTeamLogo: async (teamId: string, input: unknown) => {
         logoServiceArgs = [teamId, input];
         return { ok: true, data: input };
     },
 });
-mock("../../../lib/services/registration", {
+mock("@/lib/services/registration", {
     submitRegistration: async (input: unknown) => {
         submitServiceInput = input;
         return { ok: true, data: { id: "registration-1" } };
     },
     verifyTeamMemberEmail: async (token: string) => ({ ok: true, data: { token } }),
 });
-mock("../../../lib/validation/zod", {
+mock("@/lib/validation/zod", {
     toFieldErrors: () => (validationFailure ? { field: ["invalid"] } : {}),
 });
 

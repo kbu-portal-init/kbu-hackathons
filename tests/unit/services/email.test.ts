@@ -1,9 +1,18 @@
 import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
+import { withEnvironment } from "@/tests/helpers/environment";
 
 let sendEmail: typeof import("@/lib/services/email").sendEmail;
 const sendMailCalls: Record<string, unknown>[] = [];
-const environmentKeys = ["SMTP_HOST", "SMTP_PORT", "SMTP_SECURE", "SMTP_USER", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"];
+
+const smtpEnvironment = {
+    SMTP_HOST: "smtp.example.test",
+    SMTP_PORT: "587",
+    SMTP_SECURE: "false",
+    SMTP_USER: "mailer",
+    SMTP_PASSWORD: "secret",
+    SMTP_FROM_EMAIL: "noreply@example.test",
+};
 
 before(async () => {
     const serverOnlyPath = require.resolve("server-only");
@@ -22,31 +31,9 @@ before(async () => {
     ({ sendEmail } = await import("@/lib/services/email"));
 });
 
-function withSmtpConfigured<T>(callback: () => T, overrides: Partial<Record<string, string | undefined>> = {}): T {
-    const original = new Map(environmentKeys.map((key) => [key, process.env[key]]));
-    process.env.SMTP_HOST = "smtp.example.test";
-    process.env.SMTP_PORT = "587";
-    process.env.SMTP_SECURE = "false";
-    process.env.SMTP_USER = "mailer";
-    process.env.SMTP_PASSWORD = "secret";
-    process.env.SMTP_FROM_EMAIL = "noreply@example.test";
-    for (const [key, value] of Object.entries(overrides)) {
-        if (value === undefined) delete process.env[key];
-        else process.env[key] = value;
-    }
-    try {
-        return callback();
-    } finally {
-        for (const [key, value] of original) {
-            if (value === undefined) delete process.env[key];
-            else process.env[key] = value;
-        }
-    }
-}
-
 describe("SMTP delivery boundary", () => {
     it("sends the configured from address with the full message", async () => {
-        const result = await withSmtpConfigured(() =>
+        const result = await withEnvironment(smtpEnvironment, () =>
             sendEmail({
                 to: "student@example.test",
                 subject: "Welcome",
@@ -63,13 +50,13 @@ describe("SMTP delivery boundary", () => {
         assert.equal(sent?.html, "<p>Hello</p>");
     });
 
-    it("throws when any required SMTP setting is missing", () => {
+    it("throws when any required SMTP setting is missing", async () => {
         for (const key of ["SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"]) {
-            assert.throws(
+            await assert.rejects(
                 () =>
-                    withSmtpConfigured(() => sendEmail({ to: "a@example.test", subject: "s", text: "t" }), {
-                        [key]: undefined,
-                    }),
+                    withEnvironment({ ...smtpEnvironment, [key]: undefined }, () =>
+                        sendEmail({ to: "a@example.test", subject: "s", text: "t" }),
+                    ),
                 /SMTP email configuration is incomplete/,
             );
         }

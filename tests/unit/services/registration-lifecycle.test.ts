@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
+import { mockModule as mock } from "@/tests/helpers/mocks";
 
 type RegistrationRecord = ReturnType<typeof pendingRecord> | null;
 let registrationRecord: RegistrationRecord;
@@ -11,29 +12,24 @@ const notifications: unknown[] = [];
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
-function mock(path: string, exports: object) {
-    const filename = require.resolve(path);
-    require.cache[filename] = { id: filename, filename, loaded: true, exports } as NodeJS.Module;
-}
-
 mock("next/headers", { headers: async () => new Headers() });
-mock("../../../lib/auth/config", { auth: { api: { signUpEmail: async () => {} } } });
-mock("../../../lib/data/registrations", {
+mock("@/lib/auth/config", { auth: { api: { signUpEmail: async () => {} } } });
+mock("@/lib/data/registrations", {
     countApprovedTeams: async () => 0,
     getRegistrationWithTeam: async () => registrationRecord,
     getRegistrationByTeamId: async () => registrationRecord,
 });
-mock("../../../lib/services/rate-limit", { checkRegistrationRateLimit: async () => ({ success: true }) });
-mock("../../../lib/services/password-reset", {
+mock("@/lib/services/rate-limit", { checkRegistrationRateLimit: async () => ({ success: true }) });
+mock("@/lib/services/password-reset", {
     createPasswordSetupUrl: async () => "https://example.test/setup",
 });
-mock("../../../lib/services/notifications", {
+mock("@/lib/services/notifications", {
     sendTeamRegistrationNotification: async (input: unknown) => {
         if (notificationFails) throw new Error("delivery failed");
         notifications.push(input);
     },
 });
-mock("../../../lib/services/student-email-verification", {
+mock("@/lib/services/student-email-verification", {
     allMembersVerified: async () => verified,
     consumeStudentEmailVerification: async () => ({
         ok: true,

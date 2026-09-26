@@ -1,24 +1,20 @@
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
+import { mockModule as mock } from "@/tests/helpers/mocks";
 
 let session: unknown;
 let userQuery: unknown;
 let announcementInput: unknown;
 
-function mock(path: string, exports: object) {
-    const filename = require.resolve(path);
-    require.cache[filename] = { id: filename, filename, loaded: true, exports } as NodeJS.Module;
-}
-
 mock("next/headers", { headers: async () => new Headers() });
-mock("../../../lib/auth/config", { auth: { api: { getSession: async () => session } } });
-mock("../../../lib/data/users", {
+mock("@/lib/auth/config", { auth: { api: { getSession: async () => session } } });
+mock("@/lib/data/users", {
     listUsers: async (input: unknown) => {
         userQuery = input;
         return { items: [], meta: { page: 1, pageSize: 20, total: 0, hasNextPage: false } };
     },
 });
-mock("../../../actions/management/announcements", {
+mock("@/actions/management/announcements", {
     listPublishedAnnouncements: async (input: unknown) => {
         announcementInput = input;
         return { ok: true, data: { items: [], meta: { page: 1, pageSize: 20, total: 0, hasNextPage: false } } };

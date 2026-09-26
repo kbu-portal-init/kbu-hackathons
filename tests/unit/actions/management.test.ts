@@ -1,20 +1,16 @@
 import assert from "node:assert/strict";
 import { before, beforeEach, describe, it } from "node:test";
+import { mockModule as mock } from "@/tests/helpers/mocks";
 
 let session: unknown = { user: { id: "organizer-1", role: "organizer" } };
 let banServiceArgs: unknown[] | undefined;
 let verificationError: Error | undefined;
 let notificationError: unknown;
 
-function mock(path: string, exports: object) {
-    const filename = require.resolve(path);
-    require.cache[filename] = { id: filename, filename, loaded: true, exports } as NodeJS.Module;
-}
-
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
-mock("../../../lib/auth/guards", {
+mock("@/lib/auth/guards", {
     requireOrganizerOrAdmin: async () => {
         if (!session) throw new Error("redirect:/login");
         return session;
@@ -22,7 +18,7 @@ mock("../../../lib/auth/guards", {
     getUserRole: (role: string) =>
         role === "team" || role === "organizer" || role === "admin" ? (role as "team" | "organizer" | "admin") : null,
 });
-mock("../../../lib/services/account-banning", {
+mock("@/lib/services/account-banning", {
     banAccount: async (input: unknown, actorRole: string, actorId: string) => {
         banServiceArgs = [input, actorRole, actorId];
         return { ok: true, data: { userId: (input as { userId: string }).userId } };
@@ -32,12 +28,12 @@ mock("../../../lib/services/account-banning", {
         return { ok: true, data: { userId: (input as { userId: string }).userId } };
     },
 });
-mock("../../../lib/services/student-email-verification", {
+mock("@/lib/services/student-email-verification", {
     sendStudentEmailVerification: async () => {
         if (verificationError) throw verificationError;
     },
 });
-mock("../../../lib/services/notifications", {
+mock("@/lib/services/notifications", {
     isNotificationDeliveryError: (error: unknown) => notificationError === error,
 });
 
