@@ -44,10 +44,10 @@ describe("supporting backend modules", () => {
         const originalFind = prisma.auditLog.findMany;
         let where: unknown;
         try {
-            prisma.auditLog.count = (async (input: { where: unknown }) => {
-                where = input.where;
+            prisma.auditLog.count = (async (input: unknown) => {
+                where = (input as { where: unknown }).where;
                 return 0;
-            }) as typeof prisma.auditLog.count;
+            }) as unknown as typeof prisma.auditLog.count;
             prisma.auditLog.findMany = (async () => []) as unknown as typeof prisma.auditLog.findMany;
             await audits.listAuditLogs({
                 page: 1,
