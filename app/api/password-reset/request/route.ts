@@ -26,6 +26,15 @@ export async function POST(request: Request) {
         }
 
         const result = await requestPasswordReset(parsed.data);
+        if ("blocked" in result && result.blocked === "PENDING_TEAM") {
+            return NextResponse.json({ message: "Your team registration is still pending approval." }, { status: 403 });
+        }
+        if ("blocked" in result && result.blocked === "UNKNOWN_IDENTIFIER") {
+            return NextResponse.json(
+                { message: "No account was found for the provided username or email address." },
+                { status: 404 },
+            );
+        }
         if (!result.found || !result.sent) {
             return NextResponse.json({
                 message:
