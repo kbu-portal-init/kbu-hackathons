@@ -1,13 +1,29 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
+import { findTeamAccountByUsername, isApprovedTeamAccount } from "@/lib/auth/team-access";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
 import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
 import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
 
 export const auth = betterAuth({
+    hooks: {
+        before: createAuthMiddleware(async (context) => {
+            if (context.path !== "/sign-in/username") return;
+            const username = context.body?.username;
+            if (typeof username !== "string") return;
+
+            const user = await findTeamAccountByUsername(username);
+            if (user && !isApprovedTeamAccount(user)) {
+                throw APIError.fromStatus("FORBIDDEN", {
+                    message: "Your team registration is still pending approval.",
+                });
+            }
+        }),
+    },
     secondaryStorage: upstashSecondaryStorage,
     rateLimit: {
         enabled: true,

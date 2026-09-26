@@ -6,27 +6,28 @@ import prisma from "@/lib/prisma";
 export const PASSWORD_RESET_TOKEN_TTL_SECONDS = 60 * 60;
 export const TEAM_SETUP_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
 const RESET_TOKEN_IDENTIFIER_PREFIX = "reset-password:";
-const TEAM_SETUP_TOKEN_PREFIX = "setup:";
-const STANDARD_RESET_TOKEN_PREFIX = "reset:";
 
 /** Creates a long-lived, single-use onboarding link compatible with Better Auth's reset endpoint. */
 export async function createPasswordSetupUrl(userId: string) {
-    return createPasswordTokenUrl(userId, TEAM_SETUP_TOKEN_PREFIX, TEAM_SETUP_TOKEN_TTL_SECONDS);
+    return createPasswordTokenUrl(userId, TEAM_SETUP_TOKEN_TTL_SECONDS);
 }
 
 export async function createPasswordResetUrl(userId: string) {
-    return createPasswordTokenUrl(userId, STANDARD_RESET_TOKEN_PREFIX, PASSWORD_RESET_TOKEN_TTL_SECONDS);
+    return createPasswordTokenUrl(userId, PASSWORD_RESET_TOKEN_TTL_SECONDS);
 }
 
-async function createPasswordTokenUrl(userId: string, tokenPrefix: string, ttlSeconds: number) {
+async function createPasswordTokenUrl(userId: string, ttlSeconds: number) {
     const token = randomBytes(32).toString("base64url");
-    const identifier = `${RESET_TOKEN_IDENTIFIER_PREFIX}${tokenPrefix}${token}`;
+    // Better Auth consumes verification records using exactly
+    // `reset-password:${token}`. Do not add an application-specific prefix to
+    // the token itself: the emailed token is passed directly to resetPassword.
+    const identifier = `${RESET_TOKEN_IDENTIFIER_PREFIX}${token}`;
 
     await prisma.$transaction(async (tx) => {
         await tx.verification.deleteMany({
             where: {
                 value: userId,
-                identifier: { startsWith: `${RESET_TOKEN_IDENTIFIER_PREFIX}${tokenPrefix}` },
+                identifier: { startsWith: RESET_TOKEN_IDENTIFIER_PREFIX },
             },
         });
         await tx.verification.create({
@@ -43,5 +44,5 @@ async function createPasswordTokenUrl(userId: string, tokenPrefix: string, ttlSe
         /\/$/,
         "",
     );
-    return `${appUrl}/reset-password?token=${encodeURIComponent(`${tokenPrefix}${token}`)}`;
+    return `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
 }
