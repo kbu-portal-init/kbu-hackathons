@@ -34,9 +34,9 @@ function hash(value: string): string {
 
 function clientIp(headers?: Headers): string {
     return (
-        headers?.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-        headers?.get("x-real-ip") ||
         headers?.get("cf-connecting-ip") ||
+        headers?.get("x-real-ip") ||
+        headers?.get("x-forwarded-for")?.split(",")[0]?.trim() ||
         "unknown"
     );
 }
