@@ -270,6 +270,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                     <AlertDialogHeader>
                         <AlertDialogTitle>Before you submit</AlertDialogTitle>
                         <AlertDialogDescription>
+<<<<<<< HEAD
                             <div className="flex flex-col gap-3">
                                 <p>
                                     We will send verification links to all team members, and each member must verify
@@ -278,6 +279,17 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                 <p>After everyone verifies, the team will be automatically approved.</p>
                                 <p>The leader will receive a password-reset link after approval.</p>
                             </div>
+=======
+                            <ol className="list-decimal space-y-2 pl-5">
+                                <li>
+                                    Carefully check every team member&apos;s student email address. We will send each
+                                    member a verification link, and an incorrect email may prevent verification.
+                                </li>
+                                <li>Every team member must verify their student email address.</li>
+                                <li>After everyone verifies, the team will be automatically approved.</li>
+                                <li>The leader will receive a password-reset link after approval.</li>
+                            </ol>
+>>>>>>> 6d06fc8 (feat: clarify registration submission guidance)
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <FieldSet className="border-t pt-4">
