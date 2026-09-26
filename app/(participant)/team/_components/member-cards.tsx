@@ -1,9 +1,12 @@
 "use client";
 
+import { Download, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { generateMemberCard } from "@/actions/participant/member-cards";
 import { CardImageViewer } from "@/components/card-image-viewer";
+import { ShareButton } from "@/components/share-button";
+import { Button } from "@/components/ui/button";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
 
@@ -32,21 +35,6 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
             setError(result.error.message);
         }
         setBusyId(null);
-    }
-
-    async function handleShare(url: string) {
-        try {
-            if (navigator.share) {
-                await navigator.share({ title: "KBU Hackathon 2026 participant card", url });
-                return;
-            }
-            if (!navigator.clipboard) throw new Error("Clipboard is unavailable");
-            await navigator.clipboard.writeText(url);
-            toast.success("Card link copied");
-        } catch (error) {
-            if (error instanceof DOMException && error.name === "AbortError") return;
-            toast.error("Unable to share card link");
-        }
     }
 
     function getShareUrl(member: TeamMemberCard) {
@@ -105,41 +93,42 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                         )}
                         <div className="space-y-4 p-4">
                             <div className="min-w-0">
-                                <h2 className="font-semibold text-zinc-950">{member.name}</h2>
-                                <p className="text-sm text-zinc-500">{formatRole(member.role)}</p>
-                                <p className="mt-1 break-all text-sm text-zinc-500">{member.studentEmail}</p>
+                                <h2 className="font-semibold">{member.name}</h2>
+                                <p className="text-sm text-muted-foreground">{formatRole(member.role)}</p>
+                                <p className="mt-1 break-all text-sm text-muted-foreground">{member.studentEmail}</p>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {member.cardUrl ? (
-                                    <button
-                                        className="cursor-pointer rounded-md border border-zinc-300 px-3 py-2 text-sm"
+                                    <Button
+                                        size="lg"
+                                        variant="outline"
+                                        className="cursor-pointer transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground"
                                         onClick={() => handleDownload(member)}
-                                        type="button"
                                     >
+                                        <Download />
                                         Download
-                                    </button>
+                                    </Button>
                                 ) : null}
                                 {member.cardUrl && member.cardShareToken ? (
-                                    <button
-                                        className="cursor-pointer rounded-md border border-zinc-300 px-3 py-2 text-sm"
-                                        onClick={() => handleShare(getShareUrl(member))}
-                                        type="button"
-                                    >
-                                        Share
-                                    </button>
+                                    <ShareButton
+                                        title="KBU Hackathon 2026 participant card"
+                                        url={getShareUrl(member)}
+                                        className="h-auto rounded-md border-zinc-300 text-sm font-normal text-zinc-900"
+                                    />
                                 ) : null}
-                                <button
-                                    className="cursor-pointer rounded-md bg-orange-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                <Button
+                                    size="lg"
+                                    className="cursor-pointer hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                                     disabled={busyId === member.id}
                                     onClick={() => handleGenerate(member.id)}
-                                    type="button"
                                 >
+                                    <Sparkles />
                                     {busyId === member.id
                                         ? "Generating..."
                                         : member.cardUrl
                                           ? "Regenerate"
                                           : "Generate"}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </article>
