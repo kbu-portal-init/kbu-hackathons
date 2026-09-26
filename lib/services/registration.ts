@@ -230,14 +230,6 @@ async function provisionTeamAccount(
 export async function submitRegistration(
     input: SubmitRegistrationInput,
 ): Promise<ActionResult<SubmitRegistrationData>> {
-    const registrationRateLimit = await checkRegistrationRateLimit(input.leaderEmail, await headers());
-    if (!registrationRateLimit.success) {
-        return {
-            ok: false,
-            error: { code: "RATE_LIMITED", message: "Too many registration attempts. Please try again later." },
-        };
-    }
-
     const eventSettings = await prisma.eventSettings.findUnique({ where: { id: 1 } });
     if (!eventSettings) {
         return {
@@ -282,49 +274,78 @@ export async function submitRegistration(
         };
     }
 
+    const registrationRateLimit = await checkRegistrationRateLimit(await headers());
+    if (!registrationRateLimit.success) {
+        return {
+            ok: false,
+            error: { code: "RATE_LIMITED", message: "Too many registration attempts. Please try again later." },
+        };
+    }
+
     const loginName = await uniqueLoginName(toLoginName(input.teamName));
 
-    const result = await prisma.$transaction(async (tx) => {
-        const team = await tx.team.create({
-            data: {
-                loginName,
-                displayName: input.teamName,
-            },
+    let result: { registrationId: string; teamName: string; memberIds: string[] };
+    try {
+        result = await prisma.$transaction(async (tx) => {
+            const team = await tx.team.create({
+                data: {
+                    loginName,
+                    displayName: input.teamName,
+                },
+            });
+
+            const allMembers = [
+                { name: input.leaderName, role: input.leaderRole, email: input.leaderEmail },
+                ...input.members,
+            ];
+
+            const createdMembers = await Promise.all(
+                allMembers.map((m) =>
+                    tx.teamMember.create({
+                        data: {
+                            teamId: team.id,
+                            name: m.name,
+                            role: m.role,
+                            studentEmail: m.email,
+                        },
+                        select: { id: true },
+                    }),
+                ),
+            );
+
+            const registration = await tx.registration.create({
+                data: {
+                    teamId: team.id,
+                    applicationNotes: `Registered by ${input.leaderName}`,
+                    submittedAt: now,
+                },
+            });
+
+            return {
+                registrationId: registration.id,
+                teamName: team.displayName,
+                memberIds: createdMembers.map((m) => m.id),
+            };
         });
-
-        const allMembers = [
-            { name: input.leaderName, role: input.leaderRole, email: input.leaderEmail },
-            ...input.members,
-        ];
-
-        const createdMembers = await Promise.all(
-            allMembers.map((m) =>
-                tx.teamMember.create({
-                    data: {
-                        teamId: team.id,
-                        name: m.name,
-                        role: m.role,
-                        studentEmail: m.email,
-                    },
-                    select: { id: true },
-                }),
-            ),
-        );
-
-        const registration = await tx.registration.create({
-            data: {
-                teamId: team.id,
-                applicationNotes: `Registered by ${input.leaderName}`,
-                submittedAt: now,
-            },
-        });
-
-        return {
-            registrationId: registration.id,
-            teamName: team.displayName,
-            memberIds: createdMembers.map((m) => m.id),
-        };
-    });
+    } catch (error) {
+        const databaseError = error as { code?: string; meta?: { target?: string[] | string } };
+        const target = databaseError.meta?.target;
+        if (
+            databaseError.code === "P2002" &&
+            (Array.isArray(target)
+                ? target.some((field) => field === "studentEmail" || field === "student_email")
+                : target === "studentEmail" || target?.includes("student_email"))
+        ) {
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.EMAIL_EXISTS,
+                    message: "One or more student emails are already registered.",
+                },
+            };
+        }
+        throw error;
+    }
 
     let verificationEmailsSent = true;
     for (const memberId of result.memberIds) {

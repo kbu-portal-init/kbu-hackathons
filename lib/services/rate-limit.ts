@@ -14,19 +14,16 @@ if (isProductionRuntime && !hasRedisConfig) throw new Error("Upstash Redis confi
 
 const redis = redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null;
 const registrationByIp = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "1 h"), prefix: "kbu:registration:ip" })
-    : null;
-const registrationByEmail = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(1, "24 h"), prefix: "kbu:registration:email" })
+    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(20, "1 m"), prefix: "kbu:registration:ip" })
     : null;
 const verificationByMember = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(3, "1 h"), prefix: "kbu:verification:member" })
+    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "1 m"), prefix: "kbu:verification:member" })
     : null;
 const passwordResetByIp = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "1 h"), prefix: "kbu:password-reset:ip" })
+    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(20, "1 m"), prefix: "kbu:password-reset:ip" })
     : null;
 const passwordResetByIdentifier = redis
-    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "1 h"), prefix: "kbu:password-reset:identifier" })
+    ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "1 m"), prefix: "kbu:password-reset:identifier" })
     : null;
 
 export type RateLimitResult = { success: true } | { success: false; retryAfterSeconds: number };
@@ -56,14 +53,9 @@ async function check(limiter: Ratelimit | null, identifier: string) {
     }
 }
 
-export async function checkRegistrationRateLimit(email: string, headers?: Headers): Promise<RateLimitResult> {
-    const [ipResult, emailResult] = await Promise.all([
-        check(registrationByIp, clientIp(headers)),
-        check(registrationByEmail, hash(email.trim().toLowerCase())),
-    ]);
-    return ipResult.success && emailResult.success
-        ? { success: true }
-        : { success: false, retryAfterSeconds: Math.max(ipResult.retryAfter, emailResult.retryAfter) };
+export async function checkRegistrationRateLimit(headers?: Headers): Promise<RateLimitResult> {
+    const result = await check(registrationByIp, clientIp(headers));
+    return result.success ? { success: true } : { success: false, retryAfterSeconds: result.retryAfter };
 }
 
 export async function checkVerificationRateLimit(memberId: string, email: string): Promise<RateLimitResult> {
