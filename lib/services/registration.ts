@@ -552,7 +552,6 @@ export async function rejectRegistration(
         });
     });
 
-    const { sendTeamRegistrationNotification } = await import("@/lib/services/notifications");
     await sendTeamRegistrationNotification({
         type: "TEAM_REGISTRATION_REJECTED",
         teamId: record.teamId,
