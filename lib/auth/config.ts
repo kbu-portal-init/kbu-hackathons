@@ -12,6 +12,12 @@ export const auth = betterAuth({
     rateLimit: {
         enabled: true,
         storage: upstashSecondaryStorage ? "secondary-storage" : "memory",
+        window: 60,
+        max: 100,
+        customRules: {
+            "/sign-in/email": { window: 60, max: 10 },
+            "/change-password": { window: 60, max: 5 },
+        },
     },
     database: prismaAdapter(prisma, {
         provider: "postgresql",
