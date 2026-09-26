@@ -71,6 +71,25 @@ describe("rate limiting", () => {
         assert.deepEqual(limiters.get("kbu:registration:ip")?.identifiers, ["203.0.113.7"]);
     });
 
+    it("prioritizes the Cloudflare client IP over other headers", async () => {
+        const headers = new Headers({
+            "cf-connecting-ip": "198.51.100.4",
+            "x-real-ip": "192.0.2.10",
+            "x-forwarded-for": "203.0.113.7, 10.0.0.1",
+        });
+        await rateLimit.checkRegistrationRateLimit(headers);
+        assert.deepEqual(limiters.get("kbu:registration:ip")?.identifiers, ["198.51.100.4"]);
+    });
+
+    it("falls back to the Nginx client IP when Cloudflare is unavailable", async () => {
+        const headers = new Headers({
+            "x-real-ip": "192.0.2.10",
+            "x-forwarded-for": "203.0.113.7, 10.0.0.1",
+        });
+        await rateLimit.checkRegistrationRateLimit(headers);
+        assert.deepEqual(limiters.get("kbu:registration:ip")?.identifiers, ["192.0.2.10"]);
+    });
+
     it("normalizes and hashes verification identifiers", async () => {
         await rateLimit.checkVerificationRateLimit("member-1", " Student@Example.COM ");
         const hash = createHash("sha256").update("student@example.com").digest("hex");
