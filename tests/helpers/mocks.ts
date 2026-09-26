@@ -40,3 +40,8 @@ export function createEmailSpy() {
 export function createR2SendSpy() {
     return mockFunction<[unknown], Promise<Record<string, unknown>>>(() => Promise.resolve({}));
 }
+
+export function mockModule(path: string, exports: object) {
+    const filename = require.resolve(path);
+    require.cache[filename] = { id: filename, filename, loaded: true, exports } as NodeJS.Module;
+}
