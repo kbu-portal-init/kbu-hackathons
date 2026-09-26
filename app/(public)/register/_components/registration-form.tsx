@@ -142,7 +142,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 {/* Team Information */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        About your team
+                        About Your Team
                     </FieldLegend>
                     <FieldGroup>
                         <Controller
@@ -189,7 +189,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 {/* Team Leader */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Team leader details
+                        Team Leader
                     </FieldLegend>
                     <FieldGroup>
                         <div className="grid gap-5 sm:grid-cols-2">
@@ -240,7 +240,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 {/* Team Members */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Other team members ({teamSize - 1})
+                        Other Team Members ({teamSize - 1})
                     </FieldLegend>
                     <FieldGroup className="gap-3">
                         {fields.map((field, index) => (
