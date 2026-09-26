@@ -112,11 +112,19 @@ describe("student email verification", () => {
 
     it("reports whether all team members are verified", async () => {
         const originalCount = prisma.teamMember.count;
-        prisma.teamMember.count = (async () => 0) as typeof prisma.teamMember.count;
+        let countWhere: unknown;
+        let unverified = 1;
+        prisma.teamMember.count = (async (args: unknown) => {
+            countWhere = (args as { where: unknown }).where;
+            return unverified;
+        }) as typeof prisma.teamMember.count;
         try {
-            assert.equal(await allMembersVerified("team-1"), true);
-            prisma.teamMember.count = (async () => 1) as typeof prisma.teamMember.count;
             assert.equal(await allMembersVerified("team-1"), false);
+            assert.deepEqual(countWhere, { teamId: "team-1", studentEmailVerifiedAt: null });
+
+            unverified = 0;
+            assert.equal(await allMembersVerified("team-1"), true);
+            assert.deepEqual(countWhere, { teamId: "team-1", studentEmailVerifiedAt: null });
         } finally {
             prisma.teamMember.count = originalCount;
         }

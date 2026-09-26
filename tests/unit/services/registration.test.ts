@@ -79,14 +79,19 @@ describe("registration submission guards", () => {
     it("rejects when the approved-team limit is reached", async () => {
         const originalFind = prisma.eventSettings.findUnique;
         const originalCount = prisma.registration.count;
+        let countArgs: unknown;
         prisma.eventSettings.findUnique = (async () => validEvent) as unknown as typeof prisma.eventSettings.findUnique;
-        prisma.registration.count = (async () => validEvent.maxTeams) as typeof prisma.registration.count;
+        prisma.registration.count = (async (args: unknown) => {
+            countArgs = args;
+            return validEvent.maxTeams;
+        }) as typeof prisma.registration.count;
         try {
             const result = await submitRegistration(validInput);
             assert.deepEqual(result, {
                 ok: false,
                 error: { code: "MAX_TEAMS_REACHED", message: "Maximum number of teams has been reached" },
             });
+            assert.deepEqual(countArgs, { where: { status: "APPROVED" } });
         } finally {
             prisma.eventSettings.findUnique = originalFind;
             prisma.registration.count = originalCount;
