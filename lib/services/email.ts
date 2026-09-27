@@ -21,6 +21,7 @@ export function sendEmail(message: EmailMessage) {
     return transporter.sendMail({
         from,
         to: message.to,
+        bcc: message.bcc,
         subject: message.subject,
         text: message.text,
         html: message.html,
