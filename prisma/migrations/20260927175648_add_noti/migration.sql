@@ -1,1 +1,1 @@
-DROP INDEX "notification_senderId_idx";
+DROP INDEX IF EXISTS "notification_senderId_idx";
