@@ -2,8 +2,9 @@
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import {
     Sidebar,
     SidebarContent,
@@ -17,6 +18,7 @@ import {
     SidebarMenuItem,
     SidebarProvider,
     SidebarTrigger,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
@@ -54,6 +56,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
+            <DashboardSidebarRouteReset />
             <Sidebar collapsible="icon" className="border-sidebar-border">
                 <SidebarHeader>
                     <Link
@@ -127,4 +130,17 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
             </div>
         </SidebarProvider>
     );
+}
+
+function DashboardSidebarRouteReset() {
+    const pathname = usePathname();
+    const { setOpenMobile } = useSidebar();
+
+    useEffect(() => {
+        if (pathname) {
+            setOpenMobile(false);
+        }
+    }, [pathname, setOpenMobile]);
+
+    return null;
 }
