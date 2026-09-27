@@ -44,7 +44,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
             links: managementDashboardLinks,
         },
         admin: {
-            label: "Administrator workspace",
+            label: "Administrator panel",
             title: "Administrator dashboard",
             links: adminDashboardLinks,
         },

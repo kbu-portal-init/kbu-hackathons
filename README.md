@@ -1,6 +1,6 @@
 ﻿# KBU Hackathon 2026
 
-KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
+KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator panels.
 
 ## Current foundation
 
