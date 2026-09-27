@@ -13,6 +13,7 @@ const proxySchema = z.object({
         "submission",
         "event-image",
         "admin-profile-image",
+        "organizer-profile-image",
         "announcement-image",
         "member-profile-image",
     ]),
@@ -22,6 +23,7 @@ const IMAGE_CATEGORIES = [
     "image",
     "event-image",
     "admin-profile-image",
+    "organizer-profile-image",
     "announcement-image",
     "member-profile-image",
 ] as const;
@@ -33,6 +35,12 @@ async function getUploadOwner(category: string) {
     try {
         if (category === "admin-profile-image") {
             return (await requireAdmin()).user.id;
+        }
+
+        if (category === "organizer-profile-image") {
+            const session = await requireOrganizerOrAdmin();
+            if (session.user.role !== "organizer") return null;
+            return session.user.id;
         }
 
         if (category === "event-image") {
@@ -144,7 +152,9 @@ export async function POST(request: NextRequest) {
         const key =
             category === "admin-profile-image"
                 ? `uploads/admins/${owner}/${crypto.randomUUID()}.${extension}`
-                : `uploads/${owner}/${crypto.randomUUID()}.${extension}`;
+                : category === "organizer-profile-image"
+                  ? `uploads/organizers/${owner}/${crypto.randomUUID()}.${extension}`
+                  : `uploads/${owner}/${crypto.randomUUID()}.${extension}`;
 
         await r2.send(
             new PutObjectCommand({

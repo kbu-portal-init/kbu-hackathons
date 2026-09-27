@@ -6,10 +6,15 @@ import { toFieldErrors } from "@/lib/validation/zod";
 
 async function getUploadOwner(key: string) {
     try {
-        if (key.startsWith("uploads/admins/")) return (await requireAdmin()).user.id;
+        if (key.startsWith("uploads/admins/")) return `admins/${(await requireAdmin()).user.id}`;
+        if (key.startsWith("uploads/organizers/")) return `organizers/${(await requireOrganizerOrAdmin()).user.id}`;
         if (key.startsWith("uploads/events/")) {
             await requireOrganizerOrAdmin();
             return "events";
+        }
+        if (key.startsWith("uploads/announcements/")) {
+            await requireOrganizerOrAdmin();
+            return "announcements";
         }
         return (await requireApprovedTeam()).team.id;
     } catch {

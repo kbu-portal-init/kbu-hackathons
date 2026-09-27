@@ -463,6 +463,19 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                         <span className="font-normal text-muted-foreground">(optional)</span>
                                     </FieldLabel>
 
+                                    {createForm.watch("imageUrl") && (
+                                        <div className="overflow-hidden rounded-lg border bg-muted/20">
+                                            <Image
+                                                src={createForm.watch("imageUrl") as string}
+                                                alt="Announcement image preview"
+                                                width={800}
+                                                height={450}
+                                                className="aspect-video w-full object-cover"
+                                                unoptimized
+                                            />
+                                        </div>
+                                    )}
+
                                     <FileUpload
                                         category="announcement-image"
                                         accept="image/jpeg,image/png,image/webp,image/gif"
@@ -473,14 +486,10 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                                 shouldValidate: true,
                                             });
                                         }}
-                                        onRemove={() => {
-                                            createForm.setValue("imageUrl", "", {
-                                                shouldDirty: true,
-                                                shouldValidate: true,
-                                            });
-                                        }}
                                         label="Upload announcement image"
+                                        uploadHint="JPG, PNG, WEBP, or GIF • optimized automatically"
                                         inputId="announcement-image-upload"
+                                        variant="detailed"
                                     />
 
                                     {createForm.formState.errors.imageUrl && (
@@ -584,6 +593,19 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                         <span className="font-normal text-muted-foreground">(optional)</span>
                                     </FieldLabel>
 
+                                    {editForm.watch("imageUrl") && (
+                                        <div className="overflow-hidden rounded-lg border bg-muted/20">
+                                            <Image
+                                                src={editForm.watch("imageUrl") as string}
+                                                alt="Announcement image preview"
+                                                width={800}
+                                                height={450}
+                                                className="aspect-video w-full object-cover"
+                                                unoptimized
+                                            />
+                                        </div>
+                                    )}
+
                                     <FileUpload
                                         category="announcement-image"
                                         accept="image/jpeg,image/png,image/webp,image/gif"
@@ -594,14 +616,10 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                                 shouldValidate: true,
                                             });
                                         }}
-                                        onRemove={() => {
-                                            editForm.setValue("imageUrl", "", {
-                                                shouldDirty: true,
-                                                shouldValidate: true,
-                                            });
-                                        }}
                                         label="Upload announcement image"
+                                        uploadHint="JPG, PNG, WEBP, or GIF • optimized automatically"
                                         inputId="edit-announcement-image-upload"
+                                        variant="detailed"
                                     />
 
                                     {editForm.formState.errors.imageUrl && (
