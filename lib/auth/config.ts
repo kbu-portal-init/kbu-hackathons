@@ -25,6 +25,11 @@ export const auth = betterAuth({
         }),
     },
     secondaryStorage: upstashSecondaryStorage,
+    verification: {
+        // Team setup links are created directly in Prisma's verification table.
+        // Keep Better Auth reset-token consumption on the same database backend.
+        storeInDatabase: true,
+    },
     rateLimit: {
         enabled: true,
         storage: upstashSecondaryStorage ? "secondary-storage" : "memory",
@@ -41,7 +46,13 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         resetPasswordTokenExpiresIn: PASSWORD_RESET_TOKEN_TTL_SECONDS,
-        sendResetPassword: async ({ user, url }) => {
+        sendResetPassword: async ({ user, token }) => {
+            const appUrl = (
+                process.env.NEXT_PUBLIC_APP_URL ??
+                process.env.BETTER_AUTH_URL ??
+                "http://localhost:3000"
+            ).replace(/\/$/, "");
+            const resetUrl = `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
             const team = await prisma.team.findUnique({
                 where: { userId: user.id },
                 select: {
@@ -60,7 +71,7 @@ export const auth = betterAuth({
                 await sendNotification({
                     type: "PASSWORD_RESET",
                     recipients: [leaderEmail],
-                    data: { resetUrl: url },
+                    data: { resetUrl },
                     targetType: "User",
                     targetId: user.id,
                 });
@@ -69,7 +80,7 @@ export const auth = betterAuth({
             await sendNotification({
                 type: "PASSWORD_RESET",
                 recipients: [user.email],
-                data: { resetUrl: url },
+                data: { resetUrl },
                 targetType: "User",
                 targetId: user.id,
             });
