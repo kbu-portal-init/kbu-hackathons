@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { changeAdminPassword, updateAdminProfile } from "@/actions/admin/profile";
 import { FileUpload } from "@/components/file-upload";
+import { PasswordChangeForm } from "@/components/password-change-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +16,6 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
     const [email, setEmail] = useState(profile.email);
     const [image, setImage] = useState(profile.image);
     const [saving, setSaving] = useState(false);
-    const [passwords, setPasswords] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
 
     async function saveProfile(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -27,17 +27,6 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
             return;
         }
         toast.success("Profile updated");
-    }
-
-    async function savePassword(event: React.SubmitEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const result = await changeAdminPassword(passwords);
-        if (!result.ok) {
-            toast.error(result.error.message);
-            return;
-        }
-        setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" });
-        toast.success("Password changed");
     }
 
     return (
@@ -62,13 +51,19 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                                 </span>
                             )}
                         </div>
-                        <div className="min-w-0 flex-1">
+                        <div className="relative size-20 shrink-0">
                             <FileUpload
                                 category="admin-profile-image"
                                 accept="image/jpeg,image/png,image/webp,image/gif"
                                 currentFile={image}
+                                iconOverlay
+                                editDescription="Choose a new profile photo or remove the current photo."
+                                onRemove={async () => {
+                                    setImage(null);
+                                    const result = await updateAdminProfile({ name, email, image: null });
+                                    if (!result.ok) toast.error(result.error.message);
+                                }}
                                 onUploadComplete={(url) => setImage(url)}
-                                onRemove={() => setImage(null)}
                                 label="Select profile image"
                             />
                         </div>
@@ -98,41 +93,14 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
             </section>
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
                 <h2 className="text-lg font-semibold">Change password</h2>
-                <form onSubmit={savePassword} className="mt-5 space-y-5">
-                    <div className="space-y-2">
-                        <Label htmlFor="current-password">Current password</Label>
-                        <Input
-                            id="current-password"
-                            type="password"
-                            value={passwords.currentPassword}
-                            onChange={(event) => setPasswords({ ...passwords, currentPassword: event.target.value })}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="new-password">New password</Label>
-                        <Input
-                            id="new-password"
-                            type="password"
-                            value={passwords.newPassword}
-                            onChange={(event) => setPasswords({ ...passwords, newPassword: event.target.value })}
-                            minLength={8}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="confirm-password">Confirm new password</Label>
-                        <Input
-                            id="confirm-password"
-                            type="password"
-                            value={passwords.confirmPassword}
-                            onChange={(event) => setPasswords({ ...passwords, confirmPassword: event.target.value })}
-                            minLength={8}
-                            required
-                        />
-                    </div>
-                    <Button type="submit">Change password</Button>
-                </form>
+                <PasswordChangeForm
+                    idPrefix="admin"
+                    forgotPasswordEmail={email}
+                    onSubmit={async (values) => {
+                        const result = await changeAdminPassword(values);
+                        return result.ok ? { ok: true } : { ok: false, error: result.error };
+                    }}
+                />
             </section>
         </div>
     );
