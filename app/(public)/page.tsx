@@ -1,6 +1,5 @@
 import { ArrowRight, CalendarDays, Megaphone, Terminal, Trophy, Users, Zap } from "lucide-react";
 import Link from "next/link";
-import RoomExperience from "@/components/_3d/RoomExperience";
 import ScrollFx from "@/components/scroll-fx";
 import { redirectAuthenticatedUser } from "@/lib/auth/guards";
 
@@ -54,8 +53,8 @@ export default async function Home() {
     return (
         <main className="overflow-hidden">
             <ScrollFx />
-            {/* Hero — terminal-inspired light band with the 3D workspace */}
-            <section id="hero-3d" data-hero-parallax className={`relative bg-background dot-grid ${glowBackground}`}>
+            {/* Hero — terminal-inspired light band with a static workspace card */}
+            <section id="hero" className={`relative bg-background dot-grid ${glowBackground}`}>
                 <div className="mx-auto grid max-w-7xl gap-14 px-6 py-20 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
                     <div>
                         <p
@@ -92,10 +91,51 @@ export default async function Home() {
                             </Link>
                         </div>
                     </div>
-                    <div className="relative">
+                    <div data-reveal className="relative">
                         <div className="absolute -inset-4 rounded-4xl bg-violet-500/10 blur-2xl" aria-hidden />
-                        <div data-reveal className="relative">
-                            <RoomExperience />
+                        <div className="relative overflow-hidden rounded-2xl glass shadow-2xl shadow-violet-500/10">
+                            <div className="flex items-center gap-2 border-b border-slate-200/70 px-4 py-3">
+                                <span className="size-3 rounded-full bg-rose-300" aria-hidden />
+                                <span className="size-3 rounded-full bg-amber-300" aria-hidden />
+                                <span className="size-3 rounded-full bg-emerald-300" aria-hidden />
+                                <span className="ml-3 font-mono text-xs text-muted-foreground">
+                                    kbu-hub — first build
+                                </span>
+                            </div>
+                            <pre className="overflow-x-auto px-5 py-5 font-mono text-[13px] leading-7 text-foreground">
+                                <span className="block">
+                                    <span className="text-muted-foreground">$</span>{" "}
+                                    <span className="font-semibold">pnpm create hackathon</span>
+                                </span>
+                                <span className="block">
+                                    <span className="text-emerald-600">✔</span> workspace ready
+                                </span>
+                                <span className="block">
+                                    <span className="text-muted-foreground">$</span>{" "}
+                                    <span className="font-semibold">git checkout -b feat/your-idea</span>
+                                </span>
+                                <span className="block">
+                                    <span className="text-emerald-600">✔</span> branch created
+                                </span>
+                                <span className="block">
+                                    <span className="text-muted-foreground">$</span>{" "}
+                                    <span className="font-semibold">pnpm dev</span>
+                                    <span
+                                        className="ml-1 inline-block h-4 w-2 animate-pulse bg-violet-600 align-middle"
+                                        aria-hidden
+                                    />
+                                </span>
+                                <span className="block text-violet-700">➜ ready — bring an idea</span>
+                            </pre>
+                            <div className="border-t border-slate-200/70 px-5 py-3.5">
+                                <Link
+                                    href="/3d-demo"
+                                    className="group inline-flex items-center gap-2 font-mono text-sm font-medium text-violet-700 transition hover:text-violet-800"
+                                >
+                                    walk_into_the_room
+                                    <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

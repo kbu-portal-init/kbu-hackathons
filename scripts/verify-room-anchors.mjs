@@ -1,10 +1,10 @@
-// Verify the hand-tuned primitive anchors in room-objects.ts against the real
-// GLB bounds: every anchor must sit on or above the desk surface and inside the
-// desk footprint. Run: node scripts/verify-room-anchors.mjs
+// Verify the hand-tuned anchors in room-objects.ts against the real GLB bounds.
+// Reads the source of truth (room-objects.ts) rather than a hardcoded list, so
+// it actually catches a regression. Run: node scripts/verify-room-anchors.mjs
 import { readFileSync } from "node:fs";
-import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
+const OBJECTS_FILE = "components/_3d/room-objects.ts";
 const MODEL = "public/models/office-desk.glb";
 const DESK_SURFACE_Y = 4.28;
 const DESK_X = [-4.3, 4.21];
@@ -16,24 +16,42 @@ globalThis.URL ||= { createObjectURL: () => "blob:stub", revokeObjectURL: () => 
 globalThis.createImageBitmap ||= async () => ({});
 globalThis.document ||= { createElement: () => ({ style: {} }) };
 
-const primitives = [
-    ["calendar", [0.2, 4.3, 5.35]],
-    ["board", [-2.2, 4.3, 5.45]],
-    ["trophy", [-2.6, 4.28, 4.4]],
-    ["keyboard", [1.5, 4.28, 4.5]],
-    ["clock", [-3.5, 4.28, 4.9]],
-    ["poster", [1.4, 4.28, 5.65]],
-    ["duck", [-1.5, 4.28, 4.65]],
-    ["mug", [-0.3, 4.28, 4.35]],
-    ["plant", [-3.9, 4.28, 5.5]],
-    ["backpack", [2.8, 4.28, 5.3]],
-];
+// --- Parse room-objects.ts so this checks the real source of truth ---------
+const source = readFileSync(OBJECTS_FILE, "utf8");
 
-const expectedNodes = new Set(["laptop_8", "book_5", "book2_6", "phone_98", "Cube001_103", "lamp_95"]);
+/** Pull `anchor: { kind: "primitive", shape: "x", position: [a,b,c] }` etc. out of the source. */
+function parseAnchors(text) {
+    const anchors = [];
+    const objectRe = /\{\s*id:\s*"([^"]+)"[\s\S]*?anchor:\s*(\{[^}]*\})/g;
+    let match = objectRe.exec(text);
+    while (match) {
+        const id = match[1];
+        const anchorText = match[2];
+        const kind = /kind:\s*"([^"]+)"/.exec(anchorText)?.[1];
+        if (kind === "primitive") {
+            const shape = /shape:\s*"([^"]+)"/.exec(anchorText)?.[1];
+            const position = JSON.parse(/\[[^\]]*\]/.exec(anchorText)?.[0] ?? "[]");
+            anchors.push({ id, kind, shape, position });
+        } else if (kind === "model") {
+            const names = [...anchorText.matchAll(/"([^"]+)"/g)].map((m) => m[1]).filter((n) => n !== "model");
+            anchors.push({ id, kind, nodeNames: names });
+        }
+        match = objectRe.exec(text);
+    }
+    return anchors;
+}
 
-// GLTFLoader.parse() expects an ArrayBuffer; readFileSync returns a Node Buffer
-// whose .buffer can be a larger pooled region, so slice out the exact bytes.
+const anchors = parseAnchors(source);
+if (anchors.length === 0) {
+    console.log(`FAIL could not parse any anchors from ${OBJECTS_FILE}`);
+    console.log("     check the regex against the current room-objects.ts format");
+    process.exit(1);
+}
+
+// --- Load the model --------------------------------------------------------
 const buffer = readFileSync(MODEL);
+// readFileSync returns a Node Buffer whose .buffer can be a larger pooled
+// region; GLTFLoader.parse() wants the exact ArrayBuffer, so slice it out.
 const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 const loader = new GLTFLoader();
 
@@ -47,47 +65,12 @@ model.traverse((child) => {
     if (child.name) modelNames.add(child.name);
 });
 
-// Ground plane: the lowest point of the model, used as a sanity reference.
-const modelBox = new THREE.Box3().setFromObject(model);
-console.log(
-    "model bounds:",
-    [
-        modelBox.min.x.toFixed(2),
-        modelBox.min.y.toFixed(2),
-        modelBox.min.z.toFixed(2),
-        "->",
-        modelBox.max.x.toFixed(2),
-        modelBox.max.y.toFixed(2),
-        modelBox.max.z.toFixed(2),
-    ].join(" "),
-);
-
-// List every named node with its world-space bounds, so anchor names and shelf
-// heights can be measured rather than guessed.
-const named = [];
-model.traverse((child) => {
-    if (!child.name) return;
-    const box = new THREE.Box3().setFromObject(child);
-    if (!Number.isFinite(box.min.x)) return;
-    named.push({
-        name: child.name,
-        type: child.type,
-        min: [box.min.x, box.min.y, box.min.z].map((v) => v.toFixed(2)).join(","),
-        max: [box.max.x, box.max.y, box.max.z].map((v) => v.toFixed(2)).join(","),
-        size: [box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z].map((v) => v.toFixed(2)).join("x"),
-    });
-});
-console.log(`\nnamed nodes (${named.length}):`);
-for (const node of named) {
-    console.log(
-        `  ${node.name.padEnd(18)} ${node.type.padEnd(6)} min[${node.min}] max[${node.max}] size[${node.size}]`,
-    );
-}
-console.log();
-
 let failures = 0;
-for (const [name, pos] of primitives) {
-    const [x, y, z] = pos;
+
+// --- Check primitive anchors sit on the desk -------------------------------
+for (const anchor of anchors) {
+    if (anchor.kind !== "primitive") continue;
+    const [x, y, z] = anchor.position;
     const problems = [];
     if (y < DESK_SURFACE_Y - 0.001) {
         problems.push(`y=${y} is below the desk surface (${DESK_SURFACE_Y}) — object sinks`);
@@ -100,20 +83,26 @@ for (const [name, pos] of primitives) {
     }
     if (problems.length) {
         failures += 1;
-        console.log(`FAIL ${name} @ ${pos}`);
+        console.log(`FAIL ${anchor.id} (${anchor.shape}) @ ${anchor.position}`);
         for (const problem of problems) console.log(`       ${problem}`);
     } else {
-        console.log(`ok   ${name} @ ${pos}`);
+        console.log(`ok   ${anchor.id} (${anchor.shape}) @ ${anchor.position}`);
     }
 }
 
-const missingNodes = [...expectedNodes].filter((name) => !modelNames.has(name));
-if (missingNodes.length) {
-    failures += 1;
-    console.log(`FAIL model anchors not found: ${missingNodes.join(", ")}`);
-    console.log("       room-objects.ts would silently drop these objects (RoomScene uses `if (!node) continue`)");
-} else {
-    console.log("ok   all 6 model anchor nodes present");
+// --- Check model anchor nodes actually exist -------------------------------
+// RoomScene does `if (!node) continue`, so a wrong name silently drops the
+// object: no highlight, no hover label, no route, and no error anywhere.
+for (const anchor of anchors) {
+    if (anchor.kind !== "model") continue;
+    const missing = anchor.nodeNames.filter((name) => !modelNames.has(name));
+    if (missing.length) {
+        failures += 1;
+        console.log(`FAIL ${anchor.id} node(s) not found: ${missing.join(", ")}`);
+        console.log("       RoomScene would silently drop this object");
+    } else {
+        console.log(`ok   ${anchor.id} node(s) present: ${anchor.nodeNames.join(", ")}`);
+    }
 }
 
 console.log(failures === 0 ? "\nALL ANCHORS OK" : `\n${failures} CHECK(S) FAILED`);
