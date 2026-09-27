@@ -91,12 +91,12 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
         );
     };
 
-    const onSubmit = (values: SubmittedFormValues) => {
+    const onSubmit = async (values: SubmittedFormValues) => {
         if (!acknowledged) {
             setInformationOpen(true);
             return;
         }
-        void completeSubmission(values);
+        await completeSubmission(values);
     };
 
     const completeSubmission = async (values: SubmittedFormValues) => {
