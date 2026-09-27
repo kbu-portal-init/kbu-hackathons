@@ -232,10 +232,35 @@ export async function sendManualNotification(input: SendNotificationInput & { ac
         if (member?.team.userId) teamUserIds.push(member.team.userId);
     }
 
+    const inAppRecipientIds = [...new Set(teamUserIds)];
+    const createdNotifications =
+        inAppRecipientIds.length > 0
+            ? await prisma.notification.createManyAndReturn({
+                  data: inAppRecipientIds.map((recipientId) => ({
+                      recipientId,
+                      senderId: input.actorId,
+                      subject: input.subject,
+                      body: input.body,
+                      targetType: "ManualNotification",
+                      targetId: input.target.mode,
+                  })),
+                  select: { id: true },
+              })
+            : [];
+
     const rendered = renderCustomEmail(input.subject, input.body);
     try {
         await sendEmail({ ...rendered, to: process.env.SMTP_FROM_EMAIL ?? emailRecipients[0], bcc: emailRecipients });
     } catch (error) {
+        if (createdNotifications.length > 0) {
+            try {
+                await prisma.notification.deleteMany({
+                    where: { id: { in: createdNotifications.map(({ id }) => id) } },
+                });
+            } catch {
+                // Preserve the delivery error so callers do not treat a failed email as successful.
+            }
+        }
         scheduleNotificationAudit({
             actorId: input.actorId,
             action: "EMAIL_SEND_FAILED",
@@ -246,18 +271,6 @@ export async function sendManualNotification(input: SendNotificationInput & { ac
         throw new NotificationDeliveryError(emailRecipients, error);
     }
 
-    if (teamUserIds.length > 0) {
-        await prisma.notification.createMany({
-            data: [...new Set(teamUserIds)].map((recipientId) => ({
-                recipientId,
-                senderId: input.actorId,
-                subject: input.subject,
-                body: input.body,
-                targetType: "ManualNotification",
-                targetId: input.target.mode,
-            })),
-        });
-    }
     scheduleNotificationAudit({
         actorId: input.actorId,
         action: "EMAIL_SENT",
@@ -266,13 +279,13 @@ export async function sendManualNotification(input: SendNotificationInput & { ac
         details: {
             notificationType: "MANUAL",
             recipients: emailRecipients,
-            inAppRecipients: [...new Set(teamUserIds)],
+            inAppRecipients: inAppRecipientIds,
         },
     });
     return {
         sent: true as const,
         emailRecipientCount: emailRecipients.length,
-        inAppRecipientCount: [...new Set(teamUserIds)].length,
+        inAppRecipientCount: inAppRecipientIds.length,
     };
 }
 
