@@ -2,12 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { type Control, Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { submitTeamRegistration } from "@/actions/management/registrations";
+import { BackButton } from "@/components/back-button";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -130,9 +130,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                         ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
                         : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
                 </p>
-                <Button variant="outline" className="mt-8" render={<Link href="/" />}>
-                    Back to home
-                </Button>
+                <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
             </div>
         );
     }
