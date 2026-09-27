@@ -4,7 +4,7 @@ import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
 import type { DeleteObjectInput } from "@/lib/contracts/storage";
-import { isR2Configured, R2_BUCKET, r2 } from "@/lib/r2";
+import { isOwnedR2PublicUrl, isR2Configured, R2_BUCKET, R2_PUBLIC_URL, r2 } from "@/lib/r2";
 
 function assertKeyOwnership(key: string, owner: string): boolean {
     return key.startsWith(`uploads/${owner}/`);
@@ -40,4 +40,15 @@ export async function deleteObject(input: DeleteObjectInput, teamId: string): Pr
             },
         };
     }
+}
+
+export async function deleteOwnedR2PublicUrl(url: string, keyPrefix: string): Promise<ActionResult<{ ok: true }>> {
+    if (!isOwnedR2PublicUrl(url, `uploads/${keyPrefix}`) || !R2_PUBLIC_URL) {
+        return { ok: false, error: { code: ErrorCodes.FORBIDDEN, message: "Access denied" } };
+    }
+
+    const publicUrl = new URL(url);
+    const baseUrl = new URL(`${R2_PUBLIC_URL}/`);
+    const key = decodeURIComponent(publicUrl.pathname.slice(baseUrl.pathname.length).replace(/^\//, ""));
+    return deleteObject({ key }, keyPrefix);
 }
