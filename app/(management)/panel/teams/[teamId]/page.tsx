@@ -29,7 +29,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                             />
                         ) : (
                             <div
-                                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700 dark:bg-orange-950 dark:text-orange-300"
+                                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700"
                                 aria-hidden="true"
                             >
                                 {getInitials(team.displayName)}
@@ -58,9 +58,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                     </div>
                 </Panel>
                 <Panel title="Registration notes">
-                    <p className="text-sm text-zinc-600 dark:text-zinc-300">
-                        {team.applicationNotes || "No application notes."}
-                    </p>
+                    <p className="text-sm text-zinc-600">{team.applicationNotes || "No application notes."}</p>
                 </Panel>
             </div>
             <Panel title={`Roster (${team.members.length})`}>
@@ -79,7 +77,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                                     />
                                 ) : (
                                     <div
-                                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700 dark:bg-orange-950 dark:text-orange-300"
+                                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700"
                                         aria-hidden="true"
                                     >
                                         {getInitials(member.name)}
@@ -105,7 +103,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                     <div className="space-y-4 text-sm">
                         <div>
                             <h3 className="font-semibold">{team.submission.title}</h3>
-                            <p className="mt-1 whitespace-pre-wrap text-zinc-600 dark:text-zinc-300">
+                            <p className="mt-1 whitespace-pre-wrap text-zinc-600">
                                 {team.submission.description || "No description."}
                             </p>
                         </div>
@@ -160,9 +158,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                                     <Badge variant="outline">{review.decision}</Badge>
                                     <span className="text-zinc-500">{format(new Date(review.createdAt), "PPP p")}</span>
                                 </div>
-                                {review.reason && (
-                                    <p className="mt-1 text-zinc-600 dark:text-zinc-300">{review.reason}</p>
-                                )}
+                                {review.reason && <p className="mt-1 text-zinc-600">{review.reason}</p>}
                             </div>
                         ))}
                     </div>
@@ -185,7 +181,7 @@ function Info({ label, value }: { label: string; value: string }) {
 
 function Panel({ title, children }: { title: string; children: ReactNode }) {
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
             <h2 className="text-lg font-semibold">{title}</h2>
             <div className="mt-4">{children}</div>
         </section>

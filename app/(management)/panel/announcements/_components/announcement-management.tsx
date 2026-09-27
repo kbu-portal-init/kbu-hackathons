@@ -233,7 +233,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
             </div>
 
             {/* Announcement table */}
-            <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="rounded-2xl border border-zinc-200 bg-white">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -277,7 +277,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                     </TableCell>
 
                                     <TableCell>
-                                        {item.publishedAt ? format(new Date(item.publishedAt), "MMM d, yyyy") : "—"}
+                                        {item.publishedAt ? format(new Date(item.publishedAt), "MMM d, yyyy") : "â€”"}
                                     </TableCell>
 
                                     <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>
@@ -487,7 +487,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                             });
                                         }}
                                         label="Upload announcement image"
-                                        uploadHint="JPG, PNG, WEBP, or GIF • optimized automatically"
+                                        uploadHint="JPG, PNG, WEBP, or GIF â€¢ optimized automatically"
                                         inputId="announcement-image-upload"
                                         variant="detailed"
                                     />
@@ -617,7 +617,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                             });
                                         }}
                                         label="Upload announcement image"
-                                        uploadHint="JPG, PNG, WEBP, or GIF • optimized automatically"
+                                        uploadHint="JPG, PNG, WEBP, or GIF â€¢ optimized automatically"
                                         inputId="edit-announcement-image-upload"
                                         variant="detailed"
                                     />
@@ -654,20 +654,14 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "DRAFT":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300"
-                >
+                <Badge variant="outline" className="border-amber-300 text-amber-700">
                     Draft
                 </Badge>
             );
 
         case "PUBLISHED":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-green-300 text-green-700 dark:border-green-700 dark:text-green-300"
-                >
+                <Badge variant="outline" className="border-green-300 text-green-700">
                     Published
                 </Badge>
             );

@@ -54,7 +54,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
-            <Sidebar collapsible="icon">
+            <Sidebar collapsible="icon" className="border-sidebar-border">
                 <SidebarHeader>
                     <Link
                         href="/"

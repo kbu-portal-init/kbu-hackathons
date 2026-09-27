@@ -12,7 +12,7 @@ export default async function PanelSettingsPage() {
             <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Management workspace</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight">Organizer settings</h1>
-                <p className="mt-2 text-zinc-600 dark:text-zinc-300">Manage your profile and password.</p>
+                <p className="mt-2 text-zinc-600">Manage your profile and password.</p>
             </div>
             <OrganizerProfileSettings profile={profile} />
         </main>

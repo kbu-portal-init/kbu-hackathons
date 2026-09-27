@@ -12,19 +12,13 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300"
-                >
+                <Badge variant="outline" className="border-amber-300 text-amber-700">
                     Pending
                 </Badge>
             );
         case "APPROVED":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-green-300 text-green-700 dark:border-green-700 dark:text-green-300"
-                >
+                <Badge variant="outline" className="border-green-300 text-green-700">
                     Approved
                 </Badge>
             );
@@ -71,7 +65,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
 
             <div className="space-y-2">
                 <p className="text-xs font-medium text-zinc-500">Team members ({item.members.length})</p>
-                <div className="rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <div className="rounded-lg border border-zinc-200">
                     <Table>
                         <TableHeader>
                             <TableRow>
