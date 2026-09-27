@@ -32,9 +32,10 @@ export const listOrganizersSchema = z.object({
 });
 export type ListOrganizersInput = z.infer<typeof listOrganizersSchema> & PageInput;
 
-export const updateOrganizerSchema = organizerIdSchema.extend({
-    name: organizerNameSchema.optional(),
-    email: organizerEmailSchema.optional(),
-    password: organizerPasswordSchema.optional(),
-});
+export const updateOrganizerSchema = organizerIdSchema
+    .extend({
+        name: organizerNameSchema.optional(),
+        email: organizerEmailSchema.optional(),
+    })
+    .strict();
 export type UpdateOrganizerInput = z.infer<typeof updateOrganizerSchema>;

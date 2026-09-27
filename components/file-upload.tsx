@@ -1,10 +1,19 @@
 ﻿"use client";
 
-import { AlertCircle, CheckCircle, ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
-import Image from "next/image";
+import { AlertCircle, CheckCircle, ImageIcon, Pencil, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverDescription,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import { useUpload } from "@/lib/hooks/use-upload";
 
 type FileUploadProps = {
@@ -13,14 +22,24 @@ type FileUploadProps = {
         | "submission"
         | "event-image"
         | "admin-profile-image"
+        | "organizer-profile-image"
         | "announcement-image"
         | "member-profile-image";
     accept?: string;
     currentFile?: string | null;
     onUploadComplete: (url: string, key: string) => void;
-    onRemove?: () => void;
+    onRemove?: () => Promise<void> | void;
+    variant?: "icon" | "detailed";
+    iconOverlay?: boolean;
     label?: string;
+    uploadHint?: string;
+    editDescription?: string;
     inputId?: string;
+};
+
+type UploadedFile = {
+    key: string;
+    publicUrl: string;
 };
 
 export function FileUpload({
@@ -29,18 +48,24 @@ export function FileUpload({
     currentFile,
     onUploadComplete,
     onRemove,
+    variant = "icon",
+    iconOverlay = false,
     label = "Upload file",
+    uploadHint,
+    editDescription = "Choose a new image or remove the current one.",
     inputId,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+    const [cleanupError, setCleanupError] = useState<string | null>(null);
+    const [popoverOpen, setPopoverOpen] = useState(false);
 
     const { state, progress, error, upload, reset } = useUpload();
 
     const isUploading = state === "uploading";
-    const isAnnouncementImage = category === "announcement-image";
-
     useEffect(() => {
         if (!selectedFile) {
             setPreviewUrl(null);
@@ -59,21 +84,24 @@ export function FileUpload({
         if (!file) return;
 
         reset();
+        setUploadedFile(null);
+        setCleanupError(null);
         setSelectedFile(file);
+        setDialogOpen(true);
 
         if (inputRef.current) {
             inputRef.current.value = "";
         }
+    };
 
-        // Announcement images upload immediately after selection.
-        if (isAnnouncementImage) {
-            const result = await upload(file, category);
+    const handleChoosePhoto = () => {
+        setPopoverOpen(false);
+        inputRef.current?.click();
+    };
 
-            if (result) {
-                onUploadComplete(result.publicUrl, result.key);
-                setSelectedFile(null);
-            }
-        }
+    const handleRemove = async () => {
+        await onRemove?.();
+        setPopoverOpen(false);
     };
 
     const handleUpload = async () => {
@@ -82,38 +110,62 @@ export function FileUpload({
         const result = await upload(selectedFile, category);
 
         if (result) {
-            onUploadComplete(result.publicUrl, result.key);
-            setSelectedFile(null);
+            setUploadedFile(result);
         }
     };
 
-    const handleRemove = () => {
+    const clearSelection = () => {
         setSelectedFile(null);
         setPreviewUrl(null);
+        setUploadedFile(null);
+        setCleanupError(null);
         reset();
 
         if (inputRef.current) {
             inputRef.current.value = "";
         }
-
-        onRemove?.();
     };
 
-    const handleCancelSelection = () => {
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        reset();
+    const handleUseUploadedFile = () => {
+        if (!uploadedFile) return;
 
-        if (inputRef.current) {
-            inputRef.current.value = "";
+        onUploadComplete(uploadedFile.publicUrl, uploadedFile.key);
+        clearSelection();
+        setDialogOpen(false);
+    };
+
+    const handleCancelDialog = async () => {
+        if (isUploading) return;
+
+        if (uploadedFile) {
+            setCleanupError(null);
+
+            try {
+                const response = await fetch("/api/upload/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ key: uploadedFile.key }),
+                });
+
+                if (!response.ok) {
+                    const result = await response.json().catch(() => null);
+                    throw new Error(result?.error || "Could not remove the uploaded file.");
+                }
+            } catch (error) {
+                setCleanupError(error instanceof Error ? error.message : "Could not remove the uploaded file.");
+                return;
+            }
         }
+
+        clearSelection();
+        setDialogOpen(false);
     };
 
     const hasCurrentFile = Boolean(currentFile);
     const hasSelectedFile = Boolean(selectedFile);
 
     return (
-        <div className="space-y-3">
+        <div className={iconOverlay ? "absolute right-0 bottom-0" : "space-y-3"}>
             <Input
                 ref={inputRef}
                 id={inputId ?? `file-upload-${category}`}
@@ -125,122 +177,90 @@ export function FileUpload({
             />
 
             {/* Image preview */}
-            {(previewUrl || (hasCurrentFile && !hasSelectedFile)) && (
-                <div className="overflow-hidden rounded-lg border bg-muted/20">
-                    <div className="relative aspect-video w-full">
-                        {previewUrl ? (
-                            // biome-ignore lint/performance/noImgElement: blob URL is a temporary local preview
-                            <img
-                                src={previewUrl}
-                                alt={selectedFile?.name ?? "Selected file"}
-                                className="h-full w-full object-cover"
-                            />
-                        ) : currentFile ? (
-                            <Image
-                                src={currentFile}
-                                alt="Current announcement"
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, 800px"
-                            />
-                        ) : null}
-
-                        {isUploading && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
-                                <Loader2 className="mb-2 h-6 w-6 animate-spin" />
-                                <p className="text-sm font-medium">Uploading image...</p>
-                                <p className="text-muted-foreground text-xs">{progress}%</p>
-                            </div>
-                        )}
-                    </div>
-
-                    {!isUploading && (
-                        <div className="flex items-center justify-between gap-2 border-t p-3">
-                            <div className="min-w-0">
-                                <p className="truncate text-sm font-medium">
-                                    {selectedFile?.name ??
-                                        (hasCurrentFile ? "Current announcement image" : "Selected image")}
-                                </p>
-
-                                {selectedFile && (
-                                    <p className="text-muted-foreground text-xs">{formatFileSize(selectedFile.size)}</p>
-                                )}
-                            </div>
-
-                            <div className="flex shrink-0 gap-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => inputRef.current?.click()}
-                                >
-                                    <Upload className="mr-2 h-4 w-4" />
-                                    Replace
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={hasSelectedFile ? handleCancelSelection : handleRemove}
-                                    className="text-destructive hover:text-destructive"
-                                >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Remove
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
             {/* Empty upload state */}
-            {!hasCurrentFile && !hasSelectedFile && !isUploading && (
+            {!hasSelectedFile && !isUploading && !iconOverlay && (
                 <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
-                    className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center transition-colors hover:bg-muted/50"
+                    aria-label={hasCurrentFile ? "Replace image" : label}
+                    className={
+                        variant === "detailed"
+                            ? "flex w-full cursor-pointer items-center gap-3 rounded-lg border border-dashed p-3 text-left transition-colors hover:border-primary hover:bg-muted/50"
+                            : "flex size-10 cursor-pointer items-center justify-center rounded-full border border-dashed transition-colors hover:border-primary hover:bg-muted/50"
+                    }
                 >
-                    <div className="mb-3 rounded-full bg-muted p-3">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                        <ImageIcon className="size-5 text-muted-foreground" />
                     </div>
 
-                    <span className="mb-1 text-sm font-medium">{label}</span>
-
-                    <span className="text-muted-foreground text-xs">JPG, PNG, or WEBP • optimized automatically</span>
+                    {variant === "detailed" && (
+                        <span className="min-w-0">
+                            <span className="block truncate text-sm font-medium">
+                                {hasCurrentFile ? "Replace image" : label}
+                            </span>
+                            {uploadHint && (
+                                <span className="block truncate text-xs text-muted-foreground">{uploadHint}</span>
+                            )}
+                        </span>
+                    )}
                 </button>
             )}
 
-            {/* Generic upload button for non-announcement uploads */}
-            {hasSelectedFile && !isAnnouncementImage && !isUploading && (
-                <div className="flex gap-2">
-                    <Button type="button" onClick={handleUpload}>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload
-                    </Button>
-
-                    <Button type="button" variant="outline" onClick={handleCancelSelection}>
-                        Cancel
-                    </Button>
-                </div>
-            )}
-
-            {/* Upload progress for announcement images */}
-            {isUploading && (
-                <div className="space-y-2">
-                    <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                        <div
-                            className="h-full bg-primary transition-all duration-300"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-
-                    <p className="text-muted-foreground text-xs">Uploading... {progress}%</p>
-                </div>
+            {!hasSelectedFile && !isUploading && iconOverlay && (
+                <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                    <PopoverTrigger
+                        render={
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                className="cursor-pointer gap-1 rounded-full border shadow-sm"
+                                aria-label={`Edit ${label.toLowerCase()}`}
+                            />
+                        }
+                    >
+                        <Pencil data-icon="inline-start" />
+                        Edit
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56">
+                        <PopoverHeader>
+                            <PopoverTitle>Edit image</PopoverTitle>
+                            <PopoverDescription>{editDescription}</PopoverDescription>
+                        </PopoverHeader>
+                        <div className="flex flex-col gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="justify-start"
+                                onClick={handleChoosePhoto}
+                            >
+                                <Upload data-icon="inline-start" />
+                                Upload a photo
+                            </Button>
+                            {hasCurrentFile && onRemove && (
+                                <ConfirmActionAlertDialog
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="justify-start text-destructive"
+                                        >
+                                            Remove photo
+                                        </Button>
+                                    }
+                                    title="Remove photo?"
+                                    description="This will remove the photo from this profile or team logo."
+                                    confirmLabel="Remove photo"
+                                    onConfirm={handleRemove}
+                                />
+                            )}
+                        </div>
+                    </PopoverContent>
+                </Popover>
             )}
 
             {/* Success */}
-            {state === "done" && !isUploading && (
+            {state === "done" && !isUploading && !dialogOpen && (
                 <p className="flex items-center gap-1 text-xs text-green-600">
                     <CheckCircle className="h-3 w-3" />
                     Image uploaded successfully
@@ -254,14 +274,72 @@ export function FileUpload({
                     {error}
                 </p>
             )}
+
+            <Dialog
+                open={dialogOpen}
+                onOpenChange={(open) => {
+                    if (!open) void handleCancelDialog();
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Use this photo?</DialogTitle>
+                    </DialogHeader>
+
+                    {previewUrl && (
+                        // biome-ignore lint/performance/noImgElement: blob URL is a temporary local preview
+                        <img
+                            src={uploadedFile?.publicUrl ?? previewUrl}
+                            alt={selectedFile?.name ?? "Selected image"}
+                            className="max-h-[50vh] w-full rounded-lg object-contain"
+                        />
+                    )}
+
+                    {isUploading && (
+                        <div className="flex flex-col gap-2">
+                            <div className="h-2 overflow-hidden rounded-full bg-secondary">
+                                <div
+                                    className="h-full bg-primary transition-all duration-300"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
+                            <span className="sr-only" aria-live="polite">
+                                {progress}%
+                            </span>
+                        </div>
+                    )}
+
+                    {error && <p className="text-sm text-destructive">{error}</p>}
+                    {cleanupError && <p className="text-sm text-destructive">{cleanupError}</p>}
+
+                    <DialogFooter>
+                        {uploadedFile ? (
+                            <>
+                                <Button type="button" variant="outline" onClick={() => void handleCancelDialog()}>
+                                    Cancel
+                                </Button>
+                                <Button type="button" onClick={handleUseUploadedFile}>
+                                    OK
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => void handleCancelDialog()}
+                                    disabled={isUploading}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button type="button" onClick={handleUpload} disabled={isUploading || !selectedFile}>
+                                    Use this photo
+                                </Button>
+                            </>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
-}
-
-function formatFileSize(bytes: number) {
-    if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(1)} KB`;
-    }
-
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }

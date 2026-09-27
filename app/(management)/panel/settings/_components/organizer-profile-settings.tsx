@@ -1,17 +1,17 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import { changeAdminPassword, updateAdminProfile } from "@/actions/admin/profile";
+import { changeOrganizerPassword, updateOrganizerProfile } from "@/actions/management/organizer-profile";
 import { FileUpload } from "@/components/file-upload";
 import { PasswordChangeForm } from "@/components/password-change-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { AdminProfileDTO } from "@/lib/contracts/admin-profile";
+import type { OrganizerProfileDTO } from "@/lib/contracts/organizer-profile";
 
-export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) {
+export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfileDTO }) {
     const [name, setName] = useState(profile.name);
     const [email, setEmail] = useState(profile.email);
     const [image, setImage] = useState(profile.image);
@@ -20,12 +20,9 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
     async function saveProfile(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
         setSaving(true);
-        const result = await updateAdminProfile({ name, email, image });
+        const result = await updateOrganizerProfile({ name, email, image });
         setSaving(false);
-        if (!result.ok) {
-            toast.error(result.error.message);
-            return;
-        }
+        if (!result.ok) return toast.error(result.error.message);
         toast.success("Profile updated");
     }
 
@@ -34,57 +31,56 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
                 <h2 className="text-lg font-semibold">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
-                    <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row sm:items-center">
-                        <div className="relative size-20 min-w-20 max-w-20 shrink-0 overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-700">
+                    <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
+                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-full bg-orange-100 text-2xl font-bold text-orange-700">
                             {image ? (
                                 <Image
                                     src={image}
                                     alt="Profile"
-                                    width={80}
-                                    height={80}
-                                    className="absolute inset-0 size-full object-cover"
+                                    fill
+                                    className="rounded-full object-cover"
                                     unoptimized
                                 />
                             ) : (
-                                <span className="absolute inset-0 flex items-center justify-center">
-                                    {profile.name.slice(0, 1).toUpperCase()}
-                                </span>
+                                profile.name.slice(0, 1).toUpperCase()
                             )}
-                        </div>
-                        <div className="relative size-20 shrink-0">
                             <FileUpload
-                                category="admin-profile-image"
+                                category="organizer-profile-image"
                                 accept="image/jpeg,image/png,image/webp,image/gif"
                                 currentFile={image}
                                 iconOverlay
-                                editDescription="Choose a new profile photo or remove the current photo."
+                                label="Select profile image"
+                                editDescription="Choose a new organizer profile photo or remove the current photo."
                                 onRemove={async () => {
+                                    const result = await updateOrganizerProfile({ name, email, image: null });
+                                    if (!result.ok) {
+                                        toast.error(result.error.message);
+                                        return;
+                                    }
                                     setImage(null);
-                                    const result = await updateAdminProfile({ name, email, image: null });
-                                    if (!result.ok) toast.error(result.error.message);
                                 }}
                                 onUploadComplete={(url) => setImage(url)}
-                                label="Select profile image"
                             />
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
-                        <Input id="name" value={name} onChange={(event) => setName(event.target.value)} required />
+                        <Label htmlFor="organizer-name">Name</Label>
+                        <Input
+                            id="organizer-name"
+                            value={name}
+                            onChange={(event) => setName(event.target.value)}
+                            required
+                        />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="organizer-email">Email</Label>
                         <Input
-                            id="email"
+                            id="organizer-email"
                             type="email"
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             required
                         />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Role</Label>
-                        <Input value={profile.role} readOnly />
                     </div>
                     <Button type="submit" disabled={saving}>
                         {saving ? "Saving..." : "Save profile"}
@@ -94,10 +90,10 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
                 <h2 className="text-lg font-semibold">Change password</h2>
                 <PasswordChangeForm
-                    idPrefix="admin"
+                    idPrefix="organizer"
                     forgotPasswordEmail={email}
                     onSubmit={async (values) => {
-                        const result = await changeAdminPassword(values);
+                        const result = await changeOrganizerPassword(values);
                         return result.ok ? { ok: true } : { ok: false, error: result.error };
                     }}
                 />
