@@ -7,6 +7,7 @@ import { type Control, Controller, useFieldArray, useForm } from "react-hook-for
 import { toast } from "sonner";
 import type { z } from "zod";
 import { submitTeamRegistration } from "@/actions/management/registrations";
+import { BackButton } from "@/components/back-button";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -90,12 +91,12 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
         );
     };
 
-    const onSubmit = (values: SubmittedFormValues) => {
+    const onSubmit = async (values: SubmittedFormValues) => {
         if (!acknowledged) {
             setInformationOpen(true);
             return;
         }
-        void completeSubmission(values);
+        await completeSubmission(values);
     };
 
     const completeSubmission = async (values: SubmittedFormValues) => {
@@ -129,9 +130,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                         ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
                         : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
                 </p>
-                <Button variant="outline" className="mt-8" onClick={() => setSubmitted(false)}>
-                    Register another team
-                </Button>
+                <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
             </div>
         );
     }
