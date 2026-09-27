@@ -38,13 +38,13 @@ function VerifyContent() {
 
     if (!token) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+            <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16">
                 <div className="w-full max-w-md text-center">
-                    <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400">
+                    <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-red-100 text-red-600">
                         <XCircle className="size-7" />
                     </div>
                     <h1 className="mt-6 text-2xl font-bold tracking-tight">Invalid link</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                    <p className="mt-3 text-sm leading-6 text-zinc-600">
                         This verification link is incomplete or invalid. Please open the link directly from your email,
                         or contact your team leader or the event organizers for a new link.
                     </p>
@@ -55,13 +55,13 @@ function VerifyContent() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+        <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16">
             <div className="w-full max-w-md text-center">
                 {state === "loading" && (
                     <>
                         <Loader2 className="mx-auto size-10 animate-spin text-orange-600" />
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Verifying your email...</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             Please wait while we confirm your email address.
                         </p>
                     </>
@@ -69,11 +69,11 @@ function VerifyContent() {
 
                 {state === "success" && (
                     <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Email verified!</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             Your student email has been confirmed. Once all team members have verified their emails, an
                             organizer will review and approve your registration.
                         </p>
@@ -82,11 +82,11 @@ function VerifyContent() {
 
                 {state === "allVerified" && (
                     <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">All emails verified!</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             All team members have verified their emails. An organizer will review and approve your
                             registration. You will receive your login credentials once approved.
                         </p>
@@ -95,11 +95,11 @@ function VerifyContent() {
 
                 {state === "approved" && (
                     <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Team approved!</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             All team members have verified their emails. The team was automatically approved, and the
                             leader received a password-reset link.
                         </p>
@@ -108,11 +108,11 @@ function VerifyContent() {
 
                 {state === "approvedNoEmail" && (
                     <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-950/50 dark:text-yellow-400">
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Team approved</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             Your team was automatically approved, but the leader&apos;s password-reset email could not
                             be delivered. Please contact the organizers for help.
                         </p>
@@ -121,11 +121,11 @@ function VerifyContent() {
 
                 {state === "already" && (
                     <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-100 text-blue-600">
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Already verified</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             This email has already been verified. No further action is needed.
                         </p>
                     </>
@@ -133,18 +133,20 @@ function VerifyContent() {
 
                 {state === "error" && (
                     <>
-                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400">
+                        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-red-100 text-red-600">
                             <XCircle className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Verification failed</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                        <p className="mt-3 text-sm leading-6 text-zinc-600">
                             We couldn&apos;t verify this email because the link is invalid or has expired. Please
                             contact your team leader or the event organizers to request a new verification link.
                         </p>
                     </>
                 )}
 
-                <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
+                {state !== "loading" && (
+                    <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
+                )}
             </div>
         </main>
     );
@@ -154,7 +156,7 @@ export default function VerifyEmailPage() {
     return (
         <Suspense
             fallback={
-                <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+                <main className="flex min-h-screen items-center justify-center bg-orange-50/60 px-6 py-16">
                     <Loader2 className="size-10 animate-spin text-orange-600" />
                 </main>
             }
