@@ -35,6 +35,5 @@ export type ListOrganizersInput = z.infer<typeof listOrganizersSchema> & PageInp
 export const updateOrganizerSchema = organizerIdSchema.extend({
     name: organizerNameSchema.optional(),
     email: organizerEmailSchema.optional(),
-    password: organizerPasswordSchema.optional(),
 });
 export type UpdateOrganizerInput = z.infer<typeof updateOrganizerSchema>;
