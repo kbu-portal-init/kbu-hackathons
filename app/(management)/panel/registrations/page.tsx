@@ -1,5 +1,4 @@
 import { listRegistrationRequests } from "@/actions/management/registrations";
-import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { RegistrationManagement } from "./_components/registration-management";
 
 export default async function PanelRegistrationsPage({
@@ -7,7 +6,6 @@ export default async function PanelRegistrationsPage({
 }: {
     searchParams: Promise<{ status?: string; page?: string }>;
 }) {
-    await requireOrganizerOrAdmin();
     const params = await searchParams;
 
     const result = await listRegistrationRequests({

@@ -1,7 +1,7 @@
 import { ArrowRight, CalendarDays, Megaphone, Terminal, Trophy, Users, Zap } from "lucide-react";
 import Link from "next/link";
+import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
 import ScrollFx from "@/components/scroll-fx";
-import { redirectAuthenticatedUser } from "@/lib/auth/guards";
 
 const events = [
     {
@@ -48,14 +48,13 @@ const features = [
 const glowBackground = "bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,rgba(109,40,217,0.12),transparent)]";
 
 export default async function Home() {
-    await redirectAuthenticatedUser();
-
     return (
         <main className="overflow-hidden">
+            <HomeAuthRedirect />
             <ScrollFx />
             {/* Hero — terminal-inspired light band with a static workspace card */}
             <section id="hero" className={`relative bg-background dot-grid ${glowBackground}`}>
-                <div className="mx-auto grid max-w-7xl gap-14 px-6 py-20 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
+                <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
                     <div>
                         <p
                             data-reveal

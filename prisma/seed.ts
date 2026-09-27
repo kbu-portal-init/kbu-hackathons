@@ -66,6 +66,14 @@ async function main() {
 
     const adminUser = await createUser({ email: "admin@ms.kbu.ac.th", password: "adminpassword", name: "Super Admin" });
     await prisma.user.update({ where: { id: adminUser.id }, data: { role: "admin", emailVerified: true } });
+    const organizerUsers = await Promise.all([
+        createUser({ email: "organizer@ms.kbu.ac.th", password: "organizerpassword", name: "Primary Organizer" }),
+        createUser({ email: "organizer2@ms.kbu.ac.th", password: "organizerpassword", name: "Secondary Organizer" }),
+    ]);
+    await prisma.user.updateMany({
+        where: { id: { in: organizerUsers.map((user) => user.id) } },
+        data: { role: "organizer", emailVerified: true },
+    });
 
     await prisma.eventSettings.create({
         data: {
@@ -117,6 +125,7 @@ async function main() {
             status: "APPROVED",
             adminUserId: adminUser.id,
             submission: true,
+            studentEmailIds: ["660000000001", "660000000002", "660000000003"],
         }),
         createTeam({
             loginName: "team-pulse",
@@ -124,6 +133,7 @@ async function main() {
             status: "PENDING",
             adminUserId: adminUser.id,
             submission: false,
+            studentEmailIds: ["660000000004", "660000000005", "660000000006"],
         }),
         createTeam({
             loginName: "team-nova",
@@ -131,6 +141,7 @@ async function main() {
             status: "REJECTED",
             adminUserId: adminUser.id,
             submission: false,
+            studentEmailIds: ["660000000007", "660000000008", "660000000009"],
         }),
     ]);
 
@@ -150,7 +161,11 @@ async function main() {
         data: Array.from({ length: 40 }, (_, index) => {
             const action = auditActions[index % auditActions.length];
             const actorId =
-                index % 4 === 0 ? adminUser.id : (teamUsers[(index - 1) % teamUsers.length]?.id ?? adminUser.id);
+                index % 4 === 0
+                    ? adminUser.id
+                    : index % 4 === 1
+                      ? (organizerUsers[(index - 1) % organizerUsers.length]?.id ?? adminUser.id)
+                      : (teamUsers[(index - 1) % teamUsers.length]?.id ?? adminUser.id);
             const member = teamMembers[index % teamMembers.length];
             const target =
                 index % 5 === 0
@@ -170,6 +185,8 @@ async function main() {
     });
     console.log(`✅ Seeded admin, event settings, and ${teams.length} teams.`);
     console.log("🔐 Admin login: admin@ms.kbu.ac.th / adminpassword");
+    console.log("🔐 Organizer login: organizer@ms.kbu.ac.th / organizerpassword");
+    console.log("🔐 Organizer login: organizer2@ms.kbu.ac.th / organizerpassword");
     console.log("🔐 Team login password for all fixtures: teampassword");
     console.log("🎉 Seed finished!");
 }
@@ -191,6 +208,7 @@ async function createTeam(input: {
     status: "APPROVED" | "PENDING" | "REJECTED";
     adminUserId: string;
     submission: boolean;
+    studentEmailIds: [string, string, string];
 }) {
     const user = await createUser({
         email: `${input.loginName}@team.kbu.internal`,
@@ -210,7 +228,7 @@ async function createTeam(input: {
         data: {
             teamId: team.id,
             name: `${input.displayName} Leader`,
-            studentEmail: `${input.loginName}.leader@ms.kbu.ac.th`,
+            studentEmail: `u${input.studentEmailIds[0]}@ms.kbu.ac.th`,
             role: TeamMemberRole.LEADER,
             studentEmailVerifiedAt: verifiedAt,
         },
@@ -220,14 +238,14 @@ async function createTeam(input: {
             {
                 teamId: team.id,
                 name: `${input.displayName} Developer`,
-                studentEmail: `${input.loginName}.developer@ms.kbu.ac.th`,
+                studentEmail: `u${input.studentEmailIds[1]}@ms.kbu.ac.th`,
                 role: "DEVELOPER",
                 studentEmailVerifiedAt: verifiedAt,
             },
             {
                 teamId: team.id,
                 name: `${input.displayName} Designer`,
-                studentEmail: `${input.loginName}.designer@ms.kbu.ac.th`,
+                studentEmail: `u${input.studentEmailIds[2]}@ms.kbu.ac.th`,
                 role: "DESIGNER",
                 studentEmailVerifiedAt: verifiedAt,
             },

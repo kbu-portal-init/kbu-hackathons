@@ -5,7 +5,7 @@
 KBU Hub is a Next.js App Router application for a single KBU hackathon event. Route groups organize the workspaces without changing their URLs:
 
 - `app/(public)` contains public discovery, registration, and login pages.
-- `app/(participant)/teams` is the approved team workspace.
+- `app/(participant)/team` is the approved team workspace.
 - `app/(management)/panel` is the organizer workspace.
 - `app/(admin)/admin` is the elevated administrator workspace.
 - `app/api/auth/[...all]/route.ts` is the Better Auth protocol endpoint.

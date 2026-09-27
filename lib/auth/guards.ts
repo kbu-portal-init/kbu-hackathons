@@ -2,6 +2,7 @@ import "server-only";
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { auth } from "@/lib/auth/config";
 import prisma from "@/lib/prisma";
 
@@ -35,7 +36,7 @@ export async function redirectAuthenticatedUser() {
     const session = await auth.api.getSession({ headers: await headers() });
     const role = getUserRole(session?.user?.role);
 
-    if (role === "team") redirect("/teams");
+    if (role === "team") redirect("/team");
     if (role === "organizer") redirect("/panel");
     if (role === "admin") redirect("/admin");
 }
@@ -79,7 +80,7 @@ export async function requireTeamSession() {
     return { ...session, team };
 }
 
-export async function requireApprovedTeam() {
+export const requireApprovedTeam = cache(async () => {
     const { team, ...session } = await requireTeamSession();
 
     if (team.registration?.status !== "APPROVED") {
@@ -87,4 +88,4 @@ export async function requireApprovedTeam() {
     }
 
     return { ...session, team };
-}
+});

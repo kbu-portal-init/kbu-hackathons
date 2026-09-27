@@ -25,7 +25,9 @@ export async function SiteHeader() {
                     <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-accent text-lg font-black text-white">
                         K
                     </span>
-                    <span className="text-lg font-bold tracking-tight text-foreground">KBU Hub</span>
+                    <span className="text-lg font-bold tracking-tight text-zinc-950 dark:text-white">
+                        KBU Hackathon 2026
+                    </span>
                 </Link>
                 <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
                     {publicLinks.map(({ label, href }) => (

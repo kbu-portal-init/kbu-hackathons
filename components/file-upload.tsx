@@ -13,6 +13,7 @@ type FileUploadProps = {
     onUploadComplete: (url: string, key: string) => void;
     onRemove?: () => void;
     label?: string;
+    inputId?: string;
 };
 
 export function FileUpload({
@@ -20,8 +21,8 @@ export function FileUpload({
     accept,
     currentFile,
     onUploadComplete,
-    onRemove,
     label = "Upload file",
+    inputId,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -48,7 +49,6 @@ export function FileUpload({
         setSelectedFile(null);
         reset();
         if (inputRef.current) inputRef.current.value = "";
-        onRemove?.();
     };
 
     const isUploading = state === "uploading";
@@ -62,7 +62,7 @@ export function FileUpload({
                 onChange={handleFileChange}
                 disabled={isUploading}
                 className="hidden"
-                id={`file-upload-${category}`}
+                id={inputId ?? `file-upload-${category}`}
             />
 
             {selectedFile && (

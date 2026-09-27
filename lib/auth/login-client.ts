@@ -1,6 +1,7 @@
 "use client";
 
 import type { ZodSchema } from "zod";
+import { setSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
 import { type LoginResult, staffLoginSchema, teamLoginSchema } from "@/lib/contracts/auth";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -25,6 +26,7 @@ async function loginWith(
                 err.message ?? "Unable to authenticate. Please try again.",
             );
         }
+        setSessionHint();
         return { ok: true, data: { authenticated: true } };
     } catch {
         return failure(ErrorCodes.AUTHENTICATION_FAILED, "Unable to authenticate. Please try again.");
