@@ -27,7 +27,7 @@ export function LoginContent() {
     const isParticipant = audience === "participant";
 
     return (
-        <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+        <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
             <section className="mx-auto w-full max-w-md">
                 <h1 className="text-3xl font-bold tracking-tight">Sign in to KBU Hackathon 2026</h1>
                 <div className="mt-6 flex w-full gap-1 rounded-xl bg-muted p-1">

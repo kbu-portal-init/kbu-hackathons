@@ -21,7 +21,7 @@ export default async function AdminPage() {
             <header>
                 <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Administrator access</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight">Administrator panel</h1>
-                <p className="mt-2 text-zinc-600 dark:text-zinc-300">
+                <p className="mt-2 text-zinc-600">
                     Overview of accounts, registrations, submissions, and platform management.
                 </p>
             </header>
@@ -30,7 +30,7 @@ export default async function AdminPage() {
                     <Link
                         key={label}
                         href={href}
-                        className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-orange-300 dark:border-zinc-800 dark:bg-zinc-900"
+                        className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-orange-300"
                     >
                         <p className="text-sm text-zinc-500">{label}</p>
                         <p className="mt-3 text-3xl font-bold">{value}</p>
@@ -46,7 +46,7 @@ export default async function AdminPage() {
                     <Link
                         key={href}
                         href={href}
-                        className="rounded-2xl border border-zinc-200 p-5 hover:border-orange-300 dark:border-zinc-800"
+                        className="rounded-2xl border border-zinc-200 p-5 hover:border-orange-300"
                     >
                         <h2 className="font-semibold">{title}</h2>
                         <p className="mt-2 text-sm text-zinc-500">{description}</p>

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export type EmailMessage = {
     to: string | string[];
+    bcc?: string | string[];
     subject: string;
     text: string;
     html?: string;

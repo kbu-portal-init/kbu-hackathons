@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, startOfToday } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -42,6 +42,7 @@ export function OrganizerManagement({ items }: Props) {
     const [createOpen, setCreateOpen] = useState(false);
     const [editItem, setEditItem] = useState<OrganizerListItem | null>(null);
     const [banItem, setBanItem] = useState<OrganizerListItem | null>(null);
+    const [showCreatePassword, setShowCreatePassword] = useState(false);
 
     const createForm = useForm<CreateOrganizerInput>({
         resolver: zodResolver(createOrganizerSchema),
@@ -174,9 +175,20 @@ export function OrganizerManagement({ items }: Props) {
                                         <Input
                                             {...field}
                                             id={field.name}
-                                            type="password"
+                                            type={showCreatePassword ? "text" : "password"}
+                                            className="pr-10"
                                             aria-invalid={fieldState.invalid}
                                         />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon-sm"
+                                            className="relative float-right -mt-9 mr-1"
+                                            aria-label={showCreatePassword ? "Hide password" : "Show password"}
+                                            onClick={() => setShowCreatePassword((current) => !current)}
+                                        >
+                                            {showCreatePassword ? <EyeOff /> : <Eye />}
+                                        </Button>
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -293,7 +305,7 @@ function OrganizerTable({
     onUnban: (item: OrganizerListItem) => Promise<void>;
 }) {
     return (
-        <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-2xl border border-zinc-200 bg-white">
             <Table>
                 <TableHeader>
                     <TableRow>

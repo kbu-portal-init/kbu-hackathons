@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ForgotPasswordButton } from "@/components/forgot-password-button";
@@ -21,6 +22,11 @@ export function PasswordChangeForm({
 }) {
     const [values, setValues] = useState<PasswordValues>({ currentPassword: "", newPassword: "", confirmPassword: "" });
     const [saving, setSaving] = useState(false);
+    const [visible, setVisible] = useState<Record<keyof PasswordValues, boolean>>({
+        currentPassword: false,
+        newPassword: false,
+        confirmPassword: false,
+    });
 
     async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -51,12 +57,23 @@ export function PasswordChangeForm({
                         <Label htmlFor={`${idPrefix}-${suffix}`}>{label}</Label>
                         <Input
                             id={`${idPrefix}-${suffix}`}
-                            type="password"
+                            type={visible[key] ? "text" : "password"}
+                            className="pr-10"
                             value={values[key]}
                             onChange={(event) => setValues({ ...values, [key]: event.target.value })}
                             minLength={key === "currentPassword" ? undefined : 8}
                             required
                         />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-sm"
+                            className="relative float-right -mt-9 mr-1"
+                            aria-label={visible[key] ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+                            onClick={() => setVisible((current) => ({ ...current, [key]: !current[key] }))}
+                        >
+                            {visible[key] ? <EyeOff /> : <Eye />}
+                        </Button>
                     </div>
                 ))}
                 <Button type="submit" disabled={saving}>
