@@ -20,7 +20,7 @@ export default async function AdminPage() {
         <main className="space-y-8">
             <header>
                 <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Administrator access</p>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight">Administrator workspace</h1>
+                <h1 className="mt-2 text-3xl font-bold tracking-tight">Administrator panel</h1>
                 <p className="mt-2 text-zinc-600 dark:text-zinc-300">
                     Overview of accounts, registrations, submissions, and platform management.
                 </p>

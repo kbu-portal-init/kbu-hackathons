@@ -25,7 +25,7 @@ export function MobileNavigation() {
         <>
             <button
                 type="button"
-                className="flex size-10 items-center justify-center rounded-lg text-zinc-700 hover:bg-orange-50 dark:text-zinc-200 dark:hover:bg-orange-950/40"
+                className="flex size-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-orange-50"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? "Close menu" : "Open menu"}
@@ -36,7 +36,7 @@ export function MobileNavigation() {
             {open ? (
                 <nav
                     id="mobile-navigation"
-                    className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto bg-white px-6 py-6 dark:bg-zinc-950"
+                    className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto bg-white px-6 py-6"
                     aria-label="Mobile navigation"
                 >
                     <div className="flex flex-col gap-2">
@@ -45,13 +45,13 @@ export function MobileNavigation() {
                                 key={href}
                                 href={href}
                                 onClick={() => setOpen(false)}
-                                className="rounded-xl px-4 py-3 text-base font-medium text-zinc-700 hover:bg-orange-50 hover:text-orange-700 dark:text-zinc-200 dark:hover:bg-orange-950/40 dark:hover:text-orange-300"
+                                className="rounded-xl px-4 py-3 text-base font-medium text-muted-foreground hover:bg-orange-50 hover:text-orange-700"
                             >
                                 {label}
                             </Link>
                         ))}
                     </div>
-                    <div className="mt-auto border-t border-orange-100 pt-6 dark:border-orange-950/50">
+                    <div className="mt-auto border-t border-orange-100 pt-6">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}

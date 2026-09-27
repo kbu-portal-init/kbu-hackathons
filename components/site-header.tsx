@@ -5,22 +5,20 @@ import { publicLinks } from "@/lib/navigation";
 
 export function SiteHeader() {
     return (
-        <header className="sticky top-0 z-50 border-b border-orange-100/80 bg-white/95 backdrop-blur dark:border-orange-950/50 dark:bg-zinc-950/95">
+        <header className="sticky top-0 z-50 border-b border-orange-100/80 bg-white/95 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
                 <Link href="/" className="flex items-center gap-2">
                     <span className="flex size-9 items-center justify-center rounded-xl bg-orange-600 text-lg font-black text-white">
                         K
                     </span>
-                    <span className="text-lg font-bold tracking-tight text-zinc-950 dark:text-white">
-                        KBU Hackathon 2026
-                    </span>
+                    <span className="text-lg font-bold tracking-tight text-foreground">KBU Hackathon 2026</span>
                 </Link>
                 <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
                     {publicLinks.map(({ label, href }) => (
                         <Link
                             key={href}
                             href={href}
-                            className="text-sm font-medium text-zinc-600 hover:text-orange-600 dark:text-zinc-300 dark:hover:text-orange-400"
+                            className="text-sm font-medium text-muted-foreground hover:text-orange-600"
                         >
                             {label}
                         </Link>
