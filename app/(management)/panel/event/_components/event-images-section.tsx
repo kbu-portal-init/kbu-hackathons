@@ -23,7 +23,7 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
     const sortableImages: SortableImage[] = imageUrls.map((url) => ({ id: url, url }));
 
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
             <div className="flex items-center gap-2">
                 <ImageIcon className="size-5 text-orange-500" />
                 <h2 className="text-lg font-semibold">Event images</h2>
@@ -47,10 +47,7 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                     className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
                 >
                     {sortableImages.map(({ id, url }, index) => (
-                        <div
-                            key={id}
-                            className="group relative overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800"
-                        >
+                        <div key={id} className="group relative overflow-hidden rounded-lg border border-zinc-200">
                             <Image
                                 src={url}
                                 alt={`Event banner ${index + 1}`}

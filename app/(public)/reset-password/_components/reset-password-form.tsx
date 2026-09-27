@@ -42,10 +42,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
     if (completed) {
         return (
-            <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
-                <div className="w-full max-w-md rounded-2xl border border-orange-100 bg-white p-7 shadow-xl dark:border-orange-950 dark:bg-zinc-900">
+            <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
+                <div className="w-full max-w-md rounded-2xl border border-orange-100 bg-white p-7 shadow-xl">
                     <h1 className="text-3xl font-bold tracking-tight">Password set</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                    <p className="mt-3 text-sm leading-6 text-zinc-600">
                         Your password has been saved. You can now sign in with the account credentials associated with
                         this reset link.
                     </p>
@@ -58,18 +58,18 @@ export function ResetPasswordForm({ token }: { token: string }) {
     }
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16 dark:bg-orange-950/10">
+        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
             <div className="w-full max-w-md">
                 <BackButton fallbackHref="/" label="Back to KBU Hackathon 2026" className="mb-8" />
-                <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40 dark:border-orange-950 dark:bg-zinc-900 dark:shadow-none">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300">
+                <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
                         <LockKeyhole className="size-5" />
                     </div>
                     <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-600">
                         Password setup
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Set your password</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                    <p className="mt-3 text-sm leading-6 text-zinc-600">
                         Choose a password for your KBU Hackathon 2026 account.
                     </p>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">

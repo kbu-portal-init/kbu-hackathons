@@ -38,7 +38,8 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
     }
 
     function getShareUrl(member: TeamMemberCard) {
-        return `${window.location.origin}/cards/${member.cardShareToken}`;
+        const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+        return `${appUrl}/cards/${member.cardShareToken}`;
     }
 
     async function handleDownload(member: TeamMemberCard) {

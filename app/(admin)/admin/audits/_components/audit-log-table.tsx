@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,7 +26,7 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
         router.refresh();
     }
     return (
-        <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
             <Table>
                 <TableHeader>
                     <TableRow>

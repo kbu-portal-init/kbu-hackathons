@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -79,7 +79,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
     return (
         <form
             onSubmit={applyFilters}
-            className="grid gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end dark:border-zinc-800 dark:bg-zinc-900"
+            className="grid gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
             <div className="space-y-2">
                 <Label>User</Label>
@@ -165,7 +165,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                     id="action"
                     name="action"
                     defaultValue={action ?? ""}
-                    className="flex h-9 w-full rounded-md border border-zinc-200 bg-transparent px-3 text-sm shadow-sm outline-none focus:border-orange-500 dark:border-zinc-700"
+                    className="flex h-9 w-full rounded-md border border-zinc-200 bg-transparent px-3 text-sm shadow-sm outline-none focus:border-orange-500"
                 >
                     <option value="">All audit types</option>
                     {auditActions.map((auditAction) => (

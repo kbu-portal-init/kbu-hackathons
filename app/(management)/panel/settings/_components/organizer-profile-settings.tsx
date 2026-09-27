@@ -28,7 +28,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
 
     return (
         <div className="grid max-w-4xl gap-6 lg:grid-cols-2">
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+            <section className="rounded-2xl border border-zinc-200 bg-white p-6">
                 <h2 className="text-lg font-semibold">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
@@ -87,7 +87,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                     </Button>
                 </form>
             </section>
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+            <section className="rounded-2xl border border-zinc-200 bg-white p-6">
                 <h2 className="text-lg font-semibold">Change password</h2>
                 <PasswordChangeForm
                     idPrefix="organizer"

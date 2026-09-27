@@ -3,6 +3,7 @@ import "server-only";
 import { after } from "next/server";
 import type { Prisma } from "@/generated/prisma/client";
 import type { EmailMessage, NotificationData, NotificationInput, NotificationType } from "@/lib/contracts/email";
+import type { SendNotificationInput } from "@/lib/contracts/notifications";
 import prisma from "@/lib/prisma";
 import { sendEmail } from "@/lib/services/email";
 
@@ -112,6 +113,11 @@ function uniqueRecipients(recipients: string[]) {
     return [...new Set(recipients.map((recipient) => recipient.trim().toLowerCase()).filter(Boolean))];
 }
 
+function renderCustomEmail(subject: string, body: string): Omit<EmailMessage, "to"> {
+    const html = escapeHtml(body).replace(/\r?\n/g, "<br />");
+    return { subject, text: body, html: `<p>${html}</p>` };
+}
+
 async function recordNotificationAudit(input: {
     actorId?: string;
     action: "EMAIL_SENT" | "EMAIL_SEND_FAILED";
@@ -189,6 +195,98 @@ export async function sendNotification(input: NotificationInput): Promise<{ sent
         });
         throw new NotificationDeliveryError(recipients, error);
     }
+}
+
+export async function sendManualNotification(input: SendNotificationInput & { actorId: string }) {
+    const approvedTeamWhere = { registration: { status: "APPROVED" as const }, archivedAt: null };
+    const teams =
+        input.target.mode === "TEAM"
+            ? await prisma.team.findMany({
+                  where: { id: input.target.teamId, ...approvedTeamWhere },
+                  select: { id: true, userId: true, members: { select: { studentEmail: true } } },
+              })
+            : input.target.mode === "ALL_TEAMS"
+              ? await prisma.team.findMany({
+                    where: approvedTeamWhere,
+                    select: { id: true, userId: true, members: { select: { studentEmail: true } } },
+                })
+              : [];
+
+    if (input.target.mode === "TEAM" && teams.length === 0)
+        throw new NotificationTargetNotFoundError("Approved team was not found");
+
+    let emailRecipients =
+        input.target.mode === "EMAIL"
+            ? [input.target.email]
+            : teams.flatMap((team) => team.members.map((member) => member.studentEmail));
+    emailRecipients = uniqueRecipients(emailRecipients);
+    if (emailRecipients.length === 0)
+        throw new NotificationDeliveryError([], new Error("Notification has no recipients"));
+
+    const teamUserIds = [...new Set(teams.flatMap((team) => (team.userId ? [team.userId] : [])))];
+    if (input.target.mode === "EMAIL") {
+        const member = await prisma.teamMember.findFirst({
+            where: { studentEmail: input.target.email, team: approvedTeamWhere },
+            select: { team: { select: { userId: true } } },
+        });
+        if (member?.team.userId) teamUserIds.push(member.team.userId);
+    }
+
+    const inAppRecipientIds = [...new Set(teamUserIds)];
+    const createdNotifications =
+        inAppRecipientIds.length > 0
+            ? await prisma.notification.createManyAndReturn({
+                  data: inAppRecipientIds.map((recipientId) => ({
+                      recipientId,
+                      senderId: input.actorId,
+                      subject: input.subject,
+                      body: input.body,
+                      targetType: "ManualNotification",
+                      targetId: input.target.mode,
+                  })),
+                  select: { id: true },
+              })
+            : [];
+
+    const rendered = renderCustomEmail(input.subject, input.body);
+    try {
+        await sendEmail({ ...rendered, to: process.env.SMTP_FROM_EMAIL ?? emailRecipients[0], bcc: emailRecipients });
+    } catch (error) {
+        if (createdNotifications.length > 0) {
+            try {
+                await prisma.notification.deleteMany({
+                    where: { id: { in: createdNotifications.map(({ id }) => id) } },
+                });
+            } catch {
+                // Preserve the delivery error so callers do not treat a failed email as successful.
+            }
+        }
+        scheduleNotificationAudit({
+            actorId: input.actorId,
+            action: "EMAIL_SEND_FAILED",
+            targetType: "Notification",
+            targetId: input.target.mode,
+            details: { notificationType: "MANUAL", recipients: emailRecipients, error: "Email delivery failed" },
+        });
+        throw new NotificationDeliveryError(emailRecipients, error);
+    }
+
+    scheduleNotificationAudit({
+        actorId: input.actorId,
+        action: "EMAIL_SENT",
+        targetType: "Notification",
+        targetId: input.target.mode,
+        details: {
+            notificationType: "MANUAL",
+            recipients: emailRecipients,
+            inAppRecipients: inAppRecipientIds,
+        },
+    });
+    return {
+        sent: true as const,
+        emailRecipientCount: emailRecipients.length,
+        inAppRecipientCount: inAppRecipientIds.length,
+    };
 }
 
 export async function sendTeamRegistrationNotification(input: {

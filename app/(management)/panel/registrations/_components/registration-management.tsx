@@ -56,7 +56,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved — password setup link sent to leader");
+            toast.success("Registration approved â€” password setup link sent to leader");
             router.refresh();
         });
     };
@@ -99,7 +99,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 ))}
             </div>
 
-            <div className="mt-4 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="mt-4 rounded-2xl border border-zinc-200 bg-white">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -122,13 +122,13 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                             items.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.teamName}</TableCell>
-                                    <TableCell>{item.leaderName || "—"}</TableCell>
+                                    <TableCell>{item.leaderName || "â€”"}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         <StatusBadge status={item.status} />
                                     </TableCell>
                                     <TableCell>
-                                        {item.submittedAt ? format(new Date(item.submittedAt), "MMM d, yyyy") : "—"}
+                                        {item.submittedAt ? format(new Date(item.submittedAt), "MMM d, yyyy") : "â€”"}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
@@ -240,19 +240,13 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300"
-                >
+                <Badge variant="outline" className="border-amber-300 text-amber-700">
                     Pending
                 </Badge>
             );
         case "APPROVED":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-green-300 text-green-700 dark:border-green-700 dark:text-green-300"
-                >
+                <Badge variant="outline" className="border-green-300 text-green-700">
                     Approved
                 </Badge>
             );

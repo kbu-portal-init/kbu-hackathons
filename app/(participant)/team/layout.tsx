@@ -6,7 +6,7 @@ export default async function TeamsLayout({ children }: Readonly<{ children: Rea
     const session = await requireApprovedTeam();
     return (
         <DashboardSidebar area="participant" role={getUserRole(session.user.role)}>
-            {children}
+            <div className="flex-1 space-y-8 p-6 lg:p-8">{children}</div>
         </DashboardSidebar>
     );
 }
