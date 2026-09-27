@@ -51,12 +51,13 @@ export async function updateOrganizerProfile(input: unknown): Promise<ActionResu
     }
     try {
         const existing = await getOrganizerProfile(session.user.id);
+        const nextImage = parsed.data.image === undefined ? (existing?.image ?? null) : parsed.data.image;
         await auth.api.updateUser({
             headers: await headers(),
-            body: { name: parsed.data.name, image: parsed.data.image ?? null },
+            body: { name: parsed.data.name, image: nextImage },
         });
         await prisma.user.update({ where: { id: session.user.id }, data: { email: parsed.data.email } });
-        if (existing?.image && existing.image !== parsed.data.image) {
+        if (existing?.image && existing.image !== nextImage) {
             const cleanup = await deleteOwnedR2PublicUrl(existing.image, `organizers/${session.user.id}`);
             if (!cleanup.ok) console.error("[organizer-profile] old image cleanup failed", cleanup.error);
         }
