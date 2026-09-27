@@ -6,8 +6,8 @@ KBU Hackathon 2026 is a Next.js App Router application for a single KBU hackatho
 
 - `app/(public)` contains public discovery, registration, and login pages. `/login` is the single login route and switches between participant and management access with tabs.
 - `app/(participant)/team` is the approved team workspace.
-- `app/(management)/panel` is the organizer workspace.
-- `app/(admin)/admin` is the elevated administrator workspace.
+- `app/(management)/panel` is the organizer panel.
+- `app/(admin)/admin` is the elevated administrator panel.
 - `app/api/auth/[...all]/route.ts` is the Better Auth protocol endpoint.
 
 Keep page-specific interactive components in a private `_components` directory beside the page. Put components shared by multiple routes in `components/`. `components/ui` contains shadcn-generated source and must not be hand-edited; add components with `pnpm dlx shadcn@latest add <component>`.
