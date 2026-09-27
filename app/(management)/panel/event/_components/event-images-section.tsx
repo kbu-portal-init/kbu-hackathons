@@ -90,7 +90,9 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                     category="event-image"
                     accept="image/jpeg,image/png,image/webp,image/gif"
                     onUploadComplete={(url) => onAdd(url)}
+                    variant="detailed"
                     label="Add event image"
+                    uploadHint="JPG, PNG, WEBP, or GIF"
                 />
             </div>
         </section>
