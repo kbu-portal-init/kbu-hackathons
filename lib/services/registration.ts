@@ -328,19 +328,14 @@ export async function submitRegistration(
             };
         });
     } catch (error) {
-        const databaseError = error as { code?: string; meta?: { target?: string[] | string } };
-        const target = databaseError.meta?.target;
-        if (
-            databaseError.code === "P2002" &&
-            (Array.isArray(target)
-                ? target.some((field) => field === "studentEmail" || field === "student_email")
-                : target === "studentEmail" || target?.includes("student_email"))
-        ) {
+        const databaseError = error as { code?: string; message?: string; meta?: unknown };
+        const detail = `${databaseError.message ?? ""}${JSON.stringify(databaseError.meta ?? "")}`;
+        if (databaseError.code === "P2002" && detail.includes("team_member_student_email_key")) {
             return {
                 ok: false,
                 error: {
                     code: ErrorCodes.EMAIL_EXISTS,
-                    message: "One or more student emails are already registered.",
+                    message: "Student email already exists in another team",
                 },
             };
         }
