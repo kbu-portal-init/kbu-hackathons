@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { verifyTeamMemberEmail } from "@/actions/auth";
 import { BackButton } from "@/components/back-button";
 
@@ -12,12 +12,18 @@ function VerifyContent() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
     const [state, setState] = useState<VerifyState>("loading");
+    const requestedRef = useRef(false);
 
     useEffect(() => {
         if (!token) {
             setState("error");
             return;
         }
+
+        if (requestedRef.current) {
+            return;
+        }
+        requestedRef.current = true;
 
         verifyTeamMemberEmail(token).then((result) => {
             if (!result.ok) {
