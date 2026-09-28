@@ -20,7 +20,7 @@ import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dial
 import { FileUpload } from "@/components/file-upload";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -285,13 +285,19 @@ export function AnnouncementManagement({ items, meta }: Props) {
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
                                             {item.status === "PUBLISHED" && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    render={<Link href={`/announcements/${item.id}`} />}
+                                                // <Button
+                                                //     variant="outline"
+                                                //     size="sm"
+                                                //     render={<Link href={`/announcements/${item.id}`} />}
+                                                // >
+                                                //     View
+                                                // </Button>
+                                                <Link
+                                                    href={`/announcements/${item.id}`}
+                                                    className={buttonVariants({ variant: "outline", size: "sm" })}
                                                 >
                                                     View
-                                                </Button>
+                                                </Link>
                                             )}
 
                                             {item.status === "DRAFT" && (
