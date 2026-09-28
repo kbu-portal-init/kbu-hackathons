@@ -124,7 +124,20 @@ describe("registration lifecycle", () => {
             })) as unknown as typeof prisma.eventSettings.findUnique;
             prisma.team.findUnique = (async () => null) as unknown as typeof prisma.team.findUnique;
             prisma.$transaction = (async () => {
-                throw { code: "P2002", meta: { target: ["student_email"] } };
+                throw {
+                    code: "P2002",
+                    message: "Unique constraint failed on the constraint: `team_member_student_email_key`",
+                    meta: {
+                        modelName: "TeamMember",
+                        driverAdapterError: {
+                            cause: {
+                                kind: "UniqueConstraintViolation",
+                                constraint: { index: "team_member_student_email_key" },
+                                table: "team_member",
+                            },
+                        },
+                    },
+                };
             }) as typeof prisma.$transaction;
             const result = await service.submitRegistration({
                 teamName: "Build Team",
