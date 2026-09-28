@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle2, Loader2, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { manuallyVerifyStudentEmail, resendStudentEmailVerification } from "@/actions/management/registrations";
@@ -21,6 +22,7 @@ type MemberRowProps = {
 };
 
 export function MemberRow({ member }: MemberRowProps) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [isVerified, setIsVerified] = useState(member.verifiedAt !== null);
 
@@ -44,6 +46,7 @@ export function MemberRow({ member }: MemberRowProps) {
             }
             setIsVerified(true);
             toast.success("Email manually verified");
+            router.refresh();
         });
     };
 

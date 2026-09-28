@@ -1,10 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { Megaphone } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -16,23 +12,8 @@ import {
     publishAnnouncement,
     updateAnnouncement,
 } from "@/actions/management/announcements";
-import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import { FileUpload } from "@/components/file-upload";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import {
     type AnnouncementDTO,
     type CreateAnnouncementInput,
@@ -43,6 +24,8 @@ import {
 import type { PaginationMeta } from "@/lib/contracts/common";
 import { handleActionError } from "@/lib/utils/action-error";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
+import { AnnouncementFormDialog } from "./announcement-form-dialog";
+import { AnnouncementTable } from "./announcement-table";
 
 type Props = {
     items: AnnouncementDTO[];
@@ -210,6 +193,19 @@ export function AnnouncementManagement({ items, meta }: Props) {
         }
     };
 
+    const buildPageHref = (page: number) => {
+        const params = new URLSearchParams({
+            page: String(page),
+            pageSize: String(meta.pageSize),
+        });
+
+        if (statusFilter !== "ALL") {
+            params.set("status", statusFilter);
+        }
+
+        return `/panel/announcements?${params.toString()}`;
+    };
+
     return (
         <>
             {/* Filters + Create */}
@@ -232,444 +228,47 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 </Button>
             </div>
 
-            {/* Announcement table */}
-            <div className="rounded-2xl border border-zinc-200 bg-white">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Image</TableHead>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Published</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
+            <AnnouncementTable
+                items={items}
+                isPending={isPending}
+                onEdit={handleEdit}
+                onPublish={handlePublish}
+                onArchive={handleArchive}
+                onDelete={handleDelete}
+            />
 
-                    <TableBody>
-                        {items.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center text-zinc-500">
-                                    No announcements found.
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            items.map((item) => (
-                                <TableRow key={item.id}>
-                                    <TableCell>
-                                        <div className="relative size-14 overflow-hidden rounded-lg border bg-muted">
-                                            <Image
-                                                src={item.imageUrl ?? "/images/kbu.webp"}
-                                                alt=""
-                                                fill
-                                                className="object-cover"
-                                                sizes="56px"
-                                            />
-                                        </div>
-                                    </TableCell>
-
-                                    <TableCell className="max-w-md font-medium">
-                                        <div className="truncate">{item.title}</div>
-                                    </TableCell>
-
-                                    <TableCell>
-                                        <StatusBadge status={item.status} />
-                                    </TableCell>
-
-                                    <TableCell>
-                                        {item.publishedAt ? format(new Date(item.publishedAt), "MMM d, yyyy") : "â€”"}
-                                    </TableCell>
-
-                                    <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>
-
-                                    <TableCell>
-                                        <div className="flex justify-end gap-2">
-                                            {item.status === "PUBLISHED" && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    render={<Link href={`/announcements/${item.id}`} />}
-                                                >
-                                                    View
-                                                </Button>
-                                            )}
-
-                                            {item.status === "DRAFT" && (
-                                                <>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => handleEdit(item)}
-                                                        disabled={isPending}
-                                                    >
-                                                        Edit
-                                                    </Button>
-
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() => handlePublish(item.id)}
-                                                        disabled={isPending}
-                                                    >
-                                                        Publish
-                                                    </Button>
-
-                                                    <ConfirmActionAlertDialog
-                                                        trigger={
-                                                            <Button
-                                                                variant="destructive"
-                                                                size="sm"
-                                                                disabled={isPending}
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                        }
-                                                        title="Delete announcement?"
-                                                        description="This action cannot be undone. The draft announcement will be permanently deleted."
-                                                        confirmLabel="Delete"
-                                                        pendingLabel="Deleting..."
-                                                        onConfirm={() => handleDelete(item.id)}
-                                                    />
-                                                </>
-                                            )}
-
-                                            {item.status === "PUBLISHED" && (
-                                                <>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => handleEdit(item)}
-                                                        disabled={isPending}
-                                                    >
-                                                        Edit
-                                                    </Button>
-
-                                                    <ConfirmActionAlertDialog
-                                                        trigger={
-                                                            <Button variant="outline" size="sm" disabled={isPending}>
-                                                                Archive
-                                                            </Button>
-                                                        }
-                                                        title="Archive announcement?"
-                                                        description="The announcement will no longer be publicly visible after it is archived."
-                                                        confirmLabel="Archive"
-                                                        pendingLabel="Archiving..."
-                                                        onConfirm={() => handleArchive(item.id)}
-                                                    />
-                                                </>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-
-            {/* Pagination */}
             <PaginationFooter
                 page={meta.page}
                 pageSize={meta.pageSize}
                 total={meta.total}
                 itemsShown={items.length}
                 hasNextPage={meta.hasNextPage}
-                getPageHref={(page) => {
-                    const params = new URLSearchParams({
-                        page: String(page),
-                        pageSize: String(meta.pageSize),
-                    });
-
-                    if (statusFilter !== "ALL") {
-                        params.set("status", statusFilter);
-                    }
-
-                    return `/panel/announcements?${params.toString()}`;
-                }}
+                getPageHref={buildPageHref}
             />
 
-            {/* Create dialog */}
-            <Dialog
+            <AnnouncementFormDialog
                 open={createOpen}
-                onOpenChange={(open) => {
-                    setCreateOpen(open);
+                onOpenChange={setCreateOpen}
+                form={createForm}
+                title="Create announcement"
+                description="Share important news, updates, and events with the KBU community."
+                submitLabel="Create announcement"
+                pendingLabel="Creating..."
+                isPending={isPending}
+                onSubmit={handleCreate}
+            />
 
-                    if (!open) {
-                        createForm.reset();
-                    }
-                }}
-            >
-                <DialogContent className="overflow-hidden p-0 sm:max-w-lg">
-                    <div className="border-l-4 border-l-primary">
-                        <DialogHeader className="px-6 pb-2 pt-6">
-                            <div className="flex items-start gap-3">
-                                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                    <Megaphone className="size-5" />
-                                </div>
-
-                                <div className="min-w-0">
-                                    <DialogTitle className="text-xl font-semibold tracking-tight">
-                                        Create announcement
-                                    </DialogTitle>
-
-                                    <DialogDescription className="mt-1.5 text-sm leading-6">
-                                        Share important news, updates, and events with the KBU community.
-                                    </DialogDescription>
-                                </div>
-                            </div>
-                        </DialogHeader>
-
-                        <form onSubmit={createForm.handleSubmit(handleCreate)} className="px-6 pb-6 pt-5">
-                            <FieldGroup className="gap-5">
-                                <Field data-invalid={!!createForm.formState.errors.title}>
-                                    <FieldLabel htmlFor="announcement-title">
-                                        Title <span className="text-destructive">*</span>
-                                    </FieldLabel>
-
-                                    <Input
-                                        id="announcement-title"
-                                        {...createForm.register("title")}
-                                        aria-invalid={!!createForm.formState.errors.title}
-                                        placeholder="Enter announcement title"
-                                        className="h-11"
-                                    />
-
-                                    {createForm.formState.errors.title && (
-                                        <FieldError errors={[createForm.formState.errors.title]} />
-                                    )}
-                                </Field>
-
-                                <Field data-invalid={!!createForm.formState.errors.content}>
-                                    <FieldLabel htmlFor="announcement-content">
-                                        Content <span className="text-destructive">*</span>
-                                    </FieldLabel>
-
-                                    <Textarea
-                                        id="announcement-content"
-                                        {...createForm.register("content")}
-                                        aria-invalid={!!createForm.formState.errors.content}
-                                        placeholder="Write the announcement content..."
-                                        rows={5}
-                                        className="max-h-48 resize-none overflow-y-auto"
-                                    />
-
-                                    {createForm.formState.errors.content && (
-                                        <FieldError errors={[createForm.formState.errors.content]} />
-                                    )}
-                                </Field>
-
-                                <Field data-invalid={!!createForm.formState.errors.imageUrl}>
-                                    <FieldLabel>
-                                        Announcement image{" "}
-                                        <span className="font-normal text-muted-foreground">(optional)</span>
-                                    </FieldLabel>
-
-                                    {createForm.watch("imageUrl") && (
-                                        <div className="overflow-hidden rounded-lg border bg-muted/20">
-                                            <Image
-                                                src={createForm.watch("imageUrl") as string}
-                                                alt="Announcement image preview"
-                                                width={800}
-                                                height={450}
-                                                className="aspect-video w-full object-cover"
-                                                unoptimized
-                                            />
-                                        </div>
-                                    )}
-
-                                    <FileUpload
-                                        category="announcement-image"
-                                        accept="image/jpeg,image/png,image/webp,image/gif"
-                                        currentFile={createForm.watch("imageUrl")}
-                                        onUploadComplete={(url) => {
-                                            createForm.setValue("imageUrl", url, {
-                                                shouldDirty: true,
-                                                shouldValidate: true,
-                                            });
-                                        }}
-                                        label="Upload announcement image"
-                                        uploadHint="JPG, PNG, WEBP, or GIF â€¢ optimized automatically"
-                                        inputId="announcement-image-upload"
-                                        variant="detailed"
-                                    />
-
-                                    {createForm.formState.errors.imageUrl && (
-                                        <FieldError errors={[createForm.formState.errors.imageUrl]} />
-                                    )}
-                                </Field>
-                            </FieldGroup>
-
-                            <DialogFooter className="mt-6 -mx-6 border-t px-6 pt-4">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => setCreateOpen(false)}
-                                    disabled={isPending}
-                                >
-                                    Cancel
-                                </Button>
-
-                                <Button type="submit" disabled={isPending}>
-                                    {isPending ? "Creating..." : "Create announcement"}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </div>
-                </DialogContent>
-            </Dialog>
-
-            {/* Edit dialog */}
-            <Dialog
+            <AnnouncementFormDialog
                 open={editOpen}
-                onOpenChange={(open) => {
-                    setEditOpen(open);
-
-                    if (!open) {
-                        editForm.reset();
-                    }
-                }}
-            >
-                <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-lg">
-                    <div className="border-l-4 border-l-primary">
-                        <DialogHeader className="px-6 pb-2 pt-6">
-                            <div className="flex items-start gap-3">
-                                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                    <Megaphone className="size-5" />
-                                </div>
-
-                                <div className="min-w-0">
-                                    <DialogTitle className="text-xl font-semibold tracking-tight">
-                                        Edit announcement
-                                    </DialogTitle>
-
-                                    <DialogDescription className="mt-1.5 text-sm leading-6">
-                                        Update the announcement details and image.
-                                    </DialogDescription>
-                                </div>
-                            </div>
-                        </DialogHeader>
-
-                        <form onSubmit={editForm.handleSubmit(handleUpdate)} className="px-6 pb-6 pt-5">
-                            <FieldGroup className="gap-5">
-                                <Field data-invalid={!!editForm.formState.errors.title}>
-                                    <FieldLabel htmlFor="edit-announcement-title">
-                                        Title <span className="text-destructive">*</span>
-                                    </FieldLabel>
-
-                                    <Input
-                                        id="edit-announcement-title"
-                                        {...editForm.register("title")}
-                                        aria-invalid={!!editForm.formState.errors.title}
-                                        placeholder="Enter announcement title"
-                                        className="h-11"
-                                    />
-
-                                    {editForm.formState.errors.title && (
-                                        <FieldError errors={[editForm.formState.errors.title]} />
-                                    )}
-                                </Field>
-
-                                <Field data-invalid={!!editForm.formState.errors.content}>
-                                    <FieldLabel htmlFor="edit-announcement-content">
-                                        Content <span className="text-destructive">*</span>
-                                    </FieldLabel>
-
-                                    <Textarea
-                                        id="edit-announcement-content"
-                                        {...editForm.register("content")}
-                                        aria-invalid={!!editForm.formState.errors.content}
-                                        placeholder="Write the announcement content..."
-                                        rows={5}
-                                        className="max-h-48 resize-none overflow-y-auto"
-                                    />
-
-                                    {editForm.formState.errors.content && (
-                                        <FieldError errors={[editForm.formState.errors.content]} />
-                                    )}
-                                </Field>
-
-                                <Field data-invalid={!!editForm.formState.errors.imageUrl}>
-                                    <FieldLabel>
-                                        Announcement image{" "}
-                                        <span className="font-normal text-muted-foreground">(optional)</span>
-                                    </FieldLabel>
-
-                                    {editForm.watch("imageUrl") && (
-                                        <div className="overflow-hidden rounded-lg border bg-muted/20">
-                                            <Image
-                                                src={editForm.watch("imageUrl") as string}
-                                                alt="Announcement image preview"
-                                                width={800}
-                                                height={450}
-                                                className="aspect-video w-full object-cover"
-                                                unoptimized
-                                            />
-                                        </div>
-                                    )}
-
-                                    <FileUpload
-                                        category="announcement-image"
-                                        accept="image/jpeg,image/png,image/webp,image/gif"
-                                        currentFile={editForm.watch("imageUrl")}
-                                        onUploadComplete={(url) => {
-                                            editForm.setValue("imageUrl", url, {
-                                                shouldDirty: true,
-                                                shouldValidate: true,
-                                            });
-                                        }}
-                                        label="Upload announcement image"
-                                        uploadHint="JPG, PNG, WEBP, or GIF â€¢ optimized automatically"
-                                        inputId="edit-announcement-image-upload"
-                                        variant="detailed"
-                                    />
-
-                                    {editForm.formState.errors.imageUrl && (
-                                        <FieldError errors={[editForm.formState.errors.imageUrl]} />
-                                    )}
-                                </Field>
-                            </FieldGroup>
-
-                            <DialogFooter className="mt-6 -mx-6 border-t px-6 pt-4">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => setEditOpen(false)}
-                                    disabled={isPending}
-                                >
-                                    Cancel
-                                </Button>
-
-                                <Button type="submit" disabled={isPending}>
-                                    {isPending ? "Saving..." : "Save changes"}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </div>
-                </DialogContent>
-            </Dialog>
+                onOpenChange={setEditOpen}
+                form={editForm}
+                title="Edit announcement"
+                description="Update the announcement details and image."
+                submitLabel="Save changes"
+                pendingLabel="Saving..."
+                isPending={isPending}
+                onSubmit={handleUpdate}
+            />
         </>
     );
-}
-
-function StatusBadge({ status }: { status: string }) {
-    switch (status) {
-        case "DRAFT":
-            return (
-                <Badge variant="outline" className="border-amber-300 text-amber-700">
-                    Draft
-                </Badge>
-            );
-
-        case "PUBLISHED":
-            return (
-                <Badge variant="outline" className="border-green-300 text-green-700">
-                    Published
-                </Badge>
-            );
-
-        case "ARCHIVED":
-            return <Badge variant="secondary">Archived</Badge>;
-
-        default:
-            return <Badge variant="secondary">{status}</Badge>;
-    }
 }
