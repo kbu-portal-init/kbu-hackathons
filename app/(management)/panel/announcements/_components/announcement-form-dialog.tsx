@@ -2,7 +2,7 @@
 
 import { Megaphone } from "lucide-react";
 import Image from "next/image";
-import type { FieldErrors, UseFormRegister, UseFormReturn, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import type { UseFormReturn } from "react-hook-form";
 import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +29,6 @@ type AnnouncementFormDialogProps<T extends FormFields> = {
     form: UseFormReturn<T>;
     title: string;
     description: string;
-    idPrefix: string;
     submitLabel: string;
     pendingLabel: string;
     isPending: boolean;
@@ -42,18 +41,13 @@ export function AnnouncementFormDialog<T extends FormFields>({
     form,
     title,
     description,
-    idPrefix,
     submitLabel,
     pendingLabel,
     isPending,
     onSubmit,
 }: AnnouncementFormDialogProps<T>) {
-    // RHF cannot resolve literal field names on an unresolved generic T, so
-    // narrow the form API to the concrete fields this dialog renders.
-    const register = form.register as unknown as UseFormRegister<FormFields>;
-    const watch = form.watch as unknown as UseFormWatch<FormFields>;
-    const setValue = form.setValue as unknown as UseFormSetValue<FormFields>;
-    const errors = form.formState.errors as unknown as FieldErrors<FormFields>;
+    const { register, watch, setValue, formState } = form as unknown as UseFormReturn<FormFields>;
+    const errors = formState.errors;
     const imageUrl = watch("imageUrl");
 
     const handleOpenChange = (nextOpen: boolean) => {
@@ -87,12 +81,12 @@ export function AnnouncementFormDialog<T extends FormFields>({
                     <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-6 pt-5">
                         <FieldGroup className="gap-5">
                             <Field data-invalid={!!errors.title}>
-                                <FieldLabel htmlFor={`${idPrefix}-title`}>
+                                <FieldLabel htmlFor="announcement-title">
                                     Title <span className="text-destructive">*</span>
                                 </FieldLabel>
 
                                 <Input
-                                    id={`${idPrefix}-title`}
+                                    id="announcement-title"
                                     {...register("title")}
                                     aria-invalid={!!errors.title}
                                     placeholder="Enter announcement title"
@@ -103,12 +97,12 @@ export function AnnouncementFormDialog<T extends FormFields>({
                             </Field>
 
                             <Field data-invalid={!!errors.content}>
-                                <FieldLabel htmlFor={`${idPrefix}-content`}>
+                                <FieldLabel htmlFor="announcement-content">
                                     Content <span className="text-destructive">*</span>
                                 </FieldLabel>
 
                                 <Textarea
-                                    id={`${idPrefix}-content`}
+                                    id="announcement-content"
                                     {...register("content")}
                                     aria-invalid={!!errors.content}
                                     placeholder="Write the announcement content..."
@@ -150,7 +144,7 @@ export function AnnouncementFormDialog<T extends FormFields>({
                                     }}
                                     label="Upload announcement image"
                                     uploadHint="JPG, PNG, WEBP, or GIF • optimized automatically"
-                                    inputId={`${idPrefix}-image-upload`}
+                                    inputId="announcement-image-upload"
                                     variant="detailed"
                                 />
 

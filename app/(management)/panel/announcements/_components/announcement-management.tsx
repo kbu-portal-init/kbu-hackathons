@@ -252,7 +252,6 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 form={createForm}
                 title="Create announcement"
                 description="Share important news, updates, and events with the KBU community."
-                idPrefix="announcement"
                 submitLabel="Create announcement"
                 pendingLabel="Creating..."
                 isPending={isPending}
@@ -265,7 +264,6 @@ export function AnnouncementManagement({ items, meta }: Props) {
                 form={editForm}
                 title="Edit announcement"
                 description="Update the announcement details and image."
-                idPrefix="edit-announcement"
                 submitLabel="Save changes"
                 pendingLabel="Saving..."
                 isPending={isPending}
