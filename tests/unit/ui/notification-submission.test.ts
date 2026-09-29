@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { submitNotification } from "@/app/(management)/panel/notifications/_components/notification-submission";
 
-const input = { subject: "Subject", body: "Body", target: { mode: "ALL_TEAMS" as const } };
+const input = { channel: "BOTH" as const, subject: "Subject", body: "Body", target: { mode: "ALL_TEAMS" as const } };
 
 describe("notification submission", () => {
     it("clears pending state for a returned failure", async () => {
@@ -37,12 +37,15 @@ describe("notification submission", () => {
         const states: boolean[] = [];
         let message = "";
         await submitNotification(
-            async () => ({ ok: true, data: { emailRecipientCount: 3, inAppRecipientCount: 2 } }),
+            async () => ({
+                ok: true,
+                data: { channel: "BOTH" as const, emailRecipientCount: 3, inAppRecipientCount: 2 },
+            }),
             input,
             (value) => (message = value),
             (value) => states.push(value),
         );
         assert.deepEqual(states, [true, false]);
-        assert.equal(message, "Sent to 3 email recipient(s) and 2 team inbox(es).");
+        assert.equal(message, "Sent via email and in-app: 3 email recipient(s), 2 team inbox(es).");
     });
 });

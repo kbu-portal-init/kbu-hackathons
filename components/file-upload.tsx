@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { AlertCircle, CheckCircle, ImageIcon, Pencil, Upload } from "lucide-react";
+import { AlertCircle, CheckCircle, ImageIcon, Pencil, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ export function FileUpload({
     iconOverlay = false,
     label = "Upload file",
     uploadHint,
-    editDescription = "Choose a new image or remove the current one.",
+    editDescription,
     inputId,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -225,7 +225,7 @@ export function FileUpload({
                     <PopoverContent className="w-56">
                         <PopoverHeader>
                             <PopoverTitle>Edit image</PopoverTitle>
-                            <PopoverDescription>{editDescription}</PopoverDescription>
+                            {editDescription && <PopoverDescription>{editDescription}</PopoverDescription>}
                         </PopoverHeader>
                         <div className="flex flex-col gap-2">
                             <Button
@@ -245,6 +245,7 @@ export function FileUpload({
                                             variant="outline"
                                             className="justify-start text-destructive"
                                         >
+                                            <Trash2 data-icon="inline-start" />
                                             Remove photo
                                         </Button>
                                     }

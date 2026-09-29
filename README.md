@@ -25,7 +25,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
-| Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending and team in-app inbox |
+| Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 

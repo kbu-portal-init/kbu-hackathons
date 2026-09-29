@@ -11,9 +11,14 @@ import {
 } from "@/lib/services/notifications";
 import { toFieldErrors } from "@/lib/validation/zod";
 
-export async function sendManualNotificationAction(
-    input: unknown,
-): Promise<ActionResult<{ sent: true; emailRecipientCount: number; inAppRecipientCount: number }>> {
+export async function sendManualNotificationAction(input: unknown): Promise<
+    ActionResult<{
+        sent: true;
+        channel: "EMAIL" | "IN_APP" | "BOTH";
+        emailRecipientCount: number;
+        inAppRecipientCount: number;
+    }>
+> {
     const session = await requireOrganizerOrAdmin();
     if (!getUserRole(session.user.role))
         return { ok: false, error: { code: ErrorCodes.FORBIDDEN, message: "You cannot send notifications" } };
