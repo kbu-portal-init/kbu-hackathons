@@ -62,7 +62,6 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                             iconOverlay
                             inputId="team-profile-image"
                             label="Choose team logo"
-                            editDescription="Choose a new team logo or remove the current logo."
                             onRemove={() => void saveTeamLogo(null)}
                             onUploadComplete={(url) => void saveTeamLogo(url)}
                         />
@@ -98,7 +97,6 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                     iconOverlay
                                     inputId={`member-profile-image-${member.id}`}
                                     label="Choose image"
-                                    editDescription="Choose a new member photo or remove the current photo."
                                     onRemove={() => void saveMemberImage(member.id, null)}
                                     onUploadComplete={(url) => void saveMemberImage(member.id, url)}
                                 />

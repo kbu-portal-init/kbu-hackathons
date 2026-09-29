@@ -50,7 +50,6 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                                 currentFile={image}
                                 iconOverlay
                                 label="Select profile image"
-                                editDescription="Choose a new organizer profile photo or remove the current photo."
                                 onRemove={async () => {
                                     const result = await updateOrganizerProfile({ name, email, image: null });
                                     if (!result.ok) {

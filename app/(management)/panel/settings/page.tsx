@@ -1,10 +1,11 @@
+import { redirect } from "next/navigation";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getOrganizerProfile } from "@/lib/data/organizer-profile";
 import { OrganizerProfileSettings } from "./_components/organizer-profile-settings";
 
 export default async function PanelSettingsPage() {
     const session = await requireOrganizerOrAdmin();
-    if (session.user.role !== "organizer") return null;
+    if (session.user.role === "admin") redirect("/admin/settings");
     const profile = await getOrganizerProfile(session.user.id);
     if (!profile) return null;
     return (
