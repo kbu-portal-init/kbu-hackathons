@@ -28,7 +28,8 @@ function paragraph(text: string) {
 }
 
 export function renderNotificationTemplate(type: NotificationType, data: NotificationData): RenderedTemplate {
-    const teamName = escapeHtml(data.teamName) || "Your team";
+    const rawTeamName = data.teamName ?? "";
+    const teamName = escapeHtml(rawTeamName) || "Your team";
     const reason = data.reason ? paragraph(`<strong>Reason:</strong> ${escapeHtml(data.reason)}`) : "";
     const expires = data.expiresAt ? paragraph(`<strong>Until:</strong> ${escapeHtml(data.expiresAt)}`) : "";
 
@@ -58,8 +59,8 @@ export function renderNotificationTemplate(type: NotificationType, data: Notific
             };
         }
         case "TEAM_REGISTRATION_APPROVED": {
-            const title = `${teamName} registration approved`;
-            const text = `Your team registration has been approved.\n\nTeam: ${data.teamName ?? "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`;
+            const title = `${rawTeamName || "Your team"} registration approved`;
+            const text = `Your team registration has been approved.\n\nTeam: ${rawTeamName || "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`;
             return {
                 type,
                 subject: title,
@@ -73,7 +74,7 @@ export function renderNotificationTemplate(type: NotificationType, data: Notific
             };
         }
         case "TEAM_REGISTRATION_REJECTED": {
-            const title = `${teamName} registration update`;
+            const title = `${rawTeamName || "Your team"} registration update`;
             return {
                 type,
                 subject: title,
@@ -82,7 +83,7 @@ export function renderNotificationTemplate(type: NotificationType, data: Notific
             };
         }
         case "TEAM_REGISTRATION_REOPENED": {
-            const title = `${teamName} registration reopened`;
+            const title = `${rawTeamName || "Your team"} registration reopened`;
             return {
                 type,
                 subject: title,
