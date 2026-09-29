@@ -3,9 +3,10 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
+import { after as scheduleAfter } from "next/server";
 import { findTeamAccountByUsername, isApprovedTeamAccount } from "@/lib/auth/team-access";
 import prisma from "@/lib/prisma";
-import { sendNotification } from "@/lib/services/notifications";
+import { sendLoginNotification, sendNotification } from "@/lib/services/notifications";
 import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
 import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
 
@@ -22,6 +23,20 @@ export const auth = betterAuth({
                     message: "Your team registration is still pending approval.",
                 });
             }
+        }),
+        after: createAuthMiddleware(async (context) => {
+            if (context.path !== "/sign-in/username" && context.path !== "/sign-in/email") return;
+            const session = context.context.newSession;
+            const userId = session?.user?.id;
+            if (!userId) return;
+
+            scheduleAfter(async () => {
+                try {
+                    await sendLoginNotification(userId);
+                } catch (error) {
+                    context.context.logger.error("Failed to send login notification", { userId, error });
+                }
+            });
         }),
     },
     secondaryStorage: upstashSecondaryStorage,
