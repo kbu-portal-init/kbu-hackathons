@@ -248,11 +248,21 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                     </FieldGroup>
                 </FieldSet>
 
-                <div className="flex items-center justify-between gap-4">
-                    <Button type="button" variant="outline" size="sm" onClick={() => setInformationOpen(true)}>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full sm:w-auto"
+                        onClick={() => setInformationOpen(true)}
+                    >
                         Read before submitting
                     </Button>
-                    <Button type="submit" disabled={form.formState.isSubmitting || !acknowledged} className="min-w-40">
+                    <Button
+                        type="submit"
+                        disabled={form.formState.isSubmitting || !acknowledged}
+                        className="w-full min-w-40 sm:w-auto"
+                    >
                         {form.formState.isSubmitting ? (
                             <>
                                 <Loader2 className="size-4 animate-spin" />
