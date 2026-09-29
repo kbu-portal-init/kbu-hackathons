@@ -1,6 +1,9 @@
 import { z } from "zod";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
 
+export const notificationChannels = ["EMAIL", "IN_APP", "BOTH"] as const;
+export const notificationChannelSchema = z.enum(notificationChannels);
+
 export const notificationTargetSchema = z.discriminatedUnion("mode", [
     z.object({ mode: z.literal("TEAM"), teamId: z.string().min(1, "Choose a team") }),
     z.object({ mode: z.literal("ALL_TEAMS") }),
@@ -8,6 +11,7 @@ export const notificationTargetSchema = z.discriminatedUnion("mode", [
 ]);
 
 export const sendNotificationSchema = z.object({
+    channel: notificationChannelSchema,
     subject: z.string().trim().min(1, "Subject is required").max(200, "Subject is too long"),
     body: z.string().trim().min(1, "Message is required").max(10000, "Message is too long"),
     target: notificationTargetSchema,
