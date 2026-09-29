@@ -18,17 +18,33 @@ const kbuEmail = z
     .toLowerCase()
     .refine((e) => e.endsWith("@ms.kbu.ac.th"), "Email must use the @ms.kbu.ac.th domain");
 
+const registrationName = (label: string) =>
+    z
+        .string()
+        .trim()
+        .min(2, `${label} must be at least 2 characters`)
+        .max(100, `${label} must be at most 100 characters`)
+        .refine(
+            (value) =>
+                !/[<>]/.test(value) &&
+                [...value].every((character) => {
+                    const codePoint = character.codePointAt(0) ?? 0;
+                    return codePoint > 0x1f && codePoint !== 0x7f;
+                }),
+            `${label} contains invalid characters`,
+        );
+
 // ── Public submission ──────────────────────────────────────────────
 
 export const submitRegistrationSchema = z.object({
-    teamName: z.string().trim().min(2, "Team name must be at least 2 characters"),
-    leaderName: z.string().trim().min(2, "Leader name must be at least 2 characters"),
+    teamName: registrationName("Team name"),
+    leaderName: registrationName("Leader name"),
     leaderEmail: kbuEmail,
     leaderRole: z.literal("LEADER").default("LEADER"),
     members: z
         .array(
             z.object({
-                name: z.string().trim().min(2, "Member name must be at least 2 characters"),
+                name: registrationName("Member name"),
                 role: teamMemberRoleEnum,
                 email: kbuEmail,
             }),
