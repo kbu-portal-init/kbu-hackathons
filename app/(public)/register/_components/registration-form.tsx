@@ -286,7 +286,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                 </li>
                                 <li>Every team member must verify their student email address.</li>
                                 <li>After everyone verifies, the team will be automatically approved.</li>
-                                <li>The leader will receive a password-reset link after approval.</li>
+                                <li>The leader will receive a password-setup link after approval.</li>
                             </ol>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
