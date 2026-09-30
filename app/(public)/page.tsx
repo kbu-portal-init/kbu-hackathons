@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarDays, Megaphone, Terminal, Trophy, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
+import { ScenePlaceholder } from "@/components/scene-placeholder";
 import ScrollFx from "@/components/scroll-fx";
 
 const events = [
@@ -10,6 +11,7 @@ const events = [
         date: "Coming soon",
         type: "Campus hackathon",
         description: "A weekend sprint to turn a blank repository into a working demo.",
+        art: "scene-sprint",
     },
     {
         index: "02",
@@ -17,6 +19,7 @@ const events = [
         date: "Registration opens soon",
         type: "Community event",
         description: "Open lab time with mentors, tooling, and room to experiment.",
+        art: "scene-lab",
     },
     {
         index: "03",
@@ -24,6 +27,7 @@ const events = [
         date: "Save the date",
         type: "Themed challenge",
         description: "A themed competition built around emerging technology.",
+        art: "scene-challenge",
     },
 ] as const;
 
@@ -194,21 +198,28 @@ export default async function Home() {
                                 key={event.title}
                                 href="/events"
                                 data-reveal
-                                className="group flex flex-col rounded-2xl glass-accent p-6 transition duration-300 hover:-translate-y-1 hover:border-orange-500/50"
+                                className="group flex flex-col overflow-hidden rounded-2xl glass-accent transition duration-300 hover:-translate-y-1 hover:border-orange-500/50"
                             >
-                                <div className="flex items-center justify-between">
-                                    <span className="font-mono text-xs font-semibold text-muted-foreground">
-                                        {event.index}
-                                    </span>
-                                    <span className="rounded-full bg-teal-100 px-2.5 py-1 font-mono text-xs font-medium text-teal-800">
-                                        {event.type}
-                                    </span>
+                                {/* 3D-scene placeholder where the room render will go */}
+                                <div className="relative aspect-[16/10] overflow-hidden border-b border-orange-100 bg-gradient-to-br from-orange-50 via-white to-teal-50/60">
+                                    <span className="sr-only">{event.title} preview</span>
+                                    <ScenePlaceholder variant={event.art} />
                                 </div>
-                                <h3 className="mt-6 text-lg font-bold tracking-tight text-foreground">{event.title}</h3>
-                                <p className="mt-2 text-sm leading-7 text-muted-foreground">{event.description}</p>
-                                <p className="mt-5 flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                                    <CalendarDays className="size-3.5" /> {event.date}
-                                </p>
+                                <div className="flex flex-col gap-3 p-6">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-mono text-xs font-semibold text-muted-foreground">
+                                            {event.index}
+                                        </span>
+                                        <span className="rounded-full bg-teal-100 px-2.5 py-1 font-mono text-xs font-medium text-teal-800">
+                                            {event.type}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-lg font-bold tracking-tight text-foreground">{event.title}</h3>
+                                    <p className="text-sm leading-7 text-muted-foreground">{event.description}</p>
+                                    <p className="mt-auto flex items-center gap-2 pt-3 font-mono text-xs text-muted-foreground">
+                                        <CalendarDays className="size-3.5" /> {event.date}
+                                    </p>
+                                </div>
                             </Link>
                         ))}
                     </div>
@@ -267,6 +278,11 @@ export default async function Home() {
             {/* Final CTA */}
             <section className="relative bg-background dot-grid mask-[radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent)]">
                 <div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
+                    {/* 3D-scene placeholder where the room render will go */}
+                    <div className="relative mx-auto mb-10 aspect-[16/7] max-w-4xl overflow-hidden rounded-3xl border border-orange-100 bg-gradient-to-br from-orange-50 via-white to-teal-50/60">
+                        <span className="sr-only">The KBU hackathon workspace</span>
+                        <ScenePlaceholder variant="scene-hero" />
+                    </div>
                     <p data-reveal className="font-mono text-sm font-medium text-teal-600">
                         $ ready_to_build --join
                     </p>
