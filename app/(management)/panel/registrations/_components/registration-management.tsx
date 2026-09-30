@@ -56,7 +56,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved â€” password setup link sent to leader");
+            toast.success("Registration approved — password setup link sent to leader");
             router.refresh();
         });
     };
@@ -122,13 +122,13 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                             items.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.teamName}</TableCell>
-                                    <TableCell>{item.leaderName || "â€”"}</TableCell>
+                                    <TableCell>{item.leaderName || "—"}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         <StatusBadge status={item.status} />
                                     </TableCell>
                                     <TableCell>
-                                        {item.submittedAt ? format(new Date(item.submittedAt), "MMM d, yyyy") : "â€”"}
+                                        {item.submittedAt ? format(new Date(item.submittedAt), "MMM d, yyyy") : "—"}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-2">

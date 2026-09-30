@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     }
 
     return {
-        title: `${benefit.title} â€” Student Claim Guide | KBU Hackathon 2026`,
+        title: `${benefit.title} — Student Claim Guide | KBU Hackathon 2026`,
         description: benefit.description,
     };
 }
@@ -150,7 +150,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                 <span>Provided by {benefit.provider}</span>
                                 {benefit.postedDate && (
                                     <>
-                                        <span>â€¢</span>
+                                        <span>•</span>
                                         <span>Verified {benefit.postedDate}</span>
                                     </>
                                 )}
@@ -324,7 +324,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     <div className="min-w-0 flex-1">
                         <p className="truncate text-xs font-bold text-zinc-900">{benefit.title}</p>
                         <p className="truncate text-[10px] text-zinc-500">
-                            {benefit.provider} â€¢ {benefit.valueBadge}
+                            {benefit.provider} • {benefit.valueBadge}
                         </p>
                     </div>
                     <a

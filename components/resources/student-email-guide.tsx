@@ -43,7 +43,7 @@ export function StudentEmailGuideSection() {
                                 <span className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700">
                                     Official KBU Student Verification
                                 </span>
-                                <span className="text-zinc-300">â€¢</span>
+                                <span className="text-zinc-300">•</span>
                                 <span className="text-xs text-zinc-400">
                                     Updated for {studentEmailGuide.postedDate}
                                 </span>
