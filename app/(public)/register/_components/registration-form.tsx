@@ -7,6 +7,7 @@ import { type Control, Controller, useFieldArray, useForm } from "react-hook-for
 import { toast } from "sonner";
 import type { z } from "zod";
 import { submitTeamRegistration } from "@/actions/management/registrations";
+import { BackButton } from "@/components/back-button";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -90,12 +91,12 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
         );
     };
 
-    const onSubmit = (values: SubmittedFormValues) => {
+    const onSubmit = async (values: SubmittedFormValues) => {
         if (!acknowledged) {
             setInformationOpen(true);
             return;
         }
-        void completeSubmission(values);
+        await completeSubmission(values);
     };
 
     const completeSubmission = async (values: SubmittedFormValues) => {
@@ -119,30 +120,28 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
 
     if (submitted) {
         return (
-            <div className="mx-auto max-w-xl rounded-2xl border border-emerald-200 bg-white p-8 text-center shadow-xl shadow-emerald-100/40">
-                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+            <div className="mx-auto max-w-xl rounded-2xl border border-green-200 bg-white p-8 text-center shadow-xl shadow-green-100/40">
+                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
                     <CheckCircle2 className="size-7" />
                 </div>
                 <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
+                <p className="mt-3 text-sm leading-6 text-zinc-600">
                     {verificationEmailsSent
-                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a login link."
+                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
                         : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
                 </p>
-                <Button variant="outline" className="mt-8" onClick={() => setSubmitted(false)}>
-                    Register another team
-                </Button>
+                <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
             </div>
         );
     }
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-8 rounded-2xl border border-orange-200 bg-white p-6 shadow-xl shadow-orange-100/40">
+            <div className="space-y-8 rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40">
                 {/* Team Information */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        About your team
+                        About Your Team
                     </FieldLegend>
                     <FieldGroup>
                         <Controller
@@ -189,7 +188,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 {/* Team Leader */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Team leader details
+                        Team Leader
                     </FieldLegend>
                     <FieldGroup>
                         <div className="grid gap-5 sm:grid-cols-2">
@@ -240,7 +239,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 {/* Team Members */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Other team members ({teamSize - 1})
+                        Other Team Members ({teamSize - 1})
                     </FieldLegend>
                     <FieldGroup className="gap-3">
                         {fields.map((field, index) => (
@@ -249,11 +248,21 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                     </FieldGroup>
                 </FieldSet>
 
-                <div className="flex items-center justify-between gap-4">
-                    <Button type="button" variant="outline" size="sm" onClick={() => setInformationOpen(true)}>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full sm:w-auto"
+                        onClick={() => setInformationOpen(true)}
+                    >
                         Read before submitting
                     </Button>
-                    <Button type="submit" disabled={form.formState.isSubmitting || !acknowledged} className="min-w-40">
+                    <Button
+                        type="submit"
+                        disabled={form.formState.isSubmitting || !acknowledged}
+                        className="w-full min-w-40 sm:w-auto"
+                    >
                         {form.formState.isSubmitting ? (
                             <>
                                 <Loader2 className="size-4 animate-spin" />
@@ -269,15 +278,16 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Before you submit</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            <div className="flex flex-col gap-3">
-                                <p>
-                                    We will send verification links to all team members, and each member must verify
-                                    their student email address.
-                                </p>
-                                <p>After everyone verifies, the team will be reviewed.</p>
-                                <p>The leader will receive a sign-in link when the registration is approved.</p>
-                            </div>
+                        <AlertDialogDescription render={<div />}>
+                            <ol className="list-decimal space-y-2 pl-5">
+                                <li>
+                                    Carefully check every team member&apos;s student email address. We will send each
+                                    member a verification link, and an incorrect email may prevent verification.
+                                </li>
+                                <li>Every team member must verify their student email address.</li>
+                                <li>After everyone verifies, the team will be automatically approved.</li>
+                                <li>The leader will receive a password-setup link after approval.</li>
+                            </ol>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <FieldSet className="border-t pt-4">
@@ -310,7 +320,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
 function MemberRow({ index, control }: { index: number; control: Control<FormValues, unknown, SubmittedFormValues> }) {
     return (
         <FieldGroup>
-            <div className="flex gap-3 rounded-lg border border-slate-200 p-3">
+            <div className="flex gap-3 rounded-lg border border-zinc-200 p-3">
                 <div className="grid flex-1 gap-4 sm:grid-cols-3">
                     <Controller
                         name={`members.${index}.name`}

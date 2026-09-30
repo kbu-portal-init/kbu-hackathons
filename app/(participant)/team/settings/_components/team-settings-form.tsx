@@ -42,7 +42,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                     <p className="mt-1 text-sm text-zinc-600">Upload the logo shown for {team.displayName}.</p>
                 </div>
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                    <div className="flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-3xl font-bold text-orange-700">
+                    <div className="relative flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-3xl font-bold text-orange-700">
                         {teamImageUrl ? (
                             <Image
                                 alt={`${team.displayName} logo`}
@@ -55,16 +55,17 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                         ) : (
                             team.displayName.charAt(0)
                         )}
+                        <FileUpload
+                            accept="image/png,image/jpeg,image/webp"
+                            category="image"
+                            currentFile={teamImageUrl}
+                            iconOverlay
+                            inputId="team-profile-image"
+                            label="Choose team logo"
+                            onRemove={() => void saveTeamLogo(null)}
+                            onUploadComplete={(url) => void saveTeamLogo(url)}
+                        />
                     </div>
-                    <FileUpload
-                        accept="image/png,image/jpeg,image/webp"
-                        category="image"
-                        currentFile={teamImageUrl}
-                        inputId="team-profile-image"
-                        label="Choose team logo"
-                        onRemove={() => void saveTeamLogo(null)}
-                        onUploadComplete={(url) => void saveTeamLogo(url)}
-                    />
                 </div>
             </section>
 
@@ -76,7 +77,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                 <div className="grid gap-5 md:grid-cols-2">
                     {members.map((member) => (
                         <article className="flex gap-4 rounded-xl border border-zinc-200 p-4" key={member.id}>
-                            <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-orange-100 text-xl font-bold text-orange-700">
+                            <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-orange-100 text-xl font-bold text-orange-700">
                                 {memberImages[member.id] ? (
                                     <Image
                                         alt={`${member.name} profile`}
@@ -89,20 +90,21 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                 ) : (
                                     member.name.charAt(0)
                                 )}
-                            </div>
-                            <div className="min-w-0 flex-1 space-y-1">
-                                <h3 className="font-semibold text-zinc-950">{member.name}</h3>
-                                <p className="text-sm text-zinc-700">{formatRole(member.role)}</p>
-                                <p className="break-all text-sm text-zinc-700">{member.studentEmail}</p>
                                 <FileUpload
                                     accept="image/png,image/jpeg,image/webp"
                                     category="member-profile-image"
                                     currentFile={memberImages[member.id]}
+                                    iconOverlay
                                     inputId={`member-profile-image-${member.id}`}
                                     label="Choose image"
                                     onRemove={() => void saveMemberImage(member.id, null)}
                                     onUploadComplete={(url) => void saveMemberImage(member.id, url)}
                                 />
+                            </div>
+                            <div className="min-w-0 flex-1 space-y-1">
+                                <h3 className="font-semibold text-zinc-950">{member.name}</h3>
+                                <p className="text-sm text-zinc-700">{formatRole(member.role)}</p>
+                                <p className="break-all text-sm text-zinc-700">{member.studentEmail}</p>
                             </div>
                         </article>
                     ))}

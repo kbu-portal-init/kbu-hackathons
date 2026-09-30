@@ -36,7 +36,13 @@ export async function redirectAuthenticatedUser() {
     const session = await auth.api.getSession({ headers: await headers() });
     const role = getUserRole(session?.user?.role);
 
-    if (role === "team") redirect("/team");
+    if (role === "team" && session?.user?.id) {
+        const team = await prisma.team.findUnique({
+            where: { userId: session.user.id },
+            select: { archivedAt: true, registration: { select: { status: true } } },
+        });
+        if (team?.archivedAt === null && team.registration?.status === "APPROVED") redirect("/team");
+    }
     if (role === "organizer") redirect("/panel");
     if (role === "admin") redirect("/admin");
 }

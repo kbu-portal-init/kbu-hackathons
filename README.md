@@ -1,10 +1,12 @@
-﻿# KBU Hub
+﻿# KBU Hackathon 2026
 
-KBU Hub is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator workspaces.
+KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It provides public event information and the foundation for team, organizer, and administrator panels.
 
 ## Current foundation
 
-The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, and Cloudflare R2 file storage.
+The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer and team management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
+
+Public announcement and participant-card share controls use the native Web Share API on supported mobile devices; desktop users receive copy-link and LINE-share actions.
 
 The system uses three account roles:
 
@@ -19,12 +21,15 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Area | Routes | Status |
 | --- | --- | --- |
 | Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Available without authentication |
-| Registration and login | `/register`, `/login`, `/login/participant`, `/login/management` | Public entry points; registration business flow is follow-up work |
+| Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration business flow is follow-up work |
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
-| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; event settings backend actions are available, while the `/panel/event` UI remains pending |
+| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
+| Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
+
+Unknown routes and invalid public detail records use the branded global 404 page at `app/not-found.tsx`.
 
 ## Architecture boundaries
 
@@ -41,9 +46,10 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 ## Implemented backend capabilities
 
 - Create, list/read, update, ban, and unban organizer accounts.
+- Browse approved teams with pagination, submission counts, roster/submission detail views, and team ban/unban actions.
 - Admins can ban organizers and teams; organizers can ban teams only. Bans revoke active sessions and create audit records.
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
-- SMTP delivery is provider-neutral through `sendEmail`; named notification templates route password resets, student verification, account ban/unban, and organizer account-created messages through `sendNotification`. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
+- SMTP delivery is provider-neutral through `sendEmail`; predefined, code-owned templates in `lib/services/email-templates.ts` route password resets, student verification, registration updates, account ban/unban, and organizer account-created messages through `sendNotification`. Templates provide branded HTML and plain-text fallbacks; dynamic values are HTML-escaped. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour. Both use Better Auth-compatible raw reset tokens.
 - Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
 - File storage uses authenticated server-side proxy uploads to Cloudflare R2. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated by the proxy and returned as public R2 URLs.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
@@ -77,8 +83,9 @@ Optional feature-specific settings:
 - Sentry error monitoring: `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_AUTH_TOKEN`.
 - Cloudflare Turnstile: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 - Cloudflare R2 storage: `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`.
+- Upstash Redis rate limiting: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (optional locally, required in production).
 
-Production startup requires the SMTP and Cloudflare R2 settings in addition to the local-development settings, and stops when required values are missing or invalid. Sentry DSNs are public project identifiers; set `NEXT_PUBLIC_SENTRY_DSN` at build time so browser bundles receive it.
+Production startup requires the SMTP, Cloudflare R2, and Upstash Redis settings in addition to the local-development settings, and stops when required values are missing or invalid. Redis-backed limits are shared across application instances; local development falls back to in-memory Better Auth limits and disables the application-specific Redis limits. Sentry DSNs are public project identifiers; set `NEXT_PUBLIC_SENTRY_DSN` at build time so browser bundles receive it.
 
 ## File storage
 
@@ -148,6 +155,8 @@ curl --fail http://127.0.0.1:3000/
 ```
 
 Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a `/_next/static/` asset referenced by the returned HTML also responds successfully. The web port is bound to localhost for a host reverse proxy; PostgreSQL has no published port. A missing production environment file fails Compose validation. Use `config --quiet` to avoid printing credentials. Validate fresh database startup with a separate test volume; never remove the production `postgres_data` volume as part of testing.
+
+The deployment workflow performs only lightweight dangling-image cleanup after the health check. BuildKit cache cleanup is intentionally excluded from the deployment path because it can exceed the remote command timeout. Run it separately during maintenance after checking available disk space, for example with `docker builder prune -f --filter "until=168h"`.
 
 Environment files are excluded from image builds. `NEXT_PUBLIC_SENTRY_DSN` and other `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
 

@@ -12,11 +12,8 @@ export default async function AdminSettingsPage() {
     return (
         <main className="space-y-8">
             <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">
-                    Administrator workspace
-                </p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight">Admin settings</h1>
-                <p className="mt-2 text-zinc-600 dark:text-zinc-300">Manage your administrator profile and password.</p>
+                <p className="mt-2 text-muted-foreground">Manage your administrator profile and password.</p>
             </div>
             <AdminProfileSettings profile={profile} />
         </main>

@@ -2,8 +2,9 @@
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import {
     Sidebar,
     SidebarContent,
@@ -17,6 +18,7 @@ import {
     SidebarMenuItem,
     SidebarProvider,
     SidebarTrigger,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
@@ -44,7 +46,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
             links: managementDashboardLinks,
         },
         admin: {
-            label: "Administrator workspace",
+            label: "Administrator panel",
             title: "Administrator dashboard",
             links: adminDashboardLinks,
         },
@@ -54,7 +56,8 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
-            <Sidebar collapsible="icon">
+            <DashboardSidebarRouteReset />
+            <Sidebar collapsible="icon" className="border-sidebar-border">
                 <SidebarHeader>
                     <Link
                         href="/"
@@ -96,7 +99,10 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         <SidebarMenuItem>
                             <ConfirmActionAlertDialog
                                 trigger={
-                                    <SidebarMenuButton tooltip="Sign out">
+                                    <SidebarMenuButton
+                                        tooltip="Sign out"
+                                        className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white cursor-pointer"
+                                    >
                                         <LogOut />
                                         <span>Sign out</span>
                                     </SidebarMenuButton>
@@ -124,4 +130,17 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
             </div>
         </SidebarProvider>
     );
+}
+
+function DashboardSidebarRouteReset() {
+    const pathname = usePathname();
+    const { setOpenMobile } = useSidebar();
+
+    useEffect(() => {
+        if (pathname) {
+            setOpenMobile(false);
+        }
+    }, [pathname, setOpenMobile]);
+
+    return null;
 }

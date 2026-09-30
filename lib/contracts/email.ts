@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export type EmailMessage = {
     to: string | string[];
+    bcc?: string | string[];
     subject: string;
     text: string;
     html?: string;
@@ -16,6 +17,7 @@ export const notificationTypes = [
     "ACCOUNT_BANNED",
     "ACCOUNT_UNBANNED",
     "ORGANIZER_ACCOUNT_CREATED",
+    "LOGIN_SUCCESS",
 ] as const;
 
 export type NotificationType = (typeof notificationTypes)[number];
@@ -27,6 +29,8 @@ export type NotificationData = {
     reason?: string | null;
     expiresAt?: string | null;
     loginEmail?: string;
+    loginRole?: "team" | "organizer" | "admin";
+    loginAt?: string;
 };
 export type NotificationInput = {
     type: NotificationType;

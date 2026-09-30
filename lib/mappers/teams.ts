@@ -1,41 +1,103 @@
-import type { ListResult, PageInput } from "@/lib/contracts/common";
-import type { RegistrationStatusValue, TeamSummary } from "@/lib/contracts/teams";
+import type { TeamDetailDTO, TeamListItem } from "@/lib/contracts/teams";
 
-export type TeamRecord = {
+type TeamListRecord = {
     id: string;
-    loginName: string;
+    userId: string | null;
     displayName: string;
+    loginName: string;
     imageUrl: string | null;
-    archivedAt: Date | null;
     createdAt: Date;
-    _count: { members: number };
-    registration: { status: RegistrationStatusValue } | null;
-    submission: { title: string } | null;
+    user: { banned: boolean; banReason: string | null; banExpires: Date | null } | null;
+    members: {
+        id: string;
+        name?: string;
+        studentEmail?: string;
+        role?: string;
+        imageUrl?: string | null;
+        studentEmailVerifiedAt?: Date | null;
+    }[];
+    submission: { id: string } | null;
+    registration: { status: string } | null;
 };
 
-export function toTeamSummary(record: TeamRecord): TeamSummary {
+export function toTeamListItem(record: TeamListRecord): TeamListItem {
+    const banned = Boolean(record.user?.banned && (!record.user.banExpires || record.user.banExpires > new Date()));
     return {
         id: record.id,
-        loginName: record.loginName,
+        userId: record.userId,
         displayName: record.displayName,
+        loginName: record.loginName,
         imageUrl: record.imageUrl,
-        memberCount: record._count.members,
-        registrationStatus: record.registration?.status ?? null,
-        submissionTitle: record.submission?.title ?? null,
-        archived: record.archivedAt !== null,
+        memberCount: record.members.length,
+        submissionCount: record.submission ? 1 : 0,
+        registrationStatus: record.registration?.status ?? "UNKNOWN",
+        banned,
+        banReason: record.user?.banReason ?? null,
+        banExpires: record.user?.banExpires?.toISOString() ?? null,
         createdAt: record.createdAt.toISOString(),
     };
 }
 
-export function toTeamSummaryListResult(
-    records: TeamRecord[],
-    input: PageInput,
-    total: number,
-): ListResult<TeamSummary> {
-    const page = input.page ?? 1;
-    const pageSize = input.pageSize ?? 20;
+export function toTeamDetail(
+    record: TeamListRecord & {
+        updatedAt: Date;
+        registration: {
+            status: string;
+            submittedAt: Date | null;
+            applicationNotes: string | null;
+            withdrawnAt: Date | null;
+            reviews: { id: string; decision: string; reason: string | null; createdAt: Date }[];
+        } | null;
+        members: {
+            id: string;
+            name: string;
+            studentEmail: string;
+            role: string;
+            imageUrl: string | null;
+            studentEmailVerifiedAt: Date | null;
+        }[];
+        submission: {
+            id: string;
+            title: string;
+            description: string | null;
+            repositoryUrl: string | null;
+            demoUrl: string | null;
+            presentationUrl: string | null;
+            submittedAt: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
+        } | null;
+    },
+): TeamDetailDTO {
+    const base = toTeamListItem(record);
     return {
-        items: records.map(toTeamSummary),
-        meta: { total, page, pageSize, hasNextPage: page * pageSize < total },
+        ...base,
+        updatedAt: record.updatedAt.toISOString(),
+        submittedAt: record.registration?.submittedAt?.toISOString() ?? null,
+        applicationNotes: record.registration?.applicationNotes ?? null,
+        withdrawnAt: record.registration?.withdrawnAt?.toISOString() ?? null,
+        members: record.members.map((member) => ({
+            id: member.id,
+            name: member.name ?? "",
+            email: member.studentEmail ?? "",
+            role: member.role ?? "OTHER",
+            imageUrl: member.imageUrl ?? null,
+            verifiedAt: member.studentEmailVerifiedAt?.toISOString() ?? null,
+        })),
+        reviews:
+            record.registration?.reviews.map((review) => ({
+                id: review.id,
+                decision: review.decision,
+                reason: review.reason,
+                createdAt: review.createdAt.toISOString(),
+            })) ?? [],
+        submission: record.submission
+            ? {
+                  ...record.submission,
+                  submittedAt: record.submission.submittedAt?.toISOString() ?? null,
+                  createdAt: record.submission.createdAt.toISOString(),
+                  updatedAt: record.submission.updatedAt.toISOString(),
+              }
+            : null,
     };
 }

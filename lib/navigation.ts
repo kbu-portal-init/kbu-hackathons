@@ -20,6 +20,7 @@ export const publicLinks = [
 
 export const participantDashboardLinks = [
     { href: "/team", label: "Our Team", icon: Users },
+    { href: "/team/notifications", label: "Notifications", icon: Bell },
     { href: "/team/references", label: "References", icon: FileText },
     { href: "/team/submit", label: "Submit", icon: Upload },
     { href: "/team/settings", label: "Settings", icon: Settings },
@@ -28,6 +29,7 @@ export const participantDashboardLinks = [
 export const managementDashboardLinks = [
     { href: "/panel", label: "Overview", icon: LayoutDashboard },
     { href: "/panel/announcements", label: "Announcements", icon: Bell },
+    { href: "/panel/notifications", label: "Notifications", icon: Bell },
     {
         href: "/panel/registrations",
         label: "Registrations",

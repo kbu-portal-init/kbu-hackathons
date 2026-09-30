@@ -81,14 +81,14 @@ export default async function Home() {
                         <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
                             <Link
                                 href="/events"
-                                className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-accent px-6 py-3 font-semibold text-white shadow-lg shadow-orange-500/25 transition hover:shadow-orange-500/40"
+                                className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
                             >
-                                Explore events
-                                <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+                                <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
+                                Register Your Team
                             </Link>
                             <Link
                                 href="/login"
-                                className="inline-flex items-center justify-center gap-2 rounded-full border border-orange-400 bg-orange-50 px-6 py-3 font-mono text-sm font-medium text-orange-700 transition hover:border-orange-600 hover:text-orange-800"
+                                className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
                             >
                                 ./sign-in
                             </Link>

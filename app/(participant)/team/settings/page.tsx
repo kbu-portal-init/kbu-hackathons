@@ -1,5 +1,6 @@
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import { getTeamApprovalDate, getTeamMembersForCards } from "@/lib/data/team-members";
+import { TeamPasswordSettings } from "./_components/team-password-settings";
 import { TeamSettingsForm } from "./_components/team-settings-form";
 
 export default async function TeamSettingsPage() {
@@ -19,6 +20,7 @@ export default async function TeamSettingsPage() {
                 </p>
             </div>
             <TeamSettingsForm members={members} team={{ displayName: team.displayName, imageUrl: team.imageUrl }} />
+            <TeamPasswordSettings username={team.loginName} />
         </main>
     );
 }

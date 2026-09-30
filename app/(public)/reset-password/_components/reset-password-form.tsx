@@ -1,13 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LockKeyhole } from "lucide-react";
-import Link from "next/link";
+import { Eye, EyeOff, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { BackButton } from "@/components/back-button";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { authClient } from "@/lib/auth-client";
 import { type PasswordResetInput, passwordResetSchema } from "@/lib/contracts/auth";
 
@@ -15,6 +15,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
     const router = useRouter();
     const [submitError, setSubmitError] = useState<string>();
     const [completed, setCompleted] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const form = useForm<PasswordResetInput>({
         resolver: zodResolver(passwordResetSchema),
         defaultValues: { newPassword: "", confirmPassword: "" },
@@ -40,14 +42,15 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
     if (completed) {
         return (
-            <main className="flex flex-1 items-center justify-center bg-orange-50/70 px-6 py-16">
-                <div className="w-full max-w-md rounded-2xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/50">
+            <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
+                <div className="w-full max-w-md rounded-2xl border border-orange-100 bg-white p-7 shadow-xl">
                     <h1 className="text-3xl font-bold tracking-tight">Password set</h1>
-                    <p className="mt-3 text-sm leading-6 text-slate-600">
-                        Your password has been saved. You can now sign in with your team username and new password.
+                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        Your password has been saved. You can now sign in with the account credentials associated with
+                        this reset link.
                     </p>
-                    <Button className="mt-6 w-full" onClick={() => router.push("/login/participant")}>
-                        Go to participant login
+                    <Button className="mt-6 w-full" onClick={() => router.push("/login")}>
+                        Go to login
                     </Button>
                 </div>
             </main>
@@ -55,15 +58,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
     }
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-orange-50/70 px-6 py-16">
+        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
             <div className="w-full max-w-md">
-                <Link
-                    href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-orange-700"
-                >
-                    <ArrowLeft className="size-4" /> Back to KBU Hub
-                </Link>
-                <div className="rounded-2xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/50">
+                <BackButton fallbackHref="/" label="Back to KBU Hackathon 2026" className="mb-8" />
+                <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40">
                     <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
                         <LockKeyhole className="size-5" />
                     </div>
@@ -71,31 +69,61 @@ export function ResetPasswordForm({ token }: { token: string }) {
                         Password setup
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Set your password</h1>
-                    <p className="mt-3 text-sm leading-6 text-slate-600">Choose a password for your KBU Hub account.</p>
+                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        Choose a password for your KBU Hackathon 2026 account.
+                    </p>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
                         <p className="text-sm font-medium text-rose-600">{submitError}</p>
                         <div className="space-y-2">
                             <label htmlFor="newPassword" className="text-sm font-medium">
                                 New password
                             </label>
-                            <Input
-                                id="newPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                {...form.register("newPassword")}
-                            />
+                            <InputGroup>
+                                <InputGroupInput
+                                    id="newPassword"
+                                    type={showNewPassword ? "text" : "password"}
+                                    autoComplete="new-password"
+                                    {...form.register("newPassword")}
+                                />
+                                <InputGroupButton
+                                    type="button"
+                                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                                    onClick={() => setShowNewPassword((visible) => !visible)}
+                                    size="icon-sm"
+                                >
+                                    {showNewPassword ? (
+                                        <EyeOff data-icon="inline-start" />
+                                    ) : (
+                                        <Eye data-icon="inline-start" />
+                                    )}
+                                </InputGroupButton>
+                            </InputGroup>
                             <FormError message={form.formState.errors.newPassword?.message} />
                         </div>
                         <div className="space-y-2">
                             <label htmlFor="confirmPassword" className="text-sm font-medium">
                                 Confirm password
                             </label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                {...form.register("confirmPassword")}
-                            />
+                            <InputGroup>
+                                <InputGroupInput
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    autoComplete="new-password"
+                                    {...form.register("confirmPassword")}
+                                />
+                                <InputGroupButton
+                                    type="button"
+                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                    onClick={() => setShowConfirmPassword((visible) => !visible)}
+                                    size="icon-sm"
+                                >
+                                    {showConfirmPassword ? (
+                                        <EyeOff data-icon="inline-start" />
+                                    ) : (
+                                        <Eye data-icon="inline-start" />
+                                    )}
+                                </InputGroupButton>
+                            </InputGroup>
                             <FormError message={form.formState.errors.confirmPassword?.message} />
                         </div>
                         <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>

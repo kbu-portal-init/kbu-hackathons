@@ -1,6 +1,6 @@
 import { CardImageViewer } from "@/components/card-image-viewer";
+import { ShareButton } from "@/components/share-button";
 import { getPublicMemberCard } from "@/lib/data/public-member-cards";
-import { ShareCardButton } from "./_components/share-card-button";
 
 type PublicCardPageProps = { params: Promise<{ token: string }> };
 
@@ -29,7 +29,7 @@ export default async function PublicMemberCardPage({ params }: PublicCardPagePro
             <section className="w-full max-w-3xl overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-xl shadow-orange-100/60">
                 <CardImageViewer alt="KBU Hackathon participant card" className="h-auto w-full" src={cardUrl} />
                 <div className="border-t border-orange-100 bg-orange-50/60 p-6 text-center">
-                    <ShareCardButton />
+                    <ShareButton title="KBU Hackathon participant card" />
                 </div>
             </section>
         </main>

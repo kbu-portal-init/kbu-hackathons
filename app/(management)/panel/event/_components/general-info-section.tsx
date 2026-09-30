@@ -14,7 +14,7 @@ type Props = {
 
 export function GeneralInfoSection({ control }: Props) {
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
             <div className="flex items-center gap-2">
                 <CalendarDays className="size-5 text-orange-500" />
                 <h2 className="text-lg font-semibold">General information</h2>
@@ -75,7 +75,9 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Promo URL</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>
+                                    Promo URL <span className="font-normal text-muted-foreground">(optional)</span>
+                                </FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}

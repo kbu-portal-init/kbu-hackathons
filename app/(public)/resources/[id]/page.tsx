@@ -1,5 +1,4 @@
 import {
-    ArrowLeft,
     ArrowRight,
     CheckCircle2,
     ChevronRight,
@@ -14,6 +13,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/back-button";
 import {
     AwsIcon,
     AzureIcon,
@@ -58,12 +58,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     if (!benefit) {
         return {
-            title: "Student Benefit Not Found | KBU Hub",
+            title: "Student Benefit Not Found | KBU Hackathon 2026",
         };
     }
 
     return {
-        title: `${benefit.title} — Student Claim Guide | KBU Hub`,
+        title: `${benefit.title} — Student Claim Guide | KBU Hackathon 2026`,
         description: benefit.description,
     };
 }
@@ -83,9 +83,9 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
             {/* Top Navigation & Breadcrumbs */}
             <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
                 <nav aria-label="Breadcrumb">
-                    <ol className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-slate-500">
+                    <ol className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-zinc-500">
                         <li>
-                            <Link href="/" className="transition hover:text-orange-700">
+                            <Link href="/" className="transition hover:text-orange-600">
                                 Home
                             </Link>
                         </li>
@@ -93,7 +93,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
                         </li>
                         <li>
-                            <Link href="/resources" className="transition hover:text-orange-700">
+                            <Link href="/resources" className="transition hover:text-orange-600">
                                 Resources
                             </Link>
                         </li>
@@ -101,7 +101,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
                         </li>
                         <li
-                            className="max-w-[200px] truncate font-semibold text-foreground sm:max-w-none"
+                            className="max-w-[200px] truncate font-semibold text-zinc-900 sm:max-w-none"
                             aria-current="page"
                         >
                             {benefit.title}
@@ -109,20 +109,14 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     </ol>
                 </nav>
 
-                <Link
-                    href="/resources"
-                    className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-slate-600 transition hover:text-orange-700"
-                >
-                    <ArrowLeft className="h-3.5 w-3.5" />
-                    <span>Back to all benefits</span>
-                </Link>
+                <BackButton fallbackHref="/resources" label="Back to all benefits" className="self-start" />
             </div>
 
             {/* Hero Header Card */}
-            <section className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-orange-50 via-white to-white p-5 shadow-xs sm:p-8 lg:p-10">
+            <section className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-b from-orange-50/50 via-white to-white p-5 shadow-xs sm:p-8 lg:p-10">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex items-start gap-4 sm:gap-5">
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-accent text-white shadow-md ring-4 ring-orange-100 sm:h-20 sm:w-20">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-md ring-4 ring-orange-100 sm:h-20 sm:w-20">
                             {renderBrandIcon(benefit.iconName)}
                         </div>
 
@@ -131,7 +125,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                 {benefit.categories.map((cat) => (
                                     <span
                                         key={cat}
-                                        className="rounded-md bg-orange-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700"
+                                        className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700"
                                     >
                                         {cat}
                                     </span>
@@ -148,11 +142,11 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                 )}
                             </div>
 
-                            <h1 className="mt-2.5 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+                            <h1 className="mt-2.5 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl lg:text-4xl">
                                 {benefit.title}
                             </h1>
 
-                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
                                 <span>Provided by {benefit.provider}</span>
                                 {benefit.postedDate && (
                                     <>
@@ -180,7 +174,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                 {/* Pricing / Special Term Banner */}
                 {benefit.pricingNote && (
-                    <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-orange-200 bg-orange-50 p-3.5 text-xs font-medium text-orange-900 sm:mt-6 sm:p-4 sm:text-sm">
+                    <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-orange-200/80 bg-orange-50/80 p-3.5 text-xs font-medium text-orange-900 sm:mt-6 sm:p-4 sm:text-sm">
                         <Tag className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                         <div>
                             <span className="font-semibold">Special Student Pricing: </span>
@@ -189,18 +183,18 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     </div>
                 )}
 
-                <p className="mt-5 text-sm leading-relaxed text-slate-600 sm:text-base">{benefit.description}</p>
+                <p className="mt-5 text-sm leading-relaxed text-zinc-600 sm:text-base">{benefit.description}</p>
             </section>
 
             {/* Main Content Grid */}
             <div className="mt-8 space-y-8 sm:mt-10 sm:space-y-10">
                 {/* Section: What's Included */}
-                <section className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-8">
+                <section className="rounded-3xl border border-zinc-200/80 bg-white p-5 sm:p-8">
                     <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-orange-600" />
-                        <h2 className="text-lg font-bold text-foreground sm:text-xl">What&apos;s Included Free</h2>
+                        <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">What&apos;s Included Free</h2>
                     </div>
-                    <p className="mt-0.5 text-xs text-slate-400">
+                    <p className="mt-0.5 text-xs text-zinc-400">
                         Exclusive features unlocked with student academic status
                     </p>
 
@@ -208,7 +202,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                         {benefit.perks.map((perk) => (
                             <li
                                 key={perk}
-                                className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-3.5 text-xs leading-relaxed text-slate-700 sm:text-sm"
+                                className="flex items-start gap-3 rounded-2xl border border-zinc-100 bg-zinc-50/60 p-3.5 text-xs leading-relaxed text-zinc-700 sm:text-sm"
                             >
                                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                                 <span>{perk}</span>
@@ -218,8 +212,8 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                     {/* Restrictions Note if provided */}
                     {benefit.restrictionsNote && (
-                        <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-slate-200 bg-slate-50 p-3.5 text-xs text-slate-600 sm:p-4">
-                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                        <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-zinc-200/80 bg-zinc-50 p-3.5 text-xs text-zinc-600 sm:p-4">
+                            <Info className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
                             <div>
                                 <span className="font-semibold">Terms &amp; Restrictions: </span>
                                 {benefit.restrictionsNote}
@@ -229,7 +223,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 </section>
 
                 {/* Section: Eligibility Requirement */}
-                <section className="rounded-3xl border border-emerald-200 bg-gradient-to-r from-emerald-50/80 to-teal-50/40 p-5 sm:p-6">
+                <section className="rounded-3xl border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/40 p-5 sm:p-6">
                     <div className="flex items-center gap-2 text-emerald-800">
                         <ShieldCheck className="h-5 w-5 shrink-0" />
                         <h2 className="text-sm font-bold uppercase tracking-wider sm:text-base">
@@ -240,31 +234,29 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 </section>
 
                 {/* Section: Step-by-Step Claim Walkthrough */}
-                <section className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-8">
+                <section className="rounded-3xl border border-zinc-200/80 bg-white p-5 sm:p-8">
                     <div className="flex items-center gap-2">
                         <Clock className="h-5 w-5 text-orange-600" />
-                        <h2 className="text-lg font-bold text-foreground sm:text-xl">
-                            How to Claim This Student Offer
-                        </h2>
+                        <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">How to Claim This Student Offer</h2>
                     </div>
-                    <p className="mt-0.5 text-xs text-slate-400">Follow these exact steps to complete verification</p>
+                    <p className="mt-0.5 text-xs text-zinc-400">Follow these exact steps to complete verification</p>
 
                     <ol className="mt-5 space-y-3.5 sm:mt-6 sm:space-y-4">
                         {benefit.howToClaim.map((step, idx) => (
                             <li
                                 key={step}
-                                className="flex items-start gap-3.5 rounded-2xl border border-slate-100 bg-white p-4 shadow-2xs sm:p-5"
+                                className="flex items-start gap-3.5 rounded-2xl border border-zinc-100 bg-white p-4 shadow-2xs sm:p-5"
                             >
                                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-100 font-mono text-xs font-bold text-orange-700 sm:h-8 sm:w-8 sm:text-sm">
                                     {String(idx + 1).padStart(2, "0")}
                                 </span>
-                                <p className="pt-0.5 text-xs leading-relaxed text-slate-700 sm:text-sm">{step}</p>
+                                <p className="pt-0.5 text-xs leading-relaxed text-zinc-700 sm:text-sm">{step}</p>
                             </li>
                         ))}
                     </ol>
 
                     {/* KBU Email Helper Inside Steps */}
-                    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-orange-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-orange-50/80 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                         <div className="flex items-start gap-2.5">
                             <Mail className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                             <div>
@@ -288,8 +280,8 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                 {/* Section: Other Recommended Perks */}
                 <section className="pt-4">
-                    <h2 className="text-lg font-bold text-foreground sm:text-xl">Other Recommended Perks</h2>
-                    <p className="mt-0.5 text-xs text-slate-400">
+                    <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">Other Recommended Perks</h2>
+                    <p className="mt-0.5 text-xs text-zinc-400">
                         Explore more developer packs available for KBU students
                     </p>
 
@@ -298,7 +290,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             <Link
                                 key={item.id}
                                 href={`/resources/${item.id}`}
-                                className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs transition hover:-translate-y-0.5 hover:border-orange-400 hover:shadow-md"
+                                className="group flex flex-col justify-between rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-2xs transition hover:-translate-y-0.5 hover:border-orange-500/40 hover:shadow-md"
                             >
                                 <div>
                                     <div className="flex items-center justify-between">
@@ -311,10 +303,10 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                             </span>
                                         )}
                                     </div>
-                                    <h3 className="mt-3 text-sm font-bold text-foreground transition group-hover:text-orange-700">
+                                    <h3 className="mt-3 text-sm font-bold text-zinc-900 transition group-hover:text-orange-600">
                                         {item.title}
                                     </h3>
-                                    <p className="mt-1 line-clamp-2 text-xs text-slate-500">{item.tagline}</p>
+                                    <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{item.tagline}</p>
                                 </div>
                                 <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-orange-600">
                                     <span>Read Guide</span>
@@ -327,11 +319,11 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
             </div>
 
             {/* Mobile Sticky Bottom Action Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 p-3.5 shadow-lg backdrop-blur-md sm:hidden">
+            <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200 bg-white/95 p-3.5 shadow-lg backdrop-blur-md sm:hidden">
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-bold text-foreground">{benefit.title}</p>
-                        <p className="truncate text-[10px] text-slate-500">
+                        <p className="truncate text-xs font-bold text-zinc-900">{benefit.title}</p>
+                        <p className="truncate text-[10px] text-zinc-500">
                             {benefit.provider} • {benefit.valueBadge}
                         </p>
                     </div>

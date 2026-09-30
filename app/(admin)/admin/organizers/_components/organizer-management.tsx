@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, startOfToday } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -42,6 +42,7 @@ export function OrganizerManagement({ items }: Props) {
     const [createOpen, setCreateOpen] = useState(false);
     const [editItem, setEditItem] = useState<OrganizerListItem | null>(null);
     const [banItem, setBanItem] = useState<OrganizerListItem | null>(null);
+    const [showCreatePassword, setShowCreatePassword] = useState(false);
 
     const createForm = useForm<CreateOrganizerInput>({
         resolver: zodResolver(createOrganizerSchema),
@@ -50,7 +51,7 @@ export function OrganizerManagement({ items }: Props) {
 
     const editForm = useForm<UpdateOrganizerInput>({
         resolver: zodResolver(updateOrganizerSchema),
-        defaultValues: { userId: "", name: "", email: "", password: undefined },
+        defaultValues: { userId: "", name: "", email: "" },
     });
 
     const banForm = useForm<BanAccountFormInput, unknown, BanAccountInput>({
@@ -121,7 +122,7 @@ export function OrganizerManagement({ items }: Props) {
             <OrganizerTable
                 items={items}
                 onEdit={(item) => {
-                    editForm.reset({ userId: item.id, name: item.name, email: item.email, password: undefined });
+                    editForm.reset({ userId: item.id, name: item.name, email: item.email });
                     setEditItem(item);
                 }}
                 onBan={(item) => {
@@ -171,12 +172,25 @@ export function OrganizerManagement({ items }: Props) {
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            type="password"
-                                            aria-invalid={fieldState.invalid}
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                {...field}
+                                                id={field.name}
+                                                type={showCreatePassword ? "text" : "password"}
+                                                className="pr-10"
+                                                aria-invalid={fieldState.invalid}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon-sm"
+                                                className="absolute inset-y-1 right-1"
+                                                aria-label={showCreatePassword ? "Hide password" : "Show password"}
+                                                onClick={() => setShowCreatePassword((current) => !current)}
+                                            >
+                                                {showCreatePassword ? <EyeOff /> : <Eye />}
+                                            </Button>
+                                        </div>
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -194,9 +208,7 @@ export function OrganizerManagement({ items }: Props) {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Edit organizer</DialogTitle>
-                        <DialogDescription>
-                            Update account details. Leave password blank to keep it unchanged.
-                        </DialogDescription>
+                        <DialogDescription>Update the organizer’s name and email address.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={editForm.handleSubmit(onEdit)}>
                         <FieldGroup>
@@ -223,24 +235,6 @@ export function OrganizerManagement({ items }: Props) {
                                             type="email"
                                             aria-invalid={fieldState.invalid}
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                    </Field>
-                                )}
-                            />
-                            <Controller
-                                name="password"
-                                control={editForm.control}
-                                render={({ field, fieldState }) => (
-                                    <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>New password</FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            type="password"
-                                            aria-invalid={fieldState.invalid}
-                                            value={field.value ?? ""}
-                                        />
-                                        <FieldDescription>Leave blank to keep current password.</FieldDescription>
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -313,7 +307,7 @@ function OrganizerTable({
     onUnban: (item: OrganizerListItem) => Promise<void>;
 }) {
     return (
-        <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-2xl border border-zinc-200 bg-white">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -348,8 +342,8 @@ function OrganizerTable({
                                         <>
                                             {item.banReason ?? "No reason"}
                                             {item.banExpires
-                                                ? ` Â· until ${new Date(item.banExpires).toLocaleString()}`
-                                                : " Â· permanent"}
+                                                ? ` · until ${new Date(item.banExpires).toLocaleString()}`
+                                                : " · permanent"}
                                         </>
                                     ) : (
                                         "—"

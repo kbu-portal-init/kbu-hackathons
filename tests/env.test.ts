@@ -18,6 +18,8 @@ const completeEnvironment: Record<string, string | undefined> = {
     R2_SECRET_ACCESS_KEY: "secret",
     R2_BUCKET_NAME: "bucket",
     NEXT_PUBLIC_R2_PUBLIC_URL: "https://media.example.com",
+    UPSTASH_REDIS_REST_URL: "https://redis.example.com",
+    UPSTASH_REDIS_REST_TOKEN: "token",
 };
 
 describe("production environment validation", () => {

@@ -87,6 +87,7 @@ export function EventSettingsForm({ settings }: Props) {
                 imageUrls={imageUrls}
                 onAdd={(url) => setImageUrls((prev) => [...prev, url])}
                 onRemove={(index) => setImageUrls((prev) => prev.filter((_, i) => i !== index))}
+                onReorder={setImageUrls}
             />
 
             <div className="grid gap-8 lg:grid-cols-2">

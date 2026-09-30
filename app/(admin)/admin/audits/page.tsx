@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { listAuditLogsSchema } from "@/lib/contracts/audits";
 import { listAuditLogs } from "@/lib/data/audits";
@@ -35,12 +34,8 @@ export default async function AdminAuditsPage({
     return (
         <main className="space-y-8">
             <div>
-                <Link href="/admin" className="text-sm font-medium text-orange-600">
-                    ← Dashboard
-                </Link>
-                <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-orange-600">Administrator</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight">Audit logs</h1>
-                <p className="mt-2 text-zinc-600 dark:text-zinc-300">
+                <p className="mt-2 text-muted-foreground">
                     Review and permanently delete administrative activity records.
                 </p>
             </div>
