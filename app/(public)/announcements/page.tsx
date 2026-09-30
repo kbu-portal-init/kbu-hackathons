@@ -65,7 +65,9 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
                     {announcement.title}
                 </h2>
 
-                <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">{announcement.content}</p>
+                <p className="mt-2 line-clamp-3 text-sm leading-6 text-brand-muted-foreground">
+                    {announcement.content}
+                </p>
             </article>
         </Link>
     );

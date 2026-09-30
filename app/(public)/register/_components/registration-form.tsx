@@ -252,7 +252,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                     <Button
                         type="button"
                         variant="outline"
-                        size="sm"
+                        size="lg"
                         className="w-full sm:w-auto"
                         onClick={() => setInformationOpen(true)}
                     >
@@ -260,6 +260,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                     </Button>
                     <Button
                         type="submit"
+                        size={"lg"}
                         disabled={form.formState.isSubmitting || !acknowledged}
                         className="w-full min-w-40 sm:w-auto"
                     >
@@ -280,13 +281,19 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                         <AlertDialogTitle>Before you submit</AlertDialogTitle>
                         <AlertDialogDescription render={<div />}>
                             <ol className="list-decimal space-y-2 pl-5">
-                                <li>
+                                <li className="text-start">
                                     Carefully check every team member&apos;s student email address. We will send each
                                     member a verification link, and an incorrect email may prevent verification.
                                 </li>
-                                <li>Every team member must verify their student email address.</li>
-                                <li>After everyone verifies, the team will be automatically approved.</li>
-                                <li>The leader will receive a password-setup link after approval.</li>
+                                <li className="text-start">
+                                    Every team member must verify their student email address.
+                                </li>
+                                <li className="text-start">
+                                    After everyone verifies, the team will be automatically approved.
+                                </li>
+                                <li className="text-start">
+                                    The leader will receive a password-setup link after approval.
+                                </li>
                             </ol>
                         </AlertDialogDescription>
                     </AlertDialogHeader>

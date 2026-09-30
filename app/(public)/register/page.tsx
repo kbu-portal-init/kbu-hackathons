@@ -57,7 +57,7 @@ async function RegistrationContent() {
 
     return (
         <>
-            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-muted-foreground">
+            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-brand-muted-foreground">
                 Fill out the form below to register your team for the hackathon.
             </p>
             <div className="mt-6">

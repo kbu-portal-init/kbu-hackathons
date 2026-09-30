@@ -20,8 +20,9 @@
     --secondary: #fdf0e6;
     --secondary-foreground: #6b2f10;
 
-    --muted: #fdf0e6;
-    --muted-foreground: #7a5a44;
+    --muted: #f4f4f5;
+    --brand-muted-foreground: #6b5140;
+    --muted-foreground: var(--brand-muted-foreground);
 
     --accent: #ffedd5;
     --accent-foreground: #9a3412;
@@ -59,7 +60,8 @@
     --secondary-foreground: #fdf3e7;
 
     --muted: #3a2514;
-    --muted-foreground: #c0a488;
+    --brand-muted-foreground: #c0a488;
+    --muted-foreground: var(--brand-muted-foreground);
 
     --accent: #451a03;
     --accent-foreground: #fdba74;
@@ -98,6 +100,7 @@
 
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+    --color-brand-muted-foreground: var(--brand-muted-foreground);
 
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);

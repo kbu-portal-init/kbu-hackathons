@@ -212,9 +212,9 @@ export function FileUpload({
                         render={
                             <Button
                                 type="button"
-                                variant="secondary"
+                                variant="outline"
                                 size="sm"
-                                className="cursor-pointer gap-1 rounded-full border shadow-sm"
+                                className="cursor-pointer gap-1 rounded-full border !border-zinc-200 !bg-white text-zinc-700 shadow-sm hover:!bg-zinc-50 hover:!text-zinc-900"
                                 aria-label={`Edit ${label.toLowerCase()}`}
                             />
                         }
