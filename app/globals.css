@@ -1,65 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
+/*
+ * Warm Light Mode. Light is the product default: a bright, airy canvas with
+ * energetic orange/coral accents. The dark block is kept as the invert for
+ * prefers-dark dashboards, but the public site is a light experience.
+ */
 :root {
-    --background: #ffffff;
-    --foreground: #18181b;
+    --background: #fffdfb;
+    --foreground: #27180f;
     --card: #ffffff;
-    --card-foreground: #18181b;
+    --card-foreground: #27180f;
     --popover: #ffffff;
-    --popover-foreground: #18181b;
+    --popover-foreground: #27180f;
+
     --primary: #ea580c;
     --primary-foreground: #ffffff;
-    --secondary: #f4f4f5;
-    --secondary-foreground: #27272a;
-    --muted: #f4f4f5;
-    --muted-foreground: #71717a;
+
+    --secondary: #fdf0e6;
+    --secondary-foreground: #6b2f10;
+
+    --muted: #fdf0e6;
+    --muted-foreground: #7a5a44;
+
     --accent: #ffedd5;
     --accent-foreground: #9a3412;
+
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
     --border: #fed7aa;
     --input: #e4e4e7;
     --ring: #ea580c;
-    --sidebar: #fff7ed;
-    --sidebar-foreground: #27272a;
+
+    --sidebar: #ffffff;
+    --sidebar-foreground: #27180f;
     --sidebar-primary: #ea580c;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #ffedd5;
     --sidebar-accent-foreground: #9a3412;
-    --sidebar-border: #fed7aa;
+    --sidebar-border: #f3dcbd;
     --sidebar-ring: #ea580c;
+
+    --success: #0d9488;
 }
 
 .dark {
-    --background: #18181b;
-    --foreground: #fafafa;
-    --card: #27272a;
-    --card-foreground: #fafafa;
-    --popover: #27272a;
-    --popover-foreground: #fafafa;
+    --background: #1c1206;
+    --foreground: #fdf3e7;
+    --card: #2a1b0d;
+    --card-foreground: #fdf3e7;
+    --popover: #2a1b0d;
+    --popover-foreground: #fdf3e7;
+
     --primary: #fb923c;
-    --primary-foreground: #431407;
-    --secondary: #27272a;
-    --secondary-foreground: #fafafa;
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
-    --accent: #431407;
-    --accent-foreground: #fed7aa;
+    --primary-foreground: #2a0e03;
+
+    --secondary: #3a2514;
+    --secondary-foreground: #fdf3e7;
+
+    --muted: #3a2514;
+    --muted-foreground: #c0a488;
+
+    --accent: #451a03;
+    --accent-foreground: #fdba74;
+
     --destructive: #f87171;
     --destructive-foreground: #450a0a;
     --border: #7c2d12;
     --input: #3f3f46;
     --ring: #fb923c;
-    --sidebar: #1c1917;
-    --sidebar-foreground: #fafafa;
+
+    --sidebar: #1c1206;
+    --sidebar-foreground: #fdf3e7;
     --sidebar-primary: #fb923c;
     --sidebar-primary-foreground: #431407;
     --sidebar-accent: #431407;
     --sidebar-accent-foreground: #fed7aa;
     --sidebar-border: #7c2d12;
     --sidebar-ring: #fb923c;
+
+    --success: #2dd4bf;
 }
 
 @theme inline {
@@ -69,19 +89,26 @@
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
+
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
+
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
+
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
+
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
+
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -90,11 +117,84 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
-    --font-sans: var(--font-plus-jakarta-sans);
+
+    --color-success: var(--success);
+
+    --font-sans: "Plus Jakarta Sans", sans-serif;
+    --font-mono: "Fira Code", monospace;
+}
+
+html,
+body {
+    min-height: 100%;
 }
 
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+code,
+pre,
+kbd,
+samp {
+    font-family: "Fira Code", monospace;
+}
+
+/*
+ * Warm Light Mode utilities. The orange→coral gradient is reserved for
+ * primary CTAs, key headline text, and section dividers only — everything
+ * else uses flat accents so accent use stays minimal and consistent.
+ */
+
+/* Orange→coral gradient. Usable as gradient text (transparent color) or as a
+ * background fill for primary CTAs and section dividers. */
+.text-gradient {
+    background-image: linear-gradient(90deg, #ea580c, #ff5d6c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.bg-gradient-accent {
+    background-image: linear-gradient(90deg, #ea580c, #ff5d6c);
+}
+
+/* Glassmorphism for cards and panels. Frosted white on the light canvas. */
+.glass {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(69, 38, 14, 0.08);
+}
+
+.glass-accent {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(234, 88, 12, 0.22);
+}
+
+/* Dot-grid texture used behind the hero and final-CTA bands. */
+.dot-grid {
+    background-image: radial-gradient(circle, rgba(122, 90, 68, 0.18) 1px, transparent 1px);
+    background-size: 25px 25px;
+}
+
+/*
+ * Scroll reveal. Elements carrying [data-reveal] are hidden only after the
+ * ScrollFx client module arms the page (adds .fx-armed to <html>), so no-JS
+ * and prefers-reduced-motion visitors see the final state instead of
+ * permanently invisible content. GSAP sets inline opacity/transform on reveal,
+ * so no CSS transition is needed here.
+ */
+.fx-armed [data-reveal] {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fx-armed [data-reveal] {
+        opacity: 1;
+    }
 }

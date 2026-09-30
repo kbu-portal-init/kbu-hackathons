@@ -55,7 +55,7 @@ export function MobileNavigation() {
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}
-                            className="block rounded-full bg-orange-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-orange-700"
+                            className="block rounded-full bg-gradient-accent px-4 py-3 text-center text-sm font-semibold text-white"
                         >
                             Login
                         </Link>
