@@ -44,7 +44,7 @@ export default async function Home() {
                     <div className="relative hidden min-h-72 lg:block">
                         <div className="absolute right-8 top-4 size-56 rounded-full bg-orange-300/50 blur-3xl" />
                         <div className="relative ml-auto max-w-sm rounded-3xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/40">
-                            <p className="text-sm font-semibold text-orange-600">Whatâ€™s happening</p>
+                            <p className="text-sm font-semibold text-orange-600">What’s happening</p>
                             <p className="mt-4 text-3xl font-bold tracking-tight">Ideas start here.</p>
                             <div className="mt-8 space-y-4 text-sm text-zinc-600">
                                 <p className="flex items-center gap-3">

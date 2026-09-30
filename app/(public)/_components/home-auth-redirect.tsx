@@ -59,7 +59,7 @@ export function HomeAuthRedirect() {
             >
                 <div className="flex flex-col items-center gap-4">
                     <div className="size-8 animate-spin rounded-full border-4 border-orange-200 border-t-orange-600" />
-                    <p className="text-sm font-medium text-zinc-600">Checking your sessionâ€¦</p>
+                    <p className="text-sm font-medium text-zinc-600">Checking your session…</p>
                 </div>
             </div>
         );
