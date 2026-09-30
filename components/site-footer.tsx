@@ -8,8 +8,7 @@ export function SiteFooter() {
                 <div className="sm:col-span-2">
                     <p className="text-lg font-bold text-zinc-950">KBU Hackathon 2026</p>
                     <p className="mt-3 max-w-sm text-sm leading-6">
-                        Your home for hackathon events, announcements, resources, and the teams building what comes
-                        next.
+                        Your home for hackathon, announcements, resources, and the teams building what comes next.
                     </p>
                 </div>
                 <div>
@@ -31,7 +30,7 @@ export function SiteFooter() {
                     </div>
                 </div>
             </div>
-            <div className="border-t border-orange-100 px-6 py-5 text-center text-xs text-zinc-500">
+            <div className="border-t border-orange-200 px-6 py-5 text-center text-xs text-muted-foreground">
                 Copyright {new Date().getFullYear()} KBU Hackathon 2026. Built for the next big idea.
             </div>
         </footer>
