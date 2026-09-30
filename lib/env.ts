@@ -14,6 +14,8 @@ const REQUIRED_ENV_VARS = [
     "R2_SECRET_ACCESS_KEY",
     "R2_BUCKET_NAME",
     "NEXT_PUBLIC_R2_PUBLIC_URL",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN",
 ] as const;
 
 export type RequiredEnvVar = (typeof REQUIRED_ENV_VARS)[number];

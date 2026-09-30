@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export type EmailMessage = {
     to: string | string[];
+    bcc?: string | string[];
     subject: string;
     text: string;
     html?: string;
@@ -16,10 +17,10 @@ export const notificationTypes = [
     "ACCOUNT_BANNED",
     "ACCOUNT_UNBANNED",
     "ORGANIZER_ACCOUNT_CREATED",
+    "LOGIN_SUCCESS",
 ] as const;
 
 export type NotificationType = (typeof notificationTypes)[number];
-
 export type NotificationData = {
     verificationUrl?: string;
     teamName?: string;
@@ -28,8 +29,9 @@ export type NotificationData = {
     reason?: string | null;
     expiresAt?: string | null;
     loginEmail?: string;
+    loginRole?: "team" | "organizer" | "admin";
+    loginAt?: string;
 };
-
 export type NotificationInput = {
     type: NotificationType;
     recipients: string[];
@@ -38,7 +40,6 @@ export type NotificationInput = {
     targetType?: string;
     targetId?: string;
 };
-
 export type StudentEmailVerificationData = {
     teamMemberId: string;
     verifiedAt: string;
@@ -50,5 +51,6 @@ export const studentEmailSchema = z
     .trim()
     .toLowerCase()
     .email("Enter a valid student email")
-    .refine((email) => email.endsWith("@ms.kbu.ac.th"), "Student email must use the @ms.kbu.ac.th domain");
+    .regex(/^u\d{12}@ms\.kbu\.ac\.th$/, "Student email must match uXXXXXXXXXXXX@ms.kbu.ac.th");
+
 export const studentEmailVerificationSchema = z.object({ teamMemberId: z.string().min(1) });

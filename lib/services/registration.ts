@@ -1,6 +1,7 @@
 import "server-only";
 
 import { randomBytes } from "node:crypto";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth/config";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -12,10 +13,11 @@ import type {
     SubmitRegistrationData,
     SubmitRegistrationInput,
 } from "@/lib/contracts/registration";
-import { countApprovedTeams, getRegistrationWithTeam } from "@/lib/data/registrations";
+import { countApprovedTeams, getRegistrationByTeamId, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
 import { sendTeamRegistrationNotification } from "@/lib/services/notifications";
 import { createPasswordSetupUrl } from "@/lib/services/password-reset";
+import { checkRegistrationRateLimit } from "@/lib/services/rate-limit";
 import {
     allMembersVerified,
     consumeStudentEmailVerification,
@@ -272,53 +274,77 @@ export async function submitRegistration(
         };
     }
 
+    const registrationRateLimit = await checkRegistrationRateLimit(await headers());
+    if (!registrationRateLimit.success) {
+        return {
+            ok: false,
+            error: { code: "RATE_LIMITED", message: "Too many registration attempts. Please try again later." },
+        };
+    }
+
     const loginName = await uniqueLoginName(toLoginName(input.teamName));
 
-    const result = await prisma.$transaction(async (tx) => {
-        const team = await tx.team.create({
-            data: {
-                loginName,
-                displayName: input.teamName,
-            },
+    let result: { registrationId: string; teamName: string; memberIds: string[] };
+    try {
+        result = await prisma.$transaction(async (tx) => {
+            const team = await tx.team.create({
+                data: {
+                    loginName,
+                    displayName: input.teamName,
+                },
+            });
+
+            const allMembers = [
+                { name: input.leaderName, role: input.leaderRole, email: input.leaderEmail },
+                ...input.members,
+            ];
+
+            const createdMembers = await Promise.all(
+                allMembers.map((m) =>
+                    tx.teamMember.create({
+                        data: {
+                            teamId: team.id,
+                            name: m.name,
+                            role: m.role,
+                            studentEmail: m.email,
+                        },
+                        select: { id: true },
+                    }),
+                ),
+            );
+
+            const registration = await tx.registration.create({
+                data: {
+                    teamId: team.id,
+                    applicationNotes: `Registered by ${input.leaderName}`,
+                    submittedAt: now,
+                },
+            });
+
+            return {
+                registrationId: registration.id,
+                teamName: team.displayName,
+                memberIds: createdMembers.map((m) => m.id),
+            };
         });
-
-        const allMembers = [
-            { name: input.leaderName, role: input.leaderRole, email: input.leaderEmail },
-            ...input.members,
-        ];
-
-        const createdMembers = await Promise.all(
-            allMembers.map((m) =>
-                tx.teamMember.create({
-                    data: {
-                        teamId: team.id,
-                        name: m.name,
-                        role: m.role,
-                        studentEmail: m.email,
-                    },
-                    select: { id: true },
-                }),
-            ),
-        );
-
-        const registration = await tx.registration.create({
-            data: {
-                teamId: team.id,
-                applicationNotes: `Registered by ${input.leaderName}`,
-                submittedAt: now,
-            },
-        });
-
-        return {
-            registrationId: registration.id,
-            teamName: team.displayName,
-            memberIds: createdMembers.map((m) => m.id),
-        };
-    });
+    } catch (error) {
+        const databaseError = error as { code?: string; message?: string; meta?: unknown };
+        const detail = `${databaseError.message ?? ""}${JSON.stringify(databaseError.meta ?? "")}`;
+        if (databaseError.code === "P2002" && detail.includes("team_member_student_email_key")) {
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.EMAIL_EXISTS,
+                    message: "Student email already exists in another team",
+                },
+            };
+        }
+        throw error;
+    }
 
     let verificationEmailsSent = true;
     for (const memberId of result.memberIds) {
-        await sendStudentEmailVerification(memberId).catch(() => {
+        await sendStudentEmailVerification(memberId, { rateLimit: false }).catch(() => {
             verificationEmailsSent = false;
         });
     }
@@ -340,6 +366,8 @@ export async function verifyTeamMemberEmail(token: string): Promise<
         verified: boolean;
         allVerified: boolean;
         alreadyVerified: boolean;
+        autoApproved: boolean;
+        passwordSetupSent: boolean;
     }>
 > {
     const consumeResult = await consumeStudentEmailVerification(token);
@@ -363,12 +391,47 @@ export async function verifyTeamMemberEmail(token: string): Promise<
 
     const allVerified = await allMembersVerified(member.teamId);
 
+    let autoApproved = false;
+    let passwordSetupSent = false;
+    if (allVerified && !consumeResult.data.alreadyVerified) {
+        const record = await getRegistrationByTeamId(member.teamId);
+        if (record?.status === "PENDING") {
+            const leader = record.team.members.find((m) => m.role === "LEADER") ?? record.team.members[0];
+            if (!leader) {
+                return {
+                    ok: false,
+                    error: {
+                        code: ErrorCodes.TEAM_LEADER_NOT_FOUND,
+                        message: "Team leader not found",
+                    },
+                };
+            }
+
+            const approvalResult = await provisionTeamAccount(
+                record.id,
+                record.teamId,
+                record.team.displayName,
+                record.team.loginName,
+                { name: leader.name, studentEmail: leader.studentEmail },
+                null,
+            );
+            if (!approvalResult.ok) {
+                if (approvalResult.error.code !== ErrorCodes.MAX_TEAMS_REACHED) return approvalResult;
+            } else {
+                autoApproved = true;
+                passwordSetupSent = approvalResult.data.passwordSetupSent;
+            }
+        }
+    }
+
     return {
         ok: true,
         data: {
             verified: true,
             allVerified,
             alreadyVerified: consumeResult.data.alreadyVerified,
+            autoApproved,
+            passwordSetupSent,
         },
     };
 }
@@ -484,7 +547,6 @@ export async function rejectRegistration(
         });
     });
 
-    const { sendTeamRegistrationNotification } = await import("@/lib/services/notifications");
     await sendTeamRegistrationNotification({
         type: "TEAM_REGISTRATION_REJECTED",
         teamId: record.teamId,

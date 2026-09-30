@@ -9,6 +9,7 @@ import type {
 } from "@/lib/contracts/announcements";
 import { mapAnnouncementToDTO } from "@/lib/mappers/announcements";
 import prisma from "@/lib/prisma";
+import { isOwnedR2PublicUrl } from "@/lib/r2";
 
 function announcementError(error: unknown, fallbackCode: string, fallbackMessage: string) {
     if (error instanceof Error) {
@@ -23,6 +24,12 @@ function announcementError(error: unknown, fallbackCode: string, fallbackMessage
                 return {
                     code: "ANNOUNCEMENT_INVALID_TRANSITION",
                     message: "Invalid announcement status transition",
+                };
+
+            case "INVALID_ANNOUNCEMENT_IMAGE":
+                return {
+                    code: "INVALID_ANNOUNCEMENT_IMAGE",
+                    message: "Invalid announcement image.",
                 };
         }
     }
@@ -53,6 +60,10 @@ export async function createAnnouncement(
     actorId: string,
 ): Promise<AnnouncementActionResult> {
     try {
+        if (input.imageUrl && !isOwnedR2PublicUrl(input.imageUrl, "uploads/announcements")) {
+            throw new Error("INVALID_ANNOUNCEMENT_IMAGE");
+        }
+
         const announcement = await prisma.$transaction(async (tx) => {
             const created = await tx.announcement.create({
                 data: {
@@ -84,14 +95,9 @@ export async function createAnnouncement(
             data: mapAnnouncementToDTO(announcement),
         };
     } catch (error) {
-        console.error("[announcements] ANNOUNCEMENT_CREATION_FAILED", error);
-
         return {
             ok: false,
-            error: {
-                code: "ANNOUNCEMENT_CREATION_FAILED",
-                message: "Failed to create announcement.",
-            },
+            error: announcementError(error, "ANNOUNCEMENT_CREATION_FAILED", "Failed to create announcement."),
         };
     }
 }
@@ -101,6 +107,10 @@ export async function updateAnnouncement(
     actorId: string,
 ): Promise<AnnouncementActionResult> {
     try {
+        if (input.imageUrl && !isOwnedR2PublicUrl(input.imageUrl, "uploads/announcements")) {
+            throw new Error("INVALID_ANNOUNCEMENT_IMAGE");
+        }
+
         const announcement = await prisma.$transaction(async (tx) => {
             const current = await tx.announcement.findUnique({
                 where: {

@@ -105,6 +105,235 @@ function buildTrophy(position: [number, number, number]): BuiltPrimitive {
     return { group, meshes };
 }
 
+/** Mechanical keyboard with an accent space bar — the desk's main tool. */
+function buildKeyboard(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const keyMaterial = standardMaterial(0xe2e8f0, { roughness: 0.5 });
+
+    add(group, meshes, new THREE.BoxGeometry(1.34, 0.02, 0.5), standardMaterial(0x0f172a), [0, 0.008, 0]);
+    add(group, meshes, new THREE.BoxGeometry(1.3, 0.07, 0.46), standardMaterial(0x1e293b), [0, 0.04, 0]);
+
+    for (let row = 0; row < 3; row += 1) {
+        for (let column = 0; column < 8; column += 1) {
+            add(group, meshes, new THREE.BoxGeometry(0.125, 0.035, 0.1), keyMaterial, [
+                -0.55 + column * 0.157,
+                0.078,
+                -0.13 + row * 0.13,
+            ]);
+        }
+    }
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(0.5, 0.04, 0.09),
+        standardMaterial(0xea580c, { roughness: 0.35 }),
+        [0.15, 0.08, 0.19],
+    );
+
+    group.position.set(...position);
+    return { group, meshes };
+}
+
+/** Desk clock counting down to demo day. */
+function buildClock(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const metal = standardMaterial(0x334155, { roughness: 0.4, metalness: 0.2 });
+
+    add(
+        group,
+        meshes,
+        new THREE.CylinderGeometry(0.4, 0.4, 0.07, 28),
+        standardMaterial(0xf8fafc, { roughness: 0.5 }),
+        [0, 0.5, 0],
+        [Math.PI / 2, 0, 0],
+    );
+    add(group, meshes, new THREE.TorusGeometry(0.4, 0.04, 10, 30), metal, [0, 0.5, 0]);
+    // Hour and minute hands: one dark, one orange so the face reads at a glance.
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(0.22, 0.035, 0.02),
+        standardMaterial(0x0f172a),
+        [0.08, 0.53, 0.05],
+        [0, 0, -0.6],
+    );
+    add(group, meshes, new THREE.BoxGeometry(0.03, 0.16, 0.02), standardMaterial(0xea580c), [0, 0.58, 0.05]);
+
+    for (const side of [-1, 1]) {
+        add(
+            group,
+            meshes,
+            new THREE.CylinderGeometry(0.04, 0.05, 0.18, 10),
+            metal,
+            [side * 0.22, 0.08, 0.1],
+            [0.5, 0, 0],
+        );
+    }
+
+    group.position.set(...position);
+    return { group, meshes };
+}
+
+/** A-frame hackathon poster standing at the back of the desk. */
+function buildPoster(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const rule = standardMaterial(0x94a3b8, { roughness: 0.6 });
+
+    add(group, meshes, new THREE.BoxGeometry(1.08, 1.5, 0.05), standardMaterial(0xfaf7f2), [0, 0.78, 0]);
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(1.08, 0.34, 0.055),
+        standardMaterial(0xea580c, { roughness: 0.4 }),
+        [0, 1.36, 0.005],
+    );
+    for (const y of [1.02, 0.86, 0.7]) {
+        add(group, meshes, new THREE.BoxGeometry(0.78, 0.06, 0.06), rule, [0, y, 0.008]);
+    }
+    add(group, meshes, new THREE.BoxGeometry(1.0, 0.5, 0.05), standardMaterial(0x1e293b), [0, 0.32, 0.008]);
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(0.9, 1.2, 0.04),
+        standardMaterial(0xd6d3d1),
+        [0, 0.6, -0.22],
+        [-0.34, 0, 0],
+    );
+
+    group.position.set(...position);
+    group.rotation.y = -0.22;
+    return { group, meshes };
+}
+
+/** Rubber duck — the classic debugging companion. */
+function buildDuck(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const yellow = standardMaterial(0xfacc15, { roughness: 0.45 });
+    const eye = standardMaterial(0x0f172a);
+
+    add(group, meshes, new THREE.SphereGeometry(0.2, 18, 16), yellow, [0, 0.19, 0]);
+    add(group, meshes, new THREE.SphereGeometry(0.12, 16, 14), yellow, [0.06, 0.37, 0]);
+    add(
+        group,
+        meshes,
+        new THREE.ConeGeometry(0.06, 0.12, 12),
+        standardMaterial(0xea580c, { roughness: 0.5 }),
+        [0.19, 0.36, 0],
+        [0, 0, -Math.PI / 2],
+    );
+    for (const side of [-1, 1]) {
+        add(group, meshes, new THREE.SphereGeometry(0.018, 8, 8), eye, [0.11, 0.41, side * 0.055]);
+    }
+
+    group.position.set(...position);
+    group.rotation.y = -0.5;
+    return { group, meshes };
+}
+
+/** Desk plant: the only thing here that grows without a commit. */
+function buildPlant(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const leaf = standardMaterial(0x3f7d3f, { roughness: 0.7 });
+
+    add(
+        group,
+        meshes,
+        new THREE.CylinderGeometry(0.22, 0.16, 0.36, 16),
+        standardMaterial(0xc2703f, { roughness: 0.8 }),
+        [0, 0.18, 0],
+    );
+    add(
+        group,
+        meshes,
+        new THREE.CylinderGeometry(0.19, 0.19, 0.04, 16),
+        standardMaterial(0x4a3728, { roughness: 0.95 }),
+        [0, 0.37, 0],
+    );
+
+    const leaves: Array<[number, number, number, number]> = [
+        [0, 0.62, 0, 0],
+        [0.16, 0.55, 0.1, 0.7],
+        [-0.17, 0.53, -0.06, -0.7],
+        [0.08, 0.5, -0.16, 0.5],
+        [-0.1, 0.48, 0.16, -0.5],
+    ];
+    for (const [x, y, z, tilt] of leaves) {
+        add(group, meshes, new THREE.SphereGeometry(0.14, 12, 10), leaf, [x, y, z], [0.35, 0, tilt]);
+    }
+
+    group.position.set(...position);
+    return { group, meshes };
+}
+
+/** Coffee mug: the actual fuel of the sprint. */
+function buildMug(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const ceramic = standardMaterial(0xf8fafc, { roughness: 0.4 });
+
+    add(group, meshes, new THREE.CylinderGeometry(0.16, 0.14, 0.34, 18), ceramic, [0, 0.17, 0]);
+    add(
+        group,
+        meshes,
+        new THREE.CylinderGeometry(0.13, 0.13, 0.02, 18),
+        standardMaterial(0x3b2416, { roughness: 0.9 }),
+        [0, 0.335, 0],
+    );
+    add(
+        group,
+        meshes,
+        new THREE.CylinderGeometry(0.155, 0.155, 0.05, 18),
+        standardMaterial(0xea580c, { roughness: 0.4 }),
+        [0, 0.28, 0],
+    );
+    add(group, meshes, new THREE.TorusGeometry(0.07, 0.022, 10, 20), ceramic, [0.16, 0.19, 0], [0, Math.PI / 2, 0]);
+
+    group.position.set(...position);
+    return { group, meshes };
+}
+
+/** Backpack parked on the desk corner. */
+function buildBackpack(position: [number, number, number]): BuiltPrimitive {
+    const group = new THREE.Group();
+    const meshes: THREE.Mesh[] = [];
+    const strap = standardMaterial(0x0f172a, { roughness: 0.8 });
+
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(0.78, 0.98, 0.42),
+        standardMaterial(0x1e293b, { roughness: 0.75 }),
+        [0, 0.49, 0],
+    );
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(0.6, 0.42, 0.12),
+        standardMaterial(0x334155, { roughness: 0.7 }),
+        [0, 0.3, 0.26],
+    );
+    add(
+        group,
+        meshes,
+        new THREE.BoxGeometry(0.5, 0.06, 0.1),
+        standardMaterial(0xea580c, { roughness: 0.4 }),
+        [0, 0.55, 0.26],
+    );
+    for (const side of [-1, 1]) {
+        add(group, meshes, new THREE.BoxGeometry(0.1, 0.7, 0.1), strap, [side * 0.2, 0.7, -0.24], [0.12, 0, 0]);
+    }
+    add(group, meshes, new THREE.TorusGeometry(0.09, 0.028, 8, 18), strap, [0, 1.02, -0.02]);
+
+    group.position.set(...position);
+    group.rotation.y = 0.4;
+    return { group, meshes };
+}
+
 export function buildPrimitive(shape: RoomObjectShape, position: [number, number, number]): BuiltPrimitive {
     switch (shape) {
         case "calendar":
@@ -113,5 +342,19 @@ export function buildPrimitive(shape: RoomObjectShape, position: [number, number
             return buildBoard(position);
         case "trophy":
             return buildTrophy(position);
+        case "keyboard":
+            return buildKeyboard(position);
+        case "clock":
+            return buildClock(position);
+        case "poster":
+            return buildPoster(position);
+        case "duck":
+            return buildDuck(position);
+        case "plant":
+            return buildPlant(position);
+        case "mug":
+            return buildMug(position);
+        case "backpack":
+            return buildBackpack(position);
     }
 }

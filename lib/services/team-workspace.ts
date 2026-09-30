@@ -53,13 +53,20 @@ export async function updateTeamProfile(
 }
 
 export async function addTeamMember(teamId: string, input: AddTeamMemberInput, actorId: string): Promise<void> {
+    // studentEmail is globally unique (one account per student email), so it is
+    // the lookup key. The error message stays team-scoped for clarity.
     const existing = await prisma.teamMember.findUnique({
-        where: { teamId_studentEmail: { teamId, studentEmail: input.studentEmail } },
-        select: { id: true },
+        where: { studentEmail: input.studentEmail },
+        select: { id: true, teamId: true },
     });
 
     if (existing) {
-        throw new TeamWorkspaceError("MEMBER_EXISTS", "A member with this student email already exists");
+        throw new TeamWorkspaceError(
+            "MEMBER_EXISTS",
+            existing.teamId === teamId
+                ? "A member with this student email already exists"
+                : "This student email is already registered to another team",
+        );
     }
 
     await prisma.$transaction([

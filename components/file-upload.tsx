@@ -1,18 +1,45 @@
 ﻿"use client";
 
-import { AlertCircle, CheckCircle, Upload, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { AlertCircle, CheckCircle, ImageIcon, Pencil, Trash2, Upload } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverDescription,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import { useUpload } from "@/lib/hooks/use-upload";
 
 type FileUploadProps = {
-    category: "image" | "submission" | "event-image" | "admin-profile-image" | "member-profile-image";
+    category:
+        | "image"
+        | "submission"
+        | "event-image"
+        | "admin-profile-image"
+        | "organizer-profile-image"
+        | "announcement-image"
+        | "member-profile-image";
     accept?: string;
     currentFile?: string | null;
     onUploadComplete: (url: string, key: string) => void;
-    onRemove?: () => void;
+    onRemove?: () => Promise<void> | void;
+    variant?: "icon" | "detailed";
+    iconOverlay?: boolean;
     label?: string;
+    uploadHint?: string;
+    editDescription?: string;
+    inputId?: string;
+};
+
+type UploadedFile = {
+    key: string;
+    publicUrl: string;
 };
 
 export function FileUpload({
@@ -21,113 +48,299 @@ export function FileUpload({
     currentFile,
     onUploadComplete,
     onRemove,
+    variant = "icon",
+    iconOverlay = false,
     label = "Upload file",
+    uploadHint,
+    editDescription,
+    inputId,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
+    const [cleanupError, setCleanupError] = useState<string | null>(null);
+    const [popoverOpen, setPopoverOpen] = useState(false);
+
     const { state, progress, error, upload, reset } = useUpload();
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setSelectedFile(file);
+    const isUploading = state === "uploading";
+    useEffect(() => {
+        if (!selectedFile) {
+            setPreviewUrl(null);
+            return;
         }
+
+        const url = URL.createObjectURL(selectedFile);
+        setPreviewUrl(url);
+
+        return () => URL.revokeObjectURL(url);
+    }, [selectedFile]);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+
+        if (!file) return;
+
+        reset();
+        setUploadedFile(null);
+        setCleanupError(null);
+        setSelectedFile(file);
+        setDialogOpen(true);
+
+        if (inputRef.current) {
+            inputRef.current.value = "";
+        }
+    };
+
+    const handleChoosePhoto = () => {
+        setPopoverOpen(false);
+        inputRef.current?.click();
+    };
+
+    const handleRemove = async () => {
+        await onRemove?.();
+        setPopoverOpen(false);
     };
 
     const handleUpload = async () => {
         if (!selectedFile) return;
+
         const result = await upload(selectedFile, category);
+
         if (result) {
-            onUploadComplete(result.publicUrl, result.key);
-            setSelectedFile(null);
-            if (inputRef.current) inputRef.current.value = "";
+            setUploadedFile(result);
         }
     };
 
-    const handleRemove = () => {
+    const clearSelection = () => {
         setSelectedFile(null);
+        setPreviewUrl(null);
+        setUploadedFile(null);
+        setCleanupError(null);
         reset();
-        if (inputRef.current) inputRef.current.value = "";
-        onRemove?.();
+
+        if (inputRef.current) {
+            inputRef.current.value = "";
+        }
     };
 
-    const isUploading = state === "uploading";
+    const handleUseUploadedFile = () => {
+        if (!uploadedFile) return;
+
+        onUploadComplete(uploadedFile.publicUrl, uploadedFile.key);
+        clearSelection();
+        setDialogOpen(false);
+    };
+
+    const handleCancelDialog = async () => {
+        if (isUploading) return;
+
+        if (uploadedFile) {
+            setCleanupError(null);
+
+            try {
+                const response = await fetch("/api/upload/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ key: uploadedFile.key }),
+                });
+
+                if (!response.ok) {
+                    const result = await response.json().catch(() => null);
+                    throw new Error(result?.error || "Could not remove the uploaded file.");
+                }
+            } catch (error) {
+                setCleanupError(error instanceof Error ? error.message : "Could not remove the uploaded file.");
+                return;
+            }
+        }
+
+        clearSelection();
+        setDialogOpen(false);
+    };
+
+    const hasCurrentFile = Boolean(currentFile);
+    const hasSelectedFile = Boolean(selectedFile);
 
     return (
-        <div className="space-y-3">
+        <div className={iconOverlay ? "absolute right-0 bottom-0" : "space-y-3"}>
             <Input
                 ref={inputRef}
+                id={inputId ?? `file-upload-${category}`}
                 type="file"
                 accept={accept}
                 onChange={handleFileChange}
                 disabled={isUploading}
                 className="hidden"
-                id={`file-upload-${category}`}
             />
 
-            {selectedFile && (
-                <div className="space-y-2">
-                    <div className="flex min-w-0 items-center gap-2 rounded-md border p-2">
-                        <span className="min-w-0 flex-1 truncate text-sm">{selectedFile.name}</span>
-                        <span className="text-muted-foreground text-xs">{formatFileSize(selectedFile.size)}</span>
-                        {!isUploading && (
-                            <Button type="button" variant="ghost" size="sm" onClick={handleRemove}>
-                                <X className="h-4 w-4" />
-                            </Button>
-                        )}
+            {/* Image preview */}
+            {/* Empty upload state */}
+            {!hasSelectedFile && !isUploading && !iconOverlay && (
+                <button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                    aria-label={hasCurrentFile ? "Replace image" : label}
+                    className={
+                        variant === "detailed"
+                            ? "flex w-full cursor-pointer items-center gap-3 rounded-lg border border-dashed p-3 text-left transition-colors hover:border-primary hover:bg-muted/50"
+                            : "flex size-10 cursor-pointer items-center justify-center rounded-full border border-dashed transition-colors hover:border-primary hover:bg-muted/50"
+                    }
+                >
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                        <ImageIcon className="size-5 text-muted-foreground" />
                     </div>
 
+                    {variant === "detailed" && (
+                        <span className="min-w-0">
+                            <span className="block truncate text-sm font-medium">
+                                {hasCurrentFile ? "Replace image" : label}
+                            </span>
+                            {uploadHint && (
+                                <span className="block truncate text-xs text-muted-foreground">{uploadHint}</span>
+                            )}
+                        </span>
+                    )}
+                </button>
+            )}
+
+            {!hasSelectedFile && !isUploading && iconOverlay && (
+                <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                    <PopoverTrigger
+                        render={
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                className="cursor-pointer gap-1 rounded-full border shadow-sm"
+                                aria-label={`Edit ${label.toLowerCase()}`}
+                            />
+                        }
+                    >
+                        <Pencil data-icon="inline-start" />
+                        Edit
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56">
+                        <PopoverHeader>
+                            <PopoverTitle>Edit image</PopoverTitle>
+                            {editDescription && <PopoverDescription>{editDescription}</PopoverDescription>}
+                        </PopoverHeader>
+                        <div className="flex flex-col gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="justify-start"
+                                onClick={handleChoosePhoto}
+                            >
+                                <Upload data-icon="inline-start" />
+                                Upload a photo
+                            </Button>
+                            {hasCurrentFile && onRemove && (
+                                <ConfirmActionAlertDialog
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="justify-start text-destructive"
+                                        >
+                                            <Trash2 data-icon="inline-start" />
+                                            Remove photo
+                                        </Button>
+                                    }
+                                    title="Remove photo?"
+                                    description="This will remove the photo from this profile or team logo."
+                                    confirmLabel="Remove photo"
+                                    onConfirm={handleRemove}
+                                />
+                            )}
+                        </div>
+                    </PopoverContent>
+                </Popover>
+            )}
+
+            {/* Success */}
+            {state === "done" && !isUploading && !dialogOpen && (
+                <p className="flex items-center gap-1 text-xs text-green-600">
+                    <CheckCircle className="h-3 w-3" />
+                    Image uploaded successfully
+                </p>
+            )}
+
+            {/* Error */}
+            {error && (
+                <p className="flex items-center gap-1 text-xs text-destructive">
+                    <AlertCircle className="h-3 w-3" />
+                    {error}
+                </p>
+            )}
+
+            <Dialog
+                open={dialogOpen}
+                onOpenChange={(open) => {
+                    if (!open) void handleCancelDialog();
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Use this photo?</DialogTitle>
+                    </DialogHeader>
+
+                    {previewUrl && (
+                        // biome-ignore lint/performance/noImgElement: blob URL is a temporary local preview
+                        <img
+                            src={uploadedFile?.publicUrl ?? previewUrl}
+                            alt={selectedFile?.name ?? "Selected image"}
+                            className="max-h-[50vh] w-full rounded-lg object-contain"
+                        />
+                    )}
+
                     {isUploading && (
-                        <div className="space-y-1">
-                            <div className="bg-secondary h-2 rounded-full overflow-hidden">
+                        <div className="flex flex-col gap-2">
+                            <div className="h-2 overflow-hidden rounded-full bg-secondary">
                                 <div
-                                    className="bg-primary h-full transition-all duration-300"
+                                    className="h-full bg-primary transition-all duration-300"
                                     style={{ width: `${progress}%` }}
                                 />
                             </div>
-                            <p className="text-muted-foreground text-xs">
-                                {state === "uploading" ? `Uploading... ${progress}%` : "Verifying..."}
-                            </p>
+                            <span className="sr-only" aria-live="polite">
+                                {progress}%
+                            </span>
                         </div>
                     )}
 
-                    {state === "done" && (
-                        <p className="flex items-center gap-1 text-xs text-green-600">
-                            <CheckCircle className="h-3 w-3" /> Upload complete
-                        </p>
-                    )}
+                    {error && <p className="text-sm text-destructive">{error}</p>}
+                    {cleanupError && <p className="text-sm text-destructive">{cleanupError}</p>}
 
-                    {error && (
-                        <p className="flex items-center gap-1 text-xs text-destructive">
-                            <AlertCircle className="h-3 w-3" /> {error}
-                        </p>
-                    )}
-                </div>
-            )}
-
-            <div className="flex gap-2">
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => inputRef.current?.click()}
-                    disabled={isUploading}
-                >
-                    <Upload className="mr-2 h-4 w-4" />
-                    {currentFile && !selectedFile ? "Replace" : label}
-                </Button>
-
-                {selectedFile && !isUploading && state !== "done" && (
-                    <Button type="button" size="sm" onClick={handleUpload}>
-                        Upload
-                    </Button>
-                )}
-            </div>
+                    <DialogFooter>
+                        {uploadedFile ? (
+                            <>
+                                <Button type="button" variant="outline" onClick={() => void handleCancelDialog()}>
+                                    Cancel
+                                </Button>
+                                <Button type="button" onClick={handleUseUploadedFile}>
+                                    OK
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => void handleCancelDialog()}
+                                    disabled={isUploading}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button type="button" onClick={handleUpload} disabled={isUploading || !selectedFile}>
+                                    Use this photo
+                                </Button>
+                            </>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
-}
-
-function formatFileSize(bytes: number) {
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }

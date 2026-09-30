@@ -1,56 +1,66 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LockKeyhole, Mail } from "lucide-react";
-import Link from "next/link";
+import { Eye, EyeOff, ShieldCheck, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
 import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
 
-type LoginContentProps = { audience: "participant" | "management"; title: string; description: string };
-
-export function LoginContent({ audience, title, description }: LoginContentProps) {
-    const router = useRouter();
-
+export function LoginContent() {
+    const [audience, setAudience] = useState<"participant" | "management">("participant");
     const isParticipant = audience === "participant";
 
-    const onSuccess = () => {
-        router.push(isParticipant ? "/teams" : "/panel");
-        toast.success("Sign in successful");
-    };
-
     return (
-        <main className="flex flex-1 items-center justify-center bg-cyan-50/60 px-6 py-16 dark:bg-cyan-950/10">
-            <div className="w-full max-w-md">
-                <Link
-                    href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-cyan-600 dark:text-zinc-300"
-                >
-                    <ArrowLeft className="size-4" /> Back to KBU Hub
-                </Link>
-                <div className="rounded-2xl border border-cyan-100 bg-white p-7 shadow-xl shadow-cyan-100/40 dark:border-cyan-950 dark:bg-zinc-900 dark:shadow-none">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300">
-                        {isParticipant ? <Mail className="size-5" /> : <LockKeyhole className="size-5" />}
-                    </div>
-                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-cyan-600">
-                        {isParticipant ? "Participant access" : "Management access"}
-                    </p>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight">{title}</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{description}</p>
-                    {isParticipant ? <TeamLoginForm /> : <StaffLoginForm onSuccess={onSuccess} />}
+        <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
+            <section className="mx-auto w-full max-w-md">
+                <h1 className="text-3xl font-bold tracking-tight">Sign in to KBU Hackathon 2026</h1>
+                <div className="mt-6 flex w-full gap-1 rounded-xl bg-muted p-1">
+                    <Button
+                        type="button"
+                        variant={isParticipant ? "default" : "outline"}
+                        className="h-10 flex-1 gap-2 px-4"
+                        aria-pressed={isParticipant}
+                        onClick={() => setAudience("participant")}
+                    >
+                        <Users data-icon="inline-start" />
+                        Participant
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={!isParticipant ? "default" : "outline"}
+                        className="h-10 flex-1 gap-2 px-4"
+                        aria-pressed={!isParticipant}
+                        onClick={() => setAudience("management")}
+                    >
+                        <ShieldCheck data-icon="inline-start" />
+                        Management
+                    </Button>
                 </div>
-            </div>
+                <div className="mt-8">{isParticipant ? <TeamLoginForm /> : <StaffLoginForm />}</div>
+            </section>
         </main>
     );
 }
 
 function TeamLoginForm() {
     const [loginError, setLoginError] = useState<string>();
+    const [showPassword, setShowPassword] = useState(false);
 
     const form = useForm<TeamLoginInput>({
         resolver: zodResolver(teamLoginSchema),
@@ -65,52 +75,68 @@ function TeamLoginForm() {
             return;
         }
         toast.success("Sign in successful");
-        window.location.href = "/teams";
+        window.location.href = "/team";
     };
 
     const usernameError = form.formState.errors.username;
     const passwordError = form.formState.errors.password;
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            {loginError && <p className="text-sm text-red-500">{loginError}</p>}
-            <div className="space-y-2">
-                <label htmlFor="username" className="text-sm font-medium">
-                    Team username
-                </label>
-                <Input
-                    id="username"
-                    type="text"
-                    autoComplete="username"
-                    placeholder="kbu-ai-builders"
-                    aria-invalid={!!usernameError}
-                    {...form.register("username")}
-                />
-                {usernameError && <p className="text-sm text-red-500">{usernameError.message}</p>}
-            </div>
-            <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium">
-                    Password
-                </label>
-                <Input
-                    id="password"
-                    type="password"
-                    autoComplete="current-password"
-                    placeholder="Enter your password"
-                    aria-invalid={!!passwordError}
-                    {...form.register("password")}
-                />
-                {passwordError && <p className="text-sm text-red-500">{passwordError.message}</p>}
-            </div>
-            <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 lg:mt-2">
+            <FieldGroup>
+                {loginError && <FieldError>{loginError}</FieldError>}
+                <Field data-invalid={usernameError ? true : undefined}>
+                    <FieldLabel htmlFor="username">Team username</FieldLabel>
+                    <Input
+                        id="username"
+                        type="text"
+                        autoComplete="username"
+                        placeholder="kbu-ai-builders"
+                        aria-invalid={!!usernameError}
+                        {...form.register("username")}
+                    />
+                    <FieldError errors={[usernameError]} />
+                </Field>
+                <Field data-invalid={passwordError ? true : undefined}>
+                    <div className="flex items-center justify-between">
+                        <FieldLabel htmlFor="team-password">Password</FieldLabel>
+                        <ForgotPasswordButton
+                            identifier="username"
+                            getValue={() => form.getValues("username")}
+                            focusInput={() => form.setFocus("username")}
+                        />
+                    </div>
+                    <InputGroup>
+                        <InputGroupInput
+                            id="team-password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="current-password"
+                            placeholder="Enter your password"
+                            aria-invalid={!!passwordError}
+                            {...form.register("password")}
+                        />
+                        <InputGroupButton
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            onClick={() => setShowPassword((visible) => !visible)}
+                            size="icon-sm"
+                        >
+                            {showPassword ? <EyeOff data-icon="inline-start" /> : <Eye data-icon="inline-start" />}
+                        </InputGroupButton>
+                    </InputGroup>
+                    <FieldError errors={[passwordError]} />
+                </Field>
+                <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+                </Button>
+            </FieldGroup>
         </form>
     );
 }
 
-function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
+function StaffLoginForm() {
     const [loginError, setLoginError] = useState<string>();
+    const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
     const form = useForm<StaffLoginInput>({
         resolver: zodResolver(staffLoginSchema),
         defaultValues: { email: "", password: "" },
@@ -122,49 +148,174 @@ function StaffLoginForm({ onSuccess }: { onSuccess: () => void }) {
             setLoginError(result.error.message);
             return;
         }
-        onSuccess();
+        router.push("/panel");
+        toast.success("Sign in successful");
     };
 
     const emailError = form.formState.errors.email;
     const passwordError = form.formState.errors.password;
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            {loginError && <p className="text-sm text-red-500">{loginError}</p>}
-            <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                    Email address
-                </label>
-                <Input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="you@example.com"
-                    aria-invalid={!!emailError}
-                    {...form.register("email")}
-                />
-                {emailError && <p className="text-sm text-red-500">{emailError.message}</p>}
-            </div>
-            <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="text-sm font-medium">
-                        Password
-                    </label>
-                    <span className="text-xs text-zinc-500">Forgot password?</span>
-                </div>
-                <Input
-                    id="password"
-                    type="password"
-                    autoComplete="current-password"
-                    placeholder="Enter your password"
-                    aria-invalid={!!passwordError}
-                    {...form.register("password")}
-                />
-                {passwordError && <p className="text-sm text-red-500">{passwordError.message}</p>}
-            </div>
-            <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 lg:mt-2">
+            <FieldGroup>
+                {loginError && <FieldError>{loginError}</FieldError>}
+                <Field data-invalid={emailError ? true : undefined}>
+                    <FieldLabel htmlFor="email">Email address</FieldLabel>
+                    <Input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                        aria-invalid={!!emailError}
+                        {...form.register("email")}
+                    />
+                    <FieldError errors={[emailError]} />
+                </Field>
+                <Field data-invalid={passwordError ? true : undefined}>
+                    <div className="flex items-center justify-between">
+                        <FieldLabel htmlFor="staff-password">Password</FieldLabel>
+                        <ForgotPasswordButton
+                            identifier="email"
+                            getValue={() => form.getValues("email")}
+                            focusInput={() => form.setFocus("email")}
+                        />
+                    </div>
+                    <InputGroup>
+                        <InputGroupInput
+                            id="staff-password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="current-password"
+                            placeholder="Enter your password"
+                            aria-invalid={!!passwordError}
+                            {...form.register("password")}
+                        />
+                        <InputGroupButton
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            onClick={() => setShowPassword((visible) => !visible)}
+                            size="icon-sm"
+                        >
+                            {showPassword ? <EyeOff data-icon="inline-start" /> : <Eye data-icon="inline-start" />}
+                        </InputGroupButton>
+                    </InputGroup>
+                    <FieldError errors={[passwordError]} />
+                </Field>
+                <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+                </Button>
+            </FieldGroup>
         </form>
+    );
+}
+
+function ForgotPasswordButton({
+    identifier,
+    getValue,
+    focusInput,
+}: {
+    identifier: "email" | "username";
+    getValue: () => string;
+    focusInput: () => void;
+}) {
+    const [open, setOpen] = useState(false);
+    const [isRequesting, setIsRequesting] = useState(false);
+    const [message, setMessage] = useState<string>();
+    const [messageType, setMessageType] = useState<"info" | "error" | "success">("info");
+    const isTeam = identifier === "username";
+
+    const openDialog = () => {
+        if (!getValue().trim()) {
+            focusInput();
+            return;
+        }
+        setMessage(undefined);
+        setMessageType("info");
+        setOpen(true);
+    };
+
+    const requestReset = async () => {
+        const normalizedValue = getValue().trim();
+        if (!normalizedValue) {
+            setMessage(`Enter your ${isTeam ? "team username" : "email address"} first.`);
+            setMessageType("error");
+            return;
+        }
+
+        setMessage(undefined);
+        setIsRequesting(true);
+        try {
+            const response = await fetch("/api/password-reset/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ [identifier]: normalizedValue }),
+            });
+            const result = (await response.json()) as { message?: string };
+            if (!response.ok) {
+                setMessage(result.message ?? "Unable to request a password reset.");
+                setMessageType("error");
+                return;
+            }
+            setMessage(
+                result.message ??
+                    "Check your inbox for password reset instructions. If you do not see an email, check your spam folder.",
+            );
+            setMessageType("success");
+        } catch {
+            setMessage("Unable to request a password reset. Please try again.");
+            setMessageType("error");
+        } finally {
+            setIsRequesting(false);
+        }
+    };
+
+    return (
+        <>
+            <Button type="button" variant="link" size="sm" className="h-auto px-0 text-xs" onClick={openDialog}>
+                Forgot password?
+            </Button>
+            <Dialog
+                open={open}
+                onOpenChange={(nextOpen) => {
+                    if (!isRequesting) setOpen(nextOpen);
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Reset your password</DialogTitle>
+                        <DialogDescription>
+                            {isTeam
+                                ? "We will send password-reset instructions to the verified leader email for this team."
+                                : "We will send password-reset instructions to the email address on your account."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-3">
+                        <p className="text-sm text-muted-foreground">
+                            {isTeam ? "Team username" : "Email address"}: {getValue().trim() || "Not provided"}
+                        </p>
+                        {message && (
+                            <p
+                                className={
+                                    messageType === "error"
+                                        ? "text-sm font-medium text-red-600"
+                                        : messageType === "success"
+                                          ? "text-sm font-medium text-green-600"
+                                          : "text-sm text-muted-foreground"
+                                }
+                                role={messageType === "error" ? "alert" : "status"}
+                            >
+                                {message}
+                            </p>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose render={<Button variant="outline" disabled={isRequesting} />}>Close</DialogClose>
+                        {messageType !== "success" && (
+                            <Button type="button" onClick={requestReset} disabled={isRequesting}>
+                                {isRequesting ? "Sending..." : "Send reset link"}
+                            </Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }

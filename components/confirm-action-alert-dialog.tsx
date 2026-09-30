@@ -19,7 +19,7 @@ type ConfirmActionAlertDialogProps = {
     description: string;
     confirmLabel?: string;
     pendingLabel?: string;
-    onConfirm: () => Promise<void>;
+    onConfirm: () => Promise<boolean> | Promise<void>;
 };
 
 export function ConfirmActionAlertDialog({
@@ -35,9 +35,15 @@ export function ConfirmActionAlertDialog({
 
     const handleConfirm = async () => {
         setIsPending(true);
+
         try {
-            await onConfirm();
-            setOpen(false);
+            const result = await onConfirm();
+
+            if (result !== false) {
+                setOpen(false);
+            }
+        } catch (error) {
+            console.error(error);
         } finally {
             setIsPending(false);
         }
@@ -46,13 +52,16 @@ export function ConfirmActionAlertDialog({
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger render={trigger} />
+
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
+
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+
                     <AlertDialogAction disabled={isPending} onClick={handleConfirm}>
                         {isPending ? pendingLabel : confirmLabel}
                     </AlertDialogAction>

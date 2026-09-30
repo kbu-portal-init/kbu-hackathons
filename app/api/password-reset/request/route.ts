@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isNotificationDeliveryError } from "@/lib/services/notifications";
 import { requestPasswordReset } from "@/lib/services/password-reset-request";
+import { checkPasswordResetRateLimit } from "@/lib/services/rate-limit";
 
 const requestSchema = z
     .object({
@@ -15,11 +16,35 @@ export async function POST(request: Request) {
     if (!parsed.success) return NextResponse.json({ message: "Invalid password-reset request" }, { status: 400 });
 
     try {
+        const identifier = parsed.data.email ?? parsed.data.username ?? "";
+        const rateLimit = await checkPasswordResetRateLimit(identifier, request);
+        if (!rateLimit.success) {
+            return NextResponse.json(
+                { message: "Too many password-reset requests. Please try again later." },
+                { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+            );
+        }
+
         const result = await requestPasswordReset(parsed.data);
-        if (!result.found) return NextResponse.json({ message: "If the account exists, check the email inbox" });
-        if (!result.sent)
-            return NextResponse.json({ message: "No verified leader email is available" }, { status: 409 });
-        return NextResponse.json({ message: "Password-reset email sent" });
+        if ("blocked" in result && result.blocked === "PENDING_TEAM") {
+            return NextResponse.json({ message: "Your team registration is still pending approval." }, { status: 403 });
+        }
+        if ("blocked" in result && result.blocked === "UNKNOWN_IDENTIFIER") {
+            return NextResponse.json(
+                { message: "No account was found for the provided username or email address." },
+                { status: 404 },
+            );
+        }
+        if (!result.found || !result.sent) {
+            return NextResponse.json({
+                message:
+                    "Check your inbox for password reset instructions. If you do not see an email, check your spam folder.",
+            });
+        }
+        return NextResponse.json({
+            message:
+                "Check your inbox for password reset instructions. If you do not see an email, check your spam folder.",
+        });
     } catch (error) {
         if (isNotificationDeliveryError(error)) {
             return NextResponse.json({ message: "Unable to deliver password-reset email" }, { status: 503 });

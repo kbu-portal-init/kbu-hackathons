@@ -1,10 +1,7 @@
-import { cn } from "cn";
 import { format } from "date-fns";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
@@ -15,19 +12,13 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300"
-                >
+                <Badge variant="outline" className="border-amber-300 text-amber-700">
                     Pending
                 </Badge>
             );
         case "APPROVED":
             return (
-                <Badge
-                    variant="outline"
-                    className="border-green-300 text-green-700 dark:border-green-700 dark:text-green-300"
-                >
+                <Badge variant="outline" className="border-green-300 text-green-700">
                     Approved
                 </Badge>
             );
@@ -48,10 +39,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/panel/registrations" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
-                    <ArrowLeft className="size-4" />
-                    Back
-                </Link>
+                <BackButton fallbackHref="/panel/registrations" />
                 <div>
                     <h1 className="text-2xl font-bold">{item.teamName}</h1>
                     <p className="text-sm text-zinc-500">{item.loginName}</p>
@@ -77,7 +65,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
 
             <div className="space-y-2">
                 <p className="text-xs font-medium text-zinc-500">Team members ({item.members.length})</p>
-                <div className="rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <div className="rounded-lg border border-zinc-200">
                     <Table>
                         <TableHeader>
                             <TableRow>

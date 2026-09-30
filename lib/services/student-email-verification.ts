@@ -6,13 +6,18 @@ import { type StudentEmailVerificationData, studentEmailSchema } from "@/lib/con
 import { ErrorCodes } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 import { sendNotification } from "@/lib/services/notifications";
+import { checkVerificationRateLimit } from "@/lib/services/rate-limit";
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
-export async function sendStudentEmailVerification(teamMemberId: string) {
+export async function sendStudentEmailVerification(teamMemberId: string, options: { rateLimit?: boolean } = {}) {
     const member = await prisma.teamMember.findUnique({ where: { id: teamMemberId } });
     if (!member) throw new Error("Team member not found");
     if (!studentEmailSchema.safeParse(member.studentEmail).success) throw new Error("Invalid student email domain");
+    if (options.rateLimit !== false) {
+        const rateLimit = await checkVerificationRateLimit(teamMemberId, member.studentEmail);
+        if (!rateLimit.success) throw new Error("Too many verification email requests");
+    }
 
     const token = randomBytes(32).toString("base64url");
     const tokenHash = createHash("sha256").update(token).digest("hex");

@@ -108,15 +108,17 @@ model TeamMember {
   team                      Team                       @relation(fields: [teamId], references: [id], onDelete: Restrict)
   name                      String
   // Contact and verification address; not an auth identity.
-  studentEmail              String
+  studentEmail              String                     @unique(map: "team_member_student_email_key")
   studentEmailVerifiedAt    DateTime?
   imageUrl                  String?
+  cardUrl                   String?
+  cardKey                   String?
+  cardShareToken            String?                    @unique
   role                      TeamMemberRole             @default(OTHER)
   createdAt                 DateTime                   @default(now()) @db.Timestamptz(3)
   updatedAt                 DateTime                   @updatedAt @db.Timestamptz(3)
   studentEmailVerifications StudentEmailVerification[]
 
-  @@unique([teamId, studentEmail])
   @@map("team_member")
 }
 
@@ -219,9 +221,29 @@ model User {
   announcements   Announcement[]       @relation("AnnouncementCreator")
   reviews         RegistrationReview[]
   auditLogs       AuditLog[]
+  receivedNotifications Notification[] @relation("NotificationRecipient")
+  sentNotifications      Notification[] @relation("NotificationSender")
 
   @@unique([email])
   @@map("user")
+}
+
+model Notification {
+  id             String   @id @default(cuid())
+  recipientId    String
+  recipient      User     @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  senderId       String?
+  sender         User?    @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  subject        String
+  body           String
+  readAt         DateTime? @db.Timestamptz(3)
+  targetType     String?
+  targetId       String?
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([recipientId, readAt, createdAt])
+  @@index([createdAt])
+  @@map("notification")
 }
 
 model Session {

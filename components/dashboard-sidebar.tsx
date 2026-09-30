@@ -2,8 +2,9 @@
 
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import {
     Sidebar,
     SidebarContent,
@@ -17,7 +18,9 @@ import {
     SidebarMenuItem,
     SidebarProvider,
     SidebarTrigger,
+    useSidebar,
 } from "@/components/ui/sidebar";
+import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
 import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
 import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
@@ -33,17 +36,17 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     const config = {
         participant: {
-            label: "Team workspace",
+            label: "Team",
             title: "Team dashboard",
             links: participantDashboardLinks,
         },
         management: {
-            label: "Management workspace",
+            label: "Management panel",
             title: "Management panel",
             links: managementDashboardLinks,
         },
         admin: {
-            label: "Administrator workspace",
+            label: "Administrator panel",
             title: "Administrator dashboard",
             links: adminDashboardLinks,
         },
@@ -53,16 +56,17 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
-            <Sidebar collapsible="icon">
+            <DashboardSidebarRouteReset />
+            <Sidebar collapsible="icon" className="border-sidebar-border">
                 <SidebarHeader>
                     <Link
                         href="/"
                         className="flex items-center gap-2 rounded-md px-2 py-2 font-bold text-sidebar-foreground group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
                     >
-                        <span className="flex size-7 items-center justify-center rounded-lg bg-cyan-600 text-xs text-white">
+                        <span className="flex size-7 items-center justify-center rounded-lg bg-orange-600 text-xs text-white">
                             K
                         </span>
-                        <span className="group-data-[collapsible=icon]:hidden">KBU Hub</span>
+                        <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
                     </Link>
                 </SidebarHeader>
                 <SidebarContent>
@@ -95,7 +99,10 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         <SidebarMenuItem>
                             <ConfirmActionAlertDialog
                                 trigger={
-                                    <SidebarMenuButton tooltip="Sign out">
+                                    <SidebarMenuButton
+                                        tooltip="Sign out"
+                                        className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white cursor-pointer"
+                                    >
                                         <LogOut />
                                         <span>Sign out</span>
                                     </SidebarMenuButton>
@@ -106,6 +113,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                                 pendingLabel="Signing out..."
                                 onConfirm={async () => {
                                     await authClient.signOut();
+                                    clearSessionHint();
                                     router.push("/");
                                 }}
                             />
@@ -114,7 +122,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                 </SidebarFooter>
             </Sidebar>
             <div className="flex min-w-0 flex-1 flex-col">
-                <header className="flex h-14 items-center gap-3 border-b border-cyan-100 bg-white px-4">
+                <header className="flex h-14 items-center gap-3 border-b border-orange-100 bg-white px-4">
                     <SidebarTrigger />
                     <p className="text-sm font-semibold text-zinc-700">{headerTitle}</p>
                 </header>
@@ -122,4 +130,17 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
             </div>
         </SidebarProvider>
     );
+}
+
+function DashboardSidebarRouteReset() {
+    const pathname = usePathname();
+    const { setOpenMobile } = useSidebar();
+
+    useEffect(() => {
+        if (pathname) {
+            setOpenMobile(false);
+        }
+    }, [pathname, setOpenMobile]);
+
+    return null;
 }
