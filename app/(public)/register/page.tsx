@@ -44,7 +44,7 @@ async function RegistrationContent() {
                           ? "Registration has not opened yet"
                           : "Registration is closed"}
                 </h2>
-                <p className="mt-3 text-sm leading-6 text-zinc-600">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                     {registrationUnavailable
                         ? "Registration details are not available right now. Please try again later."
                         : registrationNotStarted
@@ -57,7 +57,7 @@ async function RegistrationContent() {
 
     return (
         <>
-            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-zinc-600">
+            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-muted-foreground">
                 Fill out the form below to register your team for the hackathon.
             </p>
             <div className="mt-6">
