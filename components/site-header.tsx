@@ -18,7 +18,7 @@ export async function SiteHeader() {
                         <Link
                             key={href}
                             href={href}
-                            className="text-sm font-medium text-muted-foreground hover:text-orange-600"
+                            className="text-sm font-medium text-brand-muted-foreground hover:text-orange-600"
                         >
                             {label}
                         </Link>

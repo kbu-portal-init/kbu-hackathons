@@ -103,7 +103,7 @@ async function AnnouncementContent({ announcementId }: { announcementId: string 
                     {announcement.title}
                 </h1>
 
-                <div className="mt-8 whitespace-pre-wrap wrap-break-word text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">
+                <div className="mt-8 whitespace-pre-wrap wrap-break-word text-base leading-8 text-brand-muted-foreground sm:text-lg sm:leading-9">
                     {announcement.content}
                 </div>
             </div>

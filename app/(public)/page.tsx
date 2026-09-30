@@ -46,7 +46,7 @@ export default async function Home() {
                         >
                             Build. Connect. <span className="text-gradient">Compete.</span>
                         </h1>
-                        <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
+                        <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-brand-muted-foreground">
                             Step into the KBU hackathon workspace. Find your next challenge, meet ambitious builders,
                             and turn bold ideas into something real.
                         </p>
@@ -73,34 +73,34 @@ export default async function Home() {
                                 <span className="size-3 rounded-full bg-rose-300" aria-hidden />
                                 <span className="size-3 rounded-full bg-amber-300" aria-hidden />
                                 <span className="size-3 rounded-full bg-emerald-300" aria-hidden />
-                                <span className="ml-3 font-mono text-xs text-muted-foreground">
+                                <span className="ml-3 font-mono text-xs text-brand-muted-foreground">
                                     kbu-hackathon-2026 — first build
                                 </span>
                             </div>
                             <pre className="overflow-x-auto px-5 py-5 font-mono text-[13px] leading-7 text-foreground">
                                 <span className="block">
-                                    <span className="text-muted-foreground">$</span>{" "}
+                                    <span className="text-brand-muted-foreground">$</span>{" "}
                                     <span className="font-semibold">pnpm create hackathon</span>
                                 </span>
                                 <span className="block">
                                     <span className="text-orange-600">✔</span> workspace ready
                                 </span>
                                 <span className="block">
-                                    <span className="text-muted-foreground">$</span>{" "}
+                                    <span className="text-brand-muted-foreground">$</span>{" "}
                                     <span className="font-semibold">git checkout -b feat/your-idea</span>
                                 </span>
                                 <span className="block">
                                     <span className="text-orange-600">✔</span> branch created
                                 </span>
                                 <span className="block">
-                                    <span className="text-muted-foreground">$</span>{" "}
+                                    <span className="text-brand-muted-foreground">$</span>{" "}
                                     <span className="font-semibold">pnpm dev</span>
                                     <span
                                         className="ml-1 inline-block h-4 w-2 animate-pulse bg-orange-600 align-middle"
                                         aria-hidden
                                     />
                                 </span>
-                                <span className="block text-orange-700">➜ ready — bring an idea</span>
+                                <span className="block text-orange-600">➜ ready — bring an idea</span>
                             </pre>
                             <div className="border-t border-slate-200/70 px-5 py-3.5">
                                 <Link
@@ -126,7 +126,7 @@ export default async function Home() {
                     <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                         From idea to demo
                     </h2>
-                    <p className="mt-4 text-muted-foreground">
+                    <p className="mt-4 text-brand-muted-foreground">
                         Three steps separate an empty repository from a working demo on stage.
                     </p>
                 </div>
@@ -141,7 +141,7 @@ export default async function Home() {
                                 <Icon className="size-5" />
                             </div>
                             <h3 className="mt-5 text-lg font-bold tracking-tight text-foreground">{title}</h3>
-                            <p className="mt-2 text-sm leading-7 text-muted-foreground">{description}</p>
+                            <p className="mt-2 text-sm leading-7 text-brand-muted-foreground">{description}</p>
                         </article>
                     ))}
                 </div>
@@ -155,7 +155,7 @@ export default async function Home() {
                         <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                             Latest from the community
                         </h2>
-                        <p className="mt-4 text-muted-foreground">
+                        <p className="mt-4 text-brand-muted-foreground">
                             News, deadlines, and updates from the KBU Hackathon 2026.
                         </p>
                         <Link
@@ -187,7 +187,7 @@ export default async function Home() {
                                 <div>
                                     <p className="font-mono text-xs font-medium text-orange-600">{announcement.tag}</p>
                                     <h3 className="mt-1.5 font-semibold text-foreground">{announcement.title}</h3>
-                                    <p className="mt-1 text-sm text-muted-foreground">{announcement.body}</p>
+                                    <p className="mt-1 text-sm text-brand-muted-foreground">{announcement.body}</p>
                                 </div>
                             </Link>
                         ))}
@@ -205,7 +205,7 @@ export default async function Home() {
                     >
                         Your team is one commit away
                     </h2>
-                    <p data-reveal className="mx-auto mt-5 max-w-xl text-muted-foreground">
+                    <p data-reveal className="mx-auto mt-5 max-w-xl text-brand-muted-foreground">
                         Register, find your team, and start building before the next kickoff.
                     </p>
                     <div data-reveal className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">

@@ -75,7 +75,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
             type="button"
             variant="outline"
             className={cn(
-                "transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground",
+                "transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground",
                 className,
             )}
         >
@@ -91,7 +91,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                 variant="outline"
                 onClick={handleShare}
                 className={cn(
-                    "rounded-full transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground",
+                    "transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground",
                     className,
                 )}
             >

@@ -103,7 +103,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                     <Button
                                         size="lg"
                                         variant="outline"
-                                        className="cursor-pointer transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                                        className="cursor-pointer transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground"
                                         onClick={() => handleDownload(member)}
                                     >
                                         <Download />

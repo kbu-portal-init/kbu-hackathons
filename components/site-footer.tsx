@@ -3,7 +3,7 @@ import { publicLinks } from "@/lib/navigation";
 
 export function SiteFooter() {
     return (
-        <footer className="border-t border-orange-100 bg-orange-50 text-muted-foreground">
+        <footer className="border-t border-orange-100 bg-orange-50 text-brand-muted-foreground">
             <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
                 <div className="sm:col-span-2">
                     <p className="text-lg font-bold text-zinc-950">KBU Hackathon 2026</p>
@@ -30,7 +30,7 @@ export function SiteFooter() {
                     </div>
                 </div>
             </div>
-            <div className="border-t border-orange-200 px-6 py-5 text-center text-xs text-muted-foreground">
+            <div className="border-t border-orange-200 px-6 py-5 text-center text-xs text-brand-muted-foreground">
                 Copyright {new Date().getFullYear()} KBU Hackathon 2026. Built for the next big idea.
             </div>
         </footer>
