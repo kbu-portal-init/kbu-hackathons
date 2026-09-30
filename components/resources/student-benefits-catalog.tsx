@@ -100,7 +100,7 @@ export function StudentBenefitsCatalog() {
                         >
                             <Mail className="h-4 w-4 text-orange-600" />
                             <span>Need student email? View Login Guide</span>
-                            <span className="text-orange-600">â†“</span>
+                            <span className="text-orange-600">↓</span>
                         </button>
                         <a
                             href="https://outlook.cloud.microsoft/mail/"

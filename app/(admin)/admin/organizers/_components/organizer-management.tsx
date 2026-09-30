@@ -342,8 +342,8 @@ function OrganizerTable({
                                         <>
                                             {item.banReason ?? "No reason"}
                                             {item.banExpires
-                                                ? ` Â· until ${new Date(item.banExpires).toLocaleString()}`
-                                                : " Â· permanent"}
+                                                ? ` · until ${new Date(item.banExpires).toLocaleString()}`
+                                                : " · permanent"}
                                         </>
                                     ) : (
                                         "—"

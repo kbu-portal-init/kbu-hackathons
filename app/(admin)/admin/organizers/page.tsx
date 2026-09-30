@@ -20,7 +20,7 @@ export default async function AdminOrganizersPage({
             <div className="flex items-end justify-between gap-4">
                 <div>
                     <Link href="/admin" className="text-sm font-medium text-orange-600">
-                        â† Dashboard
+                        ← Dashboard
                     </Link>
                     <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-orange-600">
                         Administrator

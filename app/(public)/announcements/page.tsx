@@ -1,12 +1,16 @@
+import { cn } from "cn";
+import { X } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { listPublishedAnnouncements } from "@/actions/management/announcements";
 import { BackButton } from "@/components/back-button";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { ListPublicAnnouncementSchema } from "@/lib/contracts/announcements";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
@@ -67,6 +71,96 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
     );
 }
 
+function AnnouncementResultsFallback() {
+    return (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {(["one", "two", "three", "four", "five", "six"] as const).map((card) => (
+                <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm" key={card}>
+                    <Skeleton className="aspect-video w-full bg-zinc-100" />
+                    <Skeleton className="mt-4 h-3 w-24 bg-orange-100" />
+                    <Skeleton className="mt-3 h-5 w-3/4 bg-zinc-100" />
+                    <Skeleton className="mt-2 h-4 w-full bg-zinc-100" />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+async function AnnouncementResults({ page, search }: { page: number; search?: string }) {
+    const getPageHref = (target: number) => {
+        const query = new URLSearchParams();
+
+        if (search) {
+            query.set("search", search);
+        }
+
+        if (target > 1) {
+            query.set("page", String(target));
+        }
+
+        const queryString = query.toString();
+
+        return queryString ? `/announcements?${queryString}` : "/announcements";
+    };
+
+    const result = await listPublishedAnnouncements({
+        page,
+        pageSize: PAGE_SIZE,
+        search,
+    });
+
+    if (result.ok) {
+        const lastPage = Math.max(1, Math.ceil(result.data.meta.total / PAGE_SIZE));
+
+        if (page > lastPage) {
+            redirect(getPageHref(lastPage));
+        }
+    }
+
+    const items = result.ok ? result.data.items : [];
+    const meta = result.ok ? result.data.meta : null;
+
+    return (
+        <>
+            {!result.ok && (
+                <p className="py-16 text-center text-sm text-muted-foreground">
+                    Failed to load announcements. Please try again later.
+                </p>
+            )}
+
+            {result.ok && items.length === 0 && (
+                <p className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
+                    {search ? `No announcements match "${search}".` : "No announcements yet. Check back soon."}
+                </p>
+            )}
+
+            {items.length > 0 && (
+                <section
+                    aria-label="Published announcements"
+                    className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+                >
+                    {items.map((announcement) => (
+                        <AnnouncementCard key={announcement.id} announcement={announcement} />
+                    ))}
+                </section>
+            )}
+
+            {meta && items.length > 0 && (
+                <div className="mt-10">
+                    <PaginationFooter
+                        page={meta.page}
+                        pageSize={meta.pageSize}
+                        total={meta.total}
+                        itemsShown={items.length}
+                        hasNextPage={meta.hasNextPage}
+                        getPageHref={getPageHref}
+                    />
+                </div>
+            )}
+        </>
+    );
+}
+
 export default async function AnnouncementsPage({
     searchParams,
 }: {
@@ -78,39 +172,6 @@ export default async function AnnouncementsPage({
     const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
 
     const search = filters.search ? filters.search.slice(0, MAX_SEARCH_LENGTH) : undefined;
-
-    const getPageHref = (page: number) => {
-        const query = new URLSearchParams();
-
-        if (search) {
-            query.set("search", search);
-        }
-
-        if (page > 1) {
-            query.set("page", String(page));
-        }
-
-        const queryString = query.toString();
-
-        return queryString ? `/announcements?${queryString}` : "/announcements";
-    };
-
-    const result = await listPublishedAnnouncements({
-        page: filters.page,
-        pageSize: PAGE_SIZE,
-        search,
-    });
-
-    if (result.ok) {
-        const lastPage = Math.max(1, Math.ceil(result.data.meta.total / PAGE_SIZE));
-
-        if (filters.page > lastPage) {
-            redirect(getPageHref(lastPage));
-        }
-    }
-
-    const items = result.ok ? result.data.items : [];
-    const meta = result.ok ? result.data.meta : null;
 
     return (
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
@@ -150,8 +211,10 @@ export default async function AnnouncementsPage({
                         {search && (
                             <Link
                                 href="/announcements"
-                                className="shrink-0 text-sm font-medium text-primary hover:underline"
+                                className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}
+                                aria-label="Clear search"
                             >
+                                <X aria-hidden="true" />
                                 Clear
                             </Link>
                         )}
@@ -159,41 +222,9 @@ export default async function AnnouncementsPage({
                 </search>
             </section>
 
-            {!result.ok && (
-                <p className="py-16 text-center text-sm text-muted-foreground">
-                    Failed to load announcements. Please try again later.
-                </p>
-            )}
-
-            {result.ok && items.length === 0 && (
-                <p className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-                    {search ? `No announcements match "${search}".` : "No announcements yet. Check back soon."}
-                </p>
-            )}
-
-            {items.length > 0 && (
-                <section
-                    aria-label="Published announcements"
-                    className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
-                >
-                    {items.map((announcement) => (
-                        <AnnouncementCard key={announcement.id} announcement={announcement} />
-                    ))}
-                </section>
-            )}
-
-            {meta && items.length > 0 && (
-                <div className="mt-10">
-                    <PaginationFooter
-                        page={meta.page}
-                        pageSize={meta.pageSize}
-                        total={meta.total}
-                        itemsShown={items.length}
-                        hasNextPage={meta.hasNextPage}
-                        getPageHref={getPageHref}
-                    />
-                </div>
-            )}
+            <Suspense fallback={<AnnouncementResultsFallback />}>
+                <AnnouncementResults page={filters.page} search={search} />
+            </Suspense>
         </main>
     );
 }
