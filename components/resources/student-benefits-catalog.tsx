@@ -74,7 +74,7 @@ export function StudentBenefitsCatalog() {
     return (
         <div>
             {/* Hero Header */}
-            <div className="relative mb-8 overflow-hidden rounded-3xl border border-orange-200/70 bg-gradient-to-br from-orange-50/70 via-white to-amber-50/40 p-5 sm:mb-12 sm:p-10 lg:p-12">
+            <div className="relative mb-8 overflow-hidden rounded-3xl border border-orange-200/70 bg-linear-to-br from-orange-50/70 via-white to-amber-50/40 p-5 sm:mb-12 sm:p-10 lg:p-12">
                 <div className="relative z-10 max-w-3xl">
                     <div className="inline-flex items-center gap-2 rounded-full border border-orange-200/80 bg-white/90 px-3 py-1 text-xs font-semibold text-orange-700 shadow-2xs backdrop-blur-xs">
                         <Sparkles className="h-3.5 w-3.5 text-orange-600" />

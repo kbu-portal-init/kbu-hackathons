@@ -100,10 +100,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                         <li>
                             <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
                         </li>
-                        <li
-                            className="max-w-[200px] truncate font-semibold text-zinc-900 sm:max-w-none"
-                            aria-current="page"
-                        >
+                        <li className="max-w-50 truncate font-semibold text-zinc-900 sm:max-w-none" aria-current="page">
                             {benefit.title}
                         </li>
                     </ol>
@@ -113,7 +110,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
             </div>
 
             {/* Hero Header Card */}
-            <section className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-b from-orange-50/50 via-white to-white p-5 shadow-xs sm:p-8 lg:p-10">
+            <section className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-linear-to-b from-orange-50/50 via-white to-white p-5 shadow-xs sm:p-8 lg:p-10">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex items-start gap-4 sm:gap-5">
                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-md ring-4 ring-orange-100 sm:h-20 sm:w-20">
@@ -223,7 +220,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 </section>
 
                 {/* Section: Eligibility Requirement */}
-                <section className="rounded-3xl border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/40 p-5 sm:p-6">
+                <section className="rounded-3xl border border-emerald-200/70 bg-linear-to-r from-emerald-50/80 to-teal-50/40 p-5 sm:p-6">
                     <div className="flex items-center gap-2 text-emerald-800">
                         <ShieldCheck className="h-5 w-5 shrink-0" />
                         <h2 className="text-sm font-bold uppercase tracking-wider sm:text-base">

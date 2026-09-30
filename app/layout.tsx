@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
         <html lang="en" className={`${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
-            <body className="min-h-full bg-background text-foreground">
+            <body className="min-h-full bg-white text-zinc-950">
                 <TooltipProvider>
                     {children}
                     <Toaster />

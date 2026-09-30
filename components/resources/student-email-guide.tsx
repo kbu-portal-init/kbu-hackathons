@@ -29,7 +29,7 @@ export function StudentEmailGuideSection() {
         <section
             id="student-email-guide"
             aria-labelledby="student-email-guide-heading"
-            className="scroll-mt-24 overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-b from-white to-zinc-50/60 shadow-xs"
+            className="scroll-mt-24 overflow-hidden rounded-3xl border border-zinc-200/80 bg-linear-to-b from-white to-zinc-50/60 shadow-xs"
         >
             {/* Header banner */}
             <div className="border-b border-zinc-200/80 bg-zinc-50/80 px-5 py-5 sm:px-8 sm:py-6">
@@ -76,7 +76,7 @@ export function StudentEmailGuideSection() {
                 </div>
 
                 {/* Copyable Format Callout */}
-                <div className="flex flex-col gap-4 rounded-2xl border border-orange-200/90 bg-gradient-to-r from-orange-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex flex-col gap-4 rounded-2xl border border-orange-200/90 bg-linear-to-r from-orange-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <div className="flex items-start gap-3">
                         <div className="rounded-xl bg-orange-500/10 p-2 text-orange-600">
                             <ShieldCheck className="h-5 w-5" />
