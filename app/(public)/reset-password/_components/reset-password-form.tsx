@@ -65,7 +65,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                     <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
                         <LockKeyhole className="size-5" />
                     </div>
-                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-700">
+                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-600">
                         Password setup
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Set your password</h1>
@@ -73,7 +73,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                         Choose a password for your KBU Hackathon 2026 account.
                     </p>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-                        <p className="text-sm font-medium text-rose-600">{submitError}</p>
+                        <p className="text-sm text-red-500">{submitError}</p>
                         <div className="space-y-2">
                             <label htmlFor="newPassword" className="text-sm font-medium">
                                 New password
@@ -137,5 +137,5 @@ export function ResetPasswordForm({ token }: { token: string }) {
 }
 
 function FormError({ message }: { message?: string }) {
-    return message ? <p className="text-sm font-medium text-rose-600">{message}</p> : null;
+    return message ? <p className="text-sm text-red-500">{message}</p> : null;
 }
