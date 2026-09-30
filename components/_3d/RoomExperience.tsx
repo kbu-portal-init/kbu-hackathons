@@ -51,7 +51,7 @@ export default function RoomExperience({ className, parallaxRef = heroParallax }
         <div
             className={
                 className ??
-                "relative h-72 w-full overflow-hidden rounded-3xl border border-slate-200 bg-white/40 shadow-xl shadow-violet-500/10 sm:h-80 lg:h-120"
+                "relative h-72 w-full overflow-hidden rounded-3xl border border-slate-200 bg-white/40 shadow-xl shadow-orange-500/10 sm:h-80 lg:h-120"
             }
         >
             <RoomScene

@@ -22,7 +22,7 @@ export default async function LoginChoicePage() {
     return (
         <main className="flex flex-1 items-center bg-background px-6 py-16 dot-grid">
             <section className="mx-auto w-full max-w-4xl">
-                <p className="text-center text-sm font-semibold uppercase tracking-widest text-cyan-700">
+                <p className="text-center text-sm font-semibold uppercase tracking-widest text-orange-700">
                     KBU Hub access
                 </p>
                 <h1 className="mt-3 text-center text-4xl font-black tracking-tight text-foreground sm:text-5xl">
@@ -36,14 +36,14 @@ export default async function LoginChoicePage() {
                         <Link
                             key={href}
                             href={href}
-                            className="group rounded-2xl glass-violet p-7 transition duration-300 hover:-translate-y-1 hover:border-violet-500"
+                            className="group rounded-2xl glass-accent p-7 transition duration-300 hover:-translate-y-1 hover:border-orange-500"
                         >
-                            <div className="flex size-12 items-center justify-center rounded-xl bg-violet-100 text-violet-600 transition group-hover:bg-violet-200">
+                            <div className="flex size-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 transition group-hover:bg-orange-200">
                                 <Icon className="size-6" />
                             </div>
                             <h2 className="mt-6 text-2xl font-bold text-foreground">{label} login</h2>
                             <p className="mt-3 text-sm leading-6 text-muted-foreground">{description}</p>
-                            <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
+                            <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-orange-700">
                                 Continue{" "}
                                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                             </span>
@@ -52,7 +52,7 @@ export default async function LoginChoicePage() {
                 </div>
                 <Link
                     href="/"
-                    className="mx-auto mt-8 block w-fit text-sm font-medium text-muted-foreground transition hover:text-cyan-700"
+                    className="mx-auto mt-8 block w-fit text-sm font-medium text-muted-foreground transition hover:text-orange-700"
                 >
                     Back to KBU Hub
                 </Link>

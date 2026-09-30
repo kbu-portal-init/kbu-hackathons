@@ -36,7 +36,7 @@ export default function RoomOverlay({
     if (phase === "loading") {
         return (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 glass">
-                <Loader2 className="size-7 animate-spin text-cyan-700" aria-hidden />
+                <Loader2 className="size-7 animate-spin text-teal-600" aria-hidden />
                 <p className="text-sm font-medium text-foreground">
                     Preparing the workspace… {Math.round(progress * 100)}%
                 </p>
@@ -72,7 +72,7 @@ export default function RoomOverlay({
                     <button
                         type="button"
                         onClick={onEnter}
-                        className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:shadow-violet-500/50"
+                        className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 font-semibold text-white shadow-lg shadow-orange-500/30 transition hover:shadow-orange-500/50"
                     >
                         Enter the workspace <ArrowRight className="size-4" />
                     </button>
@@ -98,13 +98,13 @@ export default function RoomOverlay({
                             type="button"
                             onClick={() => setListOpen((open) => !open)}
                             aria-expanded={listOpen}
-                            className="inline-flex items-center gap-2 rounded-full glass-violet px-3.5 py-1.5 text-sm font-semibold text-foreground transition hover:border-violet-500"
+                            className="inline-flex items-center gap-2 rounded-full glass-accent px-3.5 py-1.5 text-sm font-semibold text-foreground transition hover:border-orange-500"
                         >
                             {listOpen ? <X className="size-4" /> : <Lightbulb className="size-4" />}
                             {listOpen ? "Hide" : "Explore"}
                         </button>
                         {listOpen ? (
-                            <div className="max-h-64 overflow-y-auto rounded-2xl glass-violet p-2 shadow-xl">
+                            <div className="max-h-64 overflow-y-auto rounded-2xl glass-accent p-2 shadow-xl">
                                 <ObjectList objects={objects} onActivate={onActivate} />
                             </div>
                         ) : null}
@@ -114,7 +114,7 @@ export default function RoomOverlay({
 
             {selectedObject ? (
                 <div className="absolute bottom-4 left-1/2 w-[min(20rem,calc(100%-2rem))] -translate-x-1/2">
-                    <div className="rounded-2xl glass-violet p-4 shadow-xl shadow-violet-500/20">
+                    <div className="rounded-2xl glass-accent p-4 shadow-xl shadow-orange-500/20">
                         <div className="flex items-start justify-between gap-3">
                             <h2 className="font-bold tracking-tight text-foreground">{selectedObject.label}</h2>
                             <button
@@ -131,7 +131,7 @@ export default function RoomOverlay({
                             <button
                                 type="button"
                                 onClick={() => onOpen(selectedObject.route as string)}
-                                className="mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:shadow-lg hover:shadow-violet-500/30"
+                                className="mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:shadow-lg hover:shadow-orange-500/30"
                             >
                                 Open {selectedObject.label} <ArrowRight className="size-4" />
                             </button>
@@ -151,7 +151,7 @@ function ObjectList({ objects, onActivate }: { objects: RoomObject[]; onActivate
                     <button
                         type="button"
                         onClick={() => onActivate(object.id)}
-                        className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-muted-foreground transition hover:bg-slate-100 hover:text-cyan-700"
+                        className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-muted-foreground transition hover:bg-slate-100 hover:text-teal-600"
                     >
                         {object.label}
                     </button>

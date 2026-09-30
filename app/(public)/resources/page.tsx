@@ -16,7 +16,7 @@ export default function ResourcesPage() {
             <nav aria-label="Breadcrumb" className="mb-6 sm:mb-8">
                 <ol className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
                     <li>
-                        <Link href="/" className="transition hover:text-violet-700">
+                        <Link href="/" className="transition hover:text-orange-700">
                             Home
                         </Link>
                     </li>

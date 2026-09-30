@@ -40,8 +40,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
     if (completed) {
         return (
-            <main className="flex flex-1 items-center justify-center bg-violet-50/70 px-6 py-16">
-                <div className="w-full max-w-md rounded-2xl border border-violet-200 bg-white p-7 shadow-xl shadow-violet-200/50">
+            <main className="flex flex-1 items-center justify-center bg-orange-50/70 px-6 py-16">
+                <div className="w-full max-w-md rounded-2xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/50">
                     <h1 className="text-3xl font-bold tracking-tight">Password set</h1>
                     <p className="mt-3 text-sm leading-6 text-slate-600">
                         Your password has been saved. You can now sign in with your team username and new password.
@@ -55,19 +55,19 @@ export function ResetPasswordForm({ token }: { token: string }) {
     }
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-violet-50/70 px-6 py-16">
+        <main className="flex flex-1 items-center justify-center bg-orange-50/70 px-6 py-16">
             <div className="w-full max-w-md">
                 <Link
                     href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-violet-700"
+                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-orange-700"
                 >
                     <ArrowLeft className="size-4" /> Back to KBU Hub
                 </Link>
-                <div className="rounded-2xl border border-violet-200 bg-white p-7 shadow-xl shadow-violet-200/50">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+                <div className="rounded-2xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/50">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
                         <LockKeyhole className="size-5" />
                     </div>
-                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-violet-700">
+                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-700">
                         Password setup
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Set your password</h1>

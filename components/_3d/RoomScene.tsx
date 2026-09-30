@@ -33,10 +33,10 @@ const MODEL_URL = "/models/office-desk.glb";
 
 const DEFAULT_CAMERA = new THREE.Vector3(5.0, 6.4, 10.6);
 const DEFAULT_TARGET = new THREE.Vector3(0, 4.4, 3.6);
-const HOVER_EMISSIVE = new THREE.Color(0x22d3ee);
+const HOVER_EMISSIVE = new THREE.Color(0x14b8a6);
 const HOVER_INTENSITY = 0.45;
-/** Subtle violet glow every themed object carries; hover still overrides to cyan. */
-const BASE_EMISSIVE = new THREE.Color(0x6d28d9);
+/** Subtle orange glow every themed object carries; hover still overrides to teal. */
+const BASE_EMISSIVE = new THREE.Color(0xea580c);
 const BASE_INTENSITY = 0.06;
 /**
  * Bulb position, measured from the GLB (`Object_130` centre). Intensity is in
@@ -189,7 +189,7 @@ const RoomScene = forwardRef<RoomSceneHandle, RoomSceneProps>(function RoomScene
         const emissiveTargets = new Map<THREE.Mesh, { color: THREE.Color; intensity: number }>();
         const hoveredState = { id: null as string | null };
 
-        /** Tech Dark Mode: give every standard material a low-intensity violet glow. */
+        /** Warm Light Mode: give every standard material a low-intensity orange glow. */
         function applyThemeGlow(mesh: THREE.Mesh) {
             const apply = (material: THREE.Material) => {
                 if (material instanceof THREE.MeshStandardMaterial) {

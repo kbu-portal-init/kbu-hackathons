@@ -85,7 +85,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 <nav aria-label="Breadcrumb">
                     <ol className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-slate-500">
                         <li>
-                            <Link href="/" className="transition hover:text-violet-700">
+                            <Link href="/" className="transition hover:text-orange-700">
                                 Home
                             </Link>
                         </li>
@@ -93,7 +93,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
                         </li>
                         <li>
-                            <Link href="/resources" className="transition hover:text-violet-700">
+                            <Link href="/resources" className="transition hover:text-orange-700">
                                 Resources
                             </Link>
                         </li>
@@ -111,7 +111,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                 <Link
                     href="/resources"
-                    className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-slate-600 transition hover:text-violet-700"
+                    className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-slate-600 transition hover:text-orange-700"
                 >
                     <ArrowLeft className="h-3.5 w-3.5" />
                     <span>Back to all benefits</span>
@@ -119,10 +119,10 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
             </div>
 
             {/* Hero Header Card */}
-            <section className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-violet-50 via-white to-white p-5 shadow-xs sm:p-8 lg:p-10">
+            <section className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-orange-50 via-white to-white p-5 shadow-xs sm:p-8 lg:p-10">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex items-start gap-4 sm:gap-5">
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-accent text-white shadow-md ring-4 ring-violet-100 sm:h-20 sm:w-20">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-accent text-white shadow-md ring-4 ring-orange-100 sm:h-20 sm:w-20">
                             {renderBrandIcon(benefit.iconName)}
                         </div>
 
@@ -131,13 +131,13 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                 {benefit.categories.map((cat) => (
                                     <span
                                         key={cat}
-                                        className="rounded-md bg-violet-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-700"
+                                        className="rounded-md bg-orange-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700"
                                     >
                                         {cat}
                                     </span>
                                 ))}
                                 {benefit.badge && (
-                                    <span className="rounded-full bg-cyan-500 px-2.5 py-0.5 text-[10px] font-semibold text-white">
+                                    <span className="rounded-full bg-teal-500 px-2.5 py-0.5 text-[10px] font-semibold text-white">
                                         {benefit.badge}
                                     </span>
                                 )}
@@ -170,7 +170,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             href={benefit.officialUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-accent px-5 py-3 text-sm font-semibold text-white shadow-xs transition hover:shadow-lg hover:shadow-violet-500/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-accent px-5 py-3 text-sm font-semibold text-white shadow-xs transition hover:shadow-lg hover:shadow-orange-500/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
                         >
                             <span>Claim on {benefit.provider}</span>
                             <ExternalLink className="h-4 w-4" />
@@ -180,8 +180,8 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                 {/* Pricing / Special Term Banner */}
                 {benefit.pricingNote && (
-                    <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-violet-200 bg-violet-50 p-3.5 text-xs font-medium text-violet-900 sm:mt-6 sm:p-4 sm:text-sm">
-                        <Tag className="mt-0.5 h-4 w-4 shrink-0 text-violet-600" />
+                    <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-orange-200 bg-orange-50 p-3.5 text-xs font-medium text-orange-900 sm:mt-6 sm:p-4 sm:text-sm">
+                        <Tag className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                         <div>
                             <span className="font-semibold">Special Student Pricing: </span>
                             {benefit.pricingNote}
@@ -197,7 +197,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 {/* Section: What's Included */}
                 <section className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-8">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-violet-600" />
+                        <Sparkles className="h-5 w-5 text-orange-600" />
                         <h2 className="text-lg font-bold text-foreground sm:text-xl">What&apos;s Included Free</h2>
                     </div>
                     <p className="mt-0.5 text-xs text-slate-400">
@@ -242,7 +242,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 {/* Section: Step-by-Step Claim Walkthrough */}
                 <section className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-8">
                     <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-violet-600" />
+                        <Clock className="h-5 w-5 text-orange-600" />
                         <h2 className="text-lg font-bold text-foreground sm:text-xl">
                             How to Claim This Student Offer
                         </h2>
@@ -255,7 +255,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                 key={step}
                                 className="flex items-start gap-3.5 rounded-2xl border border-slate-100 bg-white p-4 shadow-2xs sm:p-5"
                             >
-                                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-100 font-mono text-xs font-bold text-violet-700 sm:h-8 sm:w-8 sm:text-sm">
+                                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-100 font-mono text-xs font-bold text-orange-700 sm:h-8 sm:w-8 sm:text-sm">
                                     {String(idx + 1).padStart(2, "0")}
                                 </span>
                                 <p className="pt-0.5 text-xs leading-relaxed text-slate-700 sm:text-sm">{step}</p>
@@ -264,12 +264,12 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     </ol>
 
                     {/* KBU Email Helper Inside Steps */}
-                    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-violet-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-orange-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                         <div className="flex items-start gap-2.5">
-                            <Mail className="mt-0.5 h-4 w-4 shrink-0 text-violet-600" />
+                            <Mail className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                             <div>
-                                <p className="text-xs font-bold text-violet-900">Need to check your student email?</p>
-                                <p className="text-xs text-violet-800/80">
+                                <p className="text-xs font-bold text-orange-900">Need to check your student email?</p>
+                                <p className="text-xs text-orange-800/80">
                                     Format: <code className="font-mono font-bold">u[StudentID]@ms.kbu.ac.th</code>
                                 </p>
                             </div>
@@ -278,7 +278,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             href="https://outlook.cloud.microsoft/mail/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-violet-700 underline underline-offset-2 hover:text-violet-800 sm:self-center"
+                            className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-orange-700 underline underline-offset-2 hover:text-orange-800 sm:self-center"
                         >
                             Open Outlook Webmail
                             <ExternalLink className="h-3.5 w-3.5" />
@@ -298,11 +298,11 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             <Link
                                 key={item.id}
                                 href={`/resources/${item.id}`}
-                                className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs transition hover:-translate-y-0.5 hover:border-violet-400 hover:shadow-md"
+                                className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs transition hover:-translate-y-0.5 hover:border-orange-400 hover:shadow-md"
                             >
                                 <div>
                                     <div className="flex items-center justify-between">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
                                             {renderBrandIcon(item.iconName, "h-5 w-5")}
                                         </div>
                                         {item.valueBadge && (
@@ -311,12 +311,12 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                             </span>
                                         )}
                                     </div>
-                                    <h3 className="mt-3 text-sm font-bold text-foreground transition group-hover:text-violet-700">
+                                    <h3 className="mt-3 text-sm font-bold text-foreground transition group-hover:text-orange-700">
                                         {item.title}
                                     </h3>
                                     <p className="mt-1 line-clamp-2 text-xs text-slate-500">{item.tagline}</p>
                                 </div>
-                                <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-violet-600">
+                                <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-orange-600">
                                     <span>Read Guide</span>
                                     <ArrowRight className="h-3 w-3 transition group-hover:translate-x-1" />
                                 </div>

@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
  */
 export default function FullscreenLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
-        <div className="h-dvh w-full overflow-hidden bg-gradient-to-b from-indigo-50 via-background to-cyan-50 text-foreground">
+        <div className="h-dvh w-full overflow-hidden bg-gradient-to-b from-orange-50 via-background to-teal-50 text-foreground">
             {children}
         </div>
     );

@@ -74,10 +74,10 @@ export function StudentBenefitsCatalog() {
     return (
         <div>
             {/* Hero Header */}
-            <div className="relative mb-8 overflow-hidden rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-cyan-50/60 p-5 sm:mb-12 sm:p-10 lg:p-12">
+            <div className="relative mb-8 overflow-hidden rounded-3xl border border-orange-200 bg-gradient-to-br from-orange-50 via-white to-teal-50/60 p-5 sm:mb-12 sm:p-10 lg:p-12">
                 <div className="relative z-10 max-w-3xl">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-white/90 px-3 py-1 text-xs font-semibold text-violet-700 shadow-2xs backdrop-blur-xs">
-                        <Sparkles className="h-3.5 w-3.5 text-violet-600" />
+                    <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white/90 px-3 py-1 text-xs font-semibold text-orange-700 shadow-2xs backdrop-blur-xs">
+                        <Sparkles className="h-3.5 w-3.5 text-orange-600" />
                         <span>Available for All Enrolled KBU Students</span>
                     </div>
 
@@ -96,11 +96,11 @@ export function StudentBenefitsCatalog() {
                         <button
                             type="button"
                             onClick={scrollToEmailGuide}
-                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-violet-300 bg-violet-100/70 px-4 py-2.5 text-xs font-semibold text-violet-800 transition hover:bg-violet-200/80 active:scale-95 sm:text-sm"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-orange-300 bg-orange-100/70 px-4 py-2.5 text-xs font-semibold text-orange-800 transition hover:bg-orange-200/80 active:scale-95 sm:text-sm"
                         >
-                            <Mail className="h-4 w-4 text-violet-600" />
+                            <Mail className="h-4 w-4 text-orange-600" />
                             <span>Need student email? View Login Guide</span>
-                            <span className="text-violet-600">↓</span>
+                            <span className="text-orange-600">↓</span>
                         </button>
                         <a
                             href="https://outlook.cloud.microsoft/mail/"
@@ -117,7 +117,7 @@ export function StudentBenefitsCatalog() {
                 {/* Ambient background decoration */}
                 <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-violet-400/15 blur-3xl"
+                    className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-orange-400/15 blur-3xl"
                 />
             </div>
 
@@ -133,7 +133,7 @@ export function StudentBenefitsCatalog() {
                     </div>
 
                     {/* Search Box */}
-                    <div className="relative flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 shadow-2xs transition focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-500/20 sm:max-w-xs">
+                    <div className="relative flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 shadow-2xs transition focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 sm:max-w-xs">
                         <Search className="h-4 w-4 shrink-0 text-slate-400" />
                         <input
                             type="text"
@@ -184,14 +184,14 @@ export function StudentBenefitsCatalog() {
                     {filteredBenefits.map((benefit) => (
                         <div
                             key={benefit.id}
-                            className="group flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-4 shadow-2xs transition hover:-translate-y-1 hover:border-violet-400 hover:shadow-lg sm:p-6"
+                            className="group flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-4 shadow-2xs transition hover:-translate-y-1 hover:border-orange-400 hover:shadow-lg sm:p-6"
                         >
                             <div>
                                 {/* Top row: Brand Icon & Badges */}
                                 <div className="mb-3.5 flex items-center justify-between gap-2 sm:mb-4">
                                     <Link
                                         href={`/resources/${benefit.id}`}
-                                        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 transition group-hover:bg-gradient-accent group-hover:text-white sm:h-12 sm:w-12"
+                                        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition group-hover:bg-gradient-accent group-hover:text-white sm:h-12 sm:w-12"
                                         aria-label={`View ${benefit.title} details`}
                                     >
                                         {renderCardIcon(benefit.iconName)}
@@ -203,7 +203,7 @@ export function StudentBenefitsCatalog() {
                                             </span>
                                         )}
                                         {benefit.badge && (
-                                            <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-[10px] font-semibold text-cyan-800 sm:px-2.5 sm:text-xs">
+                                            <span className="rounded-full bg-teal-100 px-2 py-0.5 text-[10px] font-semibold text-teal-800 sm:px-2.5 sm:text-xs">
                                                 {benefit.badge}
                                             </span>
                                         )}
@@ -225,7 +225,7 @@ export function StudentBenefitsCatalog() {
                                 {/* Title & Provider */}
                                 <Link
                                     href={`/resources/${benefit.id}`}
-                                    className="block text-base font-bold text-foreground transition group-hover:text-violet-700 sm:text-lg lg:text-xl"
+                                    className="block text-base font-bold text-foreground transition group-hover:text-orange-700 sm:text-lg lg:text-xl"
                                 >
                                     {benefit.title}
                                 </Link>
@@ -243,7 +243,7 @@ export function StudentBenefitsCatalog() {
                                     <ul className="mt-2 space-y-1.5">
                                         {benefit.perks.slice(0, 3).map((perk) => (
                                             <li key={perk} className="flex items-start gap-2 text-xs text-slate-600">
-                                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cyan-700" />
+                                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
                                                 <span className="line-clamp-2">{perk}</span>
                                             </li>
                                         ))}
@@ -256,7 +256,7 @@ export function StudentBenefitsCatalog() {
                                 <div className="flex items-center gap-2">
                                     <Link
                                         href={`/resources/${benefit.id}`}
-                                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-violet-50 px-3.5 py-2 text-xs font-semibold text-violet-700 transition hover:bg-gradient-accent hover:text-white"
+                                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-orange-50 px-3.5 py-2 text-xs font-semibold text-orange-700 transition hover:bg-gradient-accent hover:text-white"
                                     >
                                         <span>View Claim Guide</span>
                                         <ArrowRight className="h-3.5 w-3.5" />
@@ -290,7 +290,7 @@ export function StudentBenefitsCatalog() {
                             setSearchQuery("");
                             setSelectedCategory("All");
                         }}
-                        className="mt-4 rounded-full bg-gradient-accent px-5 py-2 text-xs font-semibold text-white transition hover:shadow-lg hover:shadow-violet-500/30"
+                        className="mt-4 rounded-full bg-gradient-accent px-5 py-2 text-xs font-semibold text-white transition hover:shadow-lg hover:shadow-orange-500/30"
                     >
                         Reset Filters
                     </button>

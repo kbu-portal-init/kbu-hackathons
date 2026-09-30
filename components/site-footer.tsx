@@ -16,7 +16,7 @@ export function SiteFooter() {
                     <p className="text-sm font-semibold text-foreground">Explore</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
                         {publicLinks.map(({ href, label }) => (
-                            <Link key={href} href={href} className="transition hover:text-cyan-700">
+                            <Link key={href} href={href} className="transition hover:text-orange-700">
                                 {label}
                             </Link>
                         ))}
@@ -25,7 +25,7 @@ export function SiteFooter() {
                 <div>
                     <p className="text-sm font-semibold text-foreground">Account</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
-                        <Link href="/login" className="transition hover:text-cyan-700">
+                        <Link href="/login" className="transition hover:text-orange-700">
                             Login
                         </Link>
                     </div>

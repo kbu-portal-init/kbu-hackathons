@@ -127,7 +127,7 @@ function buildKeyboard(position: [number, number, number]): BuiltPrimitive {
         group,
         meshes,
         new THREE.BoxGeometry(0.5, 0.04, 0.09),
-        standardMaterial(0x6d28d9, { roughness: 0.35 }),
+        standardMaterial(0xea580c, { roughness: 0.35 }),
         [0.15, 0.08, 0.19],
     );
 
@@ -150,7 +150,7 @@ function buildClock(position: [number, number, number]): BuiltPrimitive {
         [Math.PI / 2, 0, 0],
     );
     add(group, meshes, new THREE.TorusGeometry(0.4, 0.04, 10, 30), metal, [0, 0.5, 0]);
-    // Hour and minute hands: one dark, one violet so the face reads at a glance.
+    // Hour and minute hands: one dark, one orange so the face reads at a glance.
     add(
         group,
         meshes,
@@ -159,7 +159,7 @@ function buildClock(position: [number, number, number]): BuiltPrimitive {
         [0.08, 0.53, 0.05],
         [0, 0, -0.6],
     );
-    add(group, meshes, new THREE.BoxGeometry(0.03, 0.16, 0.02), standardMaterial(0x6d28d9), [0, 0.58, 0.05]);
+    add(group, meshes, new THREE.BoxGeometry(0.03, 0.16, 0.02), standardMaterial(0xea580c), [0, 0.58, 0.05]);
 
     for (const side of [-1, 1]) {
         add(
@@ -187,7 +187,7 @@ function buildPoster(position: [number, number, number]): BuiltPrimitive {
         group,
         meshes,
         new THREE.BoxGeometry(1.08, 0.34, 0.055),
-        standardMaterial(0x6d28d9, { roughness: 0.4 }),
+        standardMaterial(0xea580c, { roughness: 0.4 }),
         [0, 1.36, 0.005],
     );
     for (const y of [1.02, 0.86, 0.7]) {
@@ -288,7 +288,7 @@ function buildMug(position: [number, number, number]): BuiltPrimitive {
         group,
         meshes,
         new THREE.CylinderGeometry(0.155, 0.155, 0.05, 18),
-        standardMaterial(0x6d28d9, { roughness: 0.4 }),
+        standardMaterial(0xea580c, { roughness: 0.4 }),
         [0, 0.28, 0],
     );
     add(group, meshes, new THREE.TorusGeometry(0.07, 0.022, 10, 20), ceramic, [0.16, 0.19, 0], [0, Math.PI / 2, 0]);
@@ -321,7 +321,7 @@ function buildBackpack(position: [number, number, number]): BuiltPrimitive {
         group,
         meshes,
         new THREE.BoxGeometry(0.5, 0.06, 0.1),
-        standardMaterial(0x6d28d9, { roughness: 0.4 }),
+        standardMaterial(0xea580c, { roughness: 0.4 }),
         [0, 0.55, 0.26],
     );
     for (const side of [-1, 1]) {

@@ -138,7 +138,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-8 rounded-2xl border border-violet-200 bg-white p-6 shadow-xl shadow-violet-100/40">
+            <div className="space-y-8 rounded-2xl border border-orange-200 bg-white p-6 shadow-xl shadow-orange-100/40">
                 {/* Team Information */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">

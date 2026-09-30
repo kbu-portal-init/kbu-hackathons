@@ -2,86 +2,86 @@
 @import "tailwindcss";
 
 /*
- * Youthful Light Mode. Light is the product default: a bright, airy canvas with
- * saturated violet/cyan accents. The dark block is kept as the invert for
+ * Warm Light Mode. Light is the product default: a bright, airy canvas with
+ * energetic orange/coral accents. The dark block is kept as the invert for
  * prefers-dark dashboards, but the public site is a light experience.
  */
 :root {
-    --background: #f6f8fc;
-    --foreground: #14162b;
+    --background: #fffdfb;
+    --foreground: #27180f;
     --card: #ffffff;
-    --card-foreground: #14162b;
+    --card-foreground: #27180f;
     --popover: #ffffff;
-    --popover-foreground: #14162b;
+    --popover-foreground: #27180f;
 
-    --primary: #6d28d9;
+    --primary: #ea580c;
     --primary-foreground: #ffffff;
 
-    --secondary: #eef1fb;
-    --secondary-foreground: #23264a;
+    --secondary: #fdf0e6;
+    --secondary-foreground: #6b2f10;
 
-    --muted: #eef1fb;
-    --muted-foreground: #5b6178;
+    --muted: #fdf0e6;
+    --muted-foreground: #7a5a44;
 
-    --accent: #ece7fd;
-    --accent-foreground: #5b21b6;
+    --accent: #ffedd5;
+    --accent-foreground: #9a3412;
 
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
 
-    --border: #dfe4f0;
-    --input: #dfe4f0;
-    --ring: #6d28d9;
+    --border: #f0d6bd;
+    --input: #f0d6bd;
+    --ring: #ea580c;
 
     --sidebar: #ffffff;
-    --sidebar-foreground: #14162b;
-    --sidebar-primary: #6d28d9;
+    --sidebar-foreground: #27180f;
+    --sidebar-primary: #ea580c;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ece7fd;
-    --sidebar-accent-foreground: #5b21b6;
-    --sidebar-border: #d8dcee;
-    --sidebar-ring: #6d28d9;
+    --sidebar-accent: #ffedd5;
+    --sidebar-accent-foreground: #9a3412;
+    --sidebar-border: #f3dcbd;
+    --sidebar-ring: #ea580c;
 
-    --success: #059669;
+    --success: #0d9488;
 }
 
 .dark {
-    --background: #0a0a0f;
-    --foreground: #f5f5f7;
-    --card: #161b22;
-    --card-foreground: #f5f5f7;
-    --popover: #161b22;
-    --popover-foreground: #f5f5f7;
+    --background: #1c1206;
+    --foreground: #fdf3e7;
+    --card: #2a1b0d;
+    --card-foreground: #fdf3e7;
+    --popover: #2a1b0d;
+    --popover-foreground: #fdf3e7;
 
-    --primary: #7c3aed;
-    --primary-foreground: #ffffff;
+    --primary: #fb923c;
+    --primary-foreground: #2a0e03;
 
-    --secondary: #1a2029;
-    --secondary-foreground: #f5f5f7;
+    --secondary: #3a2514;
+    --secondary-foreground: #fdf3e7;
 
-    --muted: #1a2029;
-    --muted-foreground: #9ca3af;
+    --muted: #3a2514;
+    --muted-foreground: #c0a488;
 
-    --accent: #1b1530;
-    --accent-foreground: #c4b5fd;
+    --accent: #451a03;
+    --accent-foreground: #fdba74;
 
     --destructive: #f87171;
     --destructive-foreground: #450a0a;
 
-    --border: rgba(148, 163, 184, 0.14);
-    --input: rgba(148, 163, 184, 0.16);
-    --ring: #7c3aed;
+    --border: rgba(251, 191, 133, 0.16);
+    --input: rgba(251, 191, 133, 0.18);
+    --ring: #fb923c;
 
-    --sidebar: #0d1117;
-    --sidebar-foreground: #f5f5f7;
-    --sidebar-primary: #7c3aed;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #1b1530;
-    --sidebar-accent-foreground: #c4b5fd;
-    --sidebar-border: rgba(148, 163, 184, 0.14);
-    --sidebar-ring: #7c3aed;
+    --sidebar: #1c1206;
+    --sidebar-foreground: #fdf3e7;
+    --sidebar-primary: #fb923c;
+    --sidebar-primary-foreground: #2a0e03;
+    --sidebar-accent: #451a03;
+    --sidebar-accent-foreground: #fdba74;
+    --sidebar-border: rgba(251, 191, 133, 0.16);
+    --sidebar-ring: #fb923c;
 
-    --success: #34d399;
+    --success: #2dd4bf;
 }
 
 @theme inline {
@@ -145,22 +145,22 @@ samp {
 }
 
 /*
- * Youthful Light Mode utilities. The violet→cyan gradient is reserved for
+ * Warm Light Mode utilities. The orange→coral gradient is reserved for
  * primary CTAs, key headline text, and section dividers only — everything
  * else uses flat accents so accent use stays minimal and consistent.
  */
 
-/* Violet→cyan gradient. Usable as gradient text (transparent color) or as a
+/* Orange→coral gradient. Usable as gradient text (transparent color) or as a
  * background fill for primary CTAs and section dividers. */
 .text-gradient {
-    background-image: linear-gradient(90deg, #6d28d9, #0891b2);
+    background-image: linear-gradient(90deg, #ea580c, #ff5d6c);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 
 .bg-gradient-accent {
-    background-image: linear-gradient(90deg, #6d28d9, #0891b2);
+    background-image: linear-gradient(90deg, #ea580c, #ff5d6c);
 }
 
 /* Glassmorphism for cards and panels. Frosted white on the light canvas. */
@@ -168,19 +168,19 @@ samp {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(69, 38, 14, 0.08);
 }
 
-.glass-violet {
+.glass-accent {
     background-color: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(109, 40, 217, 0.22);
+    border: 1px solid rgba(234, 88, 12, 0.22);
 }
 
 /* Dot-grid texture used behind the hero and final-CTA bands. */
 .dot-grid {
-    background-image: radial-gradient(circle, rgba(100, 116, 139, 0.18) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(122, 90, 68, 0.18) 1px, transparent 1px);
     background-size: 25px 25px;
 }
 
