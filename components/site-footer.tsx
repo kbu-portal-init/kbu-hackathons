@@ -8,7 +8,8 @@ export function SiteFooter() {
                 <div className="sm:col-span-2">
                     <p className="text-lg font-bold text-zinc-950">KBU Hackathon 2026</p>
                     <p className="mt-3 max-w-sm text-sm leading-6">
-                        Your home for hackathon, announcements, resources, and the teams building what comes next.
+                        Your home for the very first hackathon of Kasem Bundit University, announcements, resources, and
+                        the teams building what comes next.
                     </p>
                 </div>
                 <div>

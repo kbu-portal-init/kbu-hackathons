@@ -20,7 +20,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 
 | Area | Routes | Status |
 | --- | --- | --- |
-| Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Available without authentication |
+| Public | `/`, `/announcements`, `/resources`, `/about` | Available without authentication |
 | Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration business flow is follow-up work |
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
