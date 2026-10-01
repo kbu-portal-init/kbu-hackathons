@@ -294,7 +294,7 @@ export default async function Home() {
                             href="/about"
                             className="inline-flex items-center justify-center gap-2 rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
                         >
-                            ./about
+                            Everything you need to know
                         </Link>
                     </div>
                 </div>
