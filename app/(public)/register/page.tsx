@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
@@ -80,6 +81,13 @@ export default function TeamRegistrationPage() {
                     Join KBU Hackathon 2026
                 </p>
                 <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Register your team</h1>
+                <p className="mt-4 text-sm leading-6 text-brand-muted-foreground">
+                    Not sure what the event involves? Read{" "}
+                    <Link className="font-semibold text-orange-600 underline underline-offset-4" href="/about">
+                        Everything you need to know
+                    </Link>{" "}
+                    before registering.
+                </p>
                 <Suspense fallback={<RegistrationFallback />}>
                     <RegistrationContent />
                 </Suspense>

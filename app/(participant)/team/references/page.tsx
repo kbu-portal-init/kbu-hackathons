@@ -16,14 +16,14 @@ const references = [
     {
         icon: BookOpen,
         title: "Challenge brief",
-        description: "Review the problem space, expected outcomes, and what your team should focus on building.",
-        body: "Build a practical solution that creates meaningful value for the KBU community. Strong submissions clearly explain the problem, the people affected, and why the proposed solution matters.",
+        description: "Prepare for the challenge direction that will be announced when the event begins.",
+        body: "The final theme and scope will be revealed at kickoff. Your team will choose its own problem and solution within the announced direction, then explain the users affected and why the solution matters.",
     },
     {
         icon: ClipboardCheck,
         title: "Rules & eligibility",
         description: "Keep your team within the event requirements throughout the hackathon.",
-        body: "Use your registered team account, submit original work, respect other participants, and ensure every listed member has a valid verified student email.",
+        body: "Use your registered team account, submit original work, respect other participants, and ensure every listed member has a valid verified student email. You may prepare tools and general skills beforehand, but challenge-specific implementation must begin after kickoff. Any technology is allowed unless the event team announces otherwise.",
     },
     {
         icon: Trophy,
@@ -35,7 +35,7 @@ const references = [
         icon: FileText,
         title: "Submission guide",
         description: "Prepare the information and links your team will need for final submission.",
-        body: "Keep your repository, working demo, project description, and presentation materials ready. Check the Submit page for the final form and deadline once submissions open.",
+        body: "Keep your repository, working demo, project description, and presentation materials ready. The event team will confirm the final submission requirements at kickoff. Check the Submit page for the form and deadline.",
     },
 ];
 
