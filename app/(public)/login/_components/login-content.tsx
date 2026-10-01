@@ -91,7 +91,7 @@ function TeamLoginForm() {
                         id="username"
                         type="text"
                         autoComplete="username"
-                        placeholder="kbu-ai-builders"
+                        placeholder="your-team-username"
                         aria-invalid={!!usernameError}
                         {...form.register("username")}
                     />

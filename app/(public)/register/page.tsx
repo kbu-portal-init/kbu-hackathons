@@ -5,6 +5,11 @@ import { RegistrationForm } from "./_components/registration-form";
 
 export const dynamic = "force-dynamic";
 
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeZone: "Asia/Bangkok",
+});
+
 // because eventSettings is database-driven.
 // If /register is statically generated, the page may contain the old value until revalidation/rebuild.
 
@@ -44,11 +49,11 @@ async function RegistrationContent() {
                           ? "Registration has not opened yet"
                           : "Registration is closed"}
                 </h2>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 text-base leading-7 text-muted-foreground">
                     {registrationUnavailable
                         ? "Registration details are not available right now. Please try again later."
                         : registrationNotStarted
-                          ? "Registration has not started yet. Please return during the registration period to submit your team."
+                          ? `Registration has not started yet. It opens on ${dateFormatter.format(new Date(settings.registrationOpensAt))}. Please return during the registration period to submit your team.`
                           : "The registration period has ended. Please contact the organizers if you have any questions."}
                 </p>
             </div>

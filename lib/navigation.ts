@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 export const publicLinks = [
-    { href: "/events", label: "Events" },
     { href: "/register", label: "Register" },
     { href: "/announcements", label: "Announcements" },
     { href: "/resources", label: "Resources" },
