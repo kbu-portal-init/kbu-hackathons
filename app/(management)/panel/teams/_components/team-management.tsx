@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { PaginationMeta } from "@/lib/contracts/common";
 import type { TeamListItem } from "@/lib/contracts/teams";
@@ -86,13 +86,12 @@ export function TeamManagement({ items, meta, status }: Props) {
                                     <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                render={<Link href={`/panel/teams/${item.id}`} />}
+                                            <Link
+                                                href={`/panel/teams/${item.id}`}
+                                                className={buttonVariants({ variant: "outline", size: "sm" })}
                                             >
                                                 View
-                                            </Button>
+                                            </Link>
                                             <TeamActions team={item} />
                                         </div>
                                     </TableCell>

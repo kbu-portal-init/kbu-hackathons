@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { LogOut, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -86,6 +86,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                                 {area === "management" && role === "admin" && (
                                     <SidebarMenuItem>
                                         <SidebarMenuButton render={<Link href="/admin" />} tooltip="Admin Panel">
+                                            <ShieldCheck />
                                             <span>Admin Panel</span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
