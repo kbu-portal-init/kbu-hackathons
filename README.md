@@ -18,16 +18,16 @@ Team members are roster records. They do not receive Better Auth accounts; their
 
 ## Routes
 
-| Area | Routes | Status |
-| --- | --- | --- |
-| Public | `/`, `/events`, `/announcements`, `/resources`, `/about` | Available without authentication |
-| Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration business flow is follow-up work |
-| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
-| Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
-| Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
-| Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |
-| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
-| Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
+| Area                   | Routes                                                                                                                               | Status                                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Public                 | `/`, `/events`, `/announcements`, `/resources`, `/about`                                                                             | Available without authentication                                                                                                       |
+| Registration and login | `/register`, `/login`                                                                                                                | Public entry points; login selects participant or management access with tabs, while registration business flow is follow-up work      |
+| Participant            | `/team`, `/team/references`, `/team/submit`, `/team/settings`                                                                        | Protected workspace; `/team` includes per-member digital card generation and downloads                                                 |
+| Shared cards           | `/cards/[token]`                                                                                                                     | Public participant card page using a revocable share token                                                                             |
+| Management             | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented                                      |
+| Notifications          | `/panel/notifications`, `/team/notifications`                                                                                        | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox                                                      |
+| Administrator          | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings`                                                                    | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
+| Auth protocol          | `/api/auth/[...all]`                                                                                                                 | Better Auth handler; application mutations use server actions                                                                          |
 
 Unknown routes and invalid public detail records use the branded global 404 page at `app/not-found.tsx`.
 
@@ -91,10 +91,10 @@ Production startup requires the SMTP, Cloudflare R2, and Upstash Redis settings 
 
 Uploads use authenticated API requests:
 
-| Endpoint | Access | Purpose |
-| --- | --- | --- |
-| `POST /api/upload/proxy` | Approved team or organizer/admin | Validate and upload the multipart file to R2. |
-| `POST /api/upload/delete` | Owner of the upload scope | Delete an object from R2. |
+| Endpoint                  | Access                           | Purpose                                       |
+| ------------------------- | -------------------------------- | --------------------------------------------- |
+| `POST /api/upload/proxy`  | Approved team or organizer/admin | Validate and upload the multipart file to R2. |
+| `POST /api/upload/delete` | Owner of the upload scope        | Delete an object from R2.                     |
 
 Use `category: "image"` or `"submission"` for team uploads and `category: "event-image"` for management event images. The browser sends the file to the authenticated proxy; the returned URL must then be saved in the relevant team or `EventSettings.imageUrls` record. Deleting an R2 object does not remove its URL from the database automatically.
 
@@ -120,6 +120,7 @@ Migration, push, and seed commands mutate database state. The development seed c
 
 ```bash
 pnpm lint
+pnpm format:check
 pnpm exec tsc --noEmit
 pnpm build
 ```
@@ -177,7 +178,7 @@ chore/update-dependencies
 
 Open a pull request from the focused branch into `dev` and link its GitHub issue. Use a clear title such as `feat: add team settings page` or `fix: keep sidebar navigation visible on mobile`. When the integrated work is ready for release, open a separate `dev` to `main` pull request.
 
-The `Validate main pull request source` workflow (`.github/workflows/main-source-branch.yml`) rejects a `main` pull request unless its source branch is `dev`. The `Continuous Integration` workflow (`.github/workflows/ci.yml`) validates code quality (Biome lint, TypeScript typecheck, Next.js build) on pull requests to `dev` and `main`.
+The `Validate main pull request source` workflow (`.github/workflows/main-source-branch.yml`) rejects a `main` pull request unless its source branch is `dev`. The `Continuous Integration` workflow (`.github/workflows/ci.yml`) validates code quality (oxlint, oxfmt, TypeScript typecheck, Next.js build) on pull requests to `dev` and `main`.
 
 When a release pull request is merged into `main`, the `Secure Production Deployment` workflow (`.github/workflows/deploy.yml`) triggers an automated, zero-trust deployment to `/opt/hackathon` on the production host via SSH using the restricted `kbu-deploy` service account.
 
@@ -190,14 +191,18 @@ Use this description format:
 
 ```md
 ## Summary
+
 - What changed and why.
 
 ## Validation
+
 - [ ] pnpm lint
+- [ ] pnpm format:check
 - [ ] pnpm exec tsc --noEmit
 - [ ] pnpm build
 
 ## Screenshots
+
 <!-- Optional: include when helpful to review visible UI changes. -->
 
 Closes #<issue-number>
@@ -205,19 +210,20 @@ Closes #<issue-number>
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Start the Next.js development server. |
-| `pnpm build` | Create a production build. |
-| `pnpm start` | Serve a completed production build. |
-| `pnpm lint` | Check formatting and lint rules with Biome. |
-| `pnpm lint:fix` | Apply Biome lint and formatting fixes. |
-| `pnpm format` | Format files with Biome. |
-| `pnpm exec tsc --noEmit` | Run TypeScript checking. |
-| `pnpm db:start` | Start local postgres via docker-compose.local.yml. |
-| `pnpm db:watch` | Start postgres in foreground with logs. |
-| `pnpm db:stop` | Stop postgres container. |
-| `pnpm db:down` | Stop and remove postgres container + volume. |
+| Command                  | Purpose                                            |
+| ------------------------ | -------------------------------------------------- |
+| `pnpm dev`               | Start the Next.js development server.              |
+| `pnpm build`             | Create a production build.                         |
+| `pnpm start`             | Serve a completed production build.                |
+| `pnpm lint`              | Lint the codebase with oxlint.                     |
+| `pnpm lint:fix`          | Apply oxlint fixes.                                |
+| `pnpm format`            | Format files with oxfmt.                           |
+| `pnpm format:check`      | Check formatting without writing files.            |
+| `pnpm exec tsc --noEmit` | Run TypeScript checking.                           |
+| `pnpm db:start`          | Start local postgres via docker-compose.local.yml. |
+| `pnpm db:watch`          | Start postgres in foreground with logs.            |
+| `pnpm db:stop`           | Stop postgres container.                           |
+| `pnpm db:down`           | Stop and remove postgres container + volume.       |
 
 ## Tooling
 
@@ -226,9 +232,9 @@ Closes #<issue-number>
 - **Better Auth** for sessions and credentials.
 - **Tailwind CSS v4** with the full default palette. Orange is the semantic primary color, so utilities such as `bg-orange-600` and `text-orange-500` are available alongside semantic theme classes.
 - **shadcn/ui** using the Base UI, Nova, neutral-base configuration and **Lucide** icons.
-- **Biome** for linting and formatting, with Husky and lint-staged running checks before commits.
+- **oxlint** for linting and **oxfmt** for formatting, with Husky and lint-staged running checks before commits.
 
-The shadcn-generated files in `components/ui` are intentionally excluded from Biome checks. Add application-specific composition and styling in other `components` files instead.
+The shadcn-generated files in `components/ui` are intentionally excluded from oxlint and oxfmt checks. Add application-specific composition and styling in other `components` files instead.
 
 Browse the [shadcn component catalog](https://ui.shadcn.com/docs/components) before adding a primitive:
 

@@ -1,0 +1,14 @@
+{
+    "useTabs": false,
+    "tabWidth": 4,
+    "printWidth": 120,
+    "singleQuote": false,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "trailingComma": "all",
+    "semi": true,
+    "arrowParens": "always",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "ignorePatterns": [".agents", ".next", "out", "build", "public", "components/ui", "next-env.d.ts"]
+}

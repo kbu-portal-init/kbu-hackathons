@@ -1,0 +1,15 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["eslint", "typescript", "unicorn", "oxc", "react", "nextjs"],
+    "categories": {
+        "correctness": "error"
+    },
+    "rules": {
+        "react/refs": "warn",
+        "react/purity": "warn",
+        "react/set-state-in-effect": "warn",
+        "react/immutability": "warn",
+        "nextjs/no-img-element": "warn"
+    },
+    "ignorePatterns": ["components/ui", "generated", ".next", "out", "build", "public", "next-env.d.ts"]
+}

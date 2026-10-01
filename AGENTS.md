@@ -111,11 +111,12 @@ Run the relevant checks before finishing a change:
 
 ```bash
 pnpm lint
+pnpm format:check
 pnpm exec tsc --noEmit
 pnpm build
 ```
 
-Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
+oxlint and oxfmt intentionally exclude `components/ui` and `.agents`. Do not use a whole-project formatter command to modify those generated or vendored files. Husky runs lint-staged before commits.
 
 ## Production containers
 
@@ -134,7 +135,7 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 - Create each focused branch from `dev`. Open its pull request into `dev`; do not merge feature branches directly into `main`.
 - Promote tested integrated work from `dev` to `main` through a separate release pull request.
 - `.github/workflows/main-source-branch.yml` validates that `main` pull requests originate from `dev`. Keep its `Require dev source branch` job configured as a required `main` branch status check after the workflow has run.
-- `.github/workflows/ci.yml` validates code quality (Biome lint, TypeScript typecheck, Next.js build) on PRs to `dev` and `main`.
+- `.github/workflows/ci.yml` validates code quality (oxlint, oxfmt, TypeScript typecheck, Next.js build) on PRs to `dev` and `main`.
 - `.github/workflows/deploy.yml` triggers automated remote deployment to `/opt/hackathon` on the Debian 13 production host upon push to `main` using the least-privilege `kbu-deploy` service account.
 - Use `<type>/<short-description>` in lowercase kebab case, such as `feat/team-settings`, `fix/sidebar-toggle`, `docs/readme`, or `chore/update-dependencies`.
 - Keep a branch limited to one coherent change and run the relevant quality checks before handing it off.
@@ -149,14 +150,18 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 
 ```md
 ## Summary
+
 - What changed and why.
 
 ## Validation
+
 - [ ] pnpm lint
+- [ ] pnpm format:check
 - [ ] pnpm exec tsc --noEmit
 - [ ] pnpm build
 
 ## Screenshots
+
 <!-- Optional: include when helpful to review visible UI changes. -->
 
 Closes #<issue-number>
@@ -178,12 +183,12 @@ This project uses multiple AI coding agents on different models. This section de
 
 ### Agent Assignments
 
-| Agent | Model | Role | Use it for |
-|---|---|---|---|
-| VS Code default agent | gpt-oss-20b (via Kaggle) | Autocomplete / quick edits | Inline completions, small single-file tweaks, boilerplate |
-| Cline | internlm/Atria-Dawn-Preview | Feature builder | New features, multi-file changes of moderate complexity |
-| Claude Code (via Jan) | Opus → moonshotai/kimi-k3, Sonnet → z-ai/glm5, Haiku → openai/gpt-oss-20b | Architect / Refactor lead | Large refactors, cross-file/cross-module changes, planning, reviewing what Cline/OpenCode produced |
-| OpenCode | internlm/Atria-Dawn-Preview | Debugger / Reviewer | Bug fixing, pre-merge review, sanity checks |
+| Agent                 | Model                                                                     | Role                       | Use it for                                                                                         |
+| --------------------- | ------------------------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------- |
+| VS Code default agent | gpt-oss-20b (via Kaggle)                                                  | Autocomplete / quick edits | Inline completions, small single-file tweaks, boilerplate                                          |
+| Cline                 | internlm/Atria-Dawn-Preview                                               | Feature builder            | New features, multi-file changes of moderate complexity                                            |
+| Claude Code (via Jan) | Opus → moonshotai/kimi-k3, Sonnet → z-ai/glm5, Haiku → openai/gpt-oss-20b | Architect / Refactor lead  | Large refactors, cross-file/cross-module changes, planning, reviewing what Cline/OpenCode produced |
+| OpenCode              | internlm/Atria-Dawn-Preview                                               | Debugger / Reviewer        | Bug fixing, pre-merge review, sanity checks                                                        |
 
 Cline and OpenCode currently share the same model. They're told apart by role, not model — Cline builds, OpenCode reviews/fixes. If that distinction stops being useful in practice, consider dropping one.
 
@@ -199,4 +204,3 @@ Cline and OpenCode currently share the same model. They're told apart by role, n
 ### Model routing notes
 
 Jan's Claude Code integration maps Claude's size tiers to other models: Opus → moonshotai/kimi-k3, Sonnet → z-ai/glm5, Haiku → openai/gpt-oss-20b. If output quality drifts, check this mapping first. If you rename or swap any model in Jan/Cline/OpenCode settings, update the table above so it stays accurate.
-

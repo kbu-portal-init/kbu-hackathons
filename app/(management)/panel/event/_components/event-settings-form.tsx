@@ -46,7 +46,6 @@ export function EventSettingsForm({ settings }: Props) {
     const subDeadline = settings ? toDateTime(settings.submissionDeadline) : { date: new Date(), time: "17:00" };
 
     const form = useForm<UpsertEventSettingsInput>({
-        // biome-ignore lint/suspicious/noExplicitAny: zodResolver preprocess causes input/output type mismatch
         resolver: zodResolver(upsertEventSettingsSchema) as any,
         defaultValues: {
             title: settings?.title ?? "",

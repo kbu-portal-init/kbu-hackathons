@@ -9,7 +9,6 @@ on:
         branches:
             - dev
 
-
 concurrency:
     group: ci-${{ github.ref }}
     cancel-in-progress: true
@@ -44,19 +43,19 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v4
               with:
-                version: 10.27.0
+                  version: 10.27.0
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                node-version: 24
-                cache: pnpm
+                  node-version: 24
+                  cache: pnpm
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Biome Lint Check
-              run: pnpm lint
+            - name: Lint & Format Check
+              run: pnpm lint && pnpm format:check
 
             - name: Unit Tests
               run: pnpm test:unit
@@ -67,10 +66,10 @@ jobs:
             - name: Cache Next.js build
               uses: actions/cache@v4
               with:
-                path: .next/cache
-                key: nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
-                restore-keys: |
-                  nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+                  path: .next/cache
+                  key: nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.ts', '**/*.tsx') }}
+                  restore-keys: |
+                      nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
 
             - name: Next.js Production Build
               run: pnpm build

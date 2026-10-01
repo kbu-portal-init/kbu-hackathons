@@ -288,7 +288,7 @@ export function FileUpload({
                     </DialogHeader>
 
                     {previewUrl && (
-                        // biome-ignore lint/performance/noImgElement: blob URL is a temporary local preview
+                        // oxlint-disable-next-line nextjs/no-img-element -- blob URL is a temporary local preview
                         <img
                             src={uploadedFile?.publicUrl ?? previewUrl}
                             alt={selectedFile?.name ?? "Selected image"}
