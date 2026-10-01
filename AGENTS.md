@@ -66,10 +66,10 @@ The branch currently provides:
 - Public announcement and participant-card sharing with mobile native share and desktop copy-link/LINE actions.
 - Organizer/admin event settings reads and upserts with Zod validation, ISO-string DTO mapping, atomic persistence, and audit logging.
 - Cloudflare R2 storage with server-side proxy uploads, team-owned `uploads/<team-id>/` keys, organizer/admin-owned `uploads/events/` keys, and admin-owned `uploads/admins/<admin-id>/` keys.
-- Provider-neutral SMTP delivery through `sendEmail`, with typed notification templates and `sendNotification` for Better Auth password resets, student verification, account ban/unban, and organizer account-created messages. SMTP delivery is awaited; delivery outcomes are recorded asynchronously in `AuditLog` and never change the SMTP result. Organizer/team onboarding links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
+- Provider-neutral SMTP delivery through `sendEmail`, with predefined code-owned branded templates in `lib/services/email-templates.ts` and `sendNotification` for Better Auth password resets, student verification, registration updates, account ban/unban, and organizer account-created messages. Templates must provide HTML and plain-text fallbacks and escape dynamic values. SMTP delivery is awaited; delivery outcomes are recorded asynchronously in `AuditLog` and never change the SMTP result. Organizer/team onboarding links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 - Organizer/admin team management at `/panel/teams` provides paginated approved-team browsing, submission counts, team detail views, and team ban/unban actions; submissions are shown on the team detail page.
-- Organizer/admin manual notifications at `/panel/notifications` send targeted email and in-app messages to approved teams or a specific address; approved team accounts read them at `/team/notifications` and can mark them as read.
+- Organizer/admin manual notifications at `/panel/notifications` can target approved teams or a specific address and choose email, in-app, or both. In-app delivery for a specific address requires a verified member of an approved team; approved team accounts read in-app notifications at `/team/notifications` and can mark them as read.
 
 Participant registration workflows, broader organizer management workflows, and broader account-management UI remain follow-up work. Announcement management supports editing both draft and published announcements; published announcements can also be archived. Admins can browse and permanently delete audit records individually; deletion does not create a replacement audit record. The admin audit browser loads user/team-member filter options manually through the paginated `/api/admin/users` route, defaulting to 200 records per request. Admin profile settings update name, email, password, and profile image; admin profile uploads use `uploads/admins/<admin-id>/`.
 
@@ -171,3 +171,32 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## AI Coding Agents — Project Rules
+
+This project uses multiple AI coding agents on different models. This section defines who does what, so they don't step on each other or drift into inconsistent code styles. Every agent should read this file before starting any task.
+
+### Agent Assignments
+
+| Agent | Model | Role | Use it for |
+|---|---|---|---|
+| VS Code default agent | gpt-oss-20b (via Kaggle) | Autocomplete / quick edits | Inline completions, small single-file tweaks, boilerplate |
+| Cline | internlm/Atria-Dawn-Preview | Feature builder | New features, multi-file changes of moderate complexity |
+| Claude Code (via Jan) | Opus → moonshotai/kimi-k3, Sonnet → z-ai/glm5, Haiku → openai/gpt-oss-20b | Architect / Refactor lead | Large refactors, cross-file/cross-module changes, planning, reviewing what Cline/OpenCode produced |
+| OpenCode | internlm/Atria-Dawn-Preview | Debugger / Reviewer | Bug fixing, pre-merge review, sanity checks |
+
+Cline and OpenCode currently share the same model. They're told apart by role, not model — Cline builds, OpenCode reviews/fixes. If that distinction stops being useful in practice, consider dropping one.
+
+### Ground rules for every agent
+
+- Read this file (AGENTS.md) before starting any task.
+- Work on your own branch: `agent/<tool-name>/<short-task-name>`. Never edit main/master directly.
+- Only one agent should be active on a given file or branch at a time. Check current branches / open changes before starting.
+- Match the existing code style already in the repo (naming, folder structure, formatting/linting rules). Don't introduce a new pattern without flagging it in the commit/PR description.
+- Keep commits small and atomic, with messages that explain what changed and why.
+- Before merging into main, changes should be reviewed — either by you, or by Claude Code acting in the "Architect / Refactor lead" role above.
+
+### Model routing notes
+
+Jan's Claude Code integration maps Claude's size tiers to other models: Opus → moonshotai/kimi-k3, Sonnet → z-ai/glm5, Haiku → openai/gpt-oss-20b. If output quality drifts, check this mapping first. If you rename or swap any model in Jan/Cline/OpenCode settings, update the table above so it stays accurate.
+

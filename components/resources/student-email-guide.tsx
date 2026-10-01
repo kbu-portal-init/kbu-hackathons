@@ -29,13 +29,13 @@ export function StudentEmailGuideSection() {
         <section
             id="student-email-guide"
             aria-labelledby="student-email-guide-heading"
-            className="scroll-mt-24 overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-b from-white to-zinc-50/60 shadow-xs"
+            className="scroll-mt-24 overflow-hidden rounded-3xl border border-zinc-200/80 bg-linear-to-b from-white to-zinc-50/60 shadow-xs"
         >
             {/* Header banner */}
             <div className="border-b border-zinc-200/80 bg-zinc-50/80 px-5 py-5 sm:px-8 sm:py-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-xs">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-accent text-white shadow-xs">
                             <Mail className="h-5 w-5" />
                         </div>
                         <div>
@@ -43,7 +43,7 @@ export function StudentEmailGuideSection() {
                                 <span className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700">
                                     Official KBU Student Verification
                                 </span>
-                                <span className="text-zinc-300">â€¢</span>
+                                <span className="text-zinc-300">•</span>
                                 <span className="text-xs text-zinc-400">
                                     Updated for {studentEmailGuide.postedDate}
                                 </span>
@@ -61,7 +61,7 @@ export function StudentEmailGuideSection() {
                         href={studentEmailGuide.portalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 sm:text-sm"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-accent px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:shadow-lg hover:shadow-orange-500/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 sm:text-sm"
                     >
                         <span>Open Outlook Webmail</span>
                         <ExternalLink className="h-4 w-4" />
@@ -69,14 +69,14 @@ export function StudentEmailGuideSection() {
                 </div>
             </div>
 
-            <div className="p-5 sm:p-8 space-y-8">
+            <div className="space-y-8 p-5 sm:p-8">
                 {/* Description & Format Card */}
                 <div className="max-w-3xl">
                     <p className="text-sm leading-relaxed text-zinc-600">{studentEmailGuide.description}</p>
                 </div>
 
                 {/* Copyable Format Callout */}
-                <div className="flex flex-col gap-4 rounded-2xl border border-orange-200/90 bg-gradient-to-r from-orange-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex flex-col gap-4 rounded-2xl border border-orange-200/90 bg-linear-to-r from-orange-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <div className="flex items-start gap-3">
                         <div className="rounded-xl bg-orange-500/10 p-2 text-orange-600">
                             <ShieldCheck className="h-5 w-5" />

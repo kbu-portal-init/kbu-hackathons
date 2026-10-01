@@ -1,7 +1,10 @@
 import type { SendNotificationInput } from "@/lib/contracts/notifications";
 
 type SubmissionResult =
-    | { ok: true; data: { emailRecipientCount: number; inAppRecipientCount: number } }
+    | {
+          ok: true;
+          data: { channel: "EMAIL" | "IN_APP" | "BOTH"; emailRecipientCount: number; inAppRecipientCount: number };
+      }
     | { ok: false; error: { message: string } };
 
 export async function submitNotification(
@@ -15,7 +18,7 @@ export async function submitNotification(
         const result = await action(input);
         setMessage(
             result.ok
-                ? `Sent to ${result.data.emailRecipientCount} email recipient(s) and ${result.data.inAppRecipientCount} team inbox(es).`
+                ? `Sent via ${result.data.channel === "EMAIL" ? "email" : result.data.channel === "IN_APP" ? "in-app" : "email and in-app"}: ${result.data.emailRecipientCount} email recipient(s), ${result.data.inAppRecipientCount} team inbox(es).`
                 : result.error.message,
         );
         return result;

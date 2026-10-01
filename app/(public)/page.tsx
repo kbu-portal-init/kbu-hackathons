@@ -1,31 +1,56 @@
-import { ArrowRight, CalendarDays, Megaphone, NotebookPen, Users } from "lucide-react";
+import { ArrowRight, Megaphone, NotebookPen, Terminal, Trophy, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
+import ScrollFx from "@/components/scroll-fx";
 
-const events = [
-    ["KBU Innovation Sprint", "Coming soon", "Campus hackathon"],
-    ["Open Build Weekend", "Registration opens soon", "Community event"],
-    ["Future Tech Challenge", "Save the date", "Themed challenge"],
+const features = [
+    {
+        icon: Users,
+        title: "Form your team",
+        description: "Find builders with complementary skills and register a team in minutes.",
+    },
+    {
+        icon: Zap,
+        title: "Pick a challenge",
+        description: "Themed sprints and open build weekends, from kickoff to demo day.",
+    },
+    {
+        icon: Trophy,
+        title: "Ship and compete",
+        description: "Present a working demo to judges, collect feedback, and win.",
+    },
 ] as const;
+
+const glowBackground = "bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,rgba(109,40,217,0.12),transparent)]";
 
 export default async function Home() {
     return (
-        <main>
+        <main className="overflow-hidden">
             <HomeAuthRedirect />
-            <section className="overflow-hidden border-b border-orange-100 bg-orange-50">
-                <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8">
+            <ScrollFx />
+            {/* Hero — terminal-inspired light band with a static workspace card */}
+            <section id="hero" className={`relative bg-background dot-grid ${glowBackground}`}>
+                <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
                     <div>
-                        <p className="mb-5 inline-flex rounded-full border border-orange-200 bg-white px-3 py-1 text-sm font-semibold text-orange-700">
-                            The KBU hackathon community
+                        <p
+                            data-reveal
+                            className="inline-flex items-center gap-2 font-mono text-sm font-medium text-orange-600"
+                        >
+                            <Terminal className="size-4" />
+                            <span>$ kbu-hackathon --start</span>
+                            <span className="inline-block h-4 w-2 animate-pulse text-orange-600" aria-hidden />
                         </p>
-                        <h1 className="max-w-3xl text-5xl font-black tracking-tight text-zinc-950 sm:text-7xl">
-                            Build. Connect. <span className="text-orange-600">Compete.</span>
+                        <h1
+                            data-reveal
+                            className="mt-6 max-w-3xl text-5xl font-black tracking-tight text-foreground sm:text-7xl"
+                        >
+                            Build. Connect. <span className="text-gradient">Compete.</span>
                         </h1>
-                        <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-600">
-                            Find your next challenge, meet ambitious builders, and turn bold ideas into something real
-                            with KBU Hackathon 2026.
+                        <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-brand-muted-foreground">
+                            Step into the KBU hackathon workspace. Find your next challenge, meet ambitious builders,
+                            and turn bold ideas into something real.
                         </p>
-                        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                        <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
                             <Link
                                 href="/events"
                                 className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
@@ -37,91 +62,165 @@ export default async function Home() {
                                 href="/login"
                                 className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
                             >
-                                Login
+                                ./sign-in
                             </Link>
                         </div>
                     </div>
-                    <div className="relative hidden min-h-72 lg:block">
-                        <div className="absolute right-8 top-4 size-56 rounded-full bg-orange-300/50 blur-3xl" />
-                        <div className="relative ml-auto max-w-sm rounded-3xl border border-orange-200 bg-white p-7 shadow-xl shadow-orange-200/40">
-                            <p className="text-sm font-semibold text-orange-600">Whatâ€™s happening</p>
-                            <p className="mt-4 text-3xl font-bold tracking-tight">Ideas start here.</p>
-                            <div className="mt-8 space-y-4 text-sm text-zinc-600">
-                                <p className="flex items-center gap-3">
-                                    <CalendarDays className="size-5 text-orange-600" /> Discover upcoming events
-                                </p>
-                                <p className="flex items-center gap-3">
-                                    <Users className="size-5 text-orange-600" /> Find your people
-                                </p>
-                                <p className="flex items-center gap-3">
-                                    <Megaphone className="size-5 text-orange-600" /> Stay in the loop
-                                </p>
+                    <div data-reveal className="relative">
+                        <div className="absolute -inset-4 rounded-4xl bg-orange-500/10 blur-2xl" aria-hidden />
+                        <div className="relative overflow-hidden rounded-2xl glass shadow-2xl shadow-orange-500/10">
+                            <div className="flex items-center gap-2 border-b border-slate-200/70 px-4 py-3">
+                                <span className="size-3 rounded-full bg-rose-300" aria-hidden />
+                                <span className="size-3 rounded-full bg-amber-300" aria-hidden />
+                                <span className="size-3 rounded-full bg-emerald-300" aria-hidden />
+                                <span className="ml-3 font-mono text-xs text-brand-muted-foreground">
+                                    kbu-hackathon-2026 — first build
+                                </span>
+                            </div>
+                            <pre className="overflow-x-auto px-5 py-5 font-mono text-[13px] leading-7 text-foreground">
+                                <span className="block">
+                                    <span className="text-brand-muted-foreground">$</span>{" "}
+                                    <span className="font-semibold">pnpm create hackathon</span>
+                                </span>
+                                <span className="block">
+                                    <span className="text-orange-600">✔</span> workspace ready
+                                </span>
+                                <span className="block">
+                                    <span className="text-brand-muted-foreground">$</span>{" "}
+                                    <span className="font-semibold">git checkout -b feat/your-idea</span>
+                                </span>
+                                <span className="block">
+                                    <span className="text-orange-600">✔</span> branch created
+                                </span>
+                                <span className="block">
+                                    <span className="text-brand-muted-foreground">$</span>{" "}
+                                    <span className="font-semibold">pnpm dev</span>
+                                    <span
+                                        className="ml-1 inline-block h-4 w-2 animate-pulse bg-orange-600 align-middle"
+                                        aria-hidden
+                                    />
+                                </span>
+                                <span className="block text-orange-600">➜ ready — bring an idea</span>
+                            </pre>
+                            <div className="border-t border-slate-200/70 px-5 py-3.5">
+                                <Link
+                                    href="/3d-demo"
+                                    className="group inline-flex items-center gap-2 font-mono text-sm font-medium text-orange-600 transition hover:text-orange-700"
+                                >
+                                    walk_into_the_room
+                                    <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
+                {/* Section divider — the gradient is reserved for CTAs, key
+                    headlines, and dividers only. */}
+                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-accent" aria-hidden />
             </section>
+
+            {/* Features */}
             <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-                <div className="flex items-end justify-between gap-4">
-                    <div>
-                        <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Get involved</p>
-                        <h2 className="mt-2 text-3xl font-bold tracking-tight">Upcoming events</h2>
-                    </div>
-                    <Link
-                        href="/events"
-                        className="hidden items-center gap-1 text-sm font-semibold text-orange-600 sm:flex"
-                    >
-                        View all events <ArrowRight className="size-4" />
-                    </Link>
+                <div data-reveal className="max-w-2xl">
+                    <p className="font-mono text-sm font-medium text-orange-600">{"// how_it_works"}</p>
+                    <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                        From idea to demo
+                    </h2>
+                    <p className="mt-4 text-brand-muted-foreground">
+                        Three steps separate an empty repository from a working demo on stage.
+                    </p>
                 </div>
-                <div className="mt-8 grid gap-5 md:grid-cols-3">
-                    {events.map(([title, date, type]) => (
+                <div className="mt-12 grid gap-5 md:grid-cols-3" data-reveal-group>
+                    {features.map(({ icon: Icon, title, description }) => (
                         <article
                             key={title}
-                            className="rounded-2xl border border-zinc-200 p-6 hover:shadow-lg hover:shadow-orange-100"
+                            data-reveal
+                            className="group relative overflow-hidden rounded-2xl glass p-7 transition hover:border-orange-500/40"
                         >
-                            <p className="text-sm font-medium text-orange-600">{type}</p>
-                            <h3 className="mt-8 text-xl font-bold">{title}</h3>
-                            <p className="mt-2 text-sm text-zinc-500">{date}</p>
-                            <Link
-                                href="/events"
-                                className="mt-6 inline-flex items-center gap-1 text-sm font-semibold hover:text-orange-600"
-                            >
-                                Learn more <ArrowRight className="size-4" />
-                            </Link>
+                            <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-600 transition group-hover:bg-orange-200">
+                                <Icon className="size-5" />
+                            </div>
+                            <h3 className="mt-5 text-lg font-bold tracking-tight text-foreground">{title}</h3>
+                            <p className="mt-2 text-sm leading-7 text-brand-muted-foreground">{description}</p>
                         </article>
                     ))}
                 </div>
             </section>
-            <section className="bg-zinc-50">
-                <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-                    <div>
-                        <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Stay informed</p>
-                        <h2 className="mt-2 text-3xl font-bold tracking-tight">Latest announcements</h2>
-                        <p className="mt-4 text-zinc-600">
-                            News, deadlines, and updates from the KBU hackathon community.
+
+            {/* Announcements */}
+            <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+                <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+                    <div data-reveal>
+                        <p className="font-mono text-sm font-medium text-orange-600">{"// announcements"}</p>
+                        <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                            Latest from the community
+                        </h2>
+                        <p className="mt-4 text-brand-muted-foreground">
+                            News, deadlines, and updates from the KBU Hackathon 2026.
                         </p>
                         <Link
                             href="/announcements"
-                            className="mt-6 inline-flex items-center gap-1 font-semibold text-orange-600"
+                            className="mt-6 inline-flex items-center gap-1 font-semibold text-orange-600 transition hover:text-orange-700"
                         >
                             Read all announcements <ArrowRight className="size-4" />
                         </Link>
                     </div>
-                    <div className="divide-y divide-zinc-200 rounded-2xl border border-zinc-200 bg-white">
-                        <Link href="/announcements" className="block p-5 hover:bg-orange-50/50">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
-                                Community update
-                            </p>
-                            <h3 className="mt-2 font-semibold">New hackathon opportunities are on the way</h3>
-                            <p className="mt-1 text-sm text-zinc-500">
-                                Keep an eye on the events calendar for registration dates.
-                            </p>
+                    <div data-reveal className="overflow-hidden rounded-2xl glass">
+                        {[
+                            {
+                                tag: "community_update",
+                                title: "New hackathon opportunities are on the way",
+                                body: "Keep an eye on the events calendar for registration dates.",
+                            },
+                            {
+                                tag: "for_teams",
+                                title: "Prepare your team for the next challenge",
+                                body: "Explore resources and start shaping your idea.",
+                            },
+                        ].map((announcement) => (
+                            <Link
+                                key={announcement.tag}
+                                href="/announcements"
+                                className="flex items-start gap-4 border-b border-orange-200 p-5 transition last:border-b-0 hover:bg-orange-50"
+                            >
+                                <Megaphone className="mt-0.5 size-5 shrink-0 text-orange-600" />
+                                <div>
+                                    <p className="font-mono text-xs font-medium text-orange-600">{announcement.tag}</p>
+                                    <h3 className="mt-1.5 font-semibold text-foreground">{announcement.title}</h3>
+                                    <p className="mt-1 text-sm text-brand-muted-foreground">{announcement.body}</p>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Final CTA */}
+            <section className="relative bg-background border-t border-orange-100/80 dot-grid">
+                <div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
+                    <p className="font-mono text-sm font-medium text-orange-600">$ ready_to_build --join</p>
+                    <h2
+                        data-reveal
+                        className="mx-auto mt-5 max-w-2xl text-4xl font-black tracking-tight text-foreground sm:text-5xl"
+                    >
+                        Your team is one commit away
+                    </h2>
+                    <p data-reveal className="mx-auto mt-5 max-w-xl text-brand-muted-foreground">
+                        Register, find your team, and start building before the next kickoff.
+                    </p>
+                    <div data-reveal className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+                        <Link
+                            href="/register"
+                            className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-accent px-7 py-3 font-semibold text-white shadow-lg shadow-orange-500/25 transition hover:shadow-orange-500/40"
+                        >
+                            Register a team
+                            <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
                         </Link>
-                        <Link href="/announcements" className="block p-5 hover:bg-orange-50/50">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">For teams</p>
-                            <h3 className="mt-2 font-semibold">Prepare your team for the next challenge</h3>
-                            <p className="mt-1 text-sm text-zinc-500">Explore resources and start shaping your idea.</p>
+                        <Link
+                            href="/about"
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-orange-400 bg-orange-50 px-7 py-3 font-mono text-sm font-medium text-orange-700 transition hover:border-orange-600 hover:text-orange-800"
+                        >
+                            ./about
                         </Link>
                     </div>
                 </div>

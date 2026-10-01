@@ -1,7 +1,33 @@
-* text=auto
-*.ts text eol=lf
-*.tsx text eol=lf
-*.prisma text eol=lf
-*.sql text eol=lf
-*.json text eol=lf
-*.md text eol=lf
+# Normalize line endings to LF in the repository.
+# Git stores text files with LF in the index; checkouts keep LF in the working tree.
+# This stops core.autocrlf=true from rewriting every file on checkout, which made
+# the whole working tree appear dirty and polluted real diffs.
+
+* text=auto eol=lf
+
+# Binary assets must never be touched by the EOL normalization.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.avif binary
+*.glb binary
+*.gltf binary
+*.hdr binary
+*.fbx binary
+*.usdz binary
+*.mp4 binary
+*.webm binary
+*.mp3 binary
+*.wav binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.lock binary

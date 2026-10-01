@@ -40,6 +40,43 @@ describe("application contracts", () => {
         );
     });
 
+    it("allows normal name punctuation but rejects markup, controls, and oversized names", () => {
+        const valid = submitRegistrationSchema.safeParse({
+            teamName: ' R&D "Phoenix" ',
+            leaderName: " O'Brien ",
+            leaderEmail: "leader@ms.kbu.ac.th",
+            members: [{ name: "Anne-Marie", role: "DEVELOPER", email: "member@ms.kbu.ac.th" }],
+        });
+        assert.equal(valid.success, true);
+        assert.equal(
+            submitRegistrationSchema.safeParse({
+                teamName: "<script>",
+                leaderName: "Leader",
+                leaderEmail: "leader@ms.kbu.ac.th",
+                members: [],
+            }).success,
+            false,
+        );
+        assert.equal(
+            submitRegistrationSchema.safeParse({
+                teamName: "Team\u0000Name",
+                leaderName: "Leader",
+                leaderEmail: "leader@ms.kbu.ac.th",
+                members: [],
+            }).success,
+            false,
+        );
+        assert.equal(
+            submitRegistrationSchema.safeParse({
+                teamName: "T".repeat(101),
+                leaderName: "Leader",
+                leaderEmail: "leader@ms.kbu.ac.th",
+                members: [],
+            }).success,
+            false,
+        );
+    });
+
     it("requires registration workflow identifiers and rejection reasons", () => {
         assert.equal(approveRegistrationSchema.safeParse({ registrationId: "registration-1" }).success, true);
         assert.equal(approveRegistrationSchema.safeParse({ registrationId: "" }).success, false);

@@ -25,7 +25,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
-| Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending and team in-app inbox |
+| Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 
@@ -49,7 +49,7 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - Browse approved teams with pagination, submission counts, roster/submission detail views, and team ban/unban actions.
 - Admins can ban organizers and teams; organizers can ban teams only. Bans revoke active sessions and create audit records.
 - Student email verification uses random hashed tokens, expiry, replacement of outstanding tokens, and atomic single-use consumption.
-- SMTP delivery is provider-neutral through `sendEmail`; named notification templates route password resets, student verification, account ban/unban, and organizer account-created messages through `sendNotification`. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour. Both use Better Auth-compatible raw reset tokens.
+- SMTP delivery is provider-neutral through `sendEmail`; predefined, code-owned templates in `lib/services/email-templates.ts` route password resets, student verification, registration updates, account ban/unban, and organizer account-created messages through `sendNotification`. Templates provide branded HTML and plain-text fallbacks; dynamic values are HTML-escaped. SMTP delivery is awaited, while `AuditLog` delivery outcomes are recorded asynchronously and do not change the delivery result. Onboarding password-setup links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour. Both use Better Auth-compatible raw reset tokens.
 - Event settings are managed through authenticated organizer/admin server actions with Zod validation, ISO-safe DTO mapping, atomic singleton upserts, and audit logging.
 - File storage uses authenticated server-side proxy uploads to Cloudflare R2. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated by the proxy and returned as public R2 URLs.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.

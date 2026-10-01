@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { listOrganizers } from "@/lib/data/organizers";
 import { OrganizerManagement } from "./_components/organizer-management";
@@ -19,14 +18,8 @@ export default async function AdminOrganizersPage({
         <main className="space-y-8">
             <div className="flex items-end justify-between gap-4">
                 <div>
-                    <Link href="/admin" className="text-sm font-medium text-orange-600">
-                        â† Dashboard
-                    </Link>
-                    <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-orange-600">
-                        Administrator
-                    </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Organizers</h1>
-                    <p className="mt-2 text-zinc-600">Manage organizer accounts and elevated access.</p>
+                    <p className="mt-2 text-muted-foreground">Manage organizer accounts and elevated access.</p>
                 </div>
             </div>
             <OrganizerManagement items={items} />

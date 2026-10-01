@@ -35,29 +35,28 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                 <h2 className="text-lg font-semibold">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row sm:items-center">
-                        <div className="relative size-20 min-w-20 max-w-20 shrink-0 overflow-hidden rounded-full bg-orange-100 text-2xl font-bold text-orange-700">
-                            {image ? (
-                                <Image
-                                    src={image}
-                                    alt="Profile"
-                                    width={80}
-                                    height={80}
-                                    className="absolute inset-0 size-full object-cover"
-                                    unoptimized
-                                />
-                            ) : (
-                                <span className="absolute inset-0 flex items-center justify-center">
-                                    {profile.name.slice(0, 1).toUpperCase()}
-                                </span>
-                            )}
-                        </div>
-                        <div className="relative size-20 shrink-0">
+                        <div className="relative size-20 min-w-20 max-w-20 shrink-0 rounded-full bg-orange-100 text-2xl font-bold text-orange-700">
+                            <div className="absolute inset-0 overflow-hidden rounded-full">
+                                {image ? (
+                                    <Image
+                                        src={image}
+                                        alt="Profile"
+                                        width={80}
+                                        height={80}
+                                        className="absolute inset-0 size-full object-cover"
+                                        unoptimized
+                                    />
+                                ) : (
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                        {profile.name.slice(0, 1).toUpperCase()}
+                                    </span>
+                                )}
+                            </div>
                             <FileUpload
                                 category="admin-profile-image"
                                 accept="image/jpeg,image/png,image/webp,image/gif"
                                 currentFile={image}
                                 iconOverlay
-                                editDescription="Choose a new profile photo or remove the current photo."
                                 onRemove={async () => {
                                     setImage(null);
                                     const result = await updateAdminProfile({ name, email, image: null });

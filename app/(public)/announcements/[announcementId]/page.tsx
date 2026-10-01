@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { BackButton } from "@/components/back-button";
 import { ShareButton } from "@/components/share-button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getPublishedAnnouncementById } from "@/lib/data/announcements";
 
 type AnnouncementPageProps = {
@@ -48,9 +50,22 @@ export async function generateMetadata({ params }: AnnouncementPageProps): Promi
     };
 }
 
-export default async function AnnouncementPage({ params }: AnnouncementPageProps) {
-    const { announcementId } = await params;
+function AnnouncementContentFallback() {
+    return (
+        <article className="mt-10">
+            <Skeleton className="aspect-2/1 w-full rounded-3xl bg-zinc-100" />
+            <Skeleton className="mt-8 h-4 w-48 bg-orange-100" />
+            <Skeleton className="mt-6 h-10 w-3/4 max-w-full bg-zinc-100" />
+            <div className="mt-8 space-y-4">
+                {(["one", "two", "three", "four", "five"] as const).map((row) => (
+                    <Skeleton className="h-5 w-full bg-zinc-100" key={row} />
+                ))}
+            </div>
+        </article>
+    );
+}
 
+async function AnnouncementContent({ announcementId }: { announcementId: string }) {
     const announcement = await getPublishedAnnouncementById(announcementId);
 
     if (!announcement) {
@@ -61,44 +76,54 @@ export default async function AnnouncementPage({ params }: AnnouncementPageProps
     const imageUrl = announcement.imageUrl ?? "/images/kbu.webp";
 
     return (
+        <article className="mt-10">
+            <div className="relative aspect-2/1 w-full overflow-hidden rounded-3xl bg-muted shadow-sm">
+                <Image
+                    src={imageUrl}
+                    alt={announcement.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 896px"
+                    priority
+                />
+            </div>
+
+            <div className="mt-10">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+                    <time
+                        dateTime={new Date(publishedDate).toISOString()}
+                        className="text-xs font-bold uppercase tracking-[0.18em] text-primary"
+                    >
+                        Published {dateFormatter.format(new Date(publishedDate))}
+                    </time>
+                    <ShareButton title={announcement.title} />
+                </div>
+
+                <h1 className="mt-8 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
+                    {announcement.title}
+                </h1>
+
+                <div className="mt-8 whitespace-pre-wrap wrap-break-word text-base leading-8 text-brand-muted-foreground sm:text-lg sm:leading-9">
+                    {announcement.content}
+                </div>
+            </div>
+        </article>
+    );
+}
+
+export default async function AnnouncementPage({ params }: AnnouncementPageProps) {
+    const { announcementId } = await params;
+
+    return (
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-4xl">
                 <div className="flex items-center justify-between gap-4">
                     <BackButton fallbackHref="/announcements" />
                 </div>
 
-                <article className="mt-10">
-                    <div className="relative aspect-2/1 w-full overflow-hidden rounded-3xl bg-muted shadow-sm">
-                        <Image
-                            src={imageUrl}
-                            alt={announcement.title}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 1024px) 100vw, 896px"
-                            priority
-                        />
-                    </div>
-
-                    <div className="mt-10">
-                        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
-                            <time
-                                dateTime={new Date(publishedDate).toISOString()}
-                                className="text-xs font-bold uppercase tracking-[0.18em] text-primary"
-                            >
-                                Published {dateFormatter.format(new Date(publishedDate))}
-                            </time>
-                            <ShareButton title={announcement.title} />
-                        </div>
-
-                        <h1 className="mt-8 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
-                            {announcement.title}
-                        </h1>
-
-                        <div className="mt-8 whitespace-pre-wrap wrap-break-word text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">
-                            {announcement.content}
-                        </div>
-                    </div>
-                </article>
+                <Suspense fallback={<AnnouncementContentFallback />}>
+                    <AnnouncementContent announcementId={announcementId} />
+                </Suspense>
             </div>
         </main>
     );

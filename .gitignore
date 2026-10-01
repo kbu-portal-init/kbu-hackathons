@@ -53,3 +53,13 @@ foldder-local/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# local agent/editor tooling (not part of the app)
+.ohmyagent/
+.clinerules/
+.vscode/
+.github/instructions/
+package-lock.json
+
+# OpenCode Config File
+opencode.json

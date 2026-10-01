@@ -25,7 +25,7 @@ export function MobileNavigation() {
         <>
             <button
                 type="button"
-                className="flex size-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-orange-50"
+                className="flex size-10 items-center justify-center rounded-lg text-brand-muted-foreground hover:bg-orange-50"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? "Close menu" : "Open menu"}
@@ -45,7 +45,7 @@ export function MobileNavigation() {
                                 key={href}
                                 href={href}
                                 onClick={() => setOpen(false)}
-                                className="rounded-xl px-4 py-3 text-base font-medium text-muted-foreground hover:bg-orange-50 hover:text-orange-700"
+                                className="rounded-xl px-4 py-3 text-base font-medium text-brand-muted-foreground hover:bg-orange-50 hover:text-orange-700"
                             >
                                 {label}
                             </Link>
@@ -55,9 +55,9 @@ export function MobileNavigation() {
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}
-                            className="block rounded-full bg-orange-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-orange-700"
+                            className="block rounded-full bg-gradient-accent px-4 py-3 text-center text-sm font-semibold text-white"
                         >
-                            Login
+                            Sign in
                         </Link>
                     </div>
                 </nav>

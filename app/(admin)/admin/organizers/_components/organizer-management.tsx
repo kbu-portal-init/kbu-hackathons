@@ -172,23 +172,25 @@ export function OrganizerManagement({ items }: Props) {
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            type={showCreatePassword ? "text" : "password"}
-                                            className="pr-10"
-                                            aria-invalid={fieldState.invalid}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon-sm"
-                                            className="relative float-right -mt-9 mr-1"
-                                            aria-label={showCreatePassword ? "Hide password" : "Show password"}
-                                            onClick={() => setShowCreatePassword((current) => !current)}
-                                        >
-                                            {showCreatePassword ? <EyeOff /> : <Eye />}
-                                        </Button>
+                                        <div className="relative">
+                                            <Input
+                                                {...field}
+                                                id={field.name}
+                                                type={showCreatePassword ? "text" : "password"}
+                                                className="pr-10"
+                                                aria-invalid={fieldState.invalid}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon-sm"
+                                                className="absolute inset-y-1 right-1"
+                                                aria-label={showCreatePassword ? "Hide password" : "Show password"}
+                                                onClick={() => setShowCreatePassword((current) => !current)}
+                                            >
+                                                {showCreatePassword ? <EyeOff /> : <Eye />}
+                                            </Button>
+                                        </div>
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -340,8 +342,8 @@ function OrganizerTable({
                                         <>
                                             {item.banReason ?? "No reason"}
                                             {item.banExpires
-                                                ? ` Â· until ${new Date(item.banExpires).toLocaleString()}`
-                                                : " Â· permanent"}
+                                                ? ` · until ${new Date(item.banExpires).toLocaleString()}`
+                                                : " · permanent"}
                                         </>
                                     ) : (
                                         "—"
