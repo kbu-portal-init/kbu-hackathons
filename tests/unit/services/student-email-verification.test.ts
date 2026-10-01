@@ -10,9 +10,8 @@ before(async () => {
     const serverOnlyPath = require.resolve("server-only");
     require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
     ({ default: prisma } = await import("@/lib/prisma"));
-    ({ consumeStudentEmailVerification: consume, allMembersVerified } = await import(
-        "@/lib/services/student-email-verification"
-    ));
+    ({ consumeStudentEmailVerification: consume, allMembersVerified } =
+        await import("@/lib/services/student-email-verification"));
 });
 
 describe("student email verification", () => {

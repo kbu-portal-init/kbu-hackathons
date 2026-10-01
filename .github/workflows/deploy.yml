@@ -20,56 +20,56 @@ jobs:
             - name: Trigger Remote Container Deployment
               uses: appleboy/ssh-action@v1.0.3
               with:
-                host: ${{ secrets.SERVER_HOST }}
-                username: ${{ secrets.SERVER_USER }}
-                key: ${{ secrets.SERVER_SSH_KEY }}
-                port: ${{ secrets.SERVER_PORT }}
-                script_stop: true
-                script: |
-                    set -e
-                    cd /opt/hackathon
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  port: ${{ secrets.SERVER_PORT }}
+                  script_stop: true
+                  script: |
+                      set -e
+                      cd /opt/hackathon
 
-                    production_env=/opt/hackathon/.env.production
-                    if [ ! -f "$production_env" ]; then
-                        echo "Missing production environment file: $production_env" >&2
-                        exit 1
-                    fi
+                      production_env=/opt/hackathon/.env.production
+                      if [ ! -f "$production_env" ]; then
+                          echo "Missing production environment file: $production_env" >&2
+                          exit 1
+                      fi
 
-                    required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN"
+                      required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN"
 
-                    missing_vars=""
-                    for name in $required_vars; do
-                        if ! grep -Eq "^[[:space:]]*${name}[[:space:]]*=[[:space:]]*[^[:space:]]" "$production_env"; then
-                            missing_vars="$missing_vars $name"
-                        fi
-                    done
+                      missing_vars=""
+                      for name in $required_vars; do
+                          if ! grep -Eq "^[[:space:]]*${name}[[:space:]]*=[[:space:]]*[^[:space:]]" "$production_env"; then
+                              missing_vars="$missing_vars $name"
+                          fi
+                      done
 
-                    if [ -n "$missing_vars" ]; then
-                        echo "Missing production environment values:$missing_vars" >&2
-                        exit 1
-                    fi
+                      if [ -n "$missing_vars" ]; then
+                          echo "Missing production environment values:$missing_vars" >&2
+                          exit 1
+                      fi
 
-                    echo "Production environment preflight passed."
+                      echo "Production environment preflight passed."
 
-                    # Tag current image as rollback target
-                    docker tag hackathon-web:latest hackathon-web:rollback 2>/dev/null || true
+                      # Tag current image as rollback target
+                      docker tag hackathon-web:latest hackathon-web:rollback 2>/dev/null || true
 
-                    # Pull latest code
-                    git fetch origin main
-                    git reset --hard ${{ github.sha }}
+                      # Pull latest code
+                      git fetch origin main
+                      git reset --hard ${{ github.sha }}
 
-                    # Build and start new containers
-                    docker compose --env-file /opt/hackathon/.env.production up -d --build --remove-orphans
+                      # Build and start new containers
+                      docker compose --env-file /opt/hackathon/.env.production up -d --build --remove-orphans
 
-                    # Health check with automatic rollback on failure
-                    if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'; then
-                        echo "❌ Health check failed — rolling back to previous image..."
-                        docker compose --env-file /opt/hackathon/.env.production down
-                        docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
-                        docker compose --env-file /opt/hackathon/.env.production up -d
-                        echo "⚠️ Rollback complete. Investigate the failed build."
-                        exit 1
-                    fi
+                      # Health check with automatic rollback on failure
+                      if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'; then
+                          echo "❌ Health check failed — rolling back to previous image..."
+                          docker compose --env-file /opt/hackathon/.env.production down
+                          docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
+                          docker compose --env-file /opt/hackathon/.env.production up -d
+                          echo "⚠️ Rollback complete. Investigate the failed build."
+                          exit 1
+                      fi
 
-                    echo "✅ Health check passed."
-                    docker image prune -f
+                      echo "✅ Health check passed."
+                      docker image prune -f

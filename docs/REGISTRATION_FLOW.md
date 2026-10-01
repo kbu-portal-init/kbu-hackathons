@@ -13,18 +13,18 @@ AI coding agents should treat this document as the source of truth for the busin
 There are three separate concepts:
 
 1. **Team registration**
-   - A team submits its team name and member information.
-   - A registration starts as `PENDING`.
+    - A team submits its team name and member information.
+    - A registration starts as `PENDING`.
 
 2. **Student email verification**
-   - Every team member must verify their own student email.
-   - This proves control of the submitted student email.
-   - This is NOT the same thing as logging into the team account.
+    - Every team member must verify their own student email.
+    - This proves control of the submitted student email.
+    - This is NOT the same thing as logging into the team account.
 
 3. **Team account**
-   - One Better Auth user/account represents the whole team.
-   - All members of the same team use the same team username and password.
-   - There is one team account per team, not one auth account per TeamMember.
+    - One Better Auth user/account represents the whole team.
+    - All members of the same team use the same team username and password.
+    - There is one team account per team, not one auth account per TeamMember.
 
 ---
 

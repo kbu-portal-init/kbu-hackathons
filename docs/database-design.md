@@ -12,16 +12,16 @@ Status: design reference. `prisma/schema.prisma` is the active schema. This docu
 
 ## Models
 
-| Model | Responsibility |
-| --- | --- |
-| User, Account, Session, Verification | Better Auth identities, credentials, sessions and tokens. |
-| EventSettings | Single event title, description, venue, image URLs, promo URL, registration window, event dates, submission opening/deadline, maximum team capacity and roster limits. |
-| Team | Stable team identity, reserved login name, optional image URL and optional provisioned auth account. |
-| TeamMember | Roster, student notification email and role such as development, data, design, product, marketing, presentation, or `OTHER`. |
-| Registration | One application per team and its current status. |
-| RegistrationReview | Append-only decisions, reasons and reviewer identity. |
-| Submission | One current project per team, saved as a draft before submission. |
-| AuditLog | Management operations and shared-account activity. |
+| Model                                | Responsibility                                                                                                                                                         |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User, Account, Session, Verification | Better Auth identities, credentials, sessions and tokens.                                                                                                              |
+| EventSettings                        | Single event title, description, venue, image URLs, promo URL, registration window, event dates, submission opening/deadline, maximum team capacity and roster limits. |
+| Team                                 | Stable team identity, reserved login name, optional image URL and optional provisioned auth account.                                                                   |
+| TeamMember                           | Roster, student notification email and role such as development, data, design, product, marketing, presentation, or `OTHER`.                                           |
+| Registration                         | One application per team and its current status.                                                                                                                       |
+| RegistrationReview                   | Append-only decisions, reasons and reviewer identity.                                                                                                                  |
+| Submission                           | One current project per team, saved as a draft before submission.                                                                                                      |
+| AuditLog                             | Management operations and shared-account activity.                                                                                                                     |
 
 The team and application exist before credentials are issued. `Team.userId` is
 nullable until provisioning succeeds. `Team.loginName` reserves the unique name

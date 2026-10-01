@@ -5,94 +5,94 @@
 # ==============================================================================
 
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
-      secrets:
-        - sentry_auth_token
-    container_name: kbu_hackathon_web
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:3000:3000" # Bound strictly to localhost; only Nginx can reach it
-    env_file:
-      - path: /opt/hackathon/.env.production
-        required: true
-    environment:
-      NODE_ENV: production
-      PORT: "3000"
-      SENTRY_AUTH_TOKEN: ""
-    networks:
-      - frontend_net
-      - backend_net
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "1.3"
-          memory: 2048M
-        reservations:
-          cpus: "0.2"
-          memory: 512M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+            secrets:
+                - sentry_auth_token
+        container_name: kbu_hackathon_web
+        restart: unless-stopped
+        ports:
+            - "127.0.0.1:3000:3000" # Bound strictly to localhost; only Nginx can reach it
+        env_file:
+            - path: /opt/hackathon/.env.production
+              required: true
+        environment:
+            NODE_ENV: production
+            PORT: "3000"
+            SENTRY_AUTH_TOKEN: ""
+        networks:
+            - frontend_net
+            - backend_net
+        depends_on:
+            db:
+                condition: service_healthy
+        deploy:
+            resources:
+                limits:
+                    cpus: "1.3"
+                    memory: 2048M
+                reservations:
+                    cpus: "0.2"
+                    memory: 512M
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
 
-  db:
-    image: postgres:16-alpine
-    container_name: kbu_hackathon_db
-    restart: unless-stopped
-    env_file:
-      - path: /opt/hackathon/.env.production
-        required: true
-    environment:
-      SENTRY_AUTH_TOKEN: ""
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend_net # Completely isolated; no host port mapping
-    deploy:
-      resources:
-        limits:
-          cpus: "0.6"
-          memory: 1536M
-        reservations:
-          cpus: "0.1"
-          memory: 256M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    healthcheck:
-      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    security_opt:
-      - no-new-privileges:true
+    db:
+        image: postgres:16-alpine
+        container_name: kbu_hackathon_db
+        restart: unless-stopped
+        env_file:
+            - path: /opt/hackathon/.env.production
+              required: true
+        environment:
+            SENTRY_AUTH_TOKEN: ""
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - backend_net # Completely isolated; no host port mapping
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.6"
+                    memory: 1536M
+                reservations:
+                    cpus: "0.1"
+                    memory: 256M
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
+        healthcheck:
+            test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+        security_opt:
+            - no-new-privileges:true
 
 networks:
-  frontend_net:
-    driver: bridge
-  backend_net:
-    internal: true # Cannot receive external traffic; database isolation
+    frontend_net:
+        driver: bridge
+    backend_net:
+        internal: true # Cannot receive external traffic; database isolation
 
 volumes:
-  postgres_data:
-    driver: local
+    postgres_data:
+        driver: local
 
 secrets:
-  sentry_auth_token:
-    environment: SENTRY_AUTH_TOKEN
+    sentry_auth_token:
+        environment: SENTRY_AUTH_TOKEN
