@@ -113,6 +113,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                             <Info label="Target users" value={team.submission.targetUsers} />
                             <Info label="Solution" value={team.submission.solution} />
                             <Info label="Technology" value={team.submission.technologyStack} />
+                            <Info label="Additional notes" value={team.submission.additionalNotes || "None"} />
                         </div>
                         <div className="flex flex-wrap gap-3">
                             {team.submission.repositoryUrl && (
