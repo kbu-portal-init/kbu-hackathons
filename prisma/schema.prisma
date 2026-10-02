@@ -49,25 +49,31 @@ enum SubmissionStatus {
   REOPENED
 }
 
+enum EducationProgram {
+  THAI_PROGRAM
+  INTERNATIONAL_PROGRAM
+}
+
 // Migration must enforce id = 1 and valid dates/team-size bounds.
 model EventSettings {
-  id                   Int      @id @default(1)
-  title                String
-  description          String?
-  venue                String?
-  imageUrls            String[]
-  promoUrl             String?
-  registrationOpensAt  DateTime @db.Timestamptz(3)
-  registrationClosesAt DateTime @db.Timestamptz(3)
-  startsAt             DateTime @db.Timestamptz(3)
-  endsAt               DateTime @db.Timestamptz(3)
-  submissionOpensAt    DateTime @db.Timestamptz(3)
-  submissionDeadline   DateTime @db.Timestamptz(3)
-  maxTeams             Int
-  minTeamSize          Int
-  maxTeamSize          Int
-  createdAt            DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt            DateTime @updatedAt @db.Timestamptz(3)
+  id                    Int      @id @default(1)
+  title                 String
+  description           String?
+  venue                 String?
+  imageUrls             String[]
+  promoUrl              String?
+  registrationOpensAt   DateTime @db.Timestamptz(3)
+  registrationClosesAt  DateTime @db.Timestamptz(3)
+  startsAt              DateTime @db.Timestamptz(3)
+  endsAt                DateTime @db.Timestamptz(3)
+  submissionOpensAt     DateTime @db.Timestamptz(3)
+  submissionDeadline    DateTime @db.Timestamptz(3)
+   maxThaiTeams          Int
+  maxInternationalTeams Int
+  minTeamSize           Int
+  maxTeamSize           Int
+  createdAt             DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime @updatedAt @db.Timestamptz(3)
 
   @@map("event_settings")
 }
@@ -91,19 +97,20 @@ model Announcement {
 }
 
 model Team {
-  id           String        @id @default(cuid())
+  id           String           @id @default(cuid())
   // Reserved before provisioning; must equal User.username once linked.
-  loginName    String        @unique
+  loginName    String           @unique
   displayName  String
   imageUrl     String?
-  userId       String?       @unique
-  user         User?         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  userId       String?          @unique
+  user         User?            @relation(fields: [userId], references: [id], onDelete: Restrict)
   members      TeamMember[]
   registration Registration?
   submission   Submission?
-  archivedAt   DateTime?     @db.Timestamptz(3)
-  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(3)
+  program      EducationProgram
+  archivedAt   DateTime?        @db.Timestamptz(3)
+  createdAt    DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(3)
 
   @@map("team")
 }
@@ -228,31 +235,31 @@ model User {
   banReason  String?
   banExpires DateTime?
 
-  username        String?              @unique
-  displayUsername String?
-  team            Team?
-  announcements   Announcement[]       @relation("AnnouncementCreator")
-  reviews         RegistrationReview[]
-  auditLogs       AuditLog[]
-  receivedNotifications Notification[] @relation("NotificationRecipient")
-  sentNotifications      Notification[] @relation("NotificationSender")
+  username              String?              @unique
+  displayUsername       String?
+  team                  Team?
+  announcements         Announcement[]       @relation("AnnouncementCreator")
+  reviews               RegistrationReview[]
+  auditLogs             AuditLog[]
+  receivedNotifications Notification[]       @relation("NotificationRecipient")
+  sentNotifications     Notification[]       @relation("NotificationSender")
 
   @@unique([email])
   @@map("user")
 }
 
 model Notification {
-  id             String   @id @default(cuid())
-  recipientId    String
-  recipient      User     @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
-  senderId       String?
-  sender         User?    @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
-  subject        String
-  body           String
-  readAt         DateTime? @db.Timestamptz(3)
-  targetType     String?
-  targetId       String?
-  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  id          String    @id @default(cuid())
+  recipientId String
+  recipient   User      @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  senderId    String?
+  sender      User?     @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  subject     String
+  body        String
+  readAt      DateTime? @db.Timestamptz(3)
+  targetType  String?
+  targetId    String?
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
 
   @@index([recipientId, readAt, createdAt])
   @@index([createdAt])

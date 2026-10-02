@@ -20,7 +20,8 @@ export const upsertEventSettingsSchema = z
         endsAt: eventDateSchema,
         submissionOpensAt: eventDateSchema,
         submissionDeadline: eventDateSchema,
-        maxTeams: z.coerce.number().int().min(1, "Max teams must be at least 1"),
+        maxThaiTeams: z.coerce.number().int().min(0, "Max Thai program teams cannot be negative"),
+        maxInternationalTeams: z.coerce.number().int().min(0, "Max international program teams cannot be negative"),
         minTeamSize: z.coerce.number().int().min(1, "Min team size must be at least 1"),
         maxTeamSize: z.coerce.number().int().min(1, "Max team size must be at least 1"),
     })
@@ -58,7 +59,8 @@ export type EventSettingsDTO = {
     endsAt: string;
     submissionOpensAt: string;
     submissionDeadline: string;
-    maxTeams: number;
+    maxThaiTeams: number;
+    maxInternationalTeams: number;
     minTeamSize: number;
     maxTeamSize: number;
     createdAt: string;

@@ -32,12 +32,20 @@ import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TeamMemberRole } from "@/generated/prisma/enums";
+import type { EducationProgram } from "@/lib/contracts/registration";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
 import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 
 type FormValues = z.input<typeof submitRegistrationSchema>;
 type SubmittedFormValues = z.output<typeof submitRegistrationSchema>;
+
+export type ProgramSlot = { program: EducationProgram; remaining: number; limit: number };
+
+const programLabels: Record<EducationProgram, string> = {
+    THAI_PROGRAM: "Thai program",
+    INTERNATIONAL_PROGRAM: "International program",
+};
 
 const roleOptions = [
     { value: TeamMemberRole.DEVELOPER, label: formatRole(TeamMemberRole.DEVELOPER) },
@@ -50,7 +58,15 @@ const roleOptions = [
     { value: TeamMemberRole.OTHER, label: formatRole(TeamMemberRole.OTHER) },
 ] as const;
 
-export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: number; maxTeamSize: number }) {
+export function RegistrationForm({
+    minTeamSize,
+    maxTeamSize,
+    programSlots,
+}: {
+    minTeamSize: number;
+    maxTeamSize: number;
+    programSlots: ProgramSlot[];
+}) {
     const [submitted, setSubmitted] = useState(false);
     const [selectedTeamSize, setSelectedTeamSize] = useState(minTeamSize);
     const [informationOpen, setInformationOpen] = useState(false);
@@ -157,6 +173,40 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                                         placeholder="e.g. Byte Builders"
                                     />
                                     <FieldDescription>Choose a unique name for your team.</FieldDescription>
+                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                </Field>
+                            )}
+                        />
+                        <Controller
+                            name="program"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="program">Education program</FieldLabel>
+                                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                                        <SelectTrigger
+                                            id="program"
+                                            className="w-full"
+                                            aria-invalid={fieldState.invalid}
+                                        >
+                                            <SelectValue placeholder="Select a program" />
+                                        </SelectTrigger>
+                                        <SelectContent alignItemWithTrigger={false}>
+                                            {programSlots.map((slot) => (
+                                                <SelectItem
+                                                    key={slot.program}
+                                                    value={slot.program}
+                                                    disabled={slot.remaining <= 0}
+                                                >
+                                                    {programLabels[slot.program]} ({slot.remaining} of {slot.limit}{" "}
+                                                    slots left)
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FieldDescription>
+                                        Your team competes in either the Thai or the International program.
+                                    </FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
