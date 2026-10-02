@@ -24,7 +24,7 @@ export function PaginationFooter({
     getPageHref,
 }: PaginationFooterProps) {
     return (
-        <div className="flex items-center justify-between text-sm text-zinc-500" data-page-size={pageSize}>
+        <div className="flex items-center justify-between text-sm text-muted-foreground" data-page-size={pageSize}>
             <span>
                 Showing {itemsShown} of {total}
             </span>

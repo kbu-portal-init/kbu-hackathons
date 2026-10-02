@@ -41,7 +41,7 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-zinc-500">
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 No audit logs found.
                             </TableCell>
                         </TableRow>
@@ -55,7 +55,7 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
                                     {item.actor ? (
                                         <>
                                             <div>{item.actor.name}</div>
-                                            <div className="text-xs text-zinc-500">{item.actor.email}</div>
+                                            <div className="text-xs text-muted-foreground">{item.actor.email}</div>
                                         </>
                                     ) : (
                                         "System"
@@ -63,9 +63,10 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
                                 </TableCell>
                                 <TableCell className="font-medium">{item.action}</TableCell>
                                 <TableCell>
-                                    {item.targetType} <span className="text-xs text-zinc-500">{item.targetId}</span>
+                                    {item.targetType}{" "}
+                                    <span className="text-xs text-muted-foreground">{item.targetId}</span>
                                 </TableCell>
-                                <TableCell className="max-w-72 whitespace-pre-wrap wrap-break-word text-sm text-zinc-500">
+                                <TableCell className="max-w-72 whitespace-pre-wrap wrap-break-word text-sm text-muted-foreground">
                                     {item.details == null ? "—" : JSON.stringify(item.details)}
                                 </TableCell>
                                 <TableCell className="text-right">

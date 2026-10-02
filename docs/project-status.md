@@ -14,6 +14,7 @@ The branch currently provides:
 - Prisma data models for the single event, teams, roster members, registrations, submissions, sessions, bans, audits, and verification tokens.
 - Organizer/admin team management at `/panel/teams` provides paginated approved-team browsing, submission counts, team detail views, and team ban/unban actions; submissions are shown on the team detail page.
 - Organizer/admin manual notifications at `/panel/notifications` can target approved teams or a specific address and choose email, in-app, or both. In-app delivery for a specific address requires a verified member of an approved team; approved team accounts read in-app notifications at `/team/notifications` and can mark them as read.
+- Approved teams can save draft project submissions, finalize them during the configured submission window, and view the submission state at `/team/submit`. Organizers can review full submission details from team management and reopen finalized submissions with audit records.
 
 ## Remaining / follow-up work
 

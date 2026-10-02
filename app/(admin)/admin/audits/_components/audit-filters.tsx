@@ -130,19 +130,19 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                     >
                                         <div className="font-medium">
                                             {item.name}{" "}
-                                            <span className="text-xs text-zinc-500">
+                                            <span className="text-xs text-muted-foreground">
                                                 {item.kind === "teamMember" ? "Team member" : "User"}
                                             </span>
                                         </div>
-                                        <div className="text-xs text-zinc-500">
+                                        <div className="text-xs text-muted-foreground">
                                             {item.email} · {item.id}
                                         </div>
                                     </button>
                                 ))}
                                 {!loading && users.length === 0 && (
-                                    <p className="p-2 text-sm text-zinc-500">No users found.</p>
+                                    <p className="p-2 text-sm text-muted-foreground">No users found.</p>
                                 )}
-                                {loading && <p className="p-2 text-sm text-zinc-500">Loading...</p>}
+                                {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
                             </div>
                             {hasNext && (
                                 <Button

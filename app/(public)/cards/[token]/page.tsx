@@ -16,7 +16,7 @@ export default async function PublicMemberCardPage({ params }: PublicCardPagePro
                         KBU Hackathon 2026
                     </p>
                     <h1 className="mt-4 text-3xl font-bold text-zinc-950">Participant Card not found</h1>
-                    <p className="mt-3 text-zinc-600">
+                    <p className="mt-3 text-muted-foreground">
                         This card link may be invalid, expired, or no longer available.
                     </p>
                 </section>

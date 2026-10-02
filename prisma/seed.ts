@@ -370,7 +370,11 @@ async function createTeam(input: {
             data: {
                 teamId: team.id,
                 title: "Community Connection Platform",
-                description: "A development submission for the seeded approved team.",
+                summary: "A development submission for the seeded approved team.",
+                problem: "A development fixture problem statement.",
+                targetUsers: "KBU students",
+                solution: "A development fixture solution.",
+                technologyStack: "Next.js, TypeScript",
                 repositoryUrl: "https://github.com/example/team-orbit",
                 submittedAt: new Date("2026-03-02T12:00:00.000Z"),
             },

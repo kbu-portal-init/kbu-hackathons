@@ -42,7 +42,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
                 <BackButton fallbackHref="/panel/registrations" />
                 <div>
                     <h1 className="text-2xl font-bold">{item.teamName}</h1>
-                    <p className="text-sm text-zinc-500">{item.loginName}</p>
+                    <p className="text-sm text-muted-foreground">{item.loginName}</p>
                 </div>
             </div>
 
@@ -58,13 +58,13 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
 
             {item.applicationNotes && (
                 <div className="space-y-1">
-                    <p className="text-xs font-medium text-zinc-500">Application notes</p>
+                    <p className="text-xs font-medium text-muted-foreground">Application notes</p>
                     <p className="text-sm">{item.applicationNotes}</p>
                 </div>
             )}
 
             <div className="space-y-2">
-                <p className="text-xs font-medium text-zinc-500">Team members ({item.members.length})</p>
+                <p className="text-xs font-medium text-muted-foreground">Team members ({item.members.length})</p>
                 <div className="rounded-lg border border-zinc-200">
                     <Table>
                         <TableHeader>
@@ -86,7 +86,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
 
             {item.reviews.length > 0 && (
                 <div className="space-y-2">
-                    <p className="text-xs font-medium text-zinc-500">Review history</p>
+                    <p className="text-xs font-medium text-muted-foreground">Review history</p>
                     <div className="space-y-2">
                         {item.reviews.map((r) => (
                             <div key={r.id} className="flex items-start gap-3 text-sm">
@@ -121,7 +121,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
 function DetailField({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
     return (
         <div className="space-y-1">
-            <p className="text-xs font-medium text-zinc-500">{label}</p>
+            <p className="text-xs font-medium text-muted-foreground">{label}</p>
             {children ?? <p className="text-sm">{value}</p>}
         </div>
     );

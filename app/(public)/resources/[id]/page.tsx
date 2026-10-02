@@ -83,7 +83,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
             {/* Top Navigation & Breadcrumbs */}
             <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
                 <nav aria-label="Breadcrumb">
-                    <ol className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-zinc-500">
+                    <ol className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-muted-foreground">
                         <li>
                             <Link href="/" className="transition hover:text-orange-600">
                                 Home
@@ -143,7 +143,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                 {benefit.title}
                             </h1>
 
-                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                                 <span>Provided by {benefit.provider}</span>
                                 {benefit.postedDate && (
                                     <>
@@ -180,7 +180,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     </div>
                 )}
 
-                <p className="mt-5 text-sm leading-relaxed text-zinc-600 sm:text-base">{benefit.description}</p>
+                <p className="mt-5 text-sm leading-relaxed text-muted-foreground sm:text-base">{benefit.description}</p>
             </section>
 
             {/* Main Content Grid */}
@@ -209,7 +209,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                     {/* Restrictions Note if provided */}
                     {benefit.restrictionsNote && (
-                        <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-zinc-200/80 bg-zinc-50 p-3.5 text-xs text-zinc-600 sm:p-4">
+                        <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-zinc-200/80 bg-zinc-50 p-3.5 text-xs text-muted-foreground sm:p-4">
                             <Info className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
                             <div>
                                 <span className="font-semibold">Terms &amp; Restrictions: </span>
@@ -303,7 +303,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                     <h3 className="mt-3 text-sm font-bold text-zinc-900 transition group-hover:text-orange-600">
                                         {item.title}
                                     </h3>
-                                    <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{item.tagline}</p>
+                                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.tagline}</p>
                                 </div>
                                 <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-orange-600">
                                     <span>Read Guide</span>
@@ -320,7 +320,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                         <p className="truncate text-xs font-bold text-zinc-900">{benefit.title}</p>
-                        <p className="truncate text-[10px] text-zinc-500">
+                        <p className="truncate text-[10px] text-muted-foreground">
                             {benefit.provider} • {benefit.valueBadge}
                         </p>
                     </div>
