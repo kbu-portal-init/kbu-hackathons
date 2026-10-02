@@ -20,6 +20,7 @@ export function ReopenSubmissionButton({ submissionId }: { submissionId: string 
                 const result = await reopenTeamSubmission(submissionId);
                 if (!result.ok) return false;
                 window.location.reload();
+                return true;
             }}
         />
     );
