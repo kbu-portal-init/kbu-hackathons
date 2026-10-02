@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
+import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
 import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
 
@@ -49,6 +50,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                     <div className="grid gap-3 text-sm sm:grid-cols-2">
                         <Info label="Registration" value={team.registrationStatus} />
                         <Info label="Account" value={team.banned ? "Banned" : "Active"} />
+                        <Info label="Program" value={formatRole(team.program)} />
                         <Info label="Created" value={format(new Date(team.createdAt), "PPP p")} />
                         <Info label="Updated" value={format(new Date(team.updatedAt), "PPP p")} />
                         <Info

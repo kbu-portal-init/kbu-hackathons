@@ -19,6 +19,7 @@ describe("application contracts", () => {
     it("normalizes valid registration submissions and enforces KBU email addresses", () => {
         const valid = submitRegistrationSchema.safeParse({
             teamName: " Build Team ",
+            program: "THAI_PROGRAM",
             leaderName: " Leader ",
             leaderEmail: "U123456789012@MS.KBU.AC.TH",
             members: [{ name: " Member ", role: "DEVELOPER", email: "u000000000001@ms.kbu.ac.th" }],
@@ -38,11 +39,33 @@ describe("application contracts", () => {
             }).success,
             false,
         );
+        assert.equal(
+            submitRegistrationSchema.safeParse({
+                teamName: "Team",
+                leaderName: "Leader",
+                leaderEmail: "leader@ms.kbu.ac.th",
+                members: [],
+            }).success,
+            false,
+            "program is required",
+        );
+        assert.equal(
+            submitRegistrationSchema.safeParse({
+                teamName: "Team",
+                program: "EXCHANGE_PROGRAM",
+                leaderName: "Leader",
+                leaderEmail: "leader@ms.kbu.ac.th",
+                members: [],
+            }).success,
+            false,
+            "program must be Thai or International",
+        );
     });
 
     it("allows normal name punctuation but rejects markup, controls, and oversized names", () => {
         const valid = submitRegistrationSchema.safeParse({
             teamName: ' R&D "Phoenix" ',
+            program: "INTERNATIONAL_PROGRAM",
             leaderName: " O'Brien ",
             leaderEmail: "leader@ms.kbu.ac.th",
             members: [{ name: "Anne-Marie", role: "DEVELOPER", email: "member@ms.kbu.ac.th" }],
@@ -96,12 +119,15 @@ describe("application contracts", () => {
             endsAt: "2026-03-02",
             submissionOpensAt: "2026-02-01",
             submissionDeadline: "2026-02-28",
-            maxTeams: 10,
+            maxThaiTeams: 5,
+            maxInternationalTeams: 5,
             minTeamSize: 2,
             maxTeamSize: 4,
         };
         assert.equal(upsertEventSettingsSchema.safeParse(base).success, true);
         assert.equal(upsertEventSettingsSchema.safeParse({ ...base, maxTeamSize: 1 }).success, false);
+        assert.equal(upsertEventSettingsSchema.safeParse({ ...base, maxThaiTeams: -1 }).success, false);
+        assert.equal(upsertEventSettingsSchema.safeParse({ ...base, maxInternationalTeams: 0 }).success, true);
         assert.equal(
             upsertEventSettingsSchema.safeParse({ ...base, registrationClosesAt: "2025-01-01" }).success,
             false,

@@ -90,3 +90,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- END:nextjs-agent-rules -->
 
 **Reminder: feature-based architecture is NOT currently adopted. Do not reorganize the codebase into `features/` — keep the current `app/ actions/ components/ hooks/ lib/ prisma/ tests/ docs/` structure.**
+
+<!-- antislop:start -->
+## antislop
+
+For UI, copy, people, mobile layout, or code comments work, read `.agents/skills/antislop/SKILL.md` (the core filter). It also defines the delivery gate and tells you when to load a specialized skill. The optional skill folders (`antislop-ui`, `antislop-copywriting`, `antislop-human`, `antislop-layoutmobile`, `antislop-code`) are not installed in this repository; they come with the antislop release the maintainer fetches.
+
+Before starting UI work, ask the user when antislop applies: during the work, or after it is done.
+<!-- antislop:end -->

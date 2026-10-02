@@ -14,6 +14,7 @@ function listRecord() {
         displayName: "Build Team",
         loginName: "build-team",
         imageUrl: null,
+        program: "THAI_PROGRAM" as const,
         createdAt: date,
         user: { banned: true, banReason: "spam", banExpires: activeBan },
         members: [{ id: "m1" }, { id: "m2" }],

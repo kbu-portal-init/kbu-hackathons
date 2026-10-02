@@ -1,7 +1,12 @@
 import "server-only";
 
 import type { ListResult } from "@/lib/contracts/common";
-import type { ListRegistrationsInput, RegistrationDetailDTO, RegistrationListItem } from "@/lib/contracts/registration";
+import type {
+    EducationProgram,
+    ListRegistrationsInput,
+    RegistrationDetailDTO,
+    RegistrationListItem,
+} from "@/lib/contracts/registration";
 import { toRegistrationDetail, toRegistrationListItem } from "@/lib/mappers/registrations";
 import prisma from "@/lib/prisma";
 
@@ -22,6 +27,7 @@ export async function listRegistrations(input: ListRegistrationsInput): Promise<
                     select: {
                         displayName: true,
                         loginName: true,
+                        program: true,
                         members: {
                             select: { id: true, name: true, role: true, studentEmail: true },
                         },
@@ -45,6 +51,7 @@ export async function listRegistrations(input: ListRegistrationsInput): Promise<
             createdAt: r.createdAt,
             teamDisplayName: r.team.displayName,
             teamLoginName: r.team.loginName,
+            program: r.team.program,
             memberCount: r.team.members.length,
             leaderName: leader?.name ?? "",
             leaderEmail: leader?.studentEmail ?? "",
@@ -62,6 +69,7 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
                 select: {
                     displayName: true,
                     loginName: true,
+                    program: true,
                     members: {
                         select: { id: true, name: true, role: true, studentEmail: true, studentEmailVerifiedAt: true },
                         orderBy: { createdAt: "asc" },
@@ -89,6 +97,7 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
         updatedAt: record.updatedAt,
         teamDisplayName: record.team.displayName,
         teamLoginName: record.team.loginName,
+        program: record.team.program,
         memberCount: record.team.members.length,
         leaderName: leader?.name ?? "",
         leaderEmail: leader?.studentEmail ?? "",
@@ -108,8 +117,10 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
     });
 }
 
-export async function countApprovedTeams(): Promise<number> {
-    return prisma.registration.count({ where: { status: "APPROVED" } });
+export async function countApprovedTeams(program: EducationProgram): Promise<number> {
+    return prisma.registration.count({
+        where: { status: "APPROVED", team: { is: { program } } },
+    });
 }
 
 export async function getRegistrationWithTeam(registrationId: string) {

@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { PaginationMeta } from "@/lib/contracts/common";
 import type { TeamListItem } from "@/lib/contracts/teams";
+import { formatRole } from "@/lib/util";
 import { TeamActions } from "./team-actions";
 
 type Props = { items: TeamListItem[]; meta: PaginationMeta; status?: "ACTIVE" | "BANNED" };
@@ -50,6 +51,7 @@ export function TeamManagement({ items, meta, status }: Props) {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Team</TableHead>
+                            <TableHead>Program</TableHead>
                             <TableHead>Login</TableHead>
                             <TableHead>Members</TableHead>
                             <TableHead>Submission</TableHead>
@@ -61,7 +63,7 @@ export function TeamManagement({ items, meta, status }: Props) {
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                     No approved teams found.
                                 </TableCell>
                             </TableRow>
@@ -69,6 +71,7 @@ export function TeamManagement({ items, meta, status }: Props) {
                             items.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.displayName}</TableCell>
+                                    <TableCell>{formatRole(item.program)}</TableCell>
                                     <TableCell>{item.loginName}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>

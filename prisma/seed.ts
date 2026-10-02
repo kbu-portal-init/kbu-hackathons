@@ -5,7 +5,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import { Pool } from "pg";
-import { PrismaClient, TeamMemberRole } from "@/generated/prisma/client";
+import { type EducationProgram, PrismaClient, TeamMemberRole } from "@/generated/prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
@@ -82,7 +82,8 @@ async function main() {
             venue: "KBU Innovation Lab",
             imageUrls: [],
             ...eventDates,
-            maxTeams: 50,
+            maxThaiTeams: 5,
+            maxInternationalTeams: 5,
             minTeamSize: 2,
             maxTeamSize: 5,
         },
@@ -220,6 +221,7 @@ async function main() {
         createTeam({
             loginName: "team-orbit",
             displayName: "Team Orbit",
+            program: "THAI_PROGRAM",
             status: "APPROVED",
             adminUserId: adminUser.id,
             submission: true,
@@ -228,6 +230,7 @@ async function main() {
         createTeam({
             loginName: "team-pulse",
             displayName: "Team Pulse",
+            program: "INTERNATIONAL_PROGRAM",
             status: "PENDING",
             adminUserId: adminUser.id,
             submission: false,
@@ -236,6 +239,7 @@ async function main() {
         createTeam({
             loginName: "team-nova",
             displayName: "Team Nova",
+            program: "THAI_PROGRAM",
             status: "REJECTED",
             adminUserId: adminUser.id,
             submission: false,
@@ -303,6 +307,7 @@ async function createUser(input: { email: string; password: string; name: string
 async function createTeam(input: {
     loginName: string;
     displayName: string;
+    program: EducationProgram;
     status: "APPROVED" | "PENDING" | "REJECTED";
     adminUserId: string;
     submission: boolean;
@@ -319,7 +324,7 @@ async function createTeam(input: {
         data: { role: "team", emailVerified: true },
     });
     const team = await prisma.team.create({
-        data: { loginName: input.loginName, displayName: input.displayName, userId: user.id },
+        data: { loginName: input.loginName, displayName: input.displayName, program: input.program, userId: user.id },
     });
     const verifiedAt = input.status === "APPROVED" ? new Date("2026-02-10T12:00:00.000Z") : null;
     const leader = await prisma.teamMember.create({

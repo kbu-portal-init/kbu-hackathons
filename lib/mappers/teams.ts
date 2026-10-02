@@ -1,3 +1,4 @@
+import type { EducationProgram } from "@/lib/contracts/registration";
 import type { TeamDetailDTO, TeamListItem } from "@/lib/contracts/teams";
 
 type TeamListRecord = {
@@ -6,6 +7,7 @@ type TeamListRecord = {
     displayName: string;
     loginName: string;
     imageUrl: string | null;
+    program: EducationProgram;
     createdAt: Date;
     user: { banned: boolean; banReason: string | null; banExpires: Date | null } | null;
     members: {
@@ -28,6 +30,7 @@ export function toTeamListItem(record: TeamListRecord): TeamListItem {
         displayName: record.displayName,
         loginName: record.loginName,
         imageUrl: record.imageUrl,
+        program: record.program,
         memberCount: record.members.length,
         submissionCount: record.submission ? 1 : 0,
         registrationStatus: record.registration?.status ?? "UNKNOWN",
