@@ -34,7 +34,6 @@ export async function upsertEventSettings(
                     endsAt: input.endsAt,
                     submissionOpensAt: input.submissionOpensAt,
                     submissionDeadline: input.submissionDeadline,
-                    maxTeams: input.maxTeams,
                     maxThaiTeams: input.maxThaiTeams,
                     maxInternationalTeams: input.maxInternationalTeams,
                     minTeamSize: input.minTeamSize,
@@ -53,7 +52,6 @@ export async function upsertEventSettings(
                     endsAt: input.endsAt,
                     submissionOpensAt: input.submissionOpensAt,
                     submissionDeadline: input.submissionDeadline,
-                    maxTeams: input.maxTeams,
                     maxThaiTeams: input.maxThaiTeams,
                     maxInternationalTeams: input.maxInternationalTeams,
                     minTeamSize: input.minTeamSize,
@@ -69,7 +67,6 @@ export async function upsertEventSettings(
                     targetId: "1",
                     details: {
                         title: input.title,
-                        maxTeams: input.maxTeams,
                         maxThaiTeams: input.maxThaiTeams,
                         maxInternationalTeams: input.maxInternationalTeams,
                         minTeamSize: input.minTeamSize,

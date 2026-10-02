@@ -43,9 +43,9 @@ When a team submits registration:
 ### Education program and team quotas
 
 - Every submission selects one program: `THAI_PROGRAM` or `INTERNATIONAL_PROGRAM`. It is stored on `Team.program` and is required.
-- `EventSettings` holds three independent caps: `maxTeams` (total), `maxThaiTeams`, and `maxInternationalTeams`. A cap of `0` closes that program track. The two program caps do not have to add up to the total.
+- `EventSettings` holds two caps: `maxThaiTeams` and `maxInternationalTeams`. A cap of `0` closes that program track. Total team capacity is their sum (for example 5 + 5 = 10) and is shown as a read-only total in the organizer panel.
 - Quotas count APPROVED registrations only; `PENDING` registrations do not hold a slot.
-- Submission fails with `MAX_TEAMS_REACHED` when the total cap is full ("Maximum number of teams has been reached") or when the selected program's cap is full ("<program> quota has been reached").
+- Submission fails with `MAX_TEAMS_REACHED` when the selected program's cap is full ("<program> quota has been reached").
 - The public `/register` page shows the remaining slots per program and disables a full option; it hides the form entirely when both programs are full.
 
 Important:
@@ -106,7 +106,7 @@ A registration may be approved only when:
 - The total quota and the team's program quota both have room.
 - The organizer explicitly approves the registration.
 
-The quota check runs inside the approval transaction while the `event_settings` row is locked (`SELECT ... FOR UPDATE`), so concurrent approvals cannot exceed `maxTeams` or the team's `maxThaiTeams`/`maxInternationalTeams`. A quota failure returns `MAX_TEAMS_REACHED` with the program-specific message; the auto-approval path (when it is enabled) tolerates that code and leaves the registration `PENDING`.
+The quota check runs inside the approval transaction while the `event_settings` row is locked (`SELECT ... FOR UPDATE`), so concurrent approvals cannot exceed the team's `maxThaiTeams`/`maxInternationalTeams` cap (and therefore not the total, which is their sum). A quota failure returns `MAX_TEAMS_REACHED` with the program-specific message; the auto-approval path (when it is enabled) tolerates that code and leaves the registration `PENDING`.
 
 The system must not approve a registration merely because the last member verified their email.
 

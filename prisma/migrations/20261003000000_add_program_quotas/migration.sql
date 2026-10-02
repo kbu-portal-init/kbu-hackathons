@@ -8,3 +8,4 @@ SET "maxThaiTeams" = "maxTeams",
     "maxInternationalTeams" = "maxTeams";
 ALTER TABLE "event_settings" ALTER COLUMN "maxThaiTeams" SET NOT NULL;
 ALTER TABLE "event_settings" ALTER COLUMN "maxInternationalTeams" SET NOT NULL;
+ALTER TABLE "event_settings" DROP COLUMN "maxTeams";

@@ -18,7 +18,6 @@ const validInput = {
     endsAt: new Date("2026-03-02T00:00:00.000Z"),
     submissionOpensAt: new Date("2026-02-01T00:00:00.000Z"),
     submissionDeadline: new Date("2026-02-28T00:00:00.000Z"),
-    maxTeams: 20,
     maxThaiTeams: 10,
     maxInternationalTeams: 10,
     minTeamSize: 2,
@@ -103,7 +102,6 @@ describe("event settings", () => {
                     targetId: "1",
                     details: {
                         title: "KBU Hackathon",
-                        maxTeams: 20,
                         maxThaiTeams: 10,
                         maxInternationalTeams: 10,
                         minTeamSize: 2,

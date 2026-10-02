@@ -113,9 +113,9 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
     });
 }
 
-export async function countApprovedTeams(program?: EducationProgram): Promise<number> {
+export async function countApprovedTeams(program: EducationProgram): Promise<number> {
     return prisma.registration.count({
-        where: { status: "APPROVED", ...(program ? { team: { is: { program } } } : {}) },
+        where: { status: "APPROVED", team: { is: { program } } },
     });
 }
 

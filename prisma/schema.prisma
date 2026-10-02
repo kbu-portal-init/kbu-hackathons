@@ -68,8 +68,7 @@ model EventSettings {
   endsAt                DateTime @db.Timestamptz(3)
   submissionOpensAt     DateTime @db.Timestamptz(3)
   submissionDeadline    DateTime @db.Timestamptz(3)
-  maxTeams              Int
-  maxThaiTeams          Int
+   maxThaiTeams          Int
   maxInternationalTeams Int
   minTeamSize           Int
   maxTeamSize           Int

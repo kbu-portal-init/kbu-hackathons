@@ -79,7 +79,6 @@ describe("registration lifecycle", () => {
                 registrationClosesAt: new Date("2099-01-01"),
                 minTeamSize: 2,
                 maxTeamSize: 4,
-                maxTeams: 10,
                 maxThaiTeams: 10,
                 maxInternationalTeams: 10,
             })) as unknown as typeof prisma.eventSettings.findUnique;
@@ -124,7 +123,6 @@ describe("registration lifecycle", () => {
                 registrationClosesAt: new Date("2099-01-01"),
                 minTeamSize: 2,
                 maxTeamSize: 4,
-                maxTeams: 10,
                 maxThaiTeams: 10,
                 maxInternationalTeams: 10,
             })) as unknown as typeof prisma.eventSettings.findUnique;
@@ -200,7 +198,7 @@ describe("registration lifecycle", () => {
                 callback({
                     $queryRaw: async () => operations.push("lock"),
                     eventSettings: {
-                        findUnique: async () => ({ maxTeams: 10, maxThaiTeams: 10, maxInternationalTeams: 10 }),
+                        findUnique: async () => ({ maxThaiTeams: 10, maxInternationalTeams: 10 }),
                     },
                     registration: {
                         count: async () => 1,

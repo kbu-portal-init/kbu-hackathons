@@ -119,7 +119,6 @@ describe("application contracts", () => {
             endsAt: "2026-03-02",
             submissionOpensAt: "2026-02-01",
             submissionDeadline: "2026-02-28",
-            maxTeams: 10,
             maxThaiTeams: 5,
             maxInternationalTeams: 5,
             minTeamSize: 2,

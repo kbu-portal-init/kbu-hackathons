@@ -22,7 +22,6 @@ describe("core DTO mappers", () => {
             endsAt: date,
             submissionOpensAt: date,
             submissionDeadline: date,
-            maxTeams: 10,
             maxThaiTeams: 10,
             maxInternationalTeams: 10,
             minTeamSize: 2,

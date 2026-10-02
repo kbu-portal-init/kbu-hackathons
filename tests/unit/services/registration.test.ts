@@ -16,7 +16,6 @@ const validEvent = {
     registrationClosesAt: new Date("2099-01-01T00:00:00.000Z"),
     minTeamSize: 2,
     maxTeamSize: 4,
-    maxTeams: 10,
     maxThaiTeams: 5,
     maxInternationalTeams: 5,
 };
@@ -79,28 +78,6 @@ describe("registration submission guards", () => {
         }
     });
 
-    it("rejects when the approved-team limit is reached", async () => {
-        const originalFind = prisma.eventSettings.findUnique;
-        const originalCount = prisma.registration.count;
-        let countArgs: unknown;
-        prisma.eventSettings.findUnique = (async () => validEvent) as unknown as typeof prisma.eventSettings.findUnique;
-        prisma.registration.count = (async (args: unknown) => {
-            countArgs = args;
-            return validEvent.maxTeams;
-        }) as typeof prisma.registration.count;
-        try {
-            const result = await submitRegistration(validInput);
-            assert.deepEqual(result, {
-                ok: false,
-                error: { code: "MAX_TEAMS_REACHED", message: "Maximum number of teams has been reached" },
-            });
-            assert.deepEqual(countArgs, { where: { status: "APPROVED" } });
-        } finally {
-            prisma.eventSettings.findUnique = originalFind;
-            prisma.registration.count = originalCount;
-        }
-    });
-
     it("rejects when the Thai program quota is reached", async () => {
         const originalFind = prisma.eventSettings.findUnique;
         const originalCount = prisma.registration.count;
@@ -116,9 +93,7 @@ describe("registration submission guards", () => {
                 ok: false,
                 error: { code: "MAX_TEAMS_REACHED", message: "Thai program quota has been reached" },
             });
-            assert.deepEqual(countArgs[1], {
-                where: { status: "APPROVED", team: { is: { program: "THAI_PROGRAM" } } },
-            });
+            assert.deepEqual(countArgs, [{ where: { status: "APPROVED", team: { is: { program: "THAI_PROGRAM" } } } }]);
         } finally {
             prisma.eventSettings.findUnique = originalFind;
             prisma.registration.count = originalCount;
@@ -144,9 +119,9 @@ describe("registration submission guards", () => {
                 ok: false,
                 error: { code: "MAX_TEAMS_REACHED", message: "International program quota has been reached" },
             });
-            assert.deepEqual(countArgs[1], {
-                where: { status: "APPROVED", team: { is: { program: "INTERNATIONAL_PROGRAM" } } },
-            });
+            assert.deepEqual(countArgs, [
+                { where: { status: "APPROVED", team: { is: { program: "INTERNATIONAL_PROGRAM" } } } },
+            ]);
         } finally {
             prisma.eventSettings.findUnique = originalFind;
             prisma.registration.count = originalCount;

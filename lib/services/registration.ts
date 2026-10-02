@@ -131,10 +131,9 @@ async function provisionTeamAccount(
             await tx.$queryRaw`SELECT id FROM "event_settings" WHERE id = 1 FOR UPDATE`;
             const eventSettings = await tx.eventSettings.findUnique({
                 where: { id: 1 },
-                select: { maxTeams: true, maxThaiTeams: true, maxInternationalTeams: true },
+                select: { maxThaiTeams: true, maxInternationalTeams: true },
             });
-            const approvedCount = await tx.registration.count({ where: { status: "APPROVED" } });
-            if (!eventSettings || approvedCount >= eventSettings.maxTeams) {
+            if (!eventSettings) {
                 throw new RegistrationLimitReachedError();
             }
 
@@ -282,17 +281,6 @@ export async function submitRegistration(
             error: {
                 code: ErrorCodes.INVALID_TEAM_SIZE,
                 message: `Team must have ${eventSettings.minTeamSize} to ${eventSettings.maxTeamSize} members`,
-            },
-        };
-    }
-
-    const approvedCount = await countApprovedTeams();
-    if (approvedCount >= eventSettings.maxTeams) {
-        return {
-            ok: false,
-            error: {
-                code: ErrorCodes.MAX_TEAMS_REACHED,
-                message: "Maximum number of teams has been reached",
             },
         };
     }

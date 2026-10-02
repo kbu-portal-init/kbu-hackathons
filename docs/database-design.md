@@ -15,7 +15,7 @@ Status: design reference. `prisma/schema.prisma` is the active schema. This docu
 | Model | Responsibility |
 | --- | --- |
 | User, Account, Session, Verification | Better Auth identities, credentials, sessions and tokens. |
-| EventSettings | Single event title, description, venue, image URLs, promo URL, registration window, event dates, submission opening/deadline, total team capacity (`maxTeams`), per-program team capacity (`maxThaiTeams`, `maxInternationalTeams`), and roster limits. |
+| EventSettings | Single event title, description, venue, image URLs, promo URL, registration window, event dates, submission opening/deadline, per-program team capacity (`maxThaiTeams`, `maxInternationalTeams`; their sum is the total capacity), and roster limits. |
 | Team | Stable team identity, reserved login name, education program (Thai or International), optional image URL and optional provisioned auth account. |
 | TeamMember | Roster, student notification email and role such as development, data, design, product, marketing, presentation, or `OTHER`. |
 | Registration | One application per team and its current status. |
