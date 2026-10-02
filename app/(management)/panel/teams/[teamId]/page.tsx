@@ -6,6 +6,7 @@ import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
 import { TeamActions } from "../_components/team-actions";
+import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
 
 export default async function PanelTeamDetailPage({ params }: { params: Promise<{ teamId: string }> }) {
     const { teamId } = await params;
@@ -104,8 +105,14 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                         <div>
                             <h3 className="font-semibold">{team.submission.title}</h3>
                             <p className="mt-1 whitespace-pre-wrap text-zinc-600">
-                                {team.submission.description || "No description."}
+                                {team.submission.summary || "No summary."}
                             </p>
+                        </div>
+                        <div className="grid gap-4 border-t pt-4 text-sm sm:grid-cols-2">
+                            <Info label="Problem" value={team.submission.problem} />
+                            <Info label="Target users" value={team.submission.targetUsers} />
+                            <Info label="Solution" value={team.submission.solution} />
+                            <Info label="Technology" value={team.submission.technologyStack} />
                         </div>
                         <div className="flex flex-wrap gap-3">
                             {team.submission.repositoryUrl && (
@@ -138,12 +145,27 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                                     Presentation
                                 </a>
                             )}
+                            {team.submission.demoVideoUrl && (
+                                <a
+                                    className="text-primary underline"
+                                    href={team.submission.demoVideoUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    Demo video
+                                </a>
+                            )}
                         </div>
-                        <p className="text-zinc-500">
-                            {team.submission.submittedAt
-                                ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
-                                : "Draft submission"}
-                        </p>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <p className="text-zinc-500">
+                                {team.submission.submittedAt
+                                    ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
+                                    : `${team.submission.status} submission`}
+                            </p>
+                            {team.submission.status === "SUBMITTED" && (
+                                <ReopenSubmissionButton submissionId={team.submission.id} />
+                            )}
+                        </div>
                     </div>
                 ) : (
                     <p className="text-sm text-zinc-500">This team has not submitted a project yet.</p>
