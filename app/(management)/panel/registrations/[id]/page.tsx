@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
+import { formatRole } from "@/lib/util";
 import { MemberRow } from "./_components/member-row";
 import { RegistrationActions } from "./_components/registration-actions";
 
@@ -54,6 +55,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
                 <DetailField label="Status">
                     <StatusBadge status={item.status} />
                 </DetailField>
+                <DetailField label="Program" value={formatRole(item.program)} />
             </div>
 
             {item.applicationNotes && (

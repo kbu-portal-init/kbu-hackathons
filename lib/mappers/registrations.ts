@@ -1,4 +1,4 @@
-import type { RegistrationDetailDTO, RegistrationListItem } from "@/lib/contracts/registration";
+import type { EducationProgram, RegistrationDetailDTO, RegistrationListItem } from "@/lib/contracts/registration";
 
 type RegistrationListItemRecord = {
     id: string;
@@ -7,6 +7,7 @@ type RegistrationListItemRecord = {
     createdAt: Date;
     teamDisplayName: string;
     teamLoginName: string;
+    program: EducationProgram;
     memberCount: number;
     leaderName: string;
     leaderEmail: string;
@@ -17,6 +18,7 @@ export function toRegistrationListItem(record: RegistrationListItemRecord): Regi
         id: record.id,
         teamName: record.teamDisplayName,
         loginName: record.teamLoginName,
+        program: record.program,
         status: record.status,
         memberCount: record.memberCount,
         leaderName: record.leaderName,

@@ -28,6 +28,7 @@ import {
     type RejectRegistrationInput,
     rejectRegistrationSchema,
 } from "@/lib/contracts/registration";
+import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 
 type Props = {
@@ -104,6 +105,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Team</TableHead>
+                            <TableHead>Program</TableHead>
                             <TableHead>Leader</TableHead>
                             <TableHead>Members</TableHead>
                             <TableHead>Status</TableHead>
@@ -114,7 +116,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                                     No registrations found.
                                 </TableCell>
                             </TableRow>
@@ -122,6 +124,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                             items.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">{item.teamName}</TableCell>
+                                    <TableCell>{formatRole(item.program)}</TableCell>
                                     <TableCell>{item.leaderName || "—"}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>

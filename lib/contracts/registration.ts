@@ -107,6 +107,7 @@ export type RegistrationListItem = {
     id: string;
     teamName: string;
     loginName: string;
+    program: EducationProgram;
     status: string;
     memberCount: number;
     leaderName: string;

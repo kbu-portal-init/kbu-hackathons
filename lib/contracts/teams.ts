@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { ActionResult, ListActionResult, PageInput } from "@/lib/contracts/common";
+import type { EducationProgram } from "@/lib/contracts/registration";
 
 export const listTeamsSchema = z.object({
     page: z.coerce.number().int().min(1).default(1),
@@ -17,6 +18,7 @@ export type TeamListItem = {
     displayName: string;
     loginName: string;
     imageUrl: string | null;
+    program: EducationProgram;
     memberCount: number;
     submissionCount: number;
     registrationStatus: string;

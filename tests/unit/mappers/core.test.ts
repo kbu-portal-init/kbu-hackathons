@@ -79,6 +79,7 @@ describe("core DTO mappers", () => {
             createdAt: date,
             teamDisplayName: "Team",
             teamLoginName: "team",
+            program: "THAI_PROGRAM" as const,
             memberCount: 1,
             leaderName: "Leader",
             leaderEmail: "leader@example.com",
