@@ -33,7 +33,7 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                     </Badge>
                 )}
             </div>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-muted-foreground">
                 Upload images to display on the event page. Drag the handle in the corner to reorder them. The first
                 image is used as the primary banner.
             </p>

@@ -125,7 +125,7 @@ export function RegistrationForm({ minTeamSize, maxTeamSize }: { minTeamSize: nu
                     <CheckCircle2 className="size-7" />
                 </div>
                 <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
-                <p className="mt-3 text-sm leading-6 text-zinc-600">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                     {verificationEmailsSent
                         ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
                         : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}

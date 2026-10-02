@@ -50,7 +50,7 @@ function VerifyContent() {
                         <XCircle className="size-7" />
                     </div>
                     <h1 className="mt-6 text-2xl font-bold tracking-tight">Invalid link</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         This verification link is incomplete or invalid. Please open the link directly from your email,
                         or contact your team leader or the event organizers for a new link.
                     </p>
@@ -67,7 +67,7 @@ function VerifyContent() {
                     <>
                         <Loader2 className="mx-auto size-10 animate-spin text-orange-600" />
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Verifying your email...</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             Please wait while we confirm your email address.
                         </p>
                     </>
@@ -79,7 +79,7 @@ function VerifyContent() {
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Email verified!</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             Your student email has been confirmed. Once all team members have verified their emails, an
                             organizer will review and approve your registration.
                         </p>
@@ -92,7 +92,7 @@ function VerifyContent() {
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">All emails verified!</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             All team members have verified their emails. An organizer will review and approve your
                             registration. You will receive your login credentials once approved.
                         </p>
@@ -105,7 +105,7 @@ function VerifyContent() {
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Team approved!</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             All team members have verified their emails. The team was automatically approved, and the
                             leader received a password-reset link.
                         </p>
@@ -118,7 +118,7 @@ function VerifyContent() {
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Team approved</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             Your team was automatically approved, but the leader&apos;s password-reset email could not
                             be delivered. Please contact the organizers for help.
                         </p>
@@ -131,7 +131,7 @@ function VerifyContent() {
                             <CheckCircle2 className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Already verified</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             This email has already been verified. No further action is needed.
                         </p>
                     </>
@@ -143,7 +143,7 @@ function VerifyContent() {
                             <XCircle className="size-7" />
                         </div>
                         <h1 className="mt-6 text-2xl font-bold tracking-tight">Verification failed</h1>
-                        <p className="mt-3 text-sm leading-6 text-zinc-600">
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             We couldn&apos;t verify this email because the link is invalid or has expired. Please
                             contact your team leader or the event organizers to request a new verification link.
                         </p>

@@ -46,7 +46,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 className="text-xl font-bold text-zinc-950">Password</h2>
-                    <p className="mt-1 text-sm text-zinc-600">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Change the shared team account password or request a reset link.
                     </p>
                 </div>

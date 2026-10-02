@@ -72,7 +72,7 @@ export function StudentEmailGuideSection() {
             <div className="space-y-8 p-5 sm:p-8">
                 {/* Description & Format Card */}
                 <div className="max-w-3xl">
-                    <p className="text-sm leading-relaxed text-zinc-600">{studentEmailGuide.description}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{studentEmailGuide.description}</p>
                 </div>
 
                 {/* Copyable Format Callout */}
@@ -88,7 +88,7 @@ export function StudentEmailGuideSection() {
                             <p className="mt-0.5 font-mono text-sm font-bold text-zinc-900 sm:text-lg">
                                 {studentEmailGuide.formatExample}
                             </p>
-                            <p className="mt-0.5 text-xs text-zinc-500">
+                            <p className="mt-0.5 text-xs text-muted-foreground">
                                 Replace <span className="font-semibold text-zinc-800">xxxxxxxxxxxx</span> with your
                                 12-digit student ID number.
                             </p>
@@ -107,7 +107,7 @@ export function StudentEmailGuideSection() {
                             </>
                         ) : (
                             <>
-                                <Copy className="h-3.5 w-3.5 text-zinc-500" />
+                                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                                 <span>Copy Format</span>
                             </>
                         )}
@@ -130,7 +130,7 @@ export function StudentEmailGuideSection() {
                                         {step.stepNumber}
                                     </span>
                                     <h4 className="mt-1.5 text-sm font-semibold text-zinc-900">{step.title}</h4>
-                                    <p className="mt-1 text-xs leading-relaxed text-zinc-500">{step.detail}</p>
+                                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.detail}</p>
                                 </div>
                             </div>
                         ))}
@@ -145,7 +145,10 @@ export function StudentEmailGuideSection() {
                     </div>
                     <ul className="mt-3 grid gap-3 sm:grid-cols-3">
                         {studentEmailGuide.tips.map((tip) => (
-                            <li key={tip} className="flex items-start gap-2.5 text-xs leading-relaxed text-zinc-600">
+                            <li
+                                key={tip}
+                                className="flex items-start gap-2.5 text-xs leading-relaxed text-muted-foreground"
+                            >
                                 <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-500" />
                                 <span>{tip}</span>
                             </li>

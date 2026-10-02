@@ -27,9 +27,11 @@ export function TeamManagement({ items, meta, status }: Props) {
     return (
         <div className="space-y-6">
             <div>
-                <p className="text-sm font-medium text-zinc-500">Management workspace</p>
+                <p className="text-sm font-medium text-muted-foreground">Management workspace</p>
                 <h1 className="text-2xl font-semibold tracking-tight">All teams</h1>
-                <p className="mt-1 text-sm text-zinc-500">Browse approved teams and monitor their submissions.</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    Browse approved teams and monitor their submissions.
+                </p>
             </div>
             <div className="flex flex-wrap gap-2">
                 {filters.map((value) => (
@@ -59,7 +61,7 @@ export function TeamManagement({ items, meta, status }: Props) {
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center text-zinc-500">
+                                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                                     No approved teams found.
                                 </TableCell>
                             </TableRow>

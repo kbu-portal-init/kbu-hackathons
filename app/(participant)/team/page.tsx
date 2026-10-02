@@ -11,7 +11,9 @@ export default async function TeamsPage() {
         <main className="space-y-8">
             <div>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight text-orange-600">{team.displayName}</h1>
-                <p className="mt-2 text-zinc-600">Generate and share a branded digital card for each team member.</p>
+                <p className="mt-2 text-muted-foreground">
+                    Generate and share a branded digital card for each team member.
+                </p>
             </div>
             <MemberCards members={members} />
         </main>

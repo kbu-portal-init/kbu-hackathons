@@ -45,7 +45,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
             <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
                 <div className="w-full max-w-md rounded-2xl border border-orange-100 bg-white p-7 shadow-xl">
                     <h1 className="text-3xl font-bold tracking-tight">Password set</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         Your password has been saved. You can now sign in with the account credentials associated with
                         this reset link.
                     </p>
@@ -69,7 +69,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                         Password setup
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Set your password</h1>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         Choose a password for your KBU Hackathon 2026 account.
                     </p>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">

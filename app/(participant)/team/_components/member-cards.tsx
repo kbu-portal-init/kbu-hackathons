@@ -66,7 +66,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
         }
     }
 
-    if (items.length === 0) return <p className="text-sm text-zinc-500">No team members are available yet.</p>;
+    if (items.length === 0) return <p className="text-sm text-muted-foreground">No team members are available yet.</p>;
 
     return (
         <div className="space-y-4">

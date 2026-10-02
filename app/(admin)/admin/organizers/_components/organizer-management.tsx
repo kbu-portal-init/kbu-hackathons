@@ -322,7 +322,7 @@ function OrganizerTable({
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-zinc-500">
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 No organizers found.
                             </TableCell>
                         </TableRow>
@@ -337,7 +337,7 @@ function OrganizerTable({
                                         {item.banned ? "Banned" : "Active"}
                                     </span>
                                 </TableCell>
-                                <TableCell className="max-w-56 whitespace-normal text-sm text-zinc-500">
+                                <TableCell className="max-w-56 whitespace-normal text-sm text-muted-foreground">
                                     {item.banned ? (
                                         <>
                                             {item.banReason ?? "No reason"}
