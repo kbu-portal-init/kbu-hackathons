@@ -59,10 +59,17 @@ export function toTeamDetail(
         submission: {
             id: string;
             title: string;
-            description: string | null;
+            summary: string;
+            problem: string;
+            targetUsers: string;
+            solution: string;
+            technologyStack: string;
             repositoryUrl: string | null;
             demoUrl: string | null;
             presentationUrl: string | null;
+            demoVideoUrl: string | null;
+            additionalNotes: string | null;
+            status: string;
             submittedAt: Date | null;
             createdAt: Date;
             updatedAt: Date;
@@ -94,6 +101,7 @@ export function toTeamDetail(
         submission: record.submission
             ? {
                   ...record.submission,
+                  repositoryUrl: record.submission.repositoryUrl ?? "",
                   submittedAt: record.submission.submittedAt?.toISOString() ?? null,
                   createdAt: record.submission.createdAt.toISOString(),
                   updatedAt: record.submission.updatedAt.toISOString(),

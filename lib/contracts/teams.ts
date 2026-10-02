@@ -48,10 +48,17 @@ export type TeamDetailDTO = TeamListItem & {
     submission: {
         id: string;
         title: string;
-        description: string | null;
-        repositoryUrl: string | null;
+        summary: string;
+        problem: string;
+        targetUsers: string;
+        solution: string;
+        technologyStack: string;
+        repositoryUrl: string;
         demoUrl: string | null;
         presentationUrl: string | null;
+        demoVideoUrl: string | null;
+        additionalNotes: string | null;
+        status: string;
         submittedAt: string | null;
         createdAt: string;
         updatedAt: string;

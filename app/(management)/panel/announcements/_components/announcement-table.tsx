@@ -36,7 +36,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-zinc-500">
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 No announcements found.
                             </TableCell>
                         </TableRow>

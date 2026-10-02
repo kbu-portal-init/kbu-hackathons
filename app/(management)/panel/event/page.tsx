@@ -6,7 +6,7 @@ export default async function PanelEventPage() {
 
     if (!result.ok) {
         return (
-            <div className="flex h-64 items-center justify-center text-sm text-zinc-500">
+            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
                 Failed to load event settings.
             </div>
         );

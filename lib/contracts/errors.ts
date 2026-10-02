@@ -4,6 +4,9 @@ export const ErrorCodes = {
     // ─────────────────────────────────────────────────────────────
     VALIDATION_ERROR: "VALIDATION_ERROR",
     INVALID_STATUS: "INVALID_STATUS",
+    SUBMISSION_CLOSED: "SUBMISSION_CLOSED",
+    SUBMISSION_LOCKED: "SUBMISSION_LOCKED",
+    SUBMISSION_NOT_FOUND: "SUBMISSION_NOT_FOUND",
 
     // ─────────────────────────────────────────────────────────────
     // Authentication & Authorization

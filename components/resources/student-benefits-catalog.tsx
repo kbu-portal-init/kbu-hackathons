@@ -85,7 +85,7 @@ export function StudentBenefitsCatalog() {
                         Student Benefits &amp; Developer Packs
                     </h1>
 
-                    <p className="mt-2.5 text-xs leading-relaxed text-zinc-600 sm:text-base lg:text-lg">
+                    <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground sm:text-base lg:text-lg">
                         Unlock over <span className="font-semibold text-zinc-900">$200,000+</span> in industry-standard
                         software, AI coding assistants, cloud credits, and educational licenses using your official KBU
                         student credentials.
@@ -126,7 +126,7 @@ export function StudentBenefitsCatalog() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">Explore Verified Offers</h2>
-                        <p className="mt-0.5 text-xs text-zinc-500">
+                        <p className="mt-0.5 text-xs text-muted-foreground">
                             Showing {filteredBenefits.length} of {studentBenefits.length} developer packs and student
                             benefits
                         </p>
@@ -146,7 +146,7 @@ export function StudentBenefitsCatalog() {
                             <button
                                 type="button"
                                 onClick={() => setSearchQuery("")}
-                                className="shrink-0 rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+                                className="shrink-0 rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-muted-foreground"
                                 aria-label="Clear search"
                             >
                                 <X className="h-3.5 w-3.5" />
@@ -168,7 +168,7 @@ export function StudentBenefitsCatalog() {
                                 className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition sm:px-4 ${
                                     isActive
                                         ? "bg-orange-600 text-white shadow-xs"
-                                        : "border border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+                                        : "border border-zinc-200 bg-white text-muted-foreground hover:border-zinc-300 hover:bg-zinc-50"
                                 }`}
                             >
                                 {cat}
@@ -215,7 +215,7 @@ export function StudentBenefitsCatalog() {
                                     {benefit.categories.map((cat) => (
                                         <span
                                             key={cat}
-                                            className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-zinc-600"
+                                            className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground"
                                         >
                                             {cat}
                                         </span>
@@ -231,7 +231,7 @@ export function StudentBenefitsCatalog() {
                                 </Link>
                                 <p className="mt-0.5 text-xs text-zinc-400">By {benefit.provider}</p>
 
-                                <p className="mt-2 text-xs leading-relaxed text-zinc-600 sm:text-sm">
+                                <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
                                     {benefit.tagline}
                                 </p>
 
@@ -242,7 +242,10 @@ export function StudentBenefitsCatalog() {
                                     </p>
                                     <ul className="mt-2 space-y-1.5">
                                         {benefit.perks.slice(0, 3).map((perk) => (
-                                            <li key={perk} className="flex items-start gap-2 text-xs text-zinc-600">
+                                            <li
+                                                key={perk}
+                                                className="flex items-start gap-2 text-xs text-muted-foreground"
+                                            >
                                                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-600" />
                                                 <span className="line-clamp-2">{perk}</span>
                                             </li>
@@ -265,7 +268,7 @@ export function StudentBenefitsCatalog() {
                                         href={benefit.officialUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white p-2 text-zinc-600 shadow-2xs transition hover:border-zinc-300 hover:bg-zinc-50"
+                                        className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white p-2 text-muted-foreground shadow-2xs transition hover:border-zinc-300 hover:bg-zinc-50"
                                         title={`Direct claim link on ${benefit.provider}`}
                                     >
                                         <ExternalLink className="h-4 w-4" />
@@ -280,7 +283,7 @@ export function StudentBenefitsCatalog() {
                 <div className="rounded-3xl border border-dashed border-zinc-300 bg-white p-12 text-center">
                     <Gift className="mx-auto h-12 w-12 text-zinc-300" />
                     <h3 className="mt-4 text-base font-semibold text-zinc-900">No student benefits found</h3>
-                    <p className="mt-1.5 text-xs text-zinc-500">
+                    <p className="mt-1.5 text-xs text-muted-foreground">
                         No perks matched your query &quot;{searchQuery}&quot;. Try adjusting your keywords or reset
                         filters.
                     </p>

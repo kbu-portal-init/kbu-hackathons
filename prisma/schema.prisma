@@ -43,6 +43,12 @@ enum AnnouncementStatus {
   ARCHIVED
 }
 
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  REOPENED
+}
+
 // Migration must enforce id = 1 and valid dates/team-size bounds.
 model EventSettings {
   id                   Int      @id @default(1)
@@ -167,17 +173,24 @@ model RegistrationReview {
 }
 
 model Submission {
-  id              String    @id @default(cuid())
-  teamId          String    @unique
-  team            Team      @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  id              String           @id @default(cuid())
+  teamId          String           @unique
+  team            Team             @relation(fields: [teamId], references: [id], onDelete: Restrict)
   title           String
-  description     String?
-  repositoryUrl   String?
+  summary         String
+  problem         String
+  targetUsers     String
+  solution        String
+  technologyStack String
+  repositoryUrl   String
   demoUrl         String?
   presentationUrl String?
-  submittedAt     DateTime? @db.Timestamptz(3)
-  createdAt       DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime  @updatedAt @db.Timestamptz(3)
+  demoVideoUrl    String?
+  additionalNotes String?
+  status          SubmissionStatus @default(DRAFT)
+  submittedAt     DateTime?        @db.Timestamptz(3)
+  createdAt       DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime         @updatedAt @db.Timestamptz(3)
 
   @@map("submission")
 }

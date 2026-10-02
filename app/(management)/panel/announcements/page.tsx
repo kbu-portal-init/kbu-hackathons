@@ -25,9 +25,11 @@ export default async function PanelAnnouncementsPage({ searchParams }: { searchP
     return (
         <div className="space-y-6">
             <div>
-                <p className="text-sm font-medium text-zinc-500">Management workspace</p>
+                <p className="text-sm font-medium text-muted-foreground">Management workspace</p>
                 <h1 className="text-2xl font-semibold tracking-tight">Announcements</h1>
-                <p className="mt-1 text-sm text-zinc-500">Create, publish, and manage platform announcements.</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    Create, publish, and manage platform announcements.
+                </p>
             </div>
 
             <AnnouncementManagement items={result.data.items} meta={result.data.meta} />

@@ -16,7 +16,7 @@ export default async function PanelRegistrationsPage({
 
     if (!result.ok) {
         return (
-            <div className="flex h-64 items-center justify-center text-sm text-zinc-500">
+            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
                 Failed to load registrations.
             </div>
         );

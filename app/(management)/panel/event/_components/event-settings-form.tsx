@@ -138,7 +138,7 @@ export function EventSettingsForm({ settings }: Props) {
                         </>
                     )}
                 </Button>
-                {form.formState.isDirty && <p className="text-sm text-zinc-500">You have unsaved changes.</p>}
+                {form.formState.isDirty && <p className="text-sm text-muted-foreground">You have unsaved changes.</p>}
             </div>
         </form>
     );

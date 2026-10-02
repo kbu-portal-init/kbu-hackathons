@@ -70,14 +70,16 @@ export default async function TeamReferencesPage() {
                 </div>
                 <div className="rounded-2xl border border-zinc-200 bg-white p-5">
                     <ClipboardCheck className="size-5 text-orange-600" />
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">Team size</p>
+                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Team size
+                    </p>
                     <p className="mt-1 font-semibold text-zinc-950">
                         {event ? `${event.minTeamSize}–${event.maxTeamSize} members` : "Check event rules"}
                     </p>
                 </div>
                 <div className="rounded-2xl border border-zinc-200 bg-white p-5">
                     <Trophy className="size-5 text-orange-600" />
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Submission deadline
                     </p>
                     <p className="mt-1 font-semibold text-zinc-950">
@@ -94,7 +96,7 @@ export default async function TeamReferencesPage() {
                         </div>
                         <h2 className="mt-5 text-xl font-bold text-zinc-950">{title}</h2>
                         <p className="mt-2 text-sm font-medium text-orange-700">{description}</p>
-                        <p className="mt-4 text-sm leading-6 text-zinc-600">{body}</p>
+                        <p className="mt-4 text-sm leading-6 text-muted-foreground">{body}</p>
                     </article>
                 ))}
             </section>
@@ -105,7 +107,7 @@ export default async function TeamReferencesPage() {
                         <Download className="size-5 text-orange-600" />
                         <h2 className="text-xl font-bold text-zinc-950">Downloads</h2>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         Templates, presentation guidance, and official event files will be added here by the organizers.
                     </p>
                 </div>
@@ -137,7 +139,7 @@ export default async function TeamReferencesPage() {
                 <HelpCircle className="mt-0.5 size-5 shrink-0 text-orange-600" />
                 <div>
                     <h2 className="font-bold text-zinc-950">Need help?</h2>
-                    <p className="mt-1 text-sm leading-6 text-zinc-600">
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
                         Ask your team leader to coordinate questions, or contact the event organizers before the
                         submission deadline.
                     </p>
