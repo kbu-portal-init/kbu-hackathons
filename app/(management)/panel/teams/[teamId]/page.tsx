@@ -158,11 +158,28 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                             )}
                         </div>
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                            <p className="text-zinc-500">
-                                {team.submission.submittedAt
-                                    ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
-                                    : `${team.submission.status} submission`}
-                            </p>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <Badge
+                                    variant={
+                                        team.submission.status === "SUBMITTED"
+                                            ? "default"
+                                            : team.submission.status === "REOPENED"
+                                              ? "outline"
+                                              : "secondary"
+                                    }
+                                >
+                                    {team.submission.status === "SUBMITTED"
+                                        ? "Final submission"
+                                        : team.submission.status === "REOPENED"
+                                          ? "Reopened for editing"
+                                          : "Draft"}
+                                </Badge>
+                                <p className="text-sm text-zinc-500">
+                                    {team.submission.status === "SUBMITTED" && team.submission.submittedAt
+                                        ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
+                                        : "Not finalized"}
+                                </p>
+                            </div>
                             {team.submission.status === "SUBMITTED" && (
                                 <ReopenSubmissionButton submissionId={team.submission.id} />
                             )}
