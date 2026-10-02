@@ -38,7 +38,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                         )}
                         <div className="min-w-0">
                             <h1 className="truncate text-2xl font-semibold tracking-tight">{team.displayName}</h1>
-                            <p className="truncate text-sm text-zinc-500">@{team.loginName}</p>
+                            <p className="truncate text-sm text-muted-foreground">@{team.loginName}</p>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                     </div>
                 </Panel>
                 <Panel title="Registration notes">
-                    <p className="text-sm text-zinc-600">{team.applicationNotes || "No application notes."}</p>
+                    <p className="text-sm text-muted-foreground">{team.applicationNotes || "No application notes."}</p>
                 </Panel>
             </div>
             <Panel title={`Roster (${team.members.length})`}>
@@ -86,7 +86,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                                 )}
                                 <div className="min-w-0">
                                     <p className="truncate font-medium">{member.name}</p>
-                                    <p className="truncate text-sm text-zinc-500">{member.email}</p>
+                                    <p className="truncate text-sm text-muted-foreground">{member.email}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                     <div className="space-y-4 text-sm">
                         <div>
                             <h3 className="font-semibold">{team.submission.title}</h3>
-                            <p className="mt-1 whitespace-pre-wrap text-zinc-600">
+                            <p className="mt-1 whitespace-pre-wrap text-muted-foreground">
                                 {team.submission.summary || "No summary."}
                             </p>
                         </div>
@@ -174,7 +174,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                                           ? "Reopened for editing"
                                           : "Draft"}
                                 </Badge>
-                                <p className="text-sm text-zinc-500">
+                                <p className="text-sm text-muted-foreground">
                                     {team.submission.status === "SUBMITTED" && team.submission.submittedAt
                                         ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
                                         : "Not finalized"}
@@ -186,7 +186,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                         </div>
                     </div>
                 ) : (
-                    <p className="text-sm text-zinc-500">This team has not submitted a project yet.</p>
+                    <p className="text-sm text-muted-foreground">This team has not submitted a project yet.</p>
                 )}
             </Panel>
             <Panel title="Review history">
@@ -196,14 +196,16 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                             <div key={review.id} className="py-3 text-sm">
                                 <div className="flex justify-between gap-2">
                                     <Badge variant="outline">{review.decision}</Badge>
-                                    <span className="text-zinc-500">{format(new Date(review.createdAt), "PPP p")}</span>
+                                    <span className="text-muted-foreground">
+                                        {format(new Date(review.createdAt), "PPP p")}
+                                    </span>
                                 </div>
-                                {review.reason && <p className="mt-1 text-zinc-600">{review.reason}</p>}
+                                {review.reason && <p className="mt-1 text-muted-foreground">{review.reason}</p>}
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <p className="text-sm text-zinc-500">No reviews recorded.</p>
+                    <p className="text-sm text-muted-foreground">No reviews recorded.</p>
                 )}
             </Panel>
         </div>
@@ -213,7 +215,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
 function Info({ label, value }: { label: string; value: string }) {
     return (
         <div>
-            <dt className="text-zinc-500">{label}</dt>
+            <dt className="text-muted-foreground">{label}</dt>
             <dd className="font-medium">{value}</dd>
         </div>
     );
