@@ -61,6 +61,8 @@ export function EventSettingsForm({ settings }: Props) {
             submissionOpensAt: combineDateTime(subOpen.date, subOpen.time),
             submissionDeadline: combineDateTime(subDeadline.date, subDeadline.time),
             maxTeams: settings?.maxTeams ?? 50,
+            maxThaiTeams: settings?.maxThaiTeams ?? 50,
+            maxInternationalTeams: settings?.maxInternationalTeams ?? 50,
             minTeamSize: settings?.minTeamSize ?? 2,
             maxTeamSize: settings?.maxTeamSize ?? 5,
         },

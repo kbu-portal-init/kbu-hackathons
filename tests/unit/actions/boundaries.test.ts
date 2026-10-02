@@ -109,6 +109,7 @@ describe("server action boundaries", () => {
         validationFailure = undefined;
         const valid = await submitTeamRegistration({
             teamName: "Team",
+            program: "THAI_PROGRAM",
             leaderName: "Leader",
             leaderEmail: "u123456789012@ms.kbu.ac.th",
             members: [],

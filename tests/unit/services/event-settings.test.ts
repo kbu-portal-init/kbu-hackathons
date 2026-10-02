@@ -19,6 +19,8 @@ const validInput = {
     submissionOpensAt: new Date("2026-02-01T00:00:00.000Z"),
     submissionDeadline: new Date("2026-02-28T00:00:00.000Z"),
     maxTeams: 20,
+    maxThaiTeams: 10,
+    maxInternationalTeams: 10,
     minTeamSize: 2,
     maxTeamSize: 4,
 };
@@ -99,7 +101,14 @@ describe("event settings", () => {
                     action: "EVENT_SETTINGS_UPSERTED",
                     targetType: "EventSettings",
                     targetId: "1",
-                    details: { title: "KBU Hackathon", maxTeams: 20, minTeamSize: 2, maxTeamSize: 4 },
+                    details: {
+                        title: "KBU Hackathon",
+                        maxTeams: 20,
+                        maxThaiTeams: 10,
+                        maxInternationalTeams: 10,
+                        minTeamSize: 2,
+                        maxTeamSize: 4,
+                    },
                 },
             });
         } finally {

@@ -8,6 +8,7 @@ import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     ApproveRegistrationInput,
+    EducationProgram,
     RejectRegistrationData,
     RejectRegistrationInput,
     SubmitRegistrationData,
@@ -46,8 +47,8 @@ async function uniqueLoginName(base: string): Promise<string> {
 }
 
 class RegistrationLimitReachedError extends Error {
-    constructor() {
-        super("Maximum number of teams has been reached");
+    constructor(message = "Maximum number of teams has been reached") {
+        super(message);
         this.name = "RegistrationLimitReachedError";
     }
 }
@@ -59,6 +60,20 @@ class RegistrationStatusChangedError extends Error {
     }
 }
 
+type ProgramQuotaSettings = { maxThaiTeams: number; maxInternationalTeams: number };
+
+function programQuotaLimit(settings: ProgramQuotaSettings, program: EducationProgram): number {
+    return program === "THAI_PROGRAM" ? settings.maxThaiTeams : settings.maxInternationalTeams;
+}
+
+function programLabel(program: EducationProgram): string {
+    return program === "THAI_PROGRAM" ? "Thai program" : "International program";
+}
+
+function programQuotaMessage(program: EducationProgram): string {
+    return `${programLabel(program)} quota has been reached`;
+}
+
 // ── Internal: create team account and send password setup link ─────
 
 async function provisionTeamAccount(
@@ -67,6 +82,7 @@ async function provisionTeamAccount(
     teamDisplayName: string,
     teamLoginName: string,
     leader: { name: string; studentEmail: string },
+    program: EducationProgram,
     actorId: string | null,
 ): Promise<ActionResult<ApproveRegistrationData>> {
     const teamEmail = leader.studentEmail;
@@ -115,11 +131,18 @@ async function provisionTeamAccount(
             await tx.$queryRaw`SELECT id FROM "event_settings" WHERE id = 1 FOR UPDATE`;
             const eventSettings = await tx.eventSettings.findUnique({
                 where: { id: 1 },
-                select: { maxTeams: true },
+                select: { maxTeams: true, maxThaiTeams: true, maxInternationalTeams: true },
             });
             const approvedCount = await tx.registration.count({ where: { status: "APPROVED" } });
             if (!eventSettings || approvedCount >= eventSettings.maxTeams) {
                 throw new RegistrationLimitReachedError();
+            }
+
+            const programCount = await tx.registration.count({
+                where: { status: "APPROVED", team: { is: { program } } },
+            });
+            if (programCount >= programQuotaLimit(eventSettings, program)) {
+                throw new RegistrationLimitReachedError(programQuotaMessage(program));
             }
 
             const claimed = await tx.registration.updateMany({
@@ -162,7 +185,7 @@ async function provisionTeamAccount(
                 ok: false,
                 error: {
                     code: ErrorCodes.MAX_TEAMS_REACHED,
-                    message: "Maximum number of teams has been reached",
+                    message: error.message,
                 },
             };
         }
@@ -274,6 +297,17 @@ export async function submitRegistration(
         };
     }
 
+    const programApproved = await countApprovedTeams(input.program);
+    if (programApproved >= programQuotaLimit(eventSettings, input.program)) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.MAX_TEAMS_REACHED,
+                message: programQuotaMessage(input.program),
+            },
+        };
+    }
+
     const registrationRateLimit = await checkRegistrationRateLimit(await headers());
     if (!registrationRateLimit.success) {
         return {
@@ -291,6 +325,7 @@ export async function submitRegistration(
                 data: {
                     loginName,
                     displayName: input.teamName,
+                    program: input.program,
                 },
             });
 
@@ -413,6 +448,7 @@ export async function verifyTeamMemberEmail(token: string): Promise<
                 record.team.displayName,
                 record.team.loginName,
                 { name: leader.name, studentEmail: leader.studentEmail },
+                record.team.program,
                 null,
             );
             if (!approvalResult.ok) {
@@ -491,6 +527,7 @@ export async function approveRegistration(
         record.team.displayName,
         record.team.loginName,
         { name: leader.name, studentEmail: leader.studentEmail },
+        record.team.program,
         actorId,
     );
 }

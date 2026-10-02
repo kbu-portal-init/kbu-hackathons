@@ -14,6 +14,8 @@ export type EventSettingsRecord = {
     submissionOpensAt: Date;
     submissionDeadline: Date;
     maxTeams: number;
+    maxThaiTeams: number;
+    maxInternationalTeams: number;
     minTeamSize: number;
     maxTeamSize: number;
     createdAt: Date;
@@ -35,6 +37,8 @@ export function toEventSettingsDTO(record: EventSettingsRecord): EventSettingsDT
         submissionOpensAt: record.submissionOpensAt.toISOString(),
         submissionDeadline: record.submissionDeadline.toISOString(),
         maxTeams: record.maxTeams,
+        maxThaiTeams: record.maxThaiTeams,
+        maxInternationalTeams: record.maxInternationalTeams,
         minTeamSize: record.minTeamSize,
         maxTeamSize: record.maxTeamSize,
         createdAt: record.createdAt.toISOString(),

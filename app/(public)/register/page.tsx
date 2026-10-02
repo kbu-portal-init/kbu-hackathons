@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
-import { RegistrationForm } from "./_components/registration-form";
+import { countApprovedTeams } from "@/lib/data/registrations";
+import { type ProgramSlot, RegistrationForm } from "./_components/registration-form";
 
 export const dynamic = "force-dynamic";
 
@@ -61,13 +62,47 @@ async function RegistrationContent() {
         );
     }
 
+    const [thaiApproved, internationalApproved] = await Promise.all([
+        countApprovedTeams("THAI_PROGRAM"),
+        countApprovedTeams("INTERNATIONAL_PROGRAM"),
+    ]);
+
+    const programSlots: ProgramSlot[] = [
+        {
+            program: "THAI_PROGRAM",
+            remaining: Math.max(0, settings.maxThaiTeams - thaiApproved),
+            limit: settings.maxThaiTeams,
+        },
+        {
+            program: "INTERNATIONAL_PROGRAM",
+            remaining: Math.max(0, settings.maxInternationalTeams - internationalApproved),
+            limit: settings.maxInternationalTeams,
+        },
+    ];
+
+    if (programSlots.every((slot) => slot.remaining === 0)) {
+        return (
+            <div className="mt-8 rounded-2xl border border-orange-100 bg-white p-8 shadow-xl shadow-orange-100/40">
+                <h2 className="text-xl font-semibold">All team slots are filled</h2>
+                <p className="mt-3 text-base leading-7 text-muted-foreground">
+                    Both programs have reached their team limits. Please contact the organizers if you have any
+                    questions.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <>
             <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-brand-muted-foreground">
                 Fill out the form below to register your team for the hackathon.
             </p>
             <div className="mt-6">
-                <RegistrationForm minTeamSize={settings.minTeamSize} maxTeamSize={settings.maxTeamSize} />
+                <RegistrationForm
+                    minTeamSize={settings.minTeamSize}
+                    maxTeamSize={settings.maxTeamSize}
+                    programSlots={programSlots}
+                />
             </div>
         </>
     );

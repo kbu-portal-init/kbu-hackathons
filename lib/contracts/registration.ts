@@ -12,6 +12,10 @@ const teamMemberRoleEnum = z.enum([
     "OTHER",
 ]);
 
+export const educationProgramSchema = z.enum(["THAI_PROGRAM", "INTERNATIONAL_PROGRAM"]);
+
+export type EducationProgram = z.infer<typeof educationProgramSchema>;
+
 const kbuEmail = z
     .email("Invalid email address")
     .trim()
@@ -38,6 +42,7 @@ const registrationName = (label: string) =>
 
 export const submitRegistrationSchema = z.object({
     teamName: registrationName("Team name"),
+    program: educationProgramSchema,
     leaderName: registrationName("Leader name"),
     leaderEmail: kbuEmail,
     leaderRole: z.literal("LEADER").default("LEADER"),

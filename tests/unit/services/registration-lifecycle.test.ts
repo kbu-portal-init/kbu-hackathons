@@ -50,6 +50,7 @@ const pendingRecord = () => ({
     team: {
         displayName: "Build Team",
         loginName: "build-team",
+        program: "THAI_PROGRAM",
         members: [{ id: "leader-1", name: "Leader", studentEmail: "leader@example.com", role: "LEADER" }],
     },
 });
@@ -79,6 +80,8 @@ describe("registration lifecycle", () => {
                 minTeamSize: 2,
                 maxTeamSize: 4,
                 maxTeams: 10,
+                maxThaiTeams: 10,
+                maxInternationalTeams: 10,
             })) as unknown as typeof prisma.eventSettings.findUnique;
             prisma.team.findUnique = (async () => null) as unknown as typeof prisma.team.findUnique;
             prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
@@ -94,6 +97,7 @@ describe("registration lifecycle", () => {
             verificationFails = true;
             const result = await service.submitRegistration({
                 teamName: "Build Team",
+                program: "THAI_PROGRAM",
                 leaderName: "Leader",
                 leaderEmail: "leader@example.com",
                 leaderRole: "LEADER",
@@ -121,6 +125,8 @@ describe("registration lifecycle", () => {
                 minTeamSize: 2,
                 maxTeamSize: 4,
                 maxTeams: 10,
+                maxThaiTeams: 10,
+                maxInternationalTeams: 10,
             })) as unknown as typeof prisma.eventSettings.findUnique;
             prisma.team.findUnique = (async () => null) as unknown as typeof prisma.team.findUnique;
             prisma.$transaction = (async () => {
@@ -141,6 +147,7 @@ describe("registration lifecycle", () => {
             }) as typeof prisma.$transaction;
             const result = await service.submitRegistration({
                 teamName: "Build Team",
+                program: "THAI_PROGRAM",
                 leaderName: "Leader",
                 leaderEmail: "leader@example.com",
                 leaderRole: "LEADER",
@@ -192,7 +199,9 @@ describe("registration lifecycle", () => {
             prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
                 callback({
                     $queryRaw: async () => operations.push("lock"),
-                    eventSettings: { findUnique: async () => ({ maxTeams: 10 }) },
+                    eventSettings: {
+                        findUnique: async () => ({ maxTeams: 10, maxThaiTeams: 10, maxInternationalTeams: 10 }),
+                    },
                     registration: {
                         count: async () => 1,
                         updateMany: async () => {

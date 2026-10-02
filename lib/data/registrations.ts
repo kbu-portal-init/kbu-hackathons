@@ -1,7 +1,12 @@
 import "server-only";
 
 import type { ListResult } from "@/lib/contracts/common";
-import type { ListRegistrationsInput, RegistrationDetailDTO, RegistrationListItem } from "@/lib/contracts/registration";
+import type {
+    EducationProgram,
+    ListRegistrationsInput,
+    RegistrationDetailDTO,
+    RegistrationListItem,
+} from "@/lib/contracts/registration";
 import { toRegistrationDetail, toRegistrationListItem } from "@/lib/mappers/registrations";
 import prisma from "@/lib/prisma";
 
@@ -108,8 +113,10 @@ export async function getRegistrationDetail(registrationId: string): Promise<Reg
     });
 }
 
-export async function countApprovedTeams(): Promise<number> {
-    return prisma.registration.count({ where: { status: "APPROVED" } });
+export async function countApprovedTeams(program?: EducationProgram): Promise<number> {
+    return prisma.registration.count({
+        where: { status: "APPROVED", ...(program ? { team: { is: { program } } } : {}) },
+    });
 }
 
 export async function getRegistrationWithTeam(registrationId: string) {

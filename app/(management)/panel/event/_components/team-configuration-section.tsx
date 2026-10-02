@@ -33,6 +33,44 @@ export function TeamConfigurationSection({ control }: Props) {
                 />
                 <div className="grid gap-5 sm:grid-cols-2">
                     <Controller
+                        name="maxThaiTeams"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor={field.name}>Max Thai program teams</FieldLabel>
+                                <Input
+                                    {...field}
+                                    id={field.name}
+                                    type="number"
+                                    min={0}
+                                    aria-invalid={fieldState.invalid}
+                                />
+                                <FieldDescription>Set to 0 to close the Thai program track.</FieldDescription>
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
+                    <Controller
+                        name="maxInternationalTeams"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor={field.name}>Max International program teams</FieldLabel>
+                                <Input
+                                    {...field}
+                                    id={field.name}
+                                    type="number"
+                                    min={0}
+                                    aria-invalid={fieldState.invalid}
+                                />
+                                <FieldDescription>Set to 0 to close the International program track.</FieldDescription>
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </Field>
+                        )}
+                    />
+                </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                    <Controller
                         name="minTeamSize"
                         control={control}
                         render={({ field, fieldState }) => (
