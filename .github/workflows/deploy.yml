@@ -61,9 +61,24 @@ jobs:
                     # Build and start new containers
                     docker compose --env-file /opt/hackathon/.env.production up -d --build --remove-orphans
 
+                    # Apply pending Prisma migrations (one-shot container)
+                    echo "🔄 Running database migrations..."
+                    if ! docker compose --env-file /opt/hackathon/.env.production --profile migrate run --rm migrate; then
+                        echo "❌ Migration failed — dumping logs before rollback..."
+                        docker compose --env-file /opt/hackathon/.env.production logs --tail 200 web 2>&1 || true
+                        docker compose --env-file /opt/hackathon/.env.production logs --tail 200 migrate 2>&1 || true
+                        docker compose --env-file /opt/hackathon/.env.production down
+                        docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
+                        docker compose --env-file /opt/hackathon/.env.production up -d
+                        echo "⚠️ Rollback complete. Investigate the failed migration."
+                        exit 1
+                    fi
+                    echo "✅ Migrations applied."
+
                     # Health check with automatic rollback on failure
                     if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'; then
-                        echo "❌ Health check failed — rolling back to previous image..."
+                        echo "❌ Health check failed — dumping web logs before rollback..."
+                        docker compose --env-file /opt/hackathon/.env.production logs --tail 200 web 2>&1 || true
                         docker compose --env-file /opt/hackathon/.env.production down
                         docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
                         docker compose --env-file /opt/hackathon/.env.production up -d
@@ -73,3 +88,4 @@ jobs:
 
                     echo "✅ Health check passed."
                     docker image prune -f
+
