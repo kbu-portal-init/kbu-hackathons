@@ -2,6 +2,7 @@ import {
     CalendarDays,
     ClipboardPenLine,
     Coffee,
+    ExternalLink,
     MapPin,
     MessageCircle,
     ShieldCheck,
@@ -210,15 +211,25 @@ async function AboutContent() {
                             </p>
                         </div>
 
-                        <div className="mt-8 flex items-start gap-3 border border-orange-200 bg-white p-5">
-                            <MessageCircle className="mt-0.5 size-5 shrink-0 text-orange-600" />
-                            <div>
-                                <h3 className="font-bold text-foreground">Need help?</h3>
-                                <p className="mt-2 text-sm leading-6 text-brand-muted-foreground">
-                                    Contact the organizers on LINE. contact:{" "}
-                                    <span className="font-semibold text-foreground">@kbu-hackathon</span>.
-                                </p>
+                        <div className="mt-8 flex flex-col gap-4 border border-orange-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-start gap-3">
+                                <MessageCircle className="mt-0.5 size-5 shrink-0 text-orange-600" />
+                                <div>
+                                    <h3 className="font-bold text-foreground">Need help?</h3>
+                                    <p className="mt-1 text-sm text-brand-muted-foreground">
+                                        Join our official LINE group to connect with organizers and get event support.
+                                    </p>
+                                </div>
                             </div>
+                            <a
+                                href="https://line.me/R/ti/g/UthVM5PDyg"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600/90"
+                            >
+                                <span>Join LINE Group</span>
+                                <ExternalLink className="size-4" />
+                            </a>
                         </div>
                     </section>
                 </>
