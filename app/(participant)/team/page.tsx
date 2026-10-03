@@ -1,11 +1,11 @@
+import { Suspense } from "react";
+import { DashboardCardGridSkeleton } from "@/components/dashboard-skeletons";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import { getTeamMembersForCards } from "@/lib/data/team-members";
 import { MemberCards } from "./_components/member-cards";
 
 export default async function TeamsPage() {
     const { team } = await requireApprovedTeam();
-
-    const members = await getTeamMembersForCards(team.id);
 
     return (
         <main className="space-y-8">
@@ -15,7 +15,15 @@ export default async function TeamsPage() {
                     Generate and share a branded digital card for each team member.
                 </p>
             </div>
-            <MemberCards members={members} />
+            <Suspense fallback={<DashboardCardGridSkeleton />}>
+                <MemberCardsContent teamId={team.id} />
+            </Suspense>
         </main>
     );
+}
+
+async function MemberCardsContent({ teamId }: { teamId: string }) {
+    const members = await getTeamMembersForCards(teamId);
+
+    return <MemberCards members={members} />;
 }

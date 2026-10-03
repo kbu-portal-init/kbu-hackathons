@@ -10,6 +10,8 @@ import {
     Trophy,
 } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 
 const references = [
@@ -43,9 +45,7 @@ function formatDate(value: string) {
     return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(value));
 }
 
-export default async function TeamReferencesPage() {
-    const event = await getEventSettings();
-
+export default function TeamReferencesPage() {
     return (
         <main className="space-y-8 p-6 lg:p-10">
             <div>
@@ -56,37 +56,9 @@ export default async function TeamReferencesPage() {
                 </p>
             </div>
 
-            <section className="grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
-                    <CalendarDays className="size-5 text-orange-600" />
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-orange-700">
-                        Hackathon dates
-                    </p>
-                    <p className="mt-1 font-semibold text-zinc-950">
-                        {event
-                            ? `${formatDate(event.startsAt)} – ${formatDate(event.endsAt)}`
-                            : "Dates to be announced"}
-                    </p>
-                </div>
-                <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-                    <ClipboardCheck className="size-5 text-orange-600" />
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Team size
-                    </p>
-                    <p className="mt-1 font-semibold text-zinc-950">
-                        {event ? `${event.minTeamSize}–${event.maxTeamSize} members` : "Check event rules"}
-                    </p>
-                </div>
-                <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-                    <Trophy className="size-5 text-orange-600" />
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Submission deadline
-                    </p>
-                    <p className="mt-1 font-semibold text-zinc-950">
-                        {event ? formatDate(event.submissionDeadline) : "To be announced"}
-                    </p>
-                </div>
-            </section>
+            <Suspense fallback={<EventFactsSkeleton />}>
+                <EventFacts />
+            </Suspense>
 
             <section className="grid gap-5 lg:grid-cols-2">
                 {references.map(({ icon: Icon, title, description, body }) => (
@@ -146,5 +118,54 @@ export default async function TeamReferencesPage() {
                 </div>
             </section>
         </main>
+    );
+}
+
+async function EventFacts() {
+    const event = await getEventSettings();
+
+    return (
+        <section className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
+                <CalendarDays className="size-5 text-orange-600" />
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-orange-700">Hackathon dates</p>
+                <p className="mt-1 font-semibold text-zinc-950">
+                    {event ? `${formatDate(event.startsAt)} – ${formatDate(event.endsAt)}` : "Dates to be announced"}
+                </p>
+            </div>
+            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+                <ClipboardCheck className="size-5 text-orange-600" />
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team size</p>
+                <p className="mt-1 font-semibold text-zinc-950">
+                    {event ? `${event.minTeamSize}–${event.maxTeamSize} members` : "Check event rules"}
+                </p>
+            </div>
+            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+                <Trophy className="size-5 text-orange-600" />
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Submission deadline
+                </p>
+                <p className="mt-1 font-semibold text-zinc-950">
+                    {event ? formatDate(event.submissionDeadline) : "To be announced"}
+                </p>
+            </div>
+        </section>
+    );
+}
+
+function EventFactsSkeleton() {
+    return (
+        <div role="status" aria-label="Loading event details">
+            <span className="sr-only">Loading event details</span>
+            <div className="grid gap-4 sm:grid-cols-3">
+                {["one", "two", "three"].map((key) => (
+                    <div className="rounded-2xl border border-zinc-200 bg-white p-5" key={key}>
+                        <Skeleton className="size-5 bg-orange-100" />
+                        <Skeleton className="mt-4 h-4 w-28 bg-zinc-100" />
+                        <Skeleton className="mt-2 h-5 w-40 max-w-full bg-zinc-100" />
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 }

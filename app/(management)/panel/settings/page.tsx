@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getOrganizerProfile } from "@/lib/data/organizer-profile";
 import { OrganizerProfileSettings } from "./_components/organizer-profile-settings";
@@ -6,16 +8,25 @@ import { OrganizerProfileSettings } from "./_components/organizer-profile-settin
 export default async function PanelSettingsPage() {
     const session = await requireOrganizerOrAdmin();
     if (session.user.role === "admin") redirect("/admin/settings");
-    const profile = await getOrganizerProfile(session.user.id);
-    if (!profile) return null;
+
     return (
         <main className="space-y-8">
             <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Management workspace</p>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight">Organizer settings</h1>
-                <p className="mt-2 text-muted-foreground">Manage your profile and password.</p>
+                <h1 className="text-2xl font-semibold tracking-tight">Organizer settings</h1>
+                <p className="mt-1 text-muted-foreground">Manage your profile and password.</p>
             </div>
-            <OrganizerProfileSettings profile={profile} />
+            <Suspense fallback={<DashboardFormSkeleton />}>
+                <OrganizerSettingsContent userId={session.user.id} />
+            </Suspense>
         </main>
     );
+}
+
+async function OrganizerSettingsContent({ userId }: { userId: string }) {
+    const profile = await getOrganizerProfile(userId);
+
+    if (!profile) return null;
+
+    return <OrganizerProfileSettings profile={profile} />;
 }

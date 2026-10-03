@@ -2,20 +2,32 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
+import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
 import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
 
-export default async function PanelTeamDetailPage({ params }: { params: Promise<{ teamId: string }> }) {
+export default function PanelTeamDetailPage({ params }: { params: Promise<{ teamId: string }> }) {
+    return (
+        <div className="space-y-6">
+            <Suspense fallback={<DashboardDetailSkeleton />}>
+                <TeamDetailContent params={params} />
+            </Suspense>
+        </div>
+    );
+}
+
+async function TeamDetailContent({ params }: { params: Promise<{ teamId: string }> }) {
     const { teamId } = await params;
     const result = await getTeam({ teamId });
     if (!result.ok) notFound();
     const team = result.data;
     return (
-        <div className="space-y-6">
+        <>
             <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-4">
                     <BackButton fallbackHref="/panel/teams" />
@@ -210,7 +222,7 @@ export default async function PanelTeamDetailPage({ params }: { params: Promise<
                     <p className="text-sm text-muted-foreground">No reviews recorded.</p>
                 )}
             </Panel>
-        </div>
+        </>
     );
 }
 
