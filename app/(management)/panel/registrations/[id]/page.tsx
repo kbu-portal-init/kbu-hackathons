@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { BackButton } from "@/components/back-button";
+import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
@@ -32,13 +34,24 @@ function StatusBadge({ status }: { status: string }) {
 
 export default async function RegistrationDetailPage({ params }: { params: Promise<{ id: string }> }) {
     await requireOrganizerOrAdmin();
+
+    return (
+        <div className="space-y-6">
+            <Suspense fallback={<DashboardDetailSkeleton />}>
+                <RegistrationDetailContent params={params} />
+            </Suspense>
+        </div>
+    );
+}
+
+async function RegistrationDetailContent({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const item = await getRegistrationDetail(id);
 
     if (!item) notFound();
 
     return (
-        <div className="space-y-6">
+        <>
             <div className="flex items-center gap-4">
                 <BackButton fallbackHref="/panel/registrations" />
                 <div>
@@ -116,7 +129,7 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
                     unverifiedCount={item.members.filter((m) => !m.verifiedAt).length}
                 />
             )}
-        </div>
+        </>
     );
 }
 

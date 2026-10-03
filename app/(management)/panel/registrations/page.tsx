@@ -1,7 +1,21 @@
+import { Suspense } from "react";
 import { listRegistrationRequests } from "@/actions/management/registrations";
+import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { RegistrationManagement } from "./_components/registration-management";
 
-export default async function PanelRegistrationsPage({
+export default function PanelRegistrationsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ status?: string; page?: string }>;
+}) {
+    return (
+        <Suspense fallback={<DashboardListSkeleton />}>
+            <RegistrationListContent searchParams={searchParams} />
+        </Suspense>
+    );
+}
+
+async function RegistrationListContent({
     searchParams,
 }: {
     searchParams: Promise<{ status?: string; page?: string }>;

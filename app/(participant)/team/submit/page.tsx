@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { getTeamSubmission } from "@/lib/data/submissions";
@@ -5,7 +7,6 @@ import { SubmissionForm } from "./_components/submission-form";
 
 export default async function TeamSubmitPage() {
     const { team } = await requireApprovedTeam();
-    const [submission, event] = await Promise.all([getTeamSubmission(team.id), getEventSettings()]);
 
     return (
         <main className="max-w-4xl">
@@ -14,6 +15,18 @@ export default async function TeamSubmitPage() {
             <p className="mt-2 max-w-2xl text-muted-foreground">
                 Save a draft while you work, then finalize it before the configured deadline.
             </p>
+            <Suspense fallback={<DashboardFormSkeleton />}>
+                <SubmissionContent teamId={team.id} />
+            </Suspense>
+        </main>
+    );
+}
+
+async function SubmissionContent({ teamId }: { teamId: string }) {
+    const [submission, event] = await Promise.all([getTeamSubmission(teamId), getEventSettings()]);
+
+    return (
+        <>
             {event && (
                 <p className="mt-4 rounded-lg border border-orange-200 bg-orange-50 p-4 text-sm text-orange-950">
                     Submission window:{" "}
@@ -27,6 +40,6 @@ export default async function TeamSubmitPage() {
                 </p>
             )}
             <SubmissionForm submission={submission} />
-        </main>
+        </>
     );
 }

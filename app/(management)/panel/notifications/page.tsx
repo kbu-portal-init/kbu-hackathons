@@ -1,8 +1,18 @@
+import { Suspense } from "react";
 import { listTeams } from "@/actions/management/teams";
+import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import type { TeamListItem } from "@/lib/contracts/teams";
 import { NotificationComposer } from "./_components/notification-composer";
 
-export default async function NotificationsPage() {
+export default function NotificationsPage() {
+    return (
+        <Suspense fallback={<DashboardFormSkeleton header />}>
+            <NotificationComposerContent />
+        </Suspense>
+    );
+}
+
+async function NotificationComposerContent() {
     const allTeams: TeamListItem[] = [];
     let page = 1;
     let hasNextPage = true;
@@ -13,5 +23,6 @@ export default async function NotificationsPage() {
         hasNextPage = teams.data.meta.hasNextPage;
         page += 1;
     }
+
     return <NotificationComposer teams={allTeams} />;
 }

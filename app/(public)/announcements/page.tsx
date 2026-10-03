@@ -75,7 +75,12 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
 
 function AnnouncementResultsFallback() {
     return (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div
+            className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+            role="status"
+            aria-label="Loading announcements"
+        >
+            <span className="sr-only">Loading announcements</span>
             {(["one", "two", "three", "four", "five", "six"] as const).map((card) => (
                 <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm" key={card}>
                     <Skeleton className="aspect-video w-full bg-zinc-100" />
@@ -163,18 +168,11 @@ async function AnnouncementResults({ page, search }: { page: number; search?: st
     );
 }
 
-export default async function AnnouncementsPage({
+export default function AnnouncementsPage({
     searchParams,
 }: {
     searchParams: Promise<{ page?: string; search?: string }>;
 }) {
-    const params = await searchParams;
-
-    const parsed = ListPublicAnnouncementSchema.safeParse(params);
-    const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
-
-    const search = filters.search ? filters.search.slice(0, MAX_SEARCH_LENGTH) : undefined;
-
     return (
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mb-8">
@@ -192,41 +190,66 @@ export default async function AnnouncementsPage({
                 </p>
             </section>
 
-            <section className="mb-10">
-                <search>
-                    <form action="/announcements" method="get" className="flex max-w-3xl items-center gap-2">
-                        <Input
-                            key={search ?? ""}
-                            type="search"
-                            name="search"
-                            defaultValue={search}
-                            placeholder="Search announcements..."
-                            aria-label="Search announcements"
-                            maxLength={MAX_SEARCH_LENGTH}
-                            className="h-11"
-                        />
+            <Suspense fallback={<AnnouncementSearchFallback />}>
+                {searchParams.then((params) => {
+                    const parsed = ListPublicAnnouncementSchema.safeParse(params);
+                    const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
 
-                        <Button type="submit" className="h-11 px-6">
-                            Search
-                        </Button>
+                    const search = filters.search ? filters.search.slice(0, MAX_SEARCH_LENGTH) : undefined;
 
-                        {search && (
-                            <Link
-                                href="/announcements"
-                                className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}
-                                aria-label="Clear search"
-                            >
-                                <X aria-hidden="true" />
-                                Clear
-                            </Link>
-                        )}
-                    </form>
-                </search>
-            </section>
+                    return (
+                        <>
+                            <section className="mb-10">
+                                <search>
+                                    <form
+                                        action="/announcements"
+                                        method="get"
+                                        className="flex max-w-3xl items-center gap-2"
+                                    >
+                                        <Input
+                                            key={search ?? ""}
+                                            type="search"
+                                            name="search"
+                                            defaultValue={search}
+                                            placeholder="Search announcements..."
+                                            aria-label="Search announcements"
+                                            maxLength={MAX_SEARCH_LENGTH}
+                                            className="h-11"
+                                        />
 
-            <Suspense fallback={<AnnouncementResultsFallback />}>
-                <AnnouncementResults page={filters.page} search={search} />
+                                        <Button type="submit" className="h-11 px-6">
+                                            Search
+                                        </Button>
+
+                                        {search && (
+                                            <Link
+                                                href="/announcements"
+                                                className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}
+                                                aria-label="Clear search"
+                                            >
+                                                <X aria-hidden="true" />
+                                                Clear
+                                            </Link>
+                                        )}
+                                    </form>
+                                </search>
+                            </section>
+
+                            <Suspense fallback={<AnnouncementResultsFallback />}>
+                                <AnnouncementResults page={filters.page} search={search} />
+                            </Suspense>
+                        </>
+                    );
+                })}
             </Suspense>
         </main>
+    );
+}
+
+function AnnouncementSearchFallback() {
+    return (
+        <section className="mb-10" role="status" aria-label="Loading search controls">
+            <Skeleton className="h-11 w-full max-w-3xl bg-zinc-100" />
+        </section>
     );
 }

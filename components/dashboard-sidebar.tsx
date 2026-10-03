@@ -124,7 +124,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
             </Sidebar>
             <div className="flex min-w-0 flex-1 flex-col">
                 <header className="flex h-14 items-center gap-3 border-b border-orange-100 bg-white px-4">
-                    <SidebarTrigger />
+                    <SidebarTrigger className="size-11 md:size-8" />
                     <p className="text-sm font-semibold text-zinc-700">{headerTitle}</p>
                 </header>
                 {children}
