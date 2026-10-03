@@ -48,6 +48,38 @@ services:
     cap_drop:
       - ALL
 
+  # One-shot migration runner — activated with: --profile migrate
+  # Uses the builder stage (has pnpm + prisma) then exits.
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: kbu_hackathon_migrate
+    env_file:
+      - path: /opt/hackathon/.env.production
+        required: true
+    environment:
+      NODE_ENV: production
+    working_dir: /app
+    command: ["pnpm", "db:migrate:deploy"]
+    networks:
+      - backend_net
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - migrate
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
   db:
     image: postgres:16-alpine
     container_name: kbu_hackathon_db
