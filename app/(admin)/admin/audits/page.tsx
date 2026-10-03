@@ -1,20 +1,36 @@
+import { Suspense } from "react";
+import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { listAuditLogsSchema } from "@/lib/contracts/audits";
 import { listAuditLogs } from "@/lib/data/audits";
 import { AuditFilters } from "./_components/audit-filters";
 import { AuditLogTable } from "./_components/audit-log-table";
 
-export default async function AdminAuditsPage({
-    searchParams,
-}: {
-    searchParams: Promise<{
-        page?: string;
-        pageSize?: string;
-        userId?: string;
-        userKind?: "user" | "teamMember";
-        action?: string;
-    }>;
-}) {
+type AuditSearchParams = {
+    page?: string;
+    pageSize?: string;
+    userId?: string;
+    userKind?: "user" | "teamMember";
+    action?: string;
+};
+
+export default function AdminAuditsPage({ searchParams }: { searchParams: Promise<AuditSearchParams> }) {
+    return (
+        <main className="space-y-8">
+            <div>
+                <h1 className="mt-2 text-3xl font-bold tracking-tight">Audit logs</h1>
+                <p className="mt-2 text-muted-foreground">
+                    Review and permanently delete administrative activity records.
+                </p>
+            </div>
+            <Suspense fallback={<DashboardListSkeleton />}>
+                <AuditLogContent searchParams={searchParams} />
+            </Suspense>
+        </main>
+    );
+}
+
+async function AuditLogContent({ searchParams }: { searchParams: Promise<AuditSearchParams> }) {
     const params = await searchParams;
 
     const parsedParams = listAuditLogsSchema.safeParse(params);
@@ -32,13 +48,7 @@ export default async function AdminAuditsPage({
     };
 
     return (
-        <main className="space-y-8">
-            <div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight">Audit logs</h1>
-                <p className="mt-2 text-muted-foreground">
-                    Review and permanently delete administrative activity records.
-                </p>
-            </div>
+        <>
             <AuditFilters userId={filters.userId} userKind={filters.userKind} action={filters.action} />
             <AuditLogTable items={items} />
             <PaginationFooter
@@ -49,6 +59,6 @@ export default async function AdminAuditsPage({
                 hasNextPage={meta.hasNextPage}
                 getPageHref={pageHref}
             />
-        </main>
+        </>
     );
 }

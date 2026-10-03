@@ -31,6 +31,12 @@
             "skillPath": "skills/frontend-design/SKILL.md",
             "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
         },
+        "nextjs-app-architecture": {
+            "source": "aurorascharff/nextjs-app-architecture-skill",
+            "sourceType": "github",
+            "skillPath": "SKILL.md",
+            "computedHash": "9db3104f99274bd3ade02b1ef56d7c2c484496e2a941a0d588ec743d43a3a76e"
+        },
         "shadcn": {
             "source": "shadcn-ui/ui",
             "sourceType": "github",

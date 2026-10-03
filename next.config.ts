@@ -14,6 +14,11 @@ const r2Hostname = (() => {
 
 const nextConfig: NextConfig = {
     output: "standalone",
+    experimental: {
+        staleTimes: {
+            dynamic: 30,
+        },
+    },
     images: {
         remotePatterns: r2Hostname
             ? [

@@ -52,7 +52,8 @@ export async function generateMetadata({ params }: AnnouncementPageProps): Promi
 
 function AnnouncementContentFallback() {
     return (
-        <article className="mt-10">
+        <article className="mt-10" role="status" aria-label="Loading announcement">
+            <span className="sr-only">Loading announcement</span>
             <Skeleton className="aspect-2/1 w-full rounded-3xl bg-zinc-100" />
             <Skeleton className="mt-8 h-4 w-48 bg-orange-100" />
             <Skeleton className="mt-6 h-10 w-3/4 max-w-full bg-zinc-100" />
@@ -111,9 +112,7 @@ async function AnnouncementContent({ announcementId }: { announcementId: string 
     );
 }
 
-export default async function AnnouncementPage({ params }: AnnouncementPageProps) {
-    const { announcementId } = await params;
-
+export default function AnnouncementPage({ params }: AnnouncementPageProps) {
     return (
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mx-auto max-w-4xl">
@@ -122,7 +121,9 @@ export default async function AnnouncementPage({ params }: AnnouncementPageProps
                 </div>
 
                 <Suspense fallback={<AnnouncementContentFallback />}>
-                    <AnnouncementContent announcementId={announcementId} />
+                    {params.then(({ announcementId }) => (
+                        <AnnouncementContent announcementId={announcementId} />
+                    ))}
                 </Suspense>
             </div>
         </main>

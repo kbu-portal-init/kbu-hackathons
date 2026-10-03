@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import { getTeamApprovalDate, getTeamMembersForCards } from "@/lib/data/team-members";
 import { TeamPasswordSettings } from "./_components/team-password-settings";
@@ -5,7 +7,6 @@ import { TeamSettingsForm } from "./_components/team-settings-form";
 
 export default async function TeamSettingsPage() {
     const { team } = await requireApprovedTeam();
-    const [members, approvalDate] = await Promise.all([getTeamMembersForCards(team.id), getTeamApprovalDate(team.id)]);
 
     return (
         <main className="space-y-8">
@@ -15,6 +16,27 @@ export default async function TeamSettingsPage() {
                     Manage your team identity, member presentation, and shared account access.
                 </p>
             </div>
+            <Suspense fallback={<DashboardFormSkeleton />}>
+                <TeamSettingsContent
+                    team={{ displayName: team.displayName, imageUrl: team.imageUrl, loginName: team.loginName }}
+                    teamId={team.id}
+                />
+            </Suspense>
+        </main>
+    );
+}
+
+async function TeamSettingsContent({
+    team,
+    teamId,
+}: {
+    team: { displayName: string; imageUrl: string | null; loginName: string };
+    teamId: string;
+}) {
+    const [members, approvalDate] = await Promise.all([getTeamMembersForCards(teamId), getTeamApprovalDate(teamId)]);
+
+    return (
+        <>
             <TeamSettingsForm
                 members={members}
                 team={{
@@ -25,6 +47,6 @@ export default async function TeamSettingsPage() {
                 }}
             />
             <TeamPasswordSettings username={team.loginName} />
-        </main>
+        </>
     );
 }
