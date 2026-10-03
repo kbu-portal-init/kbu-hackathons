@@ -25,7 +25,7 @@ export function MobileNavigation() {
         <>
             <button
                 type="button"
-                className="flex size-10 items-center justify-center rounded-lg text-brand-muted-foreground hover:bg-orange-50"
+                className="flex size-11 items-center justify-center rounded-lg text-brand-muted-foreground hover:bg-orange-50"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? "Close menu" : "Open menu"}
