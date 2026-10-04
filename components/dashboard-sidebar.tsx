@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, ShieldCheck } from "lucide-react";
+import { ChevronsUpDown, LogOut, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -191,6 +191,7 @@ function AccountFooter({
                     <span className="block truncate text-sm font-semibold text-sidebar-foreground">{account.name}</span>
                     <span className="block truncate text-xs text-sidebar-foreground/60">{account.identifier}</span>
                 </span>
+                <ChevronsUpDown className="size-4 shrink-0 text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden" />
             </PopoverTrigger>
             <PopoverContent side="right" align="end" className="w-64">
                 <PopoverHeader>
