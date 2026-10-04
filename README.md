@@ -82,12 +82,13 @@ Required for local development:
 Optional feature-specific settings:
 
 - SMTP email delivery: `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM_EMAIL`.
+- Hackathon support contact: `LINE_CONTACT_URL` and `LINE_CONTACT_NAME`.
 - Sentry error monitoring: `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_AUTH_TOKEN`.
 - Cloudflare Turnstile: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 - Cloudflare R2 storage: `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`.
 - Upstash Redis rate limiting: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (optional locally, required in production).
 
-Production startup requires the SMTP, Cloudflare R2, and Upstash Redis settings in addition to the local-development settings, and stops when required values are missing or invalid. Redis-backed limits are shared across application instances; local development falls back to in-memory Better Auth limits and disables the application-specific Redis limits. Sentry DSNs are public project identifiers; set `NEXT_PUBLIC_SENTRY_DSN` at build time so browser bundles receive it.
+Production startup requires the SMTP, Cloudflare R2, Upstash Redis, and LINE contact settings in addition to the local-development settings, and stops when required values are missing or invalid. Redis-backed limits are shared across application instances; local development falls back to in-memory Better Auth limits and disables the application-specific Redis limits. Sentry DSNs are public project identifiers; set `NEXT_PUBLIC_SENTRY_DSN` at build time so browser bundles receive it.
 
 ## File storage
 
