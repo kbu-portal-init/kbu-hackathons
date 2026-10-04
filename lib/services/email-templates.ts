@@ -1,4 +1,5 @@
 import type { EmailMessage, NotificationData, NotificationType } from "@/lib/contracts/email";
+import { getLineContact } from "@/lib/public-data/line-contact";
 
 type RenderedTemplate = Omit<EmailMessage, "to"> & { type: NotificationType };
 
@@ -16,18 +17,24 @@ function escapeHtml(value: string | undefined | null) {
 }
 
 function appLayout(title: string, content: string, action?: { label: string; url: string }) {
+    const lineContact = getLineContact();
     const button = action
         ? `<p style="margin:28px 0"><a href="${escapeHtml(action.url)}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600">${escapeHtml(action.label)}</a></p>`
         : "";
 
-    return `<!doctype html><html><body style="margin:0;background:#fff7ed;color:#431407;font-family:Arial,sans-serif;line-height:1.6"><div style="max-width:600px;margin:0 auto;padding:32px 20px"><div style="border:1px solid #fed7aa;border-radius:10px;overflow:hidden"><div style="background:#ea580c;color:white;padding:20px 24px"><strong>KBU Hackathon 2026</strong></div><div style="background:#ffffff;padding-top:32px !important;padding-right:24px !important;padding-bottom:32px !important;padding-left:24px !important"><h1 style="font-size:22px;margin:0 0 20px;color:#7c2d12">${escapeHtml(title)}</h1>${content}${button}</div><div style="border-top:1px solid #fed7aa;padding:16px 24px;text-align:center"><p style="font-size:12px;color:#9a3412;margin:0">This is an automated message from KBU Hackathon 2026.</p></div></div></div></body></html>`;
+    return `<!doctype html><html><body style="margin:0;background:#fff7ed;color:#431407;font-family:Arial,sans-serif;line-height:1.6"><div style="max-width:600px;margin:0 auto;padding:32px 20px"><div style="border:1px solid #fed7aa;border-radius:10px;overflow:hidden"><div style="background:#ea580c;color:white;padding:20px 24px"><strong>KBU Hackathon 2026</strong></div><div style="background:#ffffff;padding-top:32px !important;padding-right:24px !important;padding-bottom:32px !important;padding-left:24px !important"><h1 style="font-size:22px;margin:0 0 20px;color:#7c2d12">${escapeHtml(title)}</h1>${content}${button}</div><div style="border-top:1px solid #fed7aa;padding:16px 24px;text-align:center"><p style="font-size:12px;color:#9a3412;margin:0">Need help? <a href="${escapeHtml(lineContact.url)}" style="color:#c2410c">${escapeHtml(lineContact.name)}</a></p><p style="font-size:12px;color:#9a3412;margin:8px 0 0">This is an automated message from KBU Hackathon 2026.</p></div></div></div></body></html>`;
+}
+
+function appendLineContact(text: string) {
+    const lineContact = getLineContact();
+    return `${text}\n\nNeed help? Contact ${lineContact.name}: ${lineContact.url}`;
 }
 
 function paragraph(text: string) {
     return `<p>${text}</p>`;
 }
 
-export function renderNotificationTemplate(type: NotificationType, data: NotificationData): RenderedTemplate {
+function renderNotificationTemplateContent(type: NotificationType, data: NotificationData): RenderedTemplate {
     const rawTeamName = data.teamName ?? "";
     const teamName = escapeHtml(rawTeamName) || "Your team";
     const reason = data.reason ? paragraph(`<strong>Reason:</strong> ${escapeHtml(data.reason)}`) : "";
@@ -148,7 +155,12 @@ export function renderNotificationTemplate(type: NotificationType, data: Notific
     }
 }
 
+export function renderNotificationTemplate(type: NotificationType, data: NotificationData): RenderedTemplate {
+    const rendered = renderNotificationTemplateContent(type, data);
+    return { ...rendered, text: appendLineContact(rendered.text) };
+}
+
 export function renderCustomEmailTemplate(subject: string, body: string): Omit<EmailMessage, "to"> {
     const htmlBody = escapeHtml(body).replace(/\r?\n/g, "<br />");
-    return { subject, text: body, html: appLayout(subject, `<p>${htmlBody}</p>`) };
+    return { subject, text: appendLineContact(body), html: appLayout(subject, `<p>${htmlBody}</p>`) };
 }

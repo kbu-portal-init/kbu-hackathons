@@ -16,6 +16,8 @@ const REQUIRED_ENV_VARS = [
     "NEXT_PUBLIC_R2_PUBLIC_URL",
     "UPSTASH_REDIS_REST_URL",
     "UPSTASH_REDIS_REST_TOKEN",
+    "LINE_CONTACT_URL",
+    "LINE_CONTACT_NAME",
 ] as const;
 
 export type RequiredEnvVar = (typeof REQUIRED_ENV_VARS)[number];
