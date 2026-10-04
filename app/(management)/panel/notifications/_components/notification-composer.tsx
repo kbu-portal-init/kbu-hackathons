@@ -38,10 +38,6 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
 
     return (
         <div className="flex max-w-2xl flex-col gap-6">
-            <div>
-                <h1 className="text-2xl font-semibold tracking-tight">Notifications</h1>
-                <p className="text-sm text-muted-foreground">Send a notification by email, in-app message, or both.</p>
-            </div>
             <form
                 onSubmit={submit}
                 className="flex flex-col gap-4 rounded-2xl border border-orange-100 bg-white p-6 shadow-sm"

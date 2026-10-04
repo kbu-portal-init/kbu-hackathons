@@ -4,7 +4,7 @@
 
 KBU Hackathon 2026 is a Next.js App Router application for a single KBU hackathon event. Route groups organize the workspaces without changing their URLs:
 
-- `app/(public)` contains public discovery, the consolidated participant information on `/about`, registration, and login pages. `/login` is the single login route and switches between participant and management access with tabs.
+- `app/(public)` contains public discovery, the consolidated participant information on the homepage, registration, and login pages. `/login` is the single login route and switches between participant and management access with tabs.
 - `app/(participant)/team` is the approved team workspace.
 - `app/(management)/panel` is the organizer panel.
 - `app/(admin)/admin` is the elevated administrator panel.
@@ -19,6 +19,7 @@ Prefer Server Components. Use client components only for browser state, events, 
 - Prefer Server Components. Add `"use client"` only when a component needs browser state, events, effects, or a client-only library.
 - Keep page files server-rendered where possible; place interactive behavior in focused client components.
 - Maintain public, participant, and management link definitions in `lib/navigation.ts`. Update that file whenever a navigation destination changes.
+- Administrator and management layouts own dashboard page padding (`p-4 sm:p-6 lg:p-8`). Their pages must not add another outer padding container; use `DashboardPageHeader` and `space-y-8` for consistent page chrome.
 - Update `README.md` and `AGENTS.md` (plus the relevant `docs/` document) whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Keep the README route map aligned with the application and `lib/navigation.ts` aligned with navigable routes.
 - Reuse application components from `components`. Do not place app-specific UI in `components/ui`.
 - `components/ui` is shadcn-generated source. Do not hand-edit it. This project uses shadcn's Base UI configuration; browse the [component catalog](https://ui.shadcn.com/docs/components) and add a component with `pnpm dlx shadcn@latest add <component>`.

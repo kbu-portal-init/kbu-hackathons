@@ -27,13 +27,6 @@ export function TeamManagement({ items, meta, status }: Props) {
     };
     return (
         <div className="space-y-6">
-            <div>
-                <p className="text-sm font-medium text-muted-foreground">Management workspace</p>
-                <h1 className="text-2xl font-semibold tracking-tight">All teams</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Browse approved teams and monitor their submissions.
-                </p>
-            </div>
             <div className="flex flex-wrap gap-2">
                 {filters.map((value) => (
                     <Button

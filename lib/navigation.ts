@@ -14,7 +14,6 @@ export const publicLinks = [
     { href: "/register", label: "Register" },
     { href: "/announcements", label: "Announcements" },
     { href: "/resources", label: "Resources" },
-    { href: "/about", label: "About" },
 ] as const;
 
 export const participantDashboardLinks = [

@@ -1,18 +1,17 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardStatGridSkeleton } from "@/components/dashboard-skeletons";
 import { getAdminOverview } from "@/lib/data/admin";
 
 export default function AdminPage() {
     return (
         <main className="space-y-8">
-            <header>
-                <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Administrator access</p>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight">Administrator panel</h1>
-                <p className="mt-2 text-muted-foreground">
-                    Overview of accounts, registrations, submissions, and platform management.
-                </p>
-            </header>
+            <DashboardPageHeader
+                eyebrow="Administrator access"
+                title="Administrator panel"
+                description="Overview of accounts, registrations, submissions, and platform management."
+            />
             <Suspense fallback={<DashboardStatGridSkeleton />}>
                 <AdminOverview />
             </Suspense>

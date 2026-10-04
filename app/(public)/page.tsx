@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarDays, ClipboardPenLine, MapPin, Megaphone, NotebookPen, Terminal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { AboutContent } from "@/app/(public)/_components/about-content";
 import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
 import ScrollFx from "@/components/scroll-fx";
 import { getEventSettings } from "@/lib/data/event-settings";
@@ -16,22 +17,38 @@ function formatDate(value: string) {
     return dateFormatter.format(new Date(value));
 }
 
-const features = [
-    {
-        title: "Form your team",
-        description: "Find builders with complementary skills and register a team in minutes.",
-    },
-    {
-        title: "Pick a challenge",
-        description: "Themed sprints and open build weekends, from kickoff to demo day.",
-    },
-    {
-        title: "Ship and compete",
-        description: "Present a working demo to judges, collect feedback, and win.",
-    },
-] as const;
-
 const glowBackground = "bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,rgba(109,40,217,0.12),transparent)]";
+
+type RegistrationState = "open" | "not-started" | "closed" | "unavailable";
+
+function RegistrationButton({ state }: { state: RegistrationState }) {
+    if (state === "open") {
+        return (
+            <Link
+                href="/register"
+                className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
+            >
+                <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
+                Register Your Team
+            </Link>
+        );
+    }
+
+    return (
+        <button
+            type="button"
+            disabled
+            className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-orange-600/45 px-5 py-3 font-semibold text-white/90 opacity-80"
+        >
+            <NotebookPen className="size-5" />
+            {state === "not-started"
+                ? "Registration opens soon"
+                : state === "closed"
+                  ? "Registration closed"
+                  : "Registration unavailable"}
+        </button>
+    );
+}
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +56,7 @@ export default async function Home() {
     const event = await getEventSettings();
     const eventImage = event?.imageUrls.find((url) => isOwnedR2PublicUrl(url, "uploads/events"));
     const now = Date.now();
-    const registrationState =
+    const registrationState: RegistrationState =
         event === null
             ? "unavailable"
             : now < new Date(event.registrationOpensAt).getTime()
@@ -61,7 +78,7 @@ export default async function Home() {
                             className="inline-flex items-center gap-2 font-mono text-sm font-medium text-orange-600"
                         >
                             <Terminal className="size-4" />
-                            <span>$ kbu-hackathon-2026 --start</span>
+                            <span>$ start</span>
                             <span className="inline-block h-4 w-2 animate-pulse text-orange-600" aria-hidden />
                         </p>
                         <h1
@@ -70,6 +87,9 @@ export default async function Home() {
                         >
                             {event?.title ?? "Build. Connect. Compete."}
                         </h1>
+                        <p data-reveal className="mt-4 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                            Build. <span className="text-primary">Connect.</span> Compete.
+                        </p>
                         <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-brand-muted-foreground">
                             {event?.description ??
                                 "Step into the KBU hackathon workspace. Find your team, build something real, and get ready to compete."}
@@ -119,28 +139,7 @@ export default async function Home() {
                             </div>
                         )}
                         <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
-                            {registrationState === "open" ? (
-                                <Link
-                                    href="/register"
-                                    className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
-                                >
-                                    <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
-                                    Register Your Team
-                                </Link>
-                            ) : (
-                                <button
-                                    type="button"
-                                    disabled
-                                    className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-orange-600/45 px-5 py-3 font-semibold text-white/90 opacity-80"
-                                >
-                                    <NotebookPen className="size-5" />
-                                    {registrationState === "not-started"
-                                        ? "Registration opens soon"
-                                        : registrationState === "closed"
-                                          ? "Registration closed"
-                                          : "Registration unavailable"}
-                                </button>
-                            )}
+                            <RegistrationButton state={registrationState} />
                             <Link
                                 href="/login"
                                 className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
@@ -161,7 +160,7 @@ export default async function Home() {
                                 </span>
                             </div>
                             {eventImage ? (
-                                <div className="relative aspect-[4/3] w-full bg-orange-100">
+                                <div className="relative aspect-4/3 w-full bg-orange-100">
                                     <Image
                                         src={eventImage}
                                         alt={event?.title ?? "KBU Hackathon event"}
@@ -172,7 +171,7 @@ export default async function Home() {
                                     />
                                 </div>
                             ) : (
-                                <div className="flex aspect-[4/3] items-center justify-center bg-orange-50 px-6 text-center text-sm text-brand-muted-foreground">
+                                <div className="flex aspect-4/3 items-center justify-center bg-orange-50 px-6 text-center text-sm text-brand-muted-foreground">
                                     Event preview coming soon.
                                 </div>
                             )}
@@ -193,27 +192,9 @@ export default async function Home() {
                 <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-accent" aria-hidden />
             </section>
 
-            {/* Features */}
-            <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-                <div data-reveal className="max-w-2xl">
-                    <p className="font-mono text-sm font-medium text-orange-600">{"// how_it_works"}</p>
-                    <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                        From idea to demo
-                    </h2>
-                    <p className="mt-4 text-brand-muted-foreground">
-                        Three steps separate an empty repository from a working demo on stage.
-                    </p>
-                </div>
-                <div className="mt-12 py-8" data-reveal-group>
-                    <div className="grid gap-8 md:grid-cols-3">
-                        {features.map(({ title, description }, index) => (
-                            <article key={title} data-reveal className="relative border-l-2 border-orange-300 pl-5">
-                                <span className="font-mono text-3xl font-bold text-orange-600">0{index + 1}</span>
-                                <h3 className="mt-5 text-lg font-bold text-foreground">{title}</h3>
-                                <p className="mt-2 text-sm leading-7 text-brand-muted-foreground">{description}</p>
-                            </article>
-                        ))}
-                    </div>
+            <section className="bg-orange-50/60">
+                <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+                    <AboutContent />
                 </div>
             </section>
 
@@ -283,19 +264,7 @@ export default async function Home() {
                         Register, find your team, and start building before the next kickoff.
                     </p>
                     <div data-reveal className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                        <Link
-                            href="/register"
-                            className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
-                        >
-                            Register your team
-                            <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
-                        </Link>
-                        <Link
-                            href="/about"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
-                        >
-                            Everything you need to know
-                        </Link>
+                        <RegistrationButton state={registrationState} />
                     </div>
                 </div>
             </section>

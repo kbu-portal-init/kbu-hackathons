@@ -20,7 +20,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 
 | Area | Routes | Status |
 | --- | --- | --- |
-| Public | `/`, `/announcements`, `/resources`, `/about` | Available without authentication; `/about` contains the participant information and two-day event flow |
+| Public | `/`, `/announcements`, `/resources` | Available without authentication; the homepage contains the participant information and two-day event flow |
 | Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration collects the roster plus the Thai/International program choice and enforces per-program and total team caps |
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
