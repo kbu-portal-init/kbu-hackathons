@@ -189,7 +189,7 @@ function AccountFooter({
                 {avatar}
                 <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
                     <span className="block truncate text-sm font-semibold text-sidebar-foreground">{account.name}</span>
-                    <span className="block truncate text-xs text-sidebar-foreground/60">{account.identifier}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{account.identifier}</span>
                 </span>
                 <ChevronsUpDown className="size-4 shrink-0 text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden" />
             </PopoverTrigger>
