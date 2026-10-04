@@ -189,14 +189,14 @@ function AccountFooter({
                 {avatar}
                 <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
                     <span className="block truncate text-sm font-semibold text-sidebar-foreground">{account.name}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{account.identifier}</span>
+                    <span className="block truncate text-xs text-sidebar-foreground/60">{account.identifier}</span>
                 </span>
             </PopoverTrigger>
             <PopoverContent side="right" align="end" className="w-64">
                 <PopoverHeader>
-                    <div className="flex flex-col items-center gap-2 text-center">
+                    <div className="flex items-center gap-3">
                         {avatar}
-                        <div className="min-w-0 max-w-full">
+                        <div className="min-w-0">
                             <PopoverTitle className="truncate">{account.name}</PopoverTitle>
                             <PopoverDescription className="truncate">{account.identifier}</PopoverDescription>
                         </div>
@@ -206,7 +206,7 @@ function AccountFooter({
                     trigger={
                         <button
                             type="button"
-                            className="cursor-pointer flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-destructive outline-none hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
+                            className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-destructive outline-none hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             <LogOut className="size-4" />
                             <span>Sign out</span>
