@@ -22,7 +22,12 @@ import {
 } from "@/components/ui/sidebar";
 import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
-import { adminDashboardLinks, managementDashboardLinks, participantDashboardLinks } from "@/lib/navigation";
+import {
+    adminDashboardLinks,
+    isActivePath,
+    managementDashboardLinks,
+    participantDashboardLinks,
+} from "@/lib/navigation";
 import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
 
 type DashboardSidebarProps = {
@@ -33,6 +38,7 @@ type DashboardSidebarProps = {
 
 export function DashboardSidebar({ area, children, role }: DashboardSidebarProps) {
     const router = useRouter();
+    const pathname = usePathname();
 
     const config = {
         participant: {
@@ -53,6 +59,7 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
     } as const;
 
     const { label: sidebarLabel, title: headerTitle, links } = config[area];
+    const adminActive = isActivePath(pathname, "/admin");
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
@@ -74,18 +81,31 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                         <SidebarGroupLabel>{sidebarLabel}</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu className="gap-1">
-                                {links.map(({ href, label, icon: Icon }) => (
-                                    <SidebarMenuItem key={href}>
-                                        <SidebarMenuButton render={<Link href={href} />} tooltip={label}>
-                                            <Icon />
-                                            <span>{label}</span>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
+                                {links.map(({ href, label, icon: Icon }) => {
+                                    const active = isActivePath(pathname, href);
+                                    return (
+                                        <SidebarMenuItem key={href}>
+                                            <SidebarMenuButton
+                                                render={<Link href={href} aria-current={active ? "page" : undefined} />}
+                                                tooltip={label}
+                                                isActive={active}
+                                            >
+                                                <Icon />
+                                                <span>{label}</span>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
                                 {/* Only shown when the user is in the management area and has the admin role */}
                                 {area === "management" && role === "admin" && (
                                     <SidebarMenuItem>
-                                        <SidebarMenuButton render={<Link href="/admin" />} tooltip="Admin Panel">
+                                        <SidebarMenuButton
+                                            render={
+                                                <Link href="/admin" aria-current={adminActive ? "page" : undefined} />
+                                            }
+                                            tooltip="Admin Panel"
+                                            isActive={adminActive}
+                                        >
                                             <ShieldCheck />
                                             <span>Admin Panel</span>
                                         </SidebarMenuButton>
