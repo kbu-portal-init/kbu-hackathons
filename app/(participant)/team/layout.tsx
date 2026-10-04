@@ -13,7 +13,6 @@ export default async function TeamsLayout({ children }: Readonly<{ children: Rea
                 email: session.user.email,
                 identifier: session.user.displayUsername ?? session.user.username ?? session.user.email,
                 image: session.user.image ?? null,
-                role: "team",
             }}
         >
             <div className="flex-1 space-y-8 p-6 lg:p-8">{children}</div>

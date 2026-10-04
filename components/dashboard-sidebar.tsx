@@ -48,7 +48,6 @@ type DashboardSidebarProps = {
         email: string;
         identifier: string;
         image: string | null;
-        role: "admin" | "organizer" | "team";
     };
 };
 
@@ -195,11 +194,15 @@ function AccountFooter({
             </PopoverTrigger>
             <PopoverContent side="right" align="end" className="w-64">
                 <PopoverHeader>
-                    <PopoverTitle className="truncate">{account.name}</PopoverTitle>
-                    <PopoverDescription className="truncate">{account.identifier}</PopoverDescription>
-                    <p className="truncate text-xs text-muted-foreground">
-                        {account.role === "team" ? "Team account" : account.email}
-                    </p>
+                    <div className="flex items-center gap-3">
+                        {avatar}
+                        <div className="min-w-0">
+                            <PopoverTitle className="truncate">{account.name}</PopoverTitle>
+                            <PopoverDescription className="truncate">
+                                {account.image ?? "No profile image"}
+                            </PopoverDescription>
+                        </div>
+                    </div>
                 </PopoverHeader>
                 <ConfirmActionAlertDialog
                     trigger={
