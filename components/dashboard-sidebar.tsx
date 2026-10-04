@@ -207,7 +207,7 @@ function AccountFooter({
                     trigger={
                         <button
                             type="button"
-                            className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-destructive outline-none hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
+                            className="flex w-full items-center gap-2 rounded-md bg-orange-600 px-2 py-2 text-sm font-medium text-white outline-none hover:bg-orange-700 hover:text-white focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             <LogOut className="size-4" />
                             <span>Sign out</span>
