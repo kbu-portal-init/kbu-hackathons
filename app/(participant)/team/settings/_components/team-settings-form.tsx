@@ -24,14 +24,20 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
 
     async function saveTeamLogo(imageUrl: string | null) {
         const result = await updateTeamLogo({ imageUrl });
-        if (!result.ok) return toast.error(result.error.message);
+        if (!result.ok) {
+            toast.error(result.error.message);
+            return;
+        }
         setTeamImageUrl(result.data.imageUrl);
         toast.success("Team profile updated");
     }
 
     async function saveMemberImage(memberId: string, imageUrl: string | null) {
         const result = await updateMemberImage({ memberId, imageUrl });
-        if (!result.ok) return toast.error(result.error.message);
+        if (!result.ok) {
+            toast.error(result.error.message);
+            return;
+        }
         setMemberImages((current) => ({ ...current, [memberId]: result.data.imageUrl }));
         toast.success("Member profile updated");
     }
@@ -54,6 +60,16 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                             ) : (
                                 team.displayName.charAt(0)
                             )}
+                            <FileUpload
+                                accept="image/png,image/jpeg,image/webp"
+                                category="image"
+                                currentFile={teamImageUrl}
+                                iconOverlay
+                                inputId="team-profile-image"
+                                label="Change team logo"
+                                onRemove={() => void saveTeamLogo(null)}
+                                onUploadComplete={(url) => saveTeamLogo(url)}
+                            />
                         </div>
                         <div className="min-w-0">
                             <p className="text-sm font-medium text-brand-muted-foreground">Team profile</p>
@@ -100,41 +116,6 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
 
             <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
                 <div className="mb-5">
-                    <h2 className="text-xl font-bold text-zinc-950">Team logo</h2>
-                    <p className="mt-1 text-sm text-brand-muted-foreground">
-                        Upload the logo shown on your team workspace and team profile.
-                    </p>
-                </div>
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                    <div className="relative flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-3xl font-bold text-orange-700">
-                        {teamImageUrl ? (
-                            <Image
-                                alt={`${team.displayName} logo`}
-                                className="size-full object-cover"
-                                height={112}
-                                src={teamImageUrl}
-                                unoptimized
-                                width={112}
-                            />
-                        ) : (
-                            team.displayName.charAt(0)
-                        )}
-                        <FileUpload
-                            accept="image/png,image/jpeg,image/webp"
-                            category="image"
-                            currentFile={teamImageUrl}
-                            iconOverlay
-                            inputId="team-profile-image"
-                            label="Choose team logo"
-                            onRemove={() => void saveTeamLogo(null)}
-                            onUploadComplete={(url) => void saveTeamLogo(url)}
-                        />
-                    </div>
-                </div>
-            </section>
-
-            <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
-                <div className="mb-5">
                     <h2 className="text-xl font-bold text-zinc-950">Member profiles</h2>
                     <p className="mt-1 text-sm text-brand-muted-foreground">
                         Keep your roster recognizable by adding a profile image for each member. Names, roles, and
@@ -165,7 +146,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                     inputId={`member-profile-image-${member.id}`}
                                     label="Choose image"
                                     onRemove={() => void saveMemberImage(member.id, null)}
-                                    onUploadComplete={(url) => void saveMemberImage(member.id, url)}
+                                    onUploadComplete={(url) => saveMemberImage(member.id, url)}
                                 />
                             </div>
                             <div className="min-w-0 flex-1 space-y-2">
