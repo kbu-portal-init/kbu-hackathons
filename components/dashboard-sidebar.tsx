@@ -1,10 +1,19 @@
 "use client";
 
-import { LogOut, ShieldCheck } from "lucide-react";
+import { ChevronsUpDown, LogOut, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import {
+    Popover,
+    PopoverContent,
+    PopoverDescription,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import {
     Sidebar,
     SidebarContent,
@@ -34,9 +43,15 @@ type DashboardSidebarProps = {
     area: "participant" | "management" | "admin";
     children: ReactNode;
     role: "admin" | "organizer" | "team" | null;
+    account: {
+        name: string;
+        email: string;
+        identifier: string;
+        image: string | null;
+    };
 };
 
-export function DashboardSidebar({ area, children, role }: DashboardSidebarProps) {
+export function DashboardSidebar({ area, children, role, account }: DashboardSidebarProps) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -116,30 +131,14 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                     </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter>
-                    <SidebarMenu>
-                        <SidebarMenuItem>
-                            <ConfirmActionAlertDialog
-                                trigger={
-                                    <SidebarMenuButton
-                                        tooltip="Sign out"
-                                        className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white cursor-pointer"
-                                    >
-                                        <LogOut />
-                                        <span>Sign out</span>
-                                    </SidebarMenuButton>
-                                }
-                                title="Sign out?"
-                                description="You will need to sign in again to access this workspace."
-                                confirmLabel="Sign out"
-                                pendingLabel="Signing out..."
-                                onConfirm={async () => {
-                                    await authClient.signOut();
-                                    clearSessionHint();
-                                    router.push("/");
-                                }}
-                            />
-                        </SidebarMenuItem>
-                    </SidebarMenu>
+                    <AccountFooter
+                        account={account}
+                        onSignOut={async () => {
+                            await authClient.signOut();
+                            clearSessionHint();
+                            router.push("/");
+                        }}
+                    />
                 </SidebarFooter>
             </Sidebar>
             <div className="flex min-w-0 flex-1 flex-col">
@@ -150,6 +149,78 @@ export function DashboardSidebar({ area, children, role }: DashboardSidebarProps
                 {children}
             </div>
         </SidebarProvider>
+    );
+}
+
+function AccountFooter({
+    account,
+    onSignOut,
+}: {
+    account: DashboardSidebarProps["account"];
+    onSignOut: () => Promise<void>;
+}) {
+    const initials = account.name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join("")
+        .toUpperCase();
+
+    const avatar = account.image ? (
+        <Image src={account.image} alt="" width={32} height={32} className="size-8 rounded-full object-cover" />
+    ) : (
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-900">
+            {initials || "?"}
+        </span>
+    );
+
+    return (
+        <Popover>
+            <PopoverTrigger
+                render={
+                    <button
+                        type="button"
+                        className="flex w-full items-center gap-2 rounded-lg p-1.5 text-left outline-none transition-colors hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring group-data-[collapsible=icon]:justify-center"
+                        aria-label={`Open account menu for ${account.name}`}
+                    />
+                }
+            >
+                {avatar}
+                <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
+                    <span className="block truncate text-sm font-semibold text-sidebar-foreground">{account.name}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{account.identifier}</span>
+                </span>
+                <ChevronsUpDown className="size-4 shrink-0 text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden" />
+            </PopoverTrigger>
+            <PopoverContent side="top" align="start" className="w-64">
+                <PopoverHeader>
+                    <div className="flex items-center gap-3">
+                        {avatar}
+                        <div className="min-w-0">
+                            <PopoverTitle className="truncate">{account.name}</PopoverTitle>
+                            <PopoverDescription className="truncate">{account.identifier}</PopoverDescription>
+                        </div>
+                    </div>
+                </PopoverHeader>
+                <ConfirmActionAlertDialog
+                    trigger={
+                        <button
+                            type="button"
+                            className="cursor-pointer flex w-full items-center gap-2 rounded-md bg-orange-600 px-2 py-2 text-sm font-medium text-white outline-none hover:bg-orange-700 hover:text-white focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                            <LogOut className="size-4" />
+                            <span>Sign out</span>
+                        </button>
+                    }
+                    title="Sign out?"
+                    description="You will need to sign in again to access this workspace."
+                    confirmLabel="Sign out"
+                    pendingLabel="Signing out..."
+                    onConfirm={onSignOut}
+                />
+            </PopoverContent>
+        </Popover>
     );
 }
 

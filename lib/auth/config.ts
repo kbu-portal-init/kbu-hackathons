@@ -6,6 +6,7 @@ import { username } from "better-auth/plugins/username";
 import { after as scheduleAfter } from "next/server";
 import { findTeamAccountByUsername, isApprovedTeamAccount } from "@/lib/auth/team-access";
 import prisma from "@/lib/prisma";
+import { isOwnedR2PublicUrl } from "@/lib/r2";
 import { sendLoginNotification, sendNotification } from "@/lib/services/notifications";
 import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset";
 import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
@@ -13,6 +14,29 @@ import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
 export const auth = betterAuth({
     hooks: {
         before: createAuthMiddleware(async (context) => {
+            if (context.path === "/update-user") {
+                const image = context.body?.image;
+                if (image !== undefined && image !== null) {
+                    const user = context.context.session?.user;
+                    if (!user) {
+                        throw APIError.fromStatus("UNAUTHORIZED", { message: "Authentication required" });
+                    }
+                    const role = user?.role;
+                    const keyPrefix =
+                        role === "admin"
+                            ? `uploads/admins/${user.id}`
+                            : role === "organizer"
+                              ? `uploads/organizers/${user.id}`
+                              : null;
+
+                    if (!keyPrefix || typeof image !== "string" || !isOwnedR2PublicUrl(image, keyPrefix)) {
+                        throw APIError.fromStatus("BAD_REQUEST", {
+                            message: "Profile image must be uploaded to your profile storage area",
+                        });
+                    }
+                }
+                return;
+            }
             if (context.path !== "/sign-in/username") return;
             const username = context.body?.username;
             if (typeof username !== "string") return;
