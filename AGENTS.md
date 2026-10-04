@@ -9,7 +9,7 @@ app/  actions/  components/  hooks/  lib/  prisma/  tests/  docs/
 lib/: auth/ contracts/ data/ services/ mappers/
 ```
 
-- Route groups organize workspaces without changing URLs: `app/(public)` (public pages and `/login`), `app/(participant)/team` (approved team workspace), `app/(management)/panel` (organizer panel), `app/(admin)/admin` (administrator panel). `app/api/auth/[...all]/route.ts` is the Better Auth protocol endpoint. Public event information and participant guidance are shown on `/about`; the 3D room may retain its own `/events` links.
+- Route groups organize workspaces without changing URLs: `app/(public)` (public pages and `/login`), `app/(participant)/team` (approved team workspace), `app/(management)/panel` (organizer panel), `app/(admin)/admin` (administrator panel). `app/api/auth/[...all]/route.ts` is the Better Auth protocol endpoint. Public event information and participant guidance are shown on the homepage; the 3D room may retain its own `/events` links.
 - Keep page-specific interactive components in a private `_components` directory beside the page. Put components shared by multiple routes in `components/`. `components/ui` is shadcn-generated source and must not be hand-edited; add components with `pnpm dlx shadcn@latest add <component>` (Base UI configuration, see the [component catalog](https://ui.shadcn.com/docs/components)). Do not place app-specific UI in `components/ui`.
 - Prefer Server Components. Add `"use client"` only when a component needs browser state, events, effects, forms, mutations, or a client-only library. Keep page files server-rendered where possible.
 - Full details: [`docs/architecture.md`](docs/architecture.md).

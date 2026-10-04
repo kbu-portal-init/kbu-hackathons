@@ -1,14 +1,22 @@
 import { Suspense } from "react";
 import { listTeams } from "@/actions/management/teams";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import type { TeamListItem } from "@/lib/contracts/teams";
 import { NotificationComposer } from "./_components/notification-composer";
 
 export default function NotificationsPage() {
     return (
-        <Suspense fallback={<DashboardFormSkeleton header />}>
-            <NotificationComposerContent />
-        </Suspense>
+        <main className="space-y-8">
+            <DashboardPageHeader
+                eyebrow="Management workspace"
+                title="Notifications"
+                description="Send a notification by email, in-app message, or both."
+            />
+            <Suspense fallback={<DashboardFormSkeleton />}>
+                <NotificationComposerContent />
+            </Suspense>
+        </main>
     );
 }
 

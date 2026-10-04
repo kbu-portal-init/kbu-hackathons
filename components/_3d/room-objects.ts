@@ -72,7 +72,7 @@ export const roomObjects: RoomObject[] = [
         id: "trophy",
         label: "About KBU Hub",
         description: "What the KBU hackathon community is and how it runs.",
-        route: "/about",
+        route: "/",
         anchor: { kind: "primitive", shape: "trophy", position: [-2.6, 4.28, 4.4] },
     },
     {

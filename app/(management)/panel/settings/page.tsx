@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getOrganizerProfile } from "@/lib/data/organizer-profile";
@@ -11,11 +12,11 @@ export default async function PanelSettingsPage() {
 
     return (
         <main className="space-y-8">
-            <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">Management workspace</p>
-                <h1 className="text-2xl font-semibold tracking-tight">Organizer settings</h1>
-                <p className="mt-1 text-muted-foreground">Manage your profile and password.</p>
-            </div>
+            <DashboardPageHeader
+                eyebrow="Management workspace"
+                title="Organizer settings"
+                description="Manage your profile and password."
+            />
             <Suspense fallback={<DashboardFormSkeleton />}>
                 <OrganizerSettingsContent userId={session.user.id} />
             </Suspense>
