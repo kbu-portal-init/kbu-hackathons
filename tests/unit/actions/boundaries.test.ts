@@ -13,6 +13,10 @@ let validationFailure: { issues: { path: (string | number)[]; message: string }[
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
+mock("next/cache", {
+    revalidatePath: () => {},
+});
+
 mock("@/lib/auth/guards", {
     requireAdmin: async () => {
         if (!adminSession) throw new Error("redirect:/login");
