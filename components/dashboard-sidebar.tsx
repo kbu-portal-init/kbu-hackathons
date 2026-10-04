@@ -198,9 +198,7 @@ function AccountFooter({
                         {avatar}
                         <div className="min-w-0">
                             <PopoverTitle className="truncate">{account.name}</PopoverTitle>
-                            <PopoverDescription className="truncate">
-                                {account.image ?? "No profile image"}
-                            </PopoverDescription>
+                            <PopoverDescription className="truncate">{account.identifier}</PopoverDescription>
                         </div>
                     </div>
                 </PopoverHeader>
