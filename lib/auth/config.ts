@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { APIError, createAuthMiddleware } from "better-auth/api";
+import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import { after as scheduleAfter } from "next/server";
@@ -17,7 +17,8 @@ export const auth = betterAuth({
             if (context.path === "/update-user") {
                 const image = context.body?.image;
                 if (image !== undefined && image !== null) {
-                    const user = context.context.session?.user;
+                    const session = await getSessionFromCtx(context);
+                    const user = session?.user;
                     if (!user) {
                         throw APIError.fromStatus("UNAUTHORIZED", { message: "Authentication required" });
                     }

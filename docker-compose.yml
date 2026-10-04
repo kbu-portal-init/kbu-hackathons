@@ -10,6 +10,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        NEXT_PUBLIC_R2_PUBLIC_URL: ${NEXT_PUBLIC_R2_PUBLIC_URL:-}
         NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
       secrets:
         - sentry_auth_token
