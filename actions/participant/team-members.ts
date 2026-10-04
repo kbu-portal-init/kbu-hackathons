@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -23,5 +24,7 @@ export async function updateMemberImage(input: unknown): Promise<ActionResult<Up
         };
     }
 
-    return updateMemberImageService(team.id, parsed.data);
+    const result = await updateMemberImageService(team.id, parsed.data);
+    if (result.ok) revalidatePath("/team/settings");
+    return result;
 }

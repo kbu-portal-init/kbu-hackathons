@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { AlertCircle, CheckCircle, ImageIcon, Pencil, Trash2, Upload } from "lucide-react";
+import { AlertCircle, CheckCircle, ImageIcon, LoaderCircle, Pencil, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ type FileUploadProps = {
         | "member-profile-image";
     accept?: string;
     currentFile?: string | null;
-    onUploadComplete: (url: string, key: string) => void;
+    onUploadComplete: (url: string, key: string) => void | Promise<void>;
     onRemove?: () => Promise<void> | void;
     variant?: "icon" | "detailed";
     iconOverlay?: boolean;
@@ -62,6 +62,7 @@ export function FileUpload({
     const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
     const [cleanupError, setCleanupError] = useState<string | null>(null);
     const [popoverOpen, setPopoverOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const { state, progress, error, upload, reset } = useUpload();
 
@@ -126,16 +127,21 @@ export function FileUpload({
         }
     };
 
-    const handleUseUploadedFile = () => {
+    const handleUseUploadedFile = async () => {
         if (!uploadedFile) return;
 
-        onUploadComplete(uploadedFile.publicUrl, uploadedFile.key);
-        clearSelection();
-        setDialogOpen(false);
+        setIsSaving(true);
+        try {
+            await onUploadComplete(uploadedFile.publicUrl, uploadedFile.key);
+            clearSelection();
+            setDialogOpen(false);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleCancelDialog = async () => {
-        if (isUploading) return;
+        if (isUploading || isSaving) return;
 
         if (uploadedFile) {
             setCleanupError(null);
@@ -316,11 +322,17 @@ export function FileUpload({
                     <DialogFooter>
                         {uploadedFile ? (
                             <>
-                                <Button type="button" variant="outline" onClick={() => void handleCancelDialog()}>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => void handleCancelDialog()}
+                                    disabled={isSaving}
+                                >
                                     Cancel
                                 </Button>
-                                <Button type="button" onClick={handleUseUploadedFile}>
-                                    OK
+                                <Button type="button" onClick={() => void handleUseUploadedFile()} disabled={isSaving}>
+                                    {isSaving && <LoaderCircle className="animate-spin" data-icon="inline-start" />}
+                                    {isSaving ? "Saving…" : "Use this photo"}
                                 </Button>
                             </>
                         ) : (
@@ -329,12 +341,13 @@ export function FileUpload({
                                     type="button"
                                     variant="outline"
                                     onClick={() => void handleCancelDialog()}
-                                    disabled={isUploading}
+                                    disabled={isUploading || isSaving}
                                 >
                                     Cancel
                                 </Button>
                                 <Button type="button" onClick={handleUpload} disabled={isUploading || !selectedFile}>
-                                    Use this photo
+                                    {isUploading && <LoaderCircle className="animate-spin" data-icon="inline-start" />}
+                                    {isUploading ? "Uploading…" : "Use this photo"}
                                 </Button>
                             </>
                         )}

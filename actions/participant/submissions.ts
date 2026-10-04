@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -19,5 +20,7 @@ export async function saveSubmission(input: unknown, finalize = false): Promise<
                 fieldErrors: toFieldErrors(parsed.error),
             },
         };
-    return saveTeamSubmission(session.team.id, parsed.data, finalize, session.user.id);
+    const result = await saveTeamSubmission(session.team.id, parsed.data, finalize, session.user.id);
+    if (result.ok) revalidatePath("/team/submit");
+    return result;
 }
