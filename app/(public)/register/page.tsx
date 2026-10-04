@@ -118,7 +118,10 @@ export default function TeamRegistrationPage() {
                 <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">Register your team</h1>
                 <p className="mt-4 text-sm leading-6 text-brand-muted-foreground">
                     Not sure what the event involves? Read{" "}
-                    <Link className="font-semibold text-orange-600 underline underline-offset-4" href="/about">
+                    <Link
+                        className="font-semibold text-orange-600 underline underline-offset-4"
+                        href="/#everything-you-need-to-know"
+                    >
                         Everything you need to know
                     </Link>{" "}
                     before registering.

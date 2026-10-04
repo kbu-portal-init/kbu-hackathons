@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { listAnnouncements } from "@/actions/management/announcements";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { AnnouncementManagement } from "./_components/announcement-management";
 
@@ -12,18 +13,16 @@ type searchParams = {
 
 export default function PanelAnnouncementsPage({ searchParams }: { searchParams: Promise<searchParams> }) {
     return (
-        <div className="space-y-6">
-            <div>
-                <p className="text-sm font-medium text-muted-foreground">Management workspace</p>
-                <h1 className="text-2xl font-semibold tracking-tight">Announcements</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Create, publish, and manage platform announcements.
-                </p>
-            </div>
+        <main className="space-y-8">
+            <DashboardPageHeader
+                eyebrow="Management workspace"
+                title="Announcements"
+                description="Create, publish, and manage platform announcements."
+            />
             <Suspense fallback={<DashboardListSkeleton />}>
                 <AnnouncementContent searchParams={searchParams} />
             </Suspense>
-        </div>
+        </main>
     );
 }
 

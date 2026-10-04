@@ -1,11 +1,13 @@
-import { RoutePlaceholder } from "@/components/route-placeholder";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 
-export default async function PanelPage() {
+export default function PanelPage() {
     return (
-        <RoutePlaceholder
-            eyebrow="Management access"
-            title="Management panel"
-            description="Event management, registrations, announcements, and organizer tools will live here in a future phase."
-        />
+        <main className="space-y-8">
+            <DashboardPageHeader
+                eyebrow="Management access"
+                title="Management panel"
+                description="Manage event settings, registrations, teams, announcements, and participant communication."
+            />
+        </main>
     );
 }

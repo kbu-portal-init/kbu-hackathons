@@ -1,13 +1,21 @@
 import { Suspense } from "react";
 import { getEventSettings } from "@/actions/management/event-settings";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import { EventSettingsForm } from "./_components/event-settings-form";
 
 export default function PanelEventPage() {
     return (
-        <Suspense fallback={<DashboardFormSkeleton />}>
-            <EventSettingsContent />
-        </Suspense>
+        <main className="space-y-8">
+            <DashboardPageHeader
+                eyebrow="Management workspace"
+                title="Event settings"
+                description="Configure event details, dates, team limits, and public images."
+            />
+            <Suspense fallback={<DashboardFormSkeleton />}>
+                <EventSettingsContent />
+            </Suspense>
+        </main>
     );
 }
 

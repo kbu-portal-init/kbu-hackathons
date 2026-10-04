@@ -13,11 +13,11 @@ import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
 
 export default function PanelTeamDetailPage({ params }: { params: Promise<{ teamId: string }> }) {
     return (
-        <div className="space-y-6">
+        <main className="space-y-8">
             <Suspense fallback={<DashboardDetailSkeleton />}>
                 <TeamDetailContent params={params} />
             </Suspense>
-        </div>
+        </main>
     );
 }
 
@@ -50,7 +50,7 @@ async function TeamDetailContent({ params }: { params: Promise<{ teamId: string 
                             </div>
                         )}
                         <div className="min-w-0">
-                            <h1 className="truncate text-2xl font-semibold tracking-tight">{team.displayName}</h1>
+                            <h1 className="truncate text-3xl font-bold tracking-tight">{team.displayName}</h1>
                             <p className="truncate text-sm text-muted-foreground">@{team.loginName}</p>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { listOrganizers } from "@/lib/data/organizers";
@@ -11,12 +12,11 @@ export default function AdminOrganizersPage({
 }) {
     return (
         <main className="space-y-8">
-            <div className="flex items-end justify-between gap-4">
-                <div>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight">Organizers</h1>
-                    <p className="mt-2 text-muted-foreground">Manage organizer accounts and elevated access.</p>
-                </div>
-            </div>
+            <DashboardPageHeader
+                eyebrow="Administrator access"
+                title="Organizers"
+                description="Manage organizer accounts and elevated access."
+            />
             <Suspense fallback={<DashboardListSkeleton />}>
                 <OrganizerContent searchParams={searchParams} />
             </Suspense>

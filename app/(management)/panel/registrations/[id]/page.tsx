@@ -36,11 +36,11 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
     await requireOrganizerOrAdmin();
 
     return (
-        <div className="space-y-6">
+        <main className="space-y-8">
             <Suspense fallback={<DashboardDetailSkeleton />}>
                 <RegistrationDetailContent params={params} />
             </Suspense>
-        </div>
+        </main>
     );
 }
 
@@ -55,7 +55,7 @@ async function RegistrationDetailContent({ params }: { params: Promise<{ id: str
             <div className="flex items-center gap-4">
                 <BackButton fallbackHref="/panel/registrations" />
                 <div>
-                    <h1 className="text-2xl font-bold">{item.teamName}</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">{item.teamName}</h1>
                     <p className="text-sm text-muted-foreground">{item.loginName}</p>
                 </div>
             </div>

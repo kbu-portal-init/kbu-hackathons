@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { listRegistrationRequests } from "@/actions/management/registrations";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { RegistrationManagement } from "./_components/registration-management";
 
@@ -9,9 +10,16 @@ export default function PanelRegistrationsPage({
     searchParams: Promise<{ status?: string; page?: string }>;
 }) {
     return (
-        <Suspense fallback={<DashboardListSkeleton />}>
-            <RegistrationListContent searchParams={searchParams} />
-        </Suspense>
+        <main className="space-y-8">
+            <DashboardPageHeader
+                eyebrow="Management workspace"
+                title="Registrations"
+                description="Review team applications and manage approval decisions."
+            />
+            <Suspense fallback={<DashboardListSkeleton />}>
+                <RegistrationListContent searchParams={searchParams} />
+            </Suspense>
+        </main>
     );
 }
 

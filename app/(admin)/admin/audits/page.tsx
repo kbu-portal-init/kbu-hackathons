@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { listAuditLogsSchema } from "@/lib/contracts/audits";
@@ -17,12 +18,11 @@ type AuditSearchParams = {
 export default function AdminAuditsPage({ searchParams }: { searchParams: Promise<AuditSearchParams> }) {
     return (
         <main className="space-y-8">
-            <div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight">Audit logs</h1>
-                <p className="mt-2 text-muted-foreground">
-                    Review and permanently delete administrative activity records.
-                </p>
-            </div>
+            <DashboardPageHeader
+                eyebrow="Administrator access"
+                title="Audit logs"
+                description="Review and permanently delete administrative activity records."
+            />
             <Suspense fallback={<DashboardListSkeleton />}>
                 <AuditLogContent searchParams={searchParams} />
             </Suspense>
