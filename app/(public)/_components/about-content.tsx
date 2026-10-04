@@ -1,6 +1,9 @@
 import { Coffee, ExternalLink, MessageCircle, ShieldCheck, Trophy, Wifi } from "lucide-react";
+import { getLineContact } from "@/lib/public-data/line-contact";
 
 export function AboutContent() {
+    const lineContact = getLineContact();
+
     return (
         <section id="everything-you-need-to-know" className="scroll-mt-24">
             <p className="font-mono text-sm font-medium text-orange-600">{"// everything_you_need_to_know"}</p>
@@ -92,12 +95,12 @@ export function AboutContent() {
                     </div>
                 </div>
                 <a
-                    href="https://line.me/R/ti/g/UthVM5PDyg"
+                    href={lineContact.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600/90"
                 >
-                    <span>Join LINE Group</span>
+                    <span>{lineContact.name}</span>
                     <ExternalLink className="size-4" />
                 </a>
             </div>

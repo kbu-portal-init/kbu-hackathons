@@ -20,6 +20,8 @@ const completeEnvironment: Record<string, string | undefined> = {
     NEXT_PUBLIC_R2_PUBLIC_URL: "https://media.example.com",
     UPSTASH_REDIS_REST_URL: "https://redis.example.com",
     UPSTASH_REDIS_REST_TOKEN: "token",
+    LINE_CONTACT_URL: "https://line.me/R/ti/g/example",
+    LINE_CONTACT_NAME: "KBU Hackathon LINE",
 };
 
 describe("production environment validation", () => {
@@ -33,15 +35,34 @@ describe("production environment validation", () => {
         const environment = { ...completeEnvironment };
         environment.NEXT_PUBLIC_APP_URL = undefined;
         environment.R2_BUCKET_NAME = undefined;
+        environment.LINE_CONTACT_URL = undefined;
+        environment.LINE_CONTACT_NAME = undefined;
 
-        assert.deepEqual(getMissingEnvironmentVariables(environment), ["NEXT_PUBLIC_APP_URL", "R2_BUCKET_NAME"]);
-        assert.throws(() => assertProductionEnvironment(environment), /missing: NEXT_PUBLIC_APP_URL, R2_BUCKET_NAME/);
+        assert.deepEqual(getMissingEnvironmentVariables(environment), [
+            "NEXT_PUBLIC_APP_URL",
+            "R2_BUCKET_NAME",
+            "LINE_CONTACT_URL",
+            "LINE_CONTACT_NAME",
+        ]);
+        assert.throws(
+            () => assertProductionEnvironment(environment),
+            /missing: NEXT_PUBLIC_APP_URL, R2_BUCKET_NAME, LINE_CONTACT_URL, LINE_CONTACT_NAME/,
+        );
     });
 
     it("rejects blank values", () => {
-        const environment = { ...completeEnvironment, SMTP_HOST: "   " };
+        const environment = {
+            ...completeEnvironment,
+            SMTP_HOST: "   ",
+            LINE_CONTACT_URL: " ",
+            LINE_CONTACT_NAME: "\t",
+        };
 
-        assert.deepEqual(getMissingEnvironmentVariables(environment), ["SMTP_HOST"]);
+        assert.deepEqual(getMissingEnvironmentVariables(environment), [
+            "SMTP_HOST",
+            "LINE_CONTACT_URL",
+            "LINE_CONTACT_NAME",
+        ]);
     });
 
     it("rejects invalid URLs and SMTP ports", () => {
