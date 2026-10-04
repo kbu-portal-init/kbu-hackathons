@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
@@ -39,6 +40,7 @@ export async function markTeamNotificationRead(input: unknown): Promise<ActionRe
             },
         };
     await markNotificationRead(session.user.id, parsed.data.notificationId);
+    revalidatePath("/team/notifications");
     return { ok: true, data: { id: parsed.data.notificationId, readAt: new Date().toISOString() } };
 }
 
