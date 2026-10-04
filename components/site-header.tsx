@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
-import { publicLinks } from "@/lib/navigation";
+import { SiteHeaderNav } from "@/components/site-header-nav";
 
 export async function SiteHeader() {
     return (
@@ -13,24 +13,7 @@ export async function SiteHeader() {
                     </span>
                     <span className="text-lg font-bold tracking-tight text-foreground">KBU Hackathon 2026</span>
                 </Link>
-                <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
-                    {publicLinks.map(({ label, href }) => (
-                        <Link
-                            key={href}
-                            href={href}
-                            className="text-sm font-medium text-brand-muted-foreground hover:text-orange-600"
-                        >
-                            {label}
-                        </Link>
-                    ))}
-                </nav>
-                <Link
-                    href="/login"
-                    className="hidden rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white md:inline-flex"
-                    aria-hidden="true"
-                >
-                    Sign in
-                </Link>
+                <SiteHeaderNav />
                 <div className="md:hidden">
                     <MobileNavigation />
                 </div>

@@ -2,11 +2,13 @@
 
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { publicLinks } from "@/lib/navigation";
+import { isActivePath, publicLinks } from "@/lib/navigation";
 
 export function MobileNavigation() {
     const [open, setOpen] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         if (!open) {
@@ -40,21 +42,30 @@ export function MobileNavigation() {
                     aria-label="Mobile navigation"
                 >
                     <div className="flex flex-col gap-2">
-                        {publicLinks.map(({ label, href }) => (
-                            <Link
-                                key={href}
-                                href={href}
-                                onClick={() => setOpen(false)}
-                                className="rounded-xl px-4 py-3 text-base font-medium text-brand-muted-foreground hover:bg-orange-50 hover:text-orange-700"
-                            >
-                                {label}
-                            </Link>
-                        ))}
+                        {publicLinks.map(({ label, href }) => {
+                            const active = isActivePath(pathname, href);
+                            return (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    onClick={() => setOpen(false)}
+                                    aria-current={active ? "page" : undefined}
+                                    className={
+                                        active
+                                            ? "rounded-xl bg-orange-50 px-4 py-3 text-base font-semibold text-orange-700"
+                                            : "rounded-xl px-4 py-3 text-base font-medium text-brand-muted-foreground hover:bg-orange-50 hover:text-orange-700"
+                                    }
+                                >
+                                    {label}
+                                </Link>
+                            );
+                        })}
                     </div>
                     <div className="mt-auto border-t border-orange-100 pt-6">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}
+                            aria-current={isActivePath(pathname, "/login") ? "page" : undefined}
                             className="block rounded-full bg-gradient-accent px-4 py-3 text-center text-sm font-semibold text-white"
                         >
                             Sign in
