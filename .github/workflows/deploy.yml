@@ -132,6 +132,10 @@ jobs:
                     set -e
                     cd /opt/hackathon
 
+                    # Keep the host Compose contract aligned with the image release.
+                    git fetch origin main
+                    git reset --hard "$IMAGE_TAG"
+
                     echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
 
                     # Tag the currently running image as the rollback target and pull the immutable release images.
