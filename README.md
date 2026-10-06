@@ -131,7 +131,7 @@ pnpm build
 
 ## Production Docker deployment
 
-The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
+The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Production images are built and cached in GitHub Actions, published to GHCR with the commit SHA, and pulled by the host; the host does not rebuild the application. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
 
 Create that file on the host with restricted permissions and the required database values:
 
@@ -151,7 +151,6 @@ The deployment workflow validates `/opt/hackathon/.env.production` for all requi
 
 ```bash
 docker compose --env-file /opt/hackathon/.env.production config --quiet
-docker compose --env-file /opt/hackathon/.env.production build web
 docker compose --env-file /opt/hackathon/.env.production up -d
 docker compose --env-file /opt/hackathon/.env.production ps
 docker compose --env-file /opt/hackathon/.env.production exec web id -u

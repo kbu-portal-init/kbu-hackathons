@@ -6,14 +6,7 @@
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_R2_PUBLIC_URL: ${NEXT_PUBLIC_R2_PUBLIC_URL:-}
-        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
-      secrets:
-        - sentry_auth_token
+    image: ${IMAGE_REPOSITORY:-ghcr.io/kbu-hackathons/kbu-hackathons}:${IMAGE_TAG:-latest}
     container_name: kbu_hackathon_web
     restart: unless-stopped
     ports:
@@ -52,10 +45,7 @@ services:
   # One-shot migration runner — activated with: --profile migrate
   # Uses the builder stage (has pnpm + prisma) then exits.
   migrate:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: builder
+    image: ${IMAGE_REPOSITORY:-ghcr.io/kbu-hackathons/kbu-hackathons}:${IMAGE_TAG:-latest}-builder
     container_name: kbu_hackathon_migrate
     env_file:
       - path: /opt/hackathon/.env.production
@@ -125,7 +115,3 @@ networks:
 volumes:
   postgres_data:
     driver: local
-
-secrets:
-  sentry_auth_token:
-    environment: SENTRY_AUTH_TOKEN
