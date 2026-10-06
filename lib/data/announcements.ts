@@ -43,7 +43,7 @@ export async function listAnnouncements(input: ListAnnouncementInput): Promise<L
             : {}),
     };
 
-    const [announcements, total] = await prisma.$transaction([
+    const [announcements, total] = await Promise.all([
         prisma.announcement.findMany({
             where,
             orderBy: {
@@ -125,7 +125,7 @@ export async function listPublicAnnouncements(
             : {}),
     };
 
-    const [announcements, total] = await prisma.$transaction([
+    const [announcements, total] = await Promise.all([
         prisma.announcement.findMany({
             where,
             orderBy: [
