@@ -160,7 +160,7 @@ export default async function Home() {
                                 </span>
                             </div>
                             {eventImage ? (
-                                <div className="relative aspect-4/3 w-full bg-orange-100">
+                                <div className="relative aspect-[1672/941] w-full bg-orange-100">
                                     <Image
                                         src={eventImage}
                                         alt={event?.title ?? "KBU Hackathon event"}
@@ -171,8 +171,15 @@ export default async function Home() {
                                     />
                                 </div>
                             ) : (
-                                <div className="flex aspect-4/3 items-center justify-center bg-orange-50 px-6 text-center text-sm text-brand-muted-foreground">
-                                    Event preview coming soon.
+                                <div className="relative aspect-[1672/941] w-full bg-orange-100">
+                                    <Image
+                                        src="/images/kbu.webp"
+                                        alt="KBU Hackathon event"
+                                        fill
+                                        className="object-cover"
+                                        sizes="(max-width: 1024px) 100vw, 40vw"
+                                        priority
+                                    />
                                 </div>
                             )}
                             <div className="border-t border-slate-200/70 px-5 py-3.5">
