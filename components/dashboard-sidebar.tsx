@@ -85,9 +85,7 @@ export function DashboardSidebar({ area, children, role, account }: DashboardSid
                         href="/"
                         className="flex items-center gap-2 rounded-md px-2 py-2 font-bold text-sidebar-foreground group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
                     >
-                        <span className="flex size-7 items-center justify-center rounded-lg bg-orange-600 text-xs text-white">
-                            K
-                        </span>
+                        <Image src="/images/logo.svg" alt="" width={28} height={28} className="size-7 shrink-0" />
                         <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
                     </Link>
                 </SidebarHeader>
