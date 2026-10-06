@@ -100,8 +100,9 @@ jobs:
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
                   secrets: |
                       sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
-                  cache-from: type=gha,scope=production-builder
-                  cache-from: type=gha,scope=production-runtime
+                  cache-from: |
+                      type=gha,scope=production-builder
+                      type=gha,scope=production-runtime
                   cache-to: type=gha,mode=max,scope=production-builder
 
     deploy:
