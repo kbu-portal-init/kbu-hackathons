@@ -1,0 +1,11 @@
+# Keep organization-level CodeRabbit settings and add repository branch coverage.
+inheritance: true
+
+reviews:
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - "dev"
+      - "main"

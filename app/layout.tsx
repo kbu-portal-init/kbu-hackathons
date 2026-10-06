@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <html lang="en" className={`${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
             <body className="min-h-full bg-white text-zinc-950">
                 <TooltipProvider>
+                    <NextTopLoader color="#f97316" height={3} showSpinner={false} crawl crawlSpeed={200} speed={200} />
                     {children}
                     <Toaster />
                 </TooltipProvider>

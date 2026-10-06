@@ -26,6 +26,7 @@ Prefer Server Components. Use client components only for browser state, events, 
 
 ## Loading states and navigation
 
+- The root layout uses `nextjs-toploader` for a thin orange browser-style progress bar during client navigation. This complements, rather than replaces, page-level `Suspense` fallbacks.
 - No route group has a segment-level `loading.tsx` (`app/(public)`, `(participant)/team`, `(management)/panel`, `(admin)/admin`). A `loading.js` boundary makes Next.js prefetch only the layout up to that boundary and disables the client router cache for the route, so navigation re-fetched and swapped a shell in on every visit.
 - Pages are synchronous composition surfaces. Static chrome and section headings render first; only the data-dependent body sits inside `<Suspense>`. Resolve route props with `params.then()` / `searchParams.then()` inside the boundary, or extract the body into an async page-local content component rendered only inside the boundary.
 - Auth guards stay outside the boundary: layouts and pages await `lib/auth/guards.ts` before rendering, so denied users get the guard's own result rather than a skeleton.
