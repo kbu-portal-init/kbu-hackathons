@@ -47,7 +47,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
             <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">
-                        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-2xl font-bold text-orange-700">
+                        <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-2xl font-bold text-orange-700">
                             {teamImageUrl ? (
                                 <Image
                                     alt={`${team.displayName} logo`}
