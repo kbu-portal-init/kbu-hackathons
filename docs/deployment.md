@@ -1,6 +1,6 @@
 # Production containers and deployment
 
-- Production images are built in GitHub Actions and published to GitHub Container Registry with the commit SHA as an immutable tag. The host only pulls and runs those images; it does not build the application.
+- Production images are built in GitHub Actions and published to GitHub Container Registry with the commit SHA as an immutable tag. GitHub Actions copies the matching `docker-compose.yml` to the host, which then pulls and runs those images; the host does not need a Git checkout or build the application.
 - The workflow also publishes a `-builder` image for the one-shot Prisma migration service. BuildKit's GitHub Actions cache is shared by the runtime and migration builds.
 
 - Use Node.js 24 LTS for Docker builds and runtime, with `gcompat` in the shared base. Keep pnpm 10.27.0 in build stages only.
