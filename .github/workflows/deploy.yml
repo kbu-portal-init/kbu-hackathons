@@ -120,15 +120,10 @@ jobs:
                   ref: ${{ github.sha }}
                   persist-credentials: false
 
-            - name: Install release Compose configuration
-              uses: appleboy/scp-action@v0.1.7
-              with:
-                  host: ${{ secrets.SERVER_HOST }}
-                  username: ${{ secrets.SERVER_USER }}
-                  key: ${{ secrets.SERVER_SSH_KEY }}
-                  port: ${{ secrets.SERVER_PORT }}
-                  source: docker-compose.yml
-                  target: /opt/hackathon
+            - name: Encode release Compose configuration
+              id: compose-config
+              shell: bash
+              run: echo "content=$(base64 -w0 docker-compose.yml)" >> "$GITHUB_OUTPUT"
 
             - name: Trigger Remote Container Deployment
               uses: appleboy/ssh-action@v1.0.3
@@ -137,20 +132,19 @@ jobs:
                   IMAGE_TAG: ${{ github.sha }}
                   GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   GHCR_USER: ${{ github.actor }}
+                  COMPOSE_B64: ${{ steps.compose-config.outputs.content }}
               with:
                 host: ${{ secrets.SERVER_HOST }}
                 username: ${{ secrets.SERVER_USER }}
                 key: ${{ secrets.SERVER_SSH_KEY }}
                 port: ${{ secrets.SERVER_PORT }}
-                envs: IMAGE_REPOSITORY,IMAGE_TAG,GHCR_TOKEN,GHCR_USER
+                envs: IMAGE_REPOSITORY,IMAGE_TAG,GHCR_TOKEN,GHCR_USER,COMPOSE_B64
                 script_stop: true
                 script: |
                     set -e
                     cd /opt/hackathon
 
-                    # Keep the host Compose contract aligned with the image release.
-                    git fetch origin main
-                    git reset --hard "$IMAGE_TAG"
+                    printf '%s' "$COMPOSE_B64" | base64 -d > docker-compose.yml
 
                     echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
 
