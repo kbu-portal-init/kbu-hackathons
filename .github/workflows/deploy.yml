@@ -13,53 +13,137 @@ permissions:
     contents: read
 
 jobs:
+    preflight:
+        name: Validate Production Environment
+        runs-on: ubuntu-latest
+        steps:
+            - name: Validate remote production environment
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  port: ${{ secrets.SERVER_PORT }}
+                  script_stop: true
+                  script: |
+                      set -e
+                      production_env=/opt/hackathon/.env.production
+                      if [ ! -f "$production_env" ]; then
+                          echo "Missing production environment file: $production_env" >&2
+                          exit 1
+                      fi
+
+                      required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN LINE_CONTACT_URL LINE_CONTACT_NAME POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD"
+
+                      missing_vars=""
+                      for name in $required_vars; do
+                          if ! grep -Eq "^[[:space:]]*${name}[[:space:]]*=[[:space:]]*[^[:space:]]" "$production_env"; then
+                              missing_vars="$missing_vars $name"
+                          fi
+                      done
+
+                      if [ -n "$missing_vars" ]; then
+                          echo "Missing production environment values:$missing_vars" >&2
+                          exit 1
+                      fi
+
+                      echo "Production environment preflight passed."
+
+    build:
+        name: Build and Publish Images
+        needs: preflight
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout release commit
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.sha }}
+
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Build and push runtime image
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  push: true
+                  tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+                  build-args: |
+                      NEXT_PUBLIC_R2_PUBLIC_URL=${{ vars.NEXT_PUBLIC_R2_PUBLIC_URL }}
+                      NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+                  secrets: |
+                      sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+                  cache-from: type=gha,scope=production-runtime
+                  cache-to: type=gha,mode=max,scope=production-runtime
+
+            - name: Build and push migration image
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  target: builder
+                  push: true
+                  tags: ghcr.io/${{ github.repository }}:${{ github.sha }}-builder
+                  build-args: |
+                      NEXT_PUBLIC_R2_PUBLIC_URL=${{ vars.NEXT_PUBLIC_R2_PUBLIC_URL }}
+                      NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+                  secrets: |
+                      sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+                  cache-from: |
+                      type=gha,scope=production-builder
+                      type=gha,scope=production-runtime
+                  cache-to: type=gha,mode=max,scope=production-builder
+
     deploy:
         name: Deploy to Debian 13 Host
+        needs: build
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: read
         steps:
             - name: Trigger Remote Container Deployment
               uses: appleboy/ssh-action@v1.0.3
+              env:
+                  IMAGE_REPOSITORY: ghcr.io/${{ github.repository }}
+                  IMAGE_TAG: ${{ github.sha }}
+                  GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GHCR_USER: ${{ github.actor }}
               with:
                 host: ${{ secrets.SERVER_HOST }}
                 username: ${{ secrets.SERVER_USER }}
                 key: ${{ secrets.SERVER_SSH_KEY }}
                 port: ${{ secrets.SERVER_PORT }}
+                envs: IMAGE_REPOSITORY,IMAGE_TAG,GHCR_TOKEN,GHCR_USER
                 script_stop: true
                 script: |
                     set -e
                     cd /opt/hackathon
 
-                    production_env=/opt/hackathon/.env.production
-                    if [ ! -f "$production_env" ]; then
-                        echo "Missing production environment file: $production_env" >&2
-                        exit 1
+                    echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
+
+                    # Tag the currently running image as the rollback target and pull the immutable release images.
+                    current_image=$(docker inspect --format '{{.Image}}' kbu_hackathon_web 2>/dev/null || true)
+                    if [ -n "$current_image" ]; then
+                        docker image tag "$current_image" "$IMAGE_REPOSITORY:rollback"
                     fi
-
-                    required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN LINE_CONTACT_URL LINE_CONTACT_NAME"
-
-                    missing_vars=""
-                    for name in $required_vars; do
-                        if ! grep -Eq "^[[:space:]]*${name}[[:space:]]*=[[:space:]]*[^[:space:]]" "$production_env"; then
-                            missing_vars="$missing_vars $name"
-                        fi
-                    done
-
-                    if [ -n "$missing_vars" ]; then
-                        echo "Missing production environment values:$missing_vars" >&2
-                        exit 1
-                    fi
-
-                    echo "Production environment preflight passed."
-
-                    # Tag current image as rollback target
-                    docker tag hackathon-web:latest hackathon-web:rollback 2>/dev/null || true
-
-                    # Pull latest code
-                    git fetch origin main
-                    git reset --hard ${{ github.sha }}
+                    docker pull "$IMAGE_REPOSITORY:$IMAGE_TAG"
+                    docker pull "$IMAGE_REPOSITORY:$IMAGE_TAG-builder"
+                    docker logout ghcr.io
 
                     # Build and start new containers
-                    docker compose --env-file /opt/hackathon/.env.production up -d --build --remove-orphans
+                    docker compose --env-file /opt/hackathon/.env.production up -d --remove-orphans
 
                     # Apply pending Prisma migrations (one-shot container)
                     echo "🔄 Running database migrations..."
@@ -68,8 +152,8 @@ jobs:
                         docker compose --env-file /opt/hackathon/.env.production logs --tail 200 web 2>&1 || true
                         docker compose --env-file /opt/hackathon/.env.production logs --tail 200 migrate 2>&1 || true
                         docker compose --env-file /opt/hackathon/.env.production down
-                        docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
-                        docker compose --env-file /opt/hackathon/.env.production up -d
+                        docker image tag "$IMAGE_REPOSITORY:rollback" "$IMAGE_REPOSITORY:$IMAGE_TAG" 2>/dev/null || true
+                        IMAGE_TAG=rollback docker compose --env-file /opt/hackathon/.env.production up -d
                         echo "⚠️ Rollback complete. Investigate the failed migration."
                         exit 1
                     fi
@@ -80,8 +164,8 @@ jobs:
                         echo "❌ Health check failed — dumping web logs before rollback..."
                         docker compose --env-file /opt/hackathon/.env.production logs --tail 200 web 2>&1 || true
                         docker compose --env-file /opt/hackathon/.env.production down
-                        docker tag hackathon-web:rollback hackathon-web:latest 2>/dev/null || true
-                        docker compose --env-file /opt/hackathon/.env.production up -d
+                        docker image tag "$IMAGE_REPOSITORY:rollback" "$IMAGE_REPOSITORY:$IMAGE_TAG" 2>/dev/null || true
+                        IMAGE_TAG=rollback docker compose --env-file /opt/hackathon/.env.production up -d
                         echo "⚠️ Rollback complete. Investigate the failed build."
                         exit 1
                     fi

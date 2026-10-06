@@ -131,7 +131,7 @@ pnpm build
 
 ## Production Docker deployment
 
-The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
+The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Production images are built and cached in GitHub Actions, published to GHCR with the commit SHA, and pulled by the host; the host does not pull source code or rebuild the application. `NEXT_PUBLIC_SENTRY_DSN` is supplied from the GitHub Actions repository variable during the image build, while `SENTRY_AUTH_TOKEN` is supplied from the GitHub Actions secret only for the BuildKit build step. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
 
 Create that file on the host with restricted permissions and the required database values:
 
@@ -139,19 +139,18 @@ Create that file on the host with restricted permissions and the required databa
 POSTGRES_DB=kbu_hackathon
 POSTGRES_USER=kbu_hackathon
 POSTGRES_PASSWORD=<set-a-unique-production-password>
-NEXT_PUBLIC_SENTRY_DSN=<public-sentry-project-dsn>
-SENTRY_AUTH_TOKEN=
 ```
 
-Replace the password placeholder before deployment. For browser error reporting, replace `NEXT_PUBLIC_SENTRY_DSN` with the public project DSN; leave it empty to disable Sentry reporting. Compose passes it to the image build. Set `SENTRY_AUTH_TOKEN` to a Sentry auth token if you want source maps uploaded during the image build; leave it empty otherwise. Compose mounts it only for that build step and clears it from the running containers. The database receives its values directly from the file. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
+Replace the password placeholder before deployment. Runtime credentials are read from this file. Set the GitHub Actions repository variable `NEXT_PUBLIC_SENTRY_DSN` to the public project DSN, or leave it empty to disable Sentry reporting. Set the GitHub Actions secret `SENTRY_AUTH_TOKEN` if you want source maps uploaded during the image build; it is mounted only for that BuildKit step and is never included in the runtime container. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
 
 From the repository directory on the production host:
 
-The deployment workflow validates `/opt/hackathon/.env.production` for all required nonblank variables before tagging images, pulling code, building, or starting containers. A missing file or value stops deployment without changing the running release.
+The deployment workflow validates `/opt/hackathon/.env.production` for all required nonblank variables before tagging images, building, pulling release images, or starting containers. A missing file or value stops deployment without changing the running release.
 
 ```bash
+export IMAGE_REPOSITORY=ghcr.io/kbu-portal-init/kbu-hackathons
+export IMAGE_TAG=<commit-sha>
 docker compose --env-file /opt/hackathon/.env.production config --quiet
-docker compose --env-file /opt/hackathon/.env.production build web
 docker compose --env-file /opt/hackathon/.env.production up -d
 docker compose --env-file /opt/hackathon/.env.production ps
 docker compose --env-file /opt/hackathon/.env.production exec web id -u
