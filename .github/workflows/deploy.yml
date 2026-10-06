@@ -114,6 +114,22 @@ jobs:
             contents: read
             packages: read
         steps:
+            - name: Checkout release configuration
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.sha }}
+                  persist-credentials: false
+
+            - name: Install release Compose configuration
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  port: ${{ secrets.SERVER_PORT }}
+                  source: docker-compose.yml
+                  target: /opt/hackathon
+
             - name: Trigger Remote Container Deployment
               uses: appleboy/ssh-action@v1.0.3
               env:
@@ -131,6 +147,10 @@ jobs:
                 script: |
                     set -e
                     cd /opt/hackathon
+
+                    # Keep the host Compose contract aligned with the image release.
+                    git fetch origin main
+                    git reset --hard "$IMAGE_TAG"
 
                     echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
 
