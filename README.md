@@ -131,7 +131,7 @@ pnpm build
 
 ## Production Docker deployment
 
-The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Production images are built and cached in GitHub Actions, published to GHCR with the commit SHA, and pulled by the host; the host does not pull source code or rebuild the application. `NEXT_PUBLIC_SENTRY_DSN` is supplied from the GitHub Actions repository variable during the image build, while `SENTRY_AUTH_TOKEN` is supplied from the GitHub Actions secret only for the BuildKit build step. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
+The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Production images are built and cached in GitHub Actions, published to GHCR with the commit SHA, and pulled by the host; GitHub Actions transfers only the matching `docker-compose.yml`, so the host does not need a Git checkout, source code, or a local build. `NEXT_PUBLIC_SENTRY_DSN` is supplied from the GitHub Actions repository variable during the image build, while `SENTRY_AUTH_TOKEN` is supplied from the GitHub Actions secret only for the BuildKit build step. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
 
 Create that file on the host with restricted permissions and the required database values:
 
