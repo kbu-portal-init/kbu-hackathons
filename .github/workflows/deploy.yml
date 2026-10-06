@@ -11,7 +11,6 @@ concurrency:
 
 permissions:
     contents: read
-    packages: write
 
 jobs:
     preflight:
@@ -34,7 +33,7 @@ jobs:
                           exit 1
                       fi
 
-                      required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN LINE_CONTACT_URL LINE_CONTACT_NAME"
+                      required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN LINE_CONTACT_URL LINE_CONTACT_NAME POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD"
 
                       missing_vars=""
                       for name in $required_vars; do
@@ -54,6 +53,9 @@ jobs:
         name: Build and Publish Images
         needs: preflight
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
         steps:
             - name: Checkout release commit
               uses: actions/checkout@v4
@@ -82,8 +84,8 @@ jobs:
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
                   secrets: |
                       sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
-                  cache-from: type=gha,scope=production
-                  cache-to: type=gha,mode=max,scope=production
+                  cache-from: type=gha,scope=production-runtime
+                  cache-to: type=gha,mode=max,scope=production-runtime
 
             - name: Build and push migration image
               uses: docker/build-push-action@v6
@@ -98,13 +100,17 @@ jobs:
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
                   secrets: |
                       sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
-                  cache-from: type=gha,scope=production
-                  cache-to: type=gha,mode=max,scope=production
+                  cache-from: type=gha,scope=production-builder
+                  cache-from: type=gha,scope=production-runtime
+                  cache-to: type=gha,mode=max,scope=production-builder
 
     deploy:
         name: Deploy to Debian 13 Host
         needs: build
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: read
         steps:
             - name: Trigger Remote Container Deployment
               uses: appleboy/ssh-action@v1.0.3
@@ -133,6 +139,7 @@ jobs:
                     fi
                     docker pull "$IMAGE_REPOSITORY:$IMAGE_TAG"
                     docker pull "$IMAGE_REPOSITORY:$IMAGE_TAG-builder"
+                    docker logout ghcr.io
 
                     # Build and start new containers
                     docker compose --env-file /opt/hackathon/.env.production up -d --remove-orphans
