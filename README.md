@@ -150,6 +150,8 @@ From the repository directory on the production host:
 The deployment workflow validates `/opt/hackathon/.env.production` for all required nonblank variables before tagging images, pulling code, building, or starting containers. A missing file or value stops deployment without changing the running release.
 
 ```bash
+export IMAGE_REPOSITORY=ghcr.io/kbu-portal-init/kbu-hackathons
+export IMAGE_TAG=<commit-sha>
 docker compose --env-file /opt/hackathon/.env.production config --quiet
 docker compose --env-file /opt/hackathon/.env.production up -d
 docker compose --env-file /opt/hackathon/.env.production ps

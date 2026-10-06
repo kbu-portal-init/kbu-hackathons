@@ -14,8 +14,45 @@ permissions:
     packages: write
 
 jobs:
+    preflight:
+        name: Validate Production Environment
+        runs-on: ubuntu-latest
+        steps:
+            - name: Validate remote production environment
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  port: ${{ secrets.SERVER_PORT }}
+                  script_stop: true
+                  script: |
+                      set -e
+                      production_env=/opt/hackathon/.env.production
+                      if [ ! -f "$production_env" ]; then
+                          echo "Missing production environment file: $production_env" >&2
+                          exit 1
+                      fi
+
+                      required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN LINE_CONTACT_URL LINE_CONTACT_NAME"
+
+                      missing_vars=""
+                      for name in $required_vars; do
+                          if ! grep -Eq "^[[:space:]]*${name}[[:space:]]*=[[:space:]]*[^[:space:]]" "$production_env"; then
+                              missing_vars="$missing_vars $name"
+                          fi
+                      done
+
+                      if [ -n "$missing_vars" ]; then
+                          echo "Missing production environment values:$missing_vars" >&2
+                          exit 1
+                      fi
+
+                      echo "Production environment preflight passed."
+
     build:
         name: Build and Publish Images
+        needs: preflight
         runs-on: ubuntu-latest
         steps:
             - name: Checkout release commit
@@ -88,28 +125,6 @@ jobs:
                     cd /opt/hackathon
 
                     echo "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USER" --password-stdin
-
-                    production_env=/opt/hackathon/.env.production
-                    if [ ! -f "$production_env" ]; then
-                        echo "Missing production environment file: $production_env" >&2
-                        exit 1
-                    fi
-
-                    required_vars="NEXT_PUBLIC_APP_URL DATABASE_URL BETTER_AUTH_SECRET BETTER_AUTH_URL SMTP_HOST SMTP_PORT SMTP_SECURE SMTP_USER SMTP_PASSWORD SMTP_FROM_EMAIL R2_ENDPOINT R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET_NAME NEXT_PUBLIC_R2_PUBLIC_URL UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN LINE_CONTACT_URL LINE_CONTACT_NAME"
-
-                    missing_vars=""
-                    for name in $required_vars; do
-                        if ! grep -Eq "^[[:space:]]*${name}[[:space:]]*=[[:space:]]*[^[:space:]]" "$production_env"; then
-                            missing_vars="$missing_vars $name"
-                        fi
-                    done
-
-                    if [ -n "$missing_vars" ]; then
-                        echo "Missing production environment values:$missing_vars" >&2
-                        exit 1
-                    fi
-
-                    echo "Production environment preflight passed."
 
                     # Tag the currently running image as the rollback target and pull the immutable release images.
                     current_image=$(docker inspect --format '{{.Image}}' kbu_hackathon_web 2>/dev/null || true)
