@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { MobileNavigation } from "@/components/mobile-navigation";
@@ -8,9 +9,7 @@ export async function SiteHeader() {
         <header className="sticky top-0 z-50 border-b border-orange-100/80 bg-white/95 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
                 <Link href="/" className="flex items-center gap-2">
-                    <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-accent text-lg font-black text-white">
-                        K
-                    </span>
+                    <Image src="/images/logo.svg" alt="" width={36} height={36} className="size-9" />
                     <span className="text-lg font-bold tracking-tight text-foreground">KBU Hackathon 2026</span>
                 </Link>
                 <SiteHeaderNav />
