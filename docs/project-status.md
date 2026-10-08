@@ -1,6 +1,6 @@
 # Project status
 
-Participant cards are generated in the KBU black/orange event style using the configured event title and dates.
+Participant cards are generated in the KBU black/orange event style using the branded reference artwork and the configured event dates.
 
 ## Implemented foundation
 

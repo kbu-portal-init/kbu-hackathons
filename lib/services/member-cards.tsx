@@ -32,7 +32,6 @@ function formatEventDateRange(startsAt: Date, endsAt: Date): string {
 }
 
 async function renderMemberCard(
-    eventTitle: string,
     teamName: string,
     memberName: string,
     role: string,
@@ -73,20 +72,6 @@ async function renderMemberCard(
             >
                 <div
                     style={{
-                        color: "#ffffff",
-                        display: "flex",
-                        fontFamily: "Ethnocentric",
-                        fontSize: 22,
-                        fontWeight: 700,
-                        letterSpacing: 2,
-                        maxWidth: 980,
-                        overflow: "hidden",
-                    }}
-                >
-                    {eventTitle}
-                </div>
-                <div
-                    style={{
                         color: "#ff8a00",
                         display: "flex",
                         fontFamily: "Ethnocentric",
@@ -94,7 +79,6 @@ async function renderMemberCard(
                         fontWeight: 800,
                         letterSpacing: 2,
                         maxWidth: 980,
-                        marginTop: 10,
                     }}
                 >
                     {teamName}
@@ -181,7 +165,7 @@ export async function generateMemberCard(
 
     const event = await prisma.eventSettings.findUnique({
         where: { id: 1 },
-        select: { title: true, startsAt: true, endsAt: true },
+        select: { startsAt: true, endsAt: true },
     });
     if (!event) {
         return { ok: false, error: { code: "EVENT_NOT_CONFIGURED", message: "Event settings are not configured" } };
@@ -191,13 +175,7 @@ export async function generateMemberCard(
     let uploadedKey: string | undefined;
     let persisted = false;
     try {
-        const buffer = await renderMemberCard(
-            event.title,
-            member.team.displayName,
-            member.name,
-            member.role,
-            eventDateRange,
-        );
+        const buffer = await renderMemberCard(member.team.displayName, member.name, member.role, eventDateRange);
         const key = `uploads/${teamId}/cards/${member.id}-${crypto.randomUUID()}.png`;
         const cardShareToken = crypto.randomUUID();
         await r2.send(
