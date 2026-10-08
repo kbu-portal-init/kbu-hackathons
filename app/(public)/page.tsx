@@ -59,41 +59,52 @@ const announcementDateFormatter = new Intl.DateTimeFormat("en-GB", {
 });
 
 async function HomeAnnouncements() {
-    const result = await listPublicAnnouncements({ page: 1, pageSize: 2 });
+    try {
+        const result = await listPublicAnnouncements({ page: 1, pageSize: 2 });
 
-    if (result.items.length === 0) {
-        return <p className="p-5 text-sm text-brand-muted-foreground">No announcements have been published yet.</p>;
+        if (result.items.length === 0) {
+            return <p className="p-5 text-sm text-brand-muted-foreground">No announcements have been published yet.</p>;
+        }
+
+        return (
+            <div className="overflow-hidden rounded-2xl glass">
+                {result.items.map((announcement: PublicAnnouncementDTO) => {
+                    const publishedDate = announcement.publishedAt ?? announcement.createdAt;
+
+                    return (
+                        <Link
+                            key={announcement.id}
+                            href={`/announcements/${announcement.id}`}
+                            className="flex items-start gap-4 border-b border-orange-200 p-5 transition last:border-b-0 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-orange-600"
+                        >
+                            <Megaphone className="mt-0.5 size-5 shrink-0 text-orange-600" />
+                            <div>
+                                <time
+                                    dateTime={new Date(publishedDate).toISOString()}
+                                    className="font-mono text-xs font-medium text-orange-600"
+                                >
+                                    {announcementDateFormatter.format(new Date(publishedDate))}
+                                </time>
+                                <h3 className="mt-1.5 font-semibold text-foreground">{announcement.title}</h3>
+                                <p className="mt-1 line-clamp-2 text-sm text-brand-muted-foreground">
+                                    {announcement.content}
+                                </p>
+                            </div>
+                        </Link>
+                    );
+                })}
+            </div>
+        );
+    } catch {
+        return (
+            <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm text-brand-muted-foreground">
+                <p>Announcements are temporarily unavailable.</p>
+                <Link href="/announcements" className="mt-2 inline-flex font-semibold text-orange-700 underline">
+                    View all announcements
+                </Link>
+            </div>
+        );
     }
-
-    return (
-        <div className="overflow-hidden rounded-2xl glass">
-            {result.items.map((announcement: PublicAnnouncementDTO) => {
-                const publishedDate = announcement.publishedAt ?? announcement.createdAt;
-
-                return (
-                    <Link
-                        key={announcement.id}
-                        href={`/announcements/${announcement.id}`}
-                        className="flex items-start gap-4 border-b border-orange-200 p-5 transition last:border-b-0 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-orange-600"
-                    >
-                        <Megaphone className="mt-0.5 size-5 shrink-0 text-orange-600" />
-                        <div>
-                            <time
-                                dateTime={new Date(publishedDate).toISOString()}
-                                className="font-mono text-xs font-medium text-orange-600"
-                            >
-                                {announcementDateFormatter.format(new Date(publishedDate))}
-                            </time>
-                            <h3 className="mt-1.5 font-semibold text-foreground">{announcement.title}</h3>
-                            <p className="mt-1 line-clamp-2 text-sm text-brand-muted-foreground">
-                                {announcement.content}
-                            </p>
-                        </div>
-                    </Link>
-                );
-            })}
-        </div>
-    );
 }
 
 function HomeAnnouncementsFallback() {
