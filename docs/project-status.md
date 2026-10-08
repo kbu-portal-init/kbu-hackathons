@@ -1,5 +1,7 @@
 # Project status
 
+Participant cards are generated in the KBU black/orange event style using the configured event title and dates.
+
 ## Implemented foundation
 
 The branch currently provides:

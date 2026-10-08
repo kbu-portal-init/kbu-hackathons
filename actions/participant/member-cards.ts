@@ -8,7 +8,7 @@ import { generateMemberCard as generateMemberCardService } from "@/lib/services/
 import { toFieldErrors } from "@/lib/validation/zod";
 
 export async function generateMemberCard(input: unknown): Promise<ActionResult<GenerateMemberCardData>> {
-    const { team } = await requireApprovedTeam();
+    const { team, user } = await requireApprovedTeam();
     const parsed = generateMemberCardSchema.safeParse(input);
 
     if (!parsed.success) {
@@ -22,5 +22,5 @@ export async function generateMemberCard(input: unknown): Promise<ActionResult<G
         };
     }
 
-    return generateMemberCardService(team.id, parsed.data);
+    return generateMemberCardService(team.id, parsed.data, user.id);
 }

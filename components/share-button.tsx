@@ -87,6 +87,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
     if (canUseNativeShare) {
         return (
             <Button
+                size="lg"
                 type="button"
                 variant="outline"
                 onClick={handleShare}
