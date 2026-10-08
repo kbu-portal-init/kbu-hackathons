@@ -6,7 +6,7 @@ KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It prov
 
 The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer and team management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
 
-Public announcement and participant-card share controls use the native Web Share API on supported mobile devices; desktop users receive copy-link and LINE-share actions.
+Public announcement and participant-card share controls use the native Web Share API on supported mobile devices; desktop users receive copy-link and LINE-share actions. The homepage also includes a static participant FAQ covering registration, submissions, judging, equipment, AI usage, and event support.
 
 The system uses three account roles:
 
