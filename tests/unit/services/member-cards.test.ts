@@ -77,6 +77,7 @@ describe("member card generation", () => {
                 team: { displayName: "Team One" },
             })) as unknown as typeof prisma.teamMember.findFirst;
             prisma.eventSettings.findUnique = (async () => ({
+                title: "KBU Hackathon 2026",
                 startsAt: new Date("2026-11-09"),
                 endsAt: new Date("2026-11-10"),
             })) as unknown as typeof prisma.eventSettings.findUnique;
@@ -118,7 +119,11 @@ describe("member card generation", () => {
                 cardKey: null,
                 team: { displayName: "Team One" },
             })) as unknown as typeof prisma.teamMember.findFirst;
-            prisma.eventSettings.findUnique = (async () => null) as unknown as typeof prisma.eventSettings.findUnique;
+            prisma.eventSettings.findUnique = (async () => ({
+                title: "KBU Hackathon 2026",
+                startsAt: new Date("2026-11-09"),
+                endsAt: new Date("2026-11-10"),
+            })) as unknown as typeof prisma.eventSettings.findUnique;
             prisma.teamMember.update = (async () => {
                 throw new Error("database unavailable");
             }) as unknown as typeof prisma.teamMember.update;
@@ -129,7 +134,7 @@ describe("member card generation", () => {
             const result = await generateMemberCard("team-1", { memberId: "member-1" });
             assert.equal(result.ok, false);
             if (!result.ok) assert.equal(result.error.code, "CARD_GENERATION_FAILED");
-            assert.equal(commands.length, 2);
+            assert.equal(commands.length, 1);
         } finally {
             prisma.teamMember.findFirst = originalFind;
             prisma.eventSettings.findUnique = originalEvent;

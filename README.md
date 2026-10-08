@@ -22,7 +22,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | --- | --- | --- |
 | Public | `/`, `/announcements`, `/resources` | Available without authentication; the homepage contains the participant information and two-day event flow |
 | Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration collects the roster plus the Thai/International program choice and enforces per-program and total team caps |
-| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
+| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes branded per-member digital cards generated from configured event title and dates, with downloads and sharing |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
 | Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |
