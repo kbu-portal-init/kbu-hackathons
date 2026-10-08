@@ -142,6 +142,7 @@ async function renderMemberCard(
 export async function generateMemberCard(
     teamId: string,
     input: GenerateMemberCardInput,
+    actorId: string,
 ): Promise<ActionResult<GenerateMemberCardData>> {
     if (!isR2Configured() || !r2 || !R2_BUCKET || !R2_PUBLIC_URL) {
         return { ok: false, error: { code: "STORAGE_NOT_CONFIGURED", message: "Storage is not configured" } };
@@ -198,6 +199,23 @@ export async function generateMemberCard(
         return { ok: true, data: { id: member.id, cardUrl, cardShareToken } };
     } catch (error) {
         console.error("Failed to generate participant card", { error, memberId: member.id, teamId });
+        try {
+            await prisma.auditLog.create({
+                data: {
+                    action: "MEMBER_CARD_GENERATION_FAILED",
+                    actorId,
+                    targetType: "TeamMember",
+                    targetId: member.id,
+                    details: { error: error instanceof Error ? error.message : "Unknown card generation failure" },
+                },
+            });
+        } catch (auditError) {
+            console.error("Failed to audit participant card generation failure", {
+                auditError,
+                memberId: member.id,
+                teamId,
+            });
+        }
         return { ok: false, error: { code: "CARD_GENERATION_FAILED", message: "Failed to generate member card" } };
     }
 }

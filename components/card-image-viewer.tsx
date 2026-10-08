@@ -60,7 +60,7 @@ export function CardImageViewer({ src, alt, width = 1600, height = 960, classNam
             />
             <button
                 aria-label={isFullscreen ? "Exit full-screen card view" : "Open full-screen card view"}
-                className={`absolute right-3 top-3 hidden size-10 cursor-pointer items-center justify-center rounded-full backdrop-blur transition sm:inline-flex sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100 ${
+                className={`absolute right-3 top-3 inline-flex size-10 cursor-pointer items-center justify-center rounded-full backdrop-blur transition sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100 ${
                     isFullscreen
                         ? "border border-white/25 bg-black/80 text-white shadow-md hover:bg-black"
                         : "border border-white/25 bg-black/60 text-white hover:border-white/40 hover:bg-black/80"
