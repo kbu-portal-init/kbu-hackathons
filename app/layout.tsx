@@ -4,7 +4,7 @@ import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getEventSettings } from "@/lib/data/event-settings";
+import { resolveOgImageUrl } from "@/lib/data/og-image";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -17,13 +17,7 @@ const DESCRIPTION = "Discover hackathons, join a team, and keep up with the KBU 
 export async function generateMetadata(): Promise<Metadata> {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-    let ogImageUrl = "/images/kbu.webp";
-    try {
-        const event = await getEventSettings();
-        ogImageUrl = event?.imageUrls[0] ?? ogImageUrl;
-    } catch {
-        // Metadata must never break rendering; keep the static fallback image.
-    }
+    const ogImageUrl = await resolveOgImageUrl();
 
     return {
         metadataBase: new URL(appUrl),
