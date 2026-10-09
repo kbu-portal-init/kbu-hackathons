@@ -6,6 +6,7 @@ import { BackButton } from "@/components/back-button";
 import { ShareButton } from "@/components/share-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getPublishedAnnouncementById } from "@/lib/data/announcements";
+import { resolveOgImageUrl } from "@/lib/data/og-image";
 
 type AnnouncementPageProps = {
     params: Promise<{
@@ -34,18 +35,23 @@ export async function generateMetadata({ params }: AnnouncementPageProps): Promi
     }
 
     const description = getDescription(announcement.content);
+    const ogImageUrl = await resolveOgImageUrl(announcement.imageUrl);
 
     return {
         title: `${announcement.title} | KBU Hackathon 2026`,
         description,
         openGraph: {
+            type: "website",
+            siteName: "KBU Hackathon 2026",
             title: announcement.title,
             description,
-            ...(announcement.imageUrl
-                ? {
-                      images: [announcement.imageUrl],
-                  }
-                : {}),
+            images: [{ url: ogImageUrl }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: announcement.title,
+            description,
+            images: [ogImageUrl],
         },
     };
 }
