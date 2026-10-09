@@ -13,9 +13,23 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 const DESCRIPTION = "Discover hackathons, join a team, and keep up with the KBU community.";
+const DEFAULT_APP_URL = "http://localhost:3000";
+
+function resolveAppUrl(): string {
+    const raw = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    if (raw) {
+        try {
+            const url = new URL(raw);
+            if (url.protocol.startsWith("http") && url.host) return url.toString().replace(/\/$/, "");
+        } catch {
+            // fall through to the default
+        }
+    }
+    return DEFAULT_APP_URL;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const appUrl = resolveAppUrl();
 
     const ogImageUrl = await resolveOgImageUrl();
 
