@@ -12,7 +12,7 @@ type CardImageViewerProps = {
     className?: string;
 };
 
-export function CardImageViewer({ src, alt, width = 1200, height = 630, className }: CardImageViewerProps) {
+export function CardImageViewer({ src, alt, width = 1600, height = 960, className }: CardImageViewerProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -31,6 +31,12 @@ export function CardImageViewer({ src, alt, width = 1200, height = 630, classNam
         await containerRef.current.requestFullscreen();
     }
 
+    function handleImageClick() {
+        if (window.matchMedia("(max-width: 639px)").matches) {
+            void toggleFullscreen();
+        }
+    }
+
     return (
         <div
             className={`group relative overflow-hidden bg-zinc-950 ${
@@ -43,17 +49,22 @@ export function CardImageViewer({ src, alt, width = 1200, height = 630, classNam
                 className={
                     isFullscreen
                         ? "block h-auto max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] w-auto object-contain"
-                        : `${className ?? ""} block`
+                        : `${className ?? ""} block cursor-pointer sm:cursor-default`
                 }
                 height={height}
                 priority
                 src={src}
                 unoptimized
                 width={width}
+                onClick={handleImageClick}
             />
             <button
                 aria-label={isFullscreen ? "Exit full-screen card view" : "Open full-screen card view"}
-                className="absolute right-3 top-3 inline-flex size-10 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition hover:bg-black/80 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
+                className={`absolute right-3 top-3 inline-flex size-10 cursor-pointer items-center justify-center rounded-full backdrop-blur transition sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100 ${
+                    isFullscreen
+                        ? "border border-white/25 bg-black/80 text-white shadow-md hover:bg-black"
+                        : "border border-white/25 bg-black/60 text-white hover:border-white/40 hover:bg-black/80"
+                }`}
                 onClick={toggleFullscreen}
                 type="button"
             >

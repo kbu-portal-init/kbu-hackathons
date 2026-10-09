@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Sparkles } from "lucide-react";
+import { Download, LoaderCircle, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { generateMemberCard } from "@/actions/participant/member-cards";
@@ -13,6 +13,7 @@ import { formatRole } from "@/lib/util";
 export function MemberCards({ members }: { members: TeamMemberCard[] }) {
     const [items, setItems] = useState(members);
     const [busyId, setBusyId] = useState<string | null>(null);
+    const [downloadingId, setDownloadingId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     async function handleGenerate(memberId: string) {
@@ -43,6 +44,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
     }
 
     async function handleDownload(member: TeamMemberCard) {
+        setDownloadingId(member.id);
         try {
             const response = await fetch(`/api/participant/member-card/${member.id}/download`);
             if (!response.ok) throw new Error("Download failed");
@@ -60,9 +62,10 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
             link.click();
             link.remove();
             URL.revokeObjectURL(objectUrl);
-            toast.success("Card download started");
         } catch {
             toast.error("Unable to download card");
+        } finally {
+            setDownloadingId(null);
         }
     }
 
@@ -74,47 +77,52 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {items.map((member) => (
                     <article
-                        className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
+                        className="flex h-full flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
                         key={member.id}
                     >
                         {busyId === member.id ? (
-                            <div className="flex aspect-1200/630 items-center justify-center bg-orange-50 text-sm text-orange-900">
+                            <div className="flex aspect-1600/960 items-center justify-center bg-orange-50 text-sm text-orange-900">
                                 Generating new card...
                             </div>
                         ) : member.cardUrl ? (
                             <CardImageViewer
                                 alt={`${member.name} digital card`}
-                                className="aspect-1200/630 w-full object-cover"
+                                className="aspect-1600/960 w-full object-cover"
                                 src={member.cardUrl}
                             />
                         ) : (
-                            <div className="flex aspect-1200/630 items-center justify-center bg-orange-50 text-sm text-orange-900">
+                            <div className="flex aspect-1600/960 items-center justify-center bg-orange-50 text-sm text-orange-900">
                                 Card not generated
                             </div>
                         )}
-                        <div className="space-y-4 p-4">
+                        <div className="flex flex-1 flex-col space-y-4 p-4">
                             <div className="min-w-0">
                                 <h2 className="font-semibold">{member.name}</h2>
                                 <p className="text-sm text-muted-foreground">{formatRole(member.role)}</p>
                                 <p className="mt-1 break-all text-sm text-muted-foreground">{member.studentEmail}</p>
                             </div>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="mt-auto flex flex-wrap gap-2">
                                 {member.cardUrl ? (
                                     <Button
                                         size="lg"
                                         variant="outline"
                                         className="cursor-pointer transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground"
+                                        disabled={downloadingId === member.id}
                                         onClick={() => handleDownload(member)}
                                     >
-                                        <Download />
-                                        Download
+                                        {downloadingId === member.id ? (
+                                            <LoaderCircle className="animate-spin" />
+                                        ) : (
+                                            <Download />
+                                        )}
+                                        {downloadingId === member.id ? "Preparing…" : "Download"}
                                     </Button>
                                 ) : null}
                                 {member.cardUrl && member.cardShareToken ? (
                                     <ShareButton
                                         title="KBU Hackathon 2026 participant card"
                                         url={getShareUrl(member)}
-                                        className="h-auto rounded-md border-zinc-300 text-sm font-normal text-zinc-900"
+                                        className="rounded-md border-zinc-300 text-sm font-normal text-zinc-900"
                                     />
                                 ) : null}
                                 <Button

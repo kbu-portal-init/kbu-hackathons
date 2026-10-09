@@ -6,7 +6,7 @@ KBU Hackathon 2026 is the web platform for a single KBU hackathon event. It prov
 
 The current foundation includes Better Auth authentication, Prisma persistence, protected workspace guards, shared contracts, server actions, data/services layers, response mappers, organizer and team management, account bans, audit records, centralized SMTP notification delivery, student email verification, event settings management, announcement management with published-announcement editing, and Cloudflare R2 file storage.
 
-Public announcement and participant-card share controls use the native Web Share API on supported mobile devices; desktop users receive copy-link and LINE-share actions.
+Public announcement and participant-card share controls use the native Web Share API on supported mobile devices; desktop users receive copy-link and LINE-share actions. The homepage also includes a static participant FAQ covering registration, submissions, judging, equipment, AI usage, and event support.
 
 The system uses three account roles:
 
@@ -22,7 +22,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | --- | --- | --- |
 | Public | `/`, `/announcements`, `/resources` | Available without authentication; the homepage contains the participant information and two-day event flow |
 | Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration collects the roster plus the Thai/International program choice and enforces per-program and total team caps |
-| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes per-member digital card generation and downloads |
+| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes branded per-member digital cards generated from the reference artwork and configured event dates, with downloads and sharing |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
 | Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |

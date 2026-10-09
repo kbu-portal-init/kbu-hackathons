@@ -43,7 +43,7 @@ describe("member card generation", () => {
                 args = input;
                 return null;
             }) as unknown as typeof prisma.teamMember.findFirst;
-            const result = await generateMemberCard("team-1", { memberId: "member-1" });
+            const result = await generateMemberCard("team-1", { memberId: "member-1" }, "user-1");
             assert.equal(result.ok, false);
             if (!result.ok) assert.equal(result.error.code, "MEMBER_NOT_FOUND");
             assert.deepEqual(args, {
@@ -77,6 +77,7 @@ describe("member card generation", () => {
                 team: { displayName: "Team One" },
             })) as unknown as typeof prisma.teamMember.findFirst;
             prisma.eventSettings.findUnique = (async () => ({
+                title: "KBU Hackathon 2026",
                 startsAt: new Date("2026-11-09"),
                 endsAt: new Date("2026-11-10"),
             })) as unknown as typeof prisma.eventSettings.findUnique;
@@ -89,7 +90,7 @@ describe("member card generation", () => {
                 return {};
             }) as typeof r2.send;
 
-            const result = await generateMemberCard("team-1", { memberId: "member-1" });
+            const result = await generateMemberCard("team-1", { memberId: "member-1" }, "user-1");
             assert.equal(result.ok, true);
             assert.ok(updateData);
             assert.ok(updateData.cardKey.startsWith("uploads/team-1/cards/member-1-"));
@@ -104,10 +105,41 @@ describe("member card generation", () => {
         }
     });
 
-    it("deletes a newly uploaded object when persistence fails", async () => {
+    it("returns a configuration error without sending an R2 command when event settings are missing", async () => {
+        const originalFind = prisma.teamMember.findFirst;
+        const originalEvent = prisma.eventSettings.findUnique;
+        const originalSend = r2.send;
+        const commands: unknown[] = [];
+        try {
+            prisma.teamMember.findFirst = (async () => ({
+                id: "member-1",
+                name: "Member",
+                role: "DEVELOPER",
+                cardKey: null,
+                team: { displayName: "Team One" },
+            })) as unknown as typeof prisma.teamMember.findFirst;
+            prisma.eventSettings.findUnique = (async () => null) as unknown as typeof prisma.eventSettings.findUnique;
+            r2.send = (async (command: unknown) => {
+                commands.push(command);
+                return {};
+            }) as typeof r2.send;
+
+            const result = await generateMemberCard("team-1", { memberId: "member-1" }, "user-1");
+            assert.equal(result.ok, false);
+            if (!result.ok) assert.equal(result.error.code, "EVENT_NOT_CONFIGURED");
+            assert.equal(commands.length, 0);
+        } finally {
+            prisma.teamMember.findFirst = originalFind;
+            prisma.eventSettings.findUnique = originalEvent;
+            r2.send = originalSend;
+        }
+    });
+
+    it("removes the uploaded object when persistence fails", async () => {
         const originalFind = prisma.teamMember.findFirst;
         const originalEvent = prisma.eventSettings.findUnique;
         const originalUpdate = prisma.teamMember.update;
+        const originalAudit = prisma.auditLog.create;
         const originalSend = r2.send;
         const commands: unknown[] = [];
         try {
@@ -118,22 +150,32 @@ describe("member card generation", () => {
                 cardKey: null,
                 team: { displayName: "Team One" },
             })) as unknown as typeof prisma.teamMember.findFirst;
-            prisma.eventSettings.findUnique = (async () => null) as unknown as typeof prisma.eventSettings.findUnique;
+            prisma.eventSettings.findUnique = (async () => ({
+                title: "KBU Hackathon 2026",
+                startsAt: new Date("2026-11-09"),
+                endsAt: new Date("2026-11-10"),
+            })) as unknown as typeof prisma.eventSettings.findUnique;
             prisma.teamMember.update = (async () => {
                 throw new Error("database unavailable");
             }) as unknown as typeof prisma.teamMember.update;
+            prisma.auditLog.create = (async () => ({})) as unknown as typeof prisma.auditLog.create;
             r2.send = (async (command: unknown) => {
                 commands.push(command);
                 return {};
             }) as typeof r2.send;
-            const result = await generateMemberCard("team-1", { memberId: "member-1" });
+            const result = await generateMemberCard("team-1", { memberId: "member-1" }, "user-1");
             assert.equal(result.ok, false);
             if (!result.ok) assert.equal(result.error.code, "CARD_GENERATION_FAILED");
             assert.equal(commands.length, 2);
+            const put = commands[0] as { input: { Key?: string } };
+            const cleanup = commands[1] as { input: { Key?: string } };
+            assert.ok(put.input.Key?.startsWith("uploads/team-1/cards/member-1-"));
+            assert.equal(cleanup.input.Key, put.input.Key);
         } finally {
             prisma.teamMember.findFirst = originalFind;
             prisma.eventSettings.findUnique = originalEvent;
             prisma.teamMember.update = originalUpdate;
+            prisma.auditLog.create = originalAudit;
             r2.send = originalSend;
         }
     });
