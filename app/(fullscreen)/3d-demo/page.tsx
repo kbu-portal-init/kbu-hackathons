@@ -15,7 +15,7 @@ export default function ThreeDemoPage() {
                     href="/"
                     className="pointer-events-auto inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm font-medium text-foreground transition hover:text-teal-500"
                 >
-                    <ArrowLeft className="size-4" /> Back to KBU Hub
+                    <ArrowLeft className="size-4" /> Back
                 </Link>
             </div>
         </main>
