@@ -218,15 +218,13 @@ export function FileUpload({
                         render={
                             <Button
                                 type="button"
-                                variant="outline"
-                                size="sm"
-                                className="cursor-pointer gap-1 rounded-full border !border-zinc-200 !bg-white text-zinc-700 shadow-sm hover:!bg-zinc-50 hover:!text-zinc-900"
+                                size="icon"
+                                className="cursor-pointer rounded-full"
                                 aria-label={`Edit ${label.toLowerCase()}`}
                             />
                         }
                     >
                         <Pencil data-icon="inline-start" />
-                        Edit
                     </PopoverTrigger>
                     <PopoverContent className="w-56">
                         <PopoverHeader>
