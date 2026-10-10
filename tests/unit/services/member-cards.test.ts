@@ -135,7 +135,7 @@ describe("member card generation", () => {
         }
     });
 
-    it("does not send a cleanup command when persistence fails", async () => {
+    it("removes the uploaded object when persistence fails", async () => {
         const originalFind = prisma.teamMember.findFirst;
         const originalEvent = prisma.eventSettings.findUnique;
         const originalUpdate = prisma.teamMember.update;
@@ -166,7 +166,11 @@ describe("member card generation", () => {
             const result = await generateMemberCard("team-1", { memberId: "member-1" }, "user-1");
             assert.equal(result.ok, false);
             if (!result.ok) assert.equal(result.error.code, "CARD_GENERATION_FAILED");
-            assert.equal(commands.length, 1);
+            assert.equal(commands.length, 2);
+            const put = commands[0] as { input: { Key?: string } };
+            const cleanup = commands[1] as { input: { Key?: string } };
+            assert.ok(put.input.Key?.startsWith("uploads/team-1/cards/member-1-"));
+            assert.equal(cleanup.input.Key, put.input.Key);
         } finally {
             prisma.teamMember.findFirst = originalFind;
             prisma.eventSettings.findUnique = originalEvent;

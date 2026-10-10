@@ -165,13 +165,15 @@ export async function generateMemberCard(
 
     const event = await prisma.eventSettings.findUnique({
         where: { id: 1 },
-        select: { title: true, startsAt: true, endsAt: true },
+        select: { startsAt: true, endsAt: true },
     });
     if (!event) {
         return { ok: false, error: { code: "EVENT_NOT_CONFIGURED", message: "Event settings are not configured" } };
     }
     const eventDateRange = formatEventDateRange(event.startsAt, event.endsAt);
 
+    let uploadedKey: string | undefined;
+    let persisted = false;
     try {
         const buffer = await renderMemberCard(member.team.displayName, member.name, member.role, eventDateRange);
         const key = `uploads/${teamId}/cards/${member.id}-${crypto.randomUUID()}.png`;
@@ -185,12 +187,14 @@ export async function generateMemberCard(
                 ContentLength: buffer.length,
             }),
         );
+        uploadedKey = key;
 
         const cardUrl = `${R2_PUBLIC_URL}/${key}`;
         await prisma.teamMember.update({
             where: { id: member.id },
             data: { cardKey: key, cardUrl, cardShareToken },
         });
+        persisted = true;
 
         if (member.cardKey && member.cardKey !== key) {
             await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: member.cardKey }));
@@ -198,6 +202,13 @@ export async function generateMemberCard(
 
         return { ok: true, data: { id: member.id, cardUrl, cardShareToken } };
     } catch (error) {
+        if (uploadedKey && !persisted) {
+            try {
+                await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: uploadedKey }));
+            } catch {
+                // Preserve the original generation failure if cleanup also fails.
+            }
+        }
         console.error("Failed to generate participant card", { error, memberId: member.id, teamId });
         try {
             await prisma.auditLog.create({
