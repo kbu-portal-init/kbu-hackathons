@@ -83,7 +83,7 @@ async function renderMemberCard(
                         whiteSpace: "nowrap",
                     }}
                 >
-                    {teamName.length > 28 ? `${teamName.slice(0, 25).trimEnd()}…` : teamName}
+                    {teamName}
                 </div>
                 <div
                     style={{
