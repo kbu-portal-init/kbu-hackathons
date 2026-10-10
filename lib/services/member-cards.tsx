@@ -72,16 +72,18 @@ async function renderMemberCard(
                 <div
                     style={{
                         color: "#ff8a00",
-                        display: "flex",
+                        display: "block",
                         fontFamily: "Ethnocentric",
                         fontSize: 28,
                         fontWeight: 800,
                         letterSpacing: 2,
                         maxWidth: 980,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                     }}
                 >
-                    {teamName}
+                    {teamName.length > 28 ? `${teamName.slice(0, 25).trimEnd()}…` : teamName}
                 </div>
                 <div
                     style={{

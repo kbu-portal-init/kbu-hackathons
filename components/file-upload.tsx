@@ -217,6 +217,7 @@ export function FileUpload({
                     <PopoverTrigger
                         render={
                             <Button
+                                type="button"
                                 size="icon"
                                 className="cursor-pointer rounded-full"
                                 aria-label={`Edit ${label.toLowerCase()}`}
