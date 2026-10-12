@@ -32,7 +32,7 @@ export async function redirectHomeIfAlreadyAuthenticated() {
     if (session?.user) redirect("/");
 }
 
-export async function redirectAuthenticatedUser() {
+export async function getAuthenticatedDestination(): Promise<string | null> {
     const session = await auth.api.getSession({ headers: await headers() });
     const role = getUserRole(session?.user?.role);
 
@@ -41,10 +41,16 @@ export async function redirectAuthenticatedUser() {
             where: { userId: session.user.id },
             select: { archivedAt: true, registration: { select: { status: true } } },
         });
-        if (team?.archivedAt === null && team.registration?.status === "APPROVED") redirect("/team");
+        if (team?.archivedAt === null && team.registration?.status === "APPROVED") return "/team";
     }
-    if (role === "organizer") redirect("/panel");
-    if (role === "admin") redirect("/admin");
+    if (role === "organizer") return "/panel";
+    if (role === "admin") return "/admin";
+    return null;
+}
+
+export async function redirectAuthenticatedUser() {
+    const destination = await getAuthenticatedDestination();
+    if (destination) redirect(destination);
 }
 
 export async function requireOrganizerOrAdmin() {
