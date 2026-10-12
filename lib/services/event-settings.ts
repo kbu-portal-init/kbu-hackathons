@@ -1,5 +1,6 @@
 import "server-only";
 
+import { revalidateTag } from "next/cache";
 import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
@@ -75,6 +76,7 @@ export async function upsertEventSettings(
                 },
             });
         });
+        revalidateTag("event-settings", "max");
     } catch {
         return {
             ok: false,

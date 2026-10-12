@@ -77,9 +77,10 @@ async function main() {
 
     await prisma.eventSettings.create({
         data: {
-            title: "KBU Innovation Sprint 2026",
-            description: "Build practical solutions for the KBU community.",
-            venue: "KBU Innovation Lab",
+            title: "KBU Hackathon 2026",
+            description:
+                "Our University's first hackathon brings bold ideas, curious minds, and collaborative teams together to build meaningful solutions. Connect with fellow innovators, turn your ideas into working prototypes, and share what you create with the KBU community.",
+            venue: "International Lounge, Kasem Nakara Building",
             imageUrls: [],
             ...eventDates,
             maxThaiTeams: 5,

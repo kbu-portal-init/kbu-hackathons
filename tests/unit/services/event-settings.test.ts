@@ -1,5 +1,11 @@
 import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
+import { mockModule as mock } from "@/tests/helpers/mocks";
+
+mock("next/cache", {
+    revalidateTag: () => {},
+    unstable_cache: (fn: () => unknown) => fn,
+});
 
 import { upsertEventSettingsSchema } from "@/lib/contracts/event-settings";
 
