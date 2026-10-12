@@ -120,6 +120,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
             announcementId: announcement.id,
             title: announcement.title,
             content: announcement.content,
+            category: announcement.category,
             imageUrl: announcement.imageUrl ?? "",
         });
 

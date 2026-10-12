@@ -144,6 +144,7 @@ export async function updateAnnouncement(
                     details: {
                         title: updated.title,
                         content: updated.content,
+                        category: updated.category,
                         imageUrl: updated.imageUrl,
                         status: updated.status,
                     },
