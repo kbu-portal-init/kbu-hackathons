@@ -33,4 +33,14 @@ Required environment categories are `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETT
 
 Production also requires `LINE_CONTACT_URL` and `LINE_CONTACT_NAME`; these values are shared by the public support link and outgoing email footers.
 
+## Pull request previews
+
+The `Vercel Preview` workflow deploys pull requests targeting `dev` with the Vercel CLI. Configure these GitHub Actions repository secrets before opening or updating a pull request:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+The workflow smoke-tests the deployed URL and fails the PR check when the Preview cannot be reached or returns an HTTP error. It also creates or updates a Preview URL comment on the pull request. Branch push deployments remain restricted by `vercel.json` to `main`, `dev`, and `wip`.
+
 See `README.md` for the full `.env.example`-based setup, including optional Turnstile and Upstash Redis settings.
