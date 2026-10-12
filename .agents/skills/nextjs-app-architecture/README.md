@@ -54,6 +54,4 @@ The `SKILL.md` overview is always loaded; references split into two zones so the
 
 ## License
 
-
-
 MIT
