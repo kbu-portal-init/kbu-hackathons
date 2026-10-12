@@ -39,7 +39,7 @@ Prefer Server Components. Use client components only for browser state, events, 
 
 ## Public localization
 
-Public locale state is resolved server-side from the `kbu-locale` cookie in `lib/i18n`. Supported values are `en` and `th`, with English as the fallback. Typed dictionaries provide public interface copy, while database-authored announcement and resource content remains unchanged until bilingual content fields are introduced. The client language switcher updates the cookie and refreshes the current route; authenticated workspaces are currently English-only.
+Public locale state is resolved server-side from the `kbu-locale` cookie in `lib/i18n`. Supported values are `en` and `th`, with English as the fallback. Typed dictionaries provide public interface copy and selected dashboard shell/reference content, while remaining authenticated-workspace text and database-authored announcement/resource content remain unchanged until further localization work is introduced. The client language switcher updates the cookie and refreshes the current route.
 
 ## Styling
 

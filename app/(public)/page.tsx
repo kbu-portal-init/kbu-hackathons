@@ -160,10 +160,10 @@ export default async function Home() {
                             data-reveal
                             className="mt-6 max-w-3xl text-5xl font-black tracking-tight text-foreground sm:text-7xl"
                         >
-                            {event?.title ?? "Build. Connect. Compete."}
+                            {event?.title ?? t.home.slogan}
                         </h1>
                         <p data-reveal className="mt-4 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                            Build. <span className="text-primary">Connect.</span> Compete.
+                            {t.home.slogan}
                         </p>
                         <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-brand-muted-foreground">
                             {event?.description ??
@@ -289,14 +289,15 @@ export default async function Home() {
                                 {t.home.latestAnnouncements}
                             </p>
                             <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                                Latest from the community
+                                {t.home.communityTitle}
                             </h2>
                             <p className="mt-4 text-brand-muted-foreground">{t.home.announcementsIntro}</p>
                             <Link
                                 href="/announcements"
                                 className="mt-6 inline-flex items-center gap-1 font-semibold text-orange-600 transition hover:text-orange-700"
                             >
-                                Read all announcements <ArrowRight className="size-4" />
+                                {locale === "th" ? "อ่านประกาศทั้งหมด" : "Read all announcements"}{" "}
+                                <ArrowRight className="size-4" />
                             </Link>
                         </div>
                         <Suspense fallback={<HomeAnnouncementsFallback locale={locale} />}>
@@ -314,7 +315,7 @@ export default async function Home() {
                         data-reveal
                         className="mx-auto mt-5 max-w-2xl text-4xl font-black tracking-tight text-foreground sm:text-5xl"
                     >
-                        Your team is one commit away
+                        {t.home.calloutTitle}
                     </h2>
                     <p data-reveal className="mx-auto mt-5 max-w-xl text-brand-muted-foreground">
                         {t.home.finalTitle}

@@ -50,7 +50,7 @@ export async function SiteFooter() {
                     <p className="text-sm font-semibold text-zinc-950">{t.common.help}</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
                         <Link href="/#need-help" className="hover:text-orange-700">
-                            Need help?
+                            {t.footer.helpLink}
                         </Link>
                     </div>
                 </div>
