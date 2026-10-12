@@ -33,6 +33,8 @@ Unknown routes and invalid public detail records use the branded global 404 page
 
 Client-side route changes show a thin orange progress bar from the root layout; page-level `Suspense` fallbacks remain responsible for content-specific loading states.
 
+Pull requests targeting `dev` receive a Vercel Preview deployment through the `Vercel Preview` GitHub Actions workflow. It requires the `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` repository secrets. Direct Vercel branch deployments remain limited to `main`, `dev`, and `wip`.
+
 ## Architecture boundaries
 
 The backend is organized as contracts ? actions/data ? services ? persistence:
