@@ -20,22 +20,15 @@ const nextConfig: NextConfig = {
         },
     },
     images: {
-        remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "pub-ab7b105929754ba195b59fb0082dca50.r2.dev",
-                pathname: "/**",
-            },
-            ...(r2Hostname
-                ? [
-                      {
-                          protocol: "https" as const,
-                          hostname: r2Hostname,
-                          pathname: "/**",
-                      },
-                  ]
-                : []),
-        ],
+        remotePatterns: r2Hostname
+            ? [
+                  {
+                      protocol: "https",
+                      hostname: r2Hostname,
+                      pathname: "/**",
+                  },
+              ]
+            : [],
     },
 };
 export default withSentryConfig(nextConfig, {
