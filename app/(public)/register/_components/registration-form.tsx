@@ -172,7 +172,7 @@ export function RegistrationForm({
                                         aria-invalid={fieldState.invalid}
                                         placeholder="e.g. Byte Builders"
                                     />
-                                    <FieldDescription>Choose a unique name for your team.</FieldDescription>
+                                    <FieldDescription>{t.uniqueTeamName}</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -201,14 +201,12 @@ export function RegistrationForm({
                                                     disabled={slot.remaining <= 0}
                                                 >
                                                     {programLabels[slot.program]} ({slot.remaining} of {slot.limit}{" "}
-                                                    slots left)
+                                                    {t.slotsLeft})
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <FieldDescription>
-                                        Your team competes in either the Thai or the International program.
-                                    </FieldDescription>
+                                    <FieldDescription>{t.programDescription}</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -224,7 +222,7 @@ export function RegistrationForm({
                                         const size = minTeamSize + index;
                                         return (
                                             <SelectItem key={size} value={String(size)}>
-                                                {size} members
+                                                {size} {t.membersLabel}
                                             </SelectItem>
                                         );
                                     })}
@@ -265,7 +263,7 @@ export function RegistrationForm({
                             <Field>
                                 <FieldLabel>{t.role}</FieldLabel>
                                 <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
-                                    Leader
+                                    {t.leaderRole}
                                 </div>
                             </Field>
                         </div>
@@ -284,7 +282,7 @@ export function RegistrationForm({
                                         aria-invalid={fieldState.invalid}
                                         placeholder="u...@ms.kbu.ac.th"
                                     />
-                                    <FieldDescription>Must be a valid @ms.kbu.ac.th email address.</FieldDescription>
+                                    <FieldDescription>{t.validStudentEmail}</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -396,7 +394,7 @@ function MemberRow({
                                         {...field}
                                         id={field.name}
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Member name"
+                                        placeholder={t.memberPlaceholder}
                                     />
                                 </InputGroup>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
