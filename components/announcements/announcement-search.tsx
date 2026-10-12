@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,15 +29,13 @@ export function AnnouncementSearch({
 
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        if (isOpen) {
-            inputRef.current?.focus();
-        }
-    }, [isOpen]);
-
     function openSearch() {
         setIsOpen(true);
         onOpenChange?.(true);
+
+        requestAnimationFrame(() => {
+            inputRef.current?.focus();
+        });
     }
 
     function closeSearch() {
