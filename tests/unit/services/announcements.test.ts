@@ -57,13 +57,14 @@ describe("announcement service", () => {
             },
             async () => {
                 const result = await service.createAnnouncement(
-                    { title: "News", content: "Details", imageUrl: "" },
+                    { title: "News", content: "Details", category: "NEWS", imageUrl: "" },
                     "admin-1",
                 );
                 assert.equal(result.ok, true);
                 assert.deepEqual(createData, {
                     title: "News",
                     content: "Details",
+                    category: "NEWS",
                     imageUrl: null,
                     status: "DRAFT",
                     createdById: "admin-1",
@@ -81,7 +82,7 @@ describe("announcement service", () => {
 
     it("rejects image URLs outside the announcement storage prefix", async () => {
         const result = await service.createAnnouncement(
-            { title: "News", content: "Details", imageUrl: "https://attacker.test/image.png" },
+            { title: "News", content: "Details", category: "NEWS", imageUrl: "https://attacker.test/image.png" },
             "admin-1",
         );
         assert.equal(result.ok, false);

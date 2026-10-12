@@ -16,8 +16,8 @@ import { PaginationFooter } from "@/components/pagination-footer";
 import { Button } from "@/components/ui/button";
 import {
     type AnnouncementDTO,
+    type CreateAnnouncementFormInput,
     type CreateAnnouncementInput,
-    CreateAnnouncementInputSchema,
     type UpdateAnnouncementInput,
     updateAnnouncementSchema,
 } from "@/lib/contracts/announcements";
@@ -44,14 +44,7 @@ export function AnnouncementManagement({ items, meta }: Props) {
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
 
-    const createForm = useForm<CreateAnnouncementInput>({
-        resolver: zodResolver(CreateAnnouncementInputSchema),
-        defaultValues: {
-            title: "",
-            content: "",
-            imageUrl: "",
-        },
-    });
+    const createForm = useForm<CreateAnnouncementFormInput, unknown, CreateAnnouncementInput>({});
 
     const editForm = useForm<UpdateAnnouncementInput>({
         resolver: zodResolver(updateAnnouncementSchema),

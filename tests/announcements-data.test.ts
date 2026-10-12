@@ -50,6 +50,7 @@ async function createTestUser() {
 async function createTestAnnouncement(input: {
     title: string;
     content: string;
+    category: "IMPORTANT" | "UPDATES" | "NEWS";
     status?: AnnouncementStatus;
     publishedAt?: Date | null;
 }) {
@@ -102,16 +103,19 @@ describe("announcement data", () => {
         await createTestAnnouncement({
             title: "Pagination Announcement 1",
             content: "Pagination content 1",
+            category: "NEWS",
         });
 
         await createTestAnnouncement({
             title: "Pagination Announcement 2",
             content: "Pagination content 2",
+            category: "NEWS",
         });
 
         await createTestAnnouncement({
             title: "Pagination Announcement 3",
             content: "Pagination content 3",
+            category: "NEWS",
         });
 
         const result = await listAnnouncements({
@@ -130,12 +134,14 @@ describe("announcement data", () => {
         await createTestAnnouncement({
             title: "Status Draft Announcement",
             content: "Status filter content",
+            category: "NEWS",
             status: "DRAFT",
         });
 
         await createTestAnnouncement({
             title: "Status Published Announcement",
             content: "Status filter content",
+            category: "NEWS",
             status: "PUBLISHED",
         });
 
@@ -153,6 +159,7 @@ describe("announcement data", () => {
         const announcement = await createTestAnnouncement({
             title: "Unique Database Search Title",
             content: "Normal announcement content",
+            category: "NEWS",
         });
 
         const result = await listAnnouncements({
@@ -168,6 +175,7 @@ describe("announcement data", () => {
         const announcement = await createTestAnnouncement({
             title: "Normal Search Title",
             content: "Unique content keyword for testing",
+            category: "NEWS",
         });
 
         const result = await listAnnouncements({
@@ -183,18 +191,21 @@ describe("announcement data", () => {
         const published = await createTestAnnouncement({
             title: "Public Published Announcement",
             content: "Public content",
+            category: "NEWS",
             status: "PUBLISHED",
         });
 
         const draft = await createTestAnnouncement({
             title: "Private Draft Announcement",
             content: "Private draft content",
+            category: "NEWS",
             status: "DRAFT",
         });
 
         const archived = await createTestAnnouncement({
             title: "Private Archived Announcement",
             content: "Private archived content",
+            category: "NEWS",
             status: "ARCHIVED",
         });
 
@@ -225,6 +236,7 @@ describe("announcement data", () => {
         const older = await createTestAnnouncement({
             title: "Older Public Announcement",
             content: "Older content",
+            category: "NEWS",
             status: "PUBLISHED",
             publishedAt: olderDate,
         });
@@ -232,6 +244,7 @@ describe("announcement data", () => {
         const newer = await createTestAnnouncement({
             title: "Newer Public Announcement",
             content: "Newer content",
+            category: "NEWS",
             status: "PUBLISHED",
             publishedAt: newerDate,
         });
@@ -253,12 +266,14 @@ describe("announcement data", () => {
         const published = await createTestAnnouncement({
             title: "Public Action Announcement",
             content: "Public action content",
+            category: "NEWS",
             status: "PUBLISHED",
         });
 
         const draft = await createTestAnnouncement({
             title: "Private Action Draft",
             content: "Private action content",
+            category: "NEWS",
             status: "DRAFT",
         });
 

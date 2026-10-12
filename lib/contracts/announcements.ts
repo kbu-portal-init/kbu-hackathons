@@ -8,6 +8,10 @@ export const AnnouncementStatusSchema = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"
 
 export type AnnouncementStatus = z.infer<typeof AnnouncementStatusSchema>;
 
+export const AnnouncementCategorySchema = z.enum(["IMPORTANT", "UPDATES", "NEWS"]);
+
+export type AnnouncementCategory = z.infer<typeof AnnouncementCategorySchema>;
+
 const AnnouncementTitleSchema = z
     .string()
     .trim()
@@ -31,10 +35,11 @@ const AnnouncementImageURLSchema = z.url("Invalid image URL").optional().or(z.li
 export const CreateAnnouncementInputSchema = z.object({
     title: AnnouncementTitleSchema,
     content: AnnouncementContentSchema,
+    category: AnnouncementCategorySchema.default("NEWS"),
     imageUrl: AnnouncementImageURLSchema,
 });
 
-export type CreateAnnouncementInput = z.infer<typeof CreateAnnouncementInputSchema>;
+export type CreateAnnouncementInput = z.output<typeof CreateAnnouncementInputSchema>;
 
 export const announcementIdSchema = z.object({
     announcementId: z.string().min(1, "Announcement ID is required"),
@@ -45,6 +50,7 @@ export type AnnouncementIdInput = z.infer<typeof announcementIdSchema>;
 export const updateAnnouncementSchema = announcementIdSchema.extend({
     title: AnnouncementTitleSchema.optional(),
     content: AnnouncementContentSchema.optional(),
+    category: AnnouncementCategorySchema.optional(),
     imageUrl: AnnouncementImageURLSchema,
 });
 
@@ -55,6 +61,7 @@ export const ListAnnouncementSchema = z.object({
     pageSize: z.coerce.number().int().min(1).max(100).default(20),
     search: z.string().trim().optional(),
     status: AnnouncementStatusSchema.optional(),
+    category: AnnouncementCategorySchema.optional(),
 });
 
 export type ListAnnouncementInput = z.infer<typeof ListAnnouncementSchema> & PageInput;
@@ -63,6 +70,7 @@ export type AnnouncementDTO = {
     id: string;
     title: string;
     content: string;
+    category: AnnouncementCategory;
     imageUrl: string | null;
     status: AnnouncementStatus;
     publishedAt: string | null;
@@ -77,6 +85,7 @@ export const ListPublicAnnouncementSchema = z.object({
     page: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(100).default(20),
     search: z.string().trim().optional(),
+    category: AnnouncementCategorySchema.optional(),
 });
 
 export type ListPublicAnnouncementInput = z.infer<typeof ListPublicAnnouncementSchema> & PageInput;
@@ -86,3 +95,5 @@ export type AnnouncementActionResult = ActionResult<AnnouncementDTO>;
 export type AnnouncementListActionResult = ListActionResult<AnnouncementDTO>;
 
 export type PublicAnnouncementListActionResult = ListActionResult<PublicAnnouncementDTO>;
+
+export type CreateAnnouncementFormInput = z.input<typeof CreateAnnouncementInputSchema>;
