@@ -95,12 +95,14 @@ async function AnnouncementResults({
     page,
     search,
     emptyLabel,
+    emptyForLabel,
     errorLabel,
     publishedLabel,
 }: {
     page: number;
     search?: string;
     emptyLabel: string;
+    emptyForLabel: string;
     errorLabel: string;
     publishedLabel: string;
 }) {
@@ -143,7 +145,7 @@ async function AnnouncementResults({
 
             {result.ok && items.length === 0 && (
                 <p className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-                    {search ? `${emptyLabel} "${search}".` : emptyLabel}
+                    {search ? `${emptyForLabel} "${search}".` : emptyLabel}
                 </p>
             )}
 
@@ -219,7 +221,7 @@ export default async function AnnouncementsPage({
                                         />
 
                                         <Button type="submit" className="h-11 px-6">
-                                            {t.common.announcements}
+                                            {t.announcementsPage.searchButton}
                                         </Button>
 
                                         {search && (
@@ -243,6 +245,7 @@ export default async function AnnouncementsPage({
                                     page={filters.page}
                                     search={search}
                                     emptyLabel={t.announcementsPage.empty}
+                                    emptyForLabel={t.announcementsPage.emptyFor}
                                     errorLabel={t.home.announcementsUnavailable}
                                     publishedLabel={t.common.announcements}
                                 />

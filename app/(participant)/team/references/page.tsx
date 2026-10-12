@@ -17,24 +17,28 @@ import { getLocale } from "@/lib/i18n/server";
 
 const references = [
     {
+        id: "challenge-brief",
         icon: BookOpen,
         title: "Challenge brief",
         description: "Prepare for the challenge direction that will be announced when the event begins.",
         body: "The final theme and scope will be revealed at kickoff. Your team will choose its own problem and solution within the announced direction, then explain the users affected and why the solution matters.",
     },
     {
+        id: "rules-eligibility",
         icon: ClipboardCheck,
         title: "Rules & eligibility",
         description: "Keep your team within the event requirements throughout the hackathon.",
         body: "Use your registered team account, submit original work, respect other participants, and ensure every listed member has a valid verified student email. You may prepare tools and general skills beforehand, but challenge-specific implementation must begin after kickoff. Any technology is allowed unless the event team announces otherwise.",
     },
     {
+        id: "judging-criteria",
         icon: Trophy,
         title: "Judging criteria",
         description: "Use these criteria to guide your decisions from idea to final presentation.",
         body: "Projects are evaluated on problem relevance, usefulness, quality of execution, originality, technical choices, and how clearly the team communicates its solution.",
     },
     {
+        id: "submission-guide",
         icon: FileText,
         title: "Submission guide",
         description: "Prepare the information and links your team will need for final submission.",
@@ -60,10 +64,10 @@ export default async function TeamReferencesPage() {
             </Suspense>
 
             <section className="grid gap-5 lg:grid-cols-2">
-                {references.map(({ icon: Icon, body }, index) => {
+                {references.map(({ icon: Icon, body, id }, index) => {
                     const [title, description] = t.cards[index];
                     return (
-                        <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm" key={title}>
+                        <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm" key={id}>
                             <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
                                 <Icon className="size-5" />
                             </div>

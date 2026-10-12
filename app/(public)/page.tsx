@@ -48,11 +48,7 @@ function RegistrationButton({ state, locale }: { state: RegistrationState; local
             className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-orange-600/45 px-5 py-3 font-semibold text-white/90 opacity-80"
         >
             <NotebookPen className="size-5" />
-            {state === "not-started"
-                ? "Registration opens soon"
-                : state === "closed"
-                  ? "Registration closed"
-                  : "Registration unavailable"}
+            {state === "not-started" ? t.notOpened : state === "closed" ? t.closed : t.unavailable}
         </button>
     );
 }

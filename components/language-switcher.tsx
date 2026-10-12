@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
 
 const options = [
     { locale: "en" as const, label: "English", image: "/images/uk.png" },
@@ -17,13 +18,13 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
     function changeLocale(nextLocale: Locale) {
         if (nextLocale === locale) return;
         // biome-ignore lint/suspicious/noDocumentCookie: Cookie Store API is not available in every supported browser.
-        document.cookie = `${LOCALE_COOKIE}=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        document.cookie = `${LOCALE_COOKIE}=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
         startTransition(() => router.refresh());
     }
 
     return (
         <fieldset className="flex items-center gap-1 rounded-full border border-orange-100 bg-white p-1">
-            <legend className="sr-only">Language</legend>
+            <legend className="sr-only">{getMessages(locale).common.language}</legend>
             {options.map((option) => {
                 const active = option.locale === locale;
                 return (
@@ -31,7 +32,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
                         key={option.locale}
                         type="button"
                         aria-pressed={active}
-                        aria-label={`Use ${option.label}`}
+                        aria-label={`${getMessages(locale).common.language}: ${option.label}`}
                         disabled={isPending}
                         onClick={() => changeLocale(option.locale)}
                         className={`cursor-pointer inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${active ? "bg-orange-600 text-white" : "text-zinc-600 hover:bg-orange-50"}`}

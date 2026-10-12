@@ -194,6 +194,8 @@ export const messages = {
             search: "Search announcements...",
             clearSearch: "Clear search",
             empty: "No announcements found.",
+            emptyFor: "No announcements found for",
+            searchButton: "Search",
         },
         references: {
             title: "References",
@@ -393,6 +395,8 @@ export const messages = {
             search: "ค้นหาประกาศ...",
             clearSearch: "ล้างการค้นหา",
             empty: "ไม่พบประกาศ",
+            emptyFor: "ไม่พบประกาศสำหรับ",
+            searchButton: "ค้นหา",
         },
         references: {
             title: "ข้อมูลอ้างอิง",
