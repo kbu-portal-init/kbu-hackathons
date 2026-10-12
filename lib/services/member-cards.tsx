@@ -14,8 +14,8 @@ const CARD_WIDTH = 1600;
 const CARD_HEIGHT = 960;
 
 async function getReferenceCardDataUrl(): Promise<string> {
-    const reference = await readFile(path.join(process.cwd(), "public/images/card-ref.png"));
-    return `data:image/png;base64,${reference.toString("base64")}`;
+    const reference = await readFile(path.join(process.cwd(), "public/images/card-ref.jpg"));
+    return `data:image/jpeg;base64,${reference.toString("base64")}`;
 }
 
 async function getEthnocentricFont(): Promise<Buffer> {
@@ -42,7 +42,6 @@ async function renderMemberCard(
     const response = new ImageResponse(
         <div
             style={{
-                background: "#090909",
                 display: "flex",
                 height: "100%",
                 overflow: "hidden",
@@ -62,23 +61,26 @@ async function renderMemberCard(
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    height: 270,
+                    height: 320,
                     justifyContent: "center",
-                    left: 86,
+                    left: 40,
                     position: "absolute",
-                    top: 532,
-                    width: 980,
+                    top: 512,
+                    width: 1440,
                 }}
             >
                 <div
                     style={{
                         color: "#ff8a00",
-                        display: "flex",
+                        display: "block",
                         fontFamily: "Ethnocentric",
                         fontSize: 28,
                         fontWeight: 800,
                         letterSpacing: 2,
                         maxWidth: 980,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                     }}
                 >
                     {teamName}
@@ -91,9 +93,9 @@ async function renderMemberCard(
                         fontSize: 68,
                         fontWeight: 800,
                         lineHeight: 1,
-                        marginTop: 12,
-                        maxWidth: 980,
-                        maxHeight: 144,
+                        marginTop: 24,
+                        maxWidth: 1440,
+                        maxHeight: 204,
                         overflow: "hidden",
                     }}
                 >
@@ -107,7 +109,9 @@ async function renderMemberCard(
                         fontSize: 32,
                         fontWeight: 700,
                         letterSpacing: 2,
-                        marginTop: 14,
+                        marginTop: 30,
+                        maxWidth: 980,
+                        whiteSpace: "nowrap",
                     }}
                 >
                     {formatRole(role)}
@@ -115,15 +119,16 @@ async function renderMemberCard(
             </div>
             <div
                 style={{
-                    bottom: 86,
+                    bottom: 40,
                     color: "#ffffff",
                     display: "flex",
                     fontFamily: "Ethnocentric",
                     fontSize: 24,
                     fontWeight: 700,
-                    left: 86,
+                    left: 40,
                     letterSpacing: 2,
                     position: "absolute",
+                    whiteSpace: "nowrap",
                 }}
             >
                 {eventDateRange}
