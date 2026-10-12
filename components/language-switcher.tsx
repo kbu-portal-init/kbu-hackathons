@@ -37,7 +37,13 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
                         onClick={() => changeLocale(option.locale)}
                         className={`cursor-pointer inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${active ? "bg-orange-600 text-white" : "text-zinc-600 hover:bg-orange-50"}`}
                     >
-                        <Image src={option.image} alt="" width={20} height={14} className="h-3.5 w-5 object-cover" />
+                        <Image
+                            src={option.image}
+                            alt=""
+                            width={20}
+                            height={20}
+                            className="h-5 w-5 shrink-0 rounded-full object-cover"
+                        />
                         <span>{option.label}</span>
                     </button>
                 );
