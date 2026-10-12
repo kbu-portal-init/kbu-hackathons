@@ -46,6 +46,12 @@ jobs:
                   preview_url="$(pnpm dlx vercel@latest deploy --token "$VERCEL_TOKEN" --yes --cwd .)"
                   echo "preview_url=$preview_url" >> "$GITHUB_OUTPUT"
 
+            - name: Smoke test Preview
+              env:
+                  PREVIEW_URL: ${{ steps.vercel.outputs.preview_url }}
+              run: |
+                  curl --fail-with-body --location --retry 5 --retry-delay 5 --retry-all-errors --silent --show-error "$PREVIEW_URL" > /dev/null
+
             - name: Add Preview URL to pull request
               uses: actions/github-script@v7
               env:

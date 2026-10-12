@@ -41,6 +41,6 @@ The `Vercel Preview` workflow deploys pull requests targeting `dev` with the Ver
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 
-The workflow creates or updates a Preview URL comment on the pull request. Branch push deployments remain restricted by `vercel.json` to `main`, `dev`, and `wip`.
+The workflow smoke-tests the deployed URL and fails the PR check when the Preview cannot be reached or returns an HTTP error. It also creates or updates a Preview URL comment on the pull request. Branch push deployments remain restricted by `vercel.json` to `main`, `dev`, and `wip`.
 
 See `README.md` for the full `.env.example`-based setup, including optional Turnstile and Upstash Redis settings.
