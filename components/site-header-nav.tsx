@@ -2,15 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
 import { isActivePath, publicLinks } from "@/lib/navigation";
 
-export function SiteHeaderNav() {
+export function SiteHeaderNav({ locale }: { locale: Locale }) {
     const pathname = usePathname();
+    const t = getMessages(locale).common;
+    const labels = { "/register": t.register, "/announcements": t.announcements, "/resources": t.resources };
     const signInActive = isActivePath(pathname, "/login");
 
     return (
         <>
-            <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
+            <nav className="hidden items-center gap-7 md:flex" aria-label={t.primaryNavigation}>
                 {publicLinks.map(({ label, href }) => {
                     const active = isActivePath(pathname, href);
                     return (
@@ -24,7 +28,7 @@ export function SiteHeaderNav() {
                                     : "text-sm font-medium text-brand-muted-foreground hover:text-orange-600"
                             }
                         >
-                            {label}
+                            {labels[href as keyof typeof labels] ?? label}
                         </Link>
                     );
                 })}
@@ -38,7 +42,7 @@ export function SiteHeaderNav() {
                         : "hidden rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white md:inline-flex"
                 }
             >
-                Sign in
+                {t.signIn}
             </Link>
         </>
     );

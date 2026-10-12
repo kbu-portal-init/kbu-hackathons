@@ -10,9 +10,20 @@ type AnnouncementSearchProps = {
     defaultValue?: string;
     category?: string;
     onOpenChange?: (open: boolean) => void;
+    labels: {
+        search: string;
+        searchButton: string;
+        openSearch: string;
+        closeSearch: string;
+    };
 };
 
-export function AnnouncementSearch({ defaultValue = "", category = "all", onOpenChange }: AnnouncementSearchProps) {
+export function AnnouncementSearch({
+    defaultValue = "",
+    category = "all",
+    onOpenChange,
+    labels,
+}: AnnouncementSearchProps) {
     const [isOpen, setIsOpen] = useState(Boolean(defaultValue));
     const [search, setSearch] = useState(defaultValue);
 
@@ -43,11 +54,11 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", onOpen
                     type="button"
                     variant="outline"
                     size="icon"
-                    aria-label="Open announcement search"
+                    aria-label={labels.openSearch}
                     onClick={openSearch}
                     className="size-11 shrink-0 rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 sm:hidden"
                 >
-                    <Search className="size-5" />
+                    <Search className="size-5" aria-hidden="true" />
                 </Button>
             )}
 
@@ -72,8 +83,8 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", onOpen
                             name="search"
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Search announcements..."
-                            aria-label="Search announcements"
+                            placeholder={labels.search}
+                            aria-label={labels.search}
                             maxLength={100}
                             className="h-11 w-full min-w-0 rounded-xl border-orange-200 bg-white pl-9 text-sm"
                         />
@@ -83,7 +94,7 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", onOpen
                         type="submit"
                         className="h-11 shrink-0 rounded-xl bg-orange-600 px-3 text-white hover:bg-orange-700 sm:px-6"
                     >
-                        Search
+                        {labels.searchButton}
                     </Button>
 
                     {/* Mobile: close and restore category buttons */}
@@ -91,11 +102,11 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", onOpen
                         type="button"
                         variant="ghost"
                         size="icon"
-                        aria-label="Close announcement search"
+                        aria-label={labels.closeSearch}
                         onClick={closeSearch}
                         className="size-9 shrink-0 sm:hidden"
                     >
-                        <X className="size-5" />
+                        <X className="size-5" aria-hidden="true" />
                     </Button>
                 </form>
             </search>

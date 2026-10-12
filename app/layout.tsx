@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { resolveOgImageUrl } from "@/lib/data/og-image";
+import { getLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -54,9 +55,10 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 }
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+    const locale = await getLocale();
     return (
-        <html lang="en" className={`${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
+        <html lang={locale} className={`${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
             <body className="min-h-full bg-white text-zinc-950">
                 <TooltipProvider>
                     <NextTopLoader color="#f97316" height={3} showSpinner={false} crawl crawlSpeed={200} speed={200} />

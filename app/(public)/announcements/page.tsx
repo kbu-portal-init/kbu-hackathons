@@ -1,5 +1,4 @@
 import { ChevronRight, House, Megaphone } from "lucide-react";
-
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -7,6 +6,8 @@ import { Suspense } from "react";
 import { AnnouncementSearch } from "@/components/announcements/announcement-search";
 import AnnouncementSidebar from "@/components/announcements/announcement-sidebar";
 import { ListPublicAnnouncementSchema } from "@/lib/contracts/announcements";
+import { getMessages } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 
 import { AnnouncementResults } from "./_components/announcement-results";
 import AnnouncementResultsFallback from "./_components/announcement-results-fallback";
@@ -20,11 +21,11 @@ const MAX_SEARCH_LENGTH = 100;
 
 type Category = "all" | "important" | "update" | "news";
 
-const categories: { label: string; value: Category }[] = [
-    { label: "All", value: "all" },
-    { label: "Important", value: "important" },
-    { label: "Updates", value: "update" },
-    { label: "News", value: "news" },
+const categories: { value: Category }[] = [
+    { value: "all" },
+    { value: "important" },
+    { value: "update" },
+    { value: "news" },
 ];
 
 function getCategoryHref(category: Category, search?: string): string {
@@ -53,6 +54,7 @@ export default async function AnnouncementsPage({
     }>;
 }) {
     const params = await searchParams;
+    const t = getMessages(await getLocale()).announcementsPage;
 
     const parsed = ListPublicAnnouncementSchema.safeParse({
         page: params.page,
@@ -82,13 +84,13 @@ export default async function AnnouncementsPage({
                     className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary"
                 >
                     <House aria-hidden="true" className="size-4" />
-                    Home
+                    {t.home}
                 </Link>
 
                 <ChevronRight aria-hidden="true" className="size-4 text-muted-foreground/60" />
 
                 <span aria-current="page" className="font-semibold text-foreground">
-                    Announcements
+                    {t.title}
                 </span>
             </nav>
 
@@ -105,12 +107,11 @@ export default async function AnnouncementsPage({
                         </p>
 
                         <h1 className="text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
-                            Announcements
+                            {t.title}
                         </h1>
 
                         <p className="mt-1.5 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-                            Stay up to date with registration deadlines, event news, and important updates from KBU
-                            Hackathon 2026.
+                            {t.intro}
                         </p>
                     </div>
                 </div>
@@ -121,14 +122,20 @@ export default async function AnnouncementsPage({
                 <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
                     {/* Search bar */}
                     <div className="min-w-0 flex-1">
-                        <AnnouncementSearch defaultValue={search} category={category} />
+                        <AnnouncementSearch
+                            defaultValue={search}
+                            category={category}
+                            labels={{
+                                search: t.search,
+                                searchButton: t.searchButton,
+                                openSearch: t.openSearch,
+                                closeSearch: t.closeSearch,
+                            }}
+                        />
                     </div>
 
                     {/* Category buttons */}
-                    <nav
-                        aria-label="Filter announcements by category"
-                        className="flex shrink-0 flex-wrap items-center gap-2"
-                    >
+                    <nav aria-label={t.filterLabel} className="flex shrink-0 flex-wrap items-center gap-2">
                         {categories.map((item) => {
                             const isActive = category === item.value;
 
@@ -143,7 +150,7 @@ export default async function AnnouncementsPage({
                                             : "border-border bg-white text-muted-foreground hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
                                     }`}
                                 >
-                                    {item.label}
+                                    {t.categories[item.value]}
                                 </Link>
                             );
                         })}
@@ -153,9 +160,21 @@ export default async function AnnouncementsPage({
 
             {/* Announcement list and sidebar */}
             <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px]">
-                <section aria-label="Published announcements" className="min-w-0">
+                <section aria-label={t.title} className="min-w-0">
                     <Suspense fallback={<AnnouncementResultsFallback />}>
-                        <AnnouncementResults page={filters.page} search={search} category={category} />
+                        <AnnouncementResults
+                            page={filters.page}
+                            search={search}
+                            category={category}
+                            labels={{
+                                loadError: t.loadError,
+                                emptyFor: t.emptyFor,
+                                emptyAll: t.emptyAll,
+                                emptyUpdates: t.emptyUpdates,
+                                emptyImportant: t.emptyImportant,
+                                emptyNews: t.emptyNews,
+                            }}
+                        />{" "}
                     </Suspense>
                 </section>
 

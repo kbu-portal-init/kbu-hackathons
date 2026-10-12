@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { listPublishedAnnouncements } from "@/actions/management/announcements";
 import { PaginationFooter } from "@/components/pagination-footer";
+
 import AnnouncementCard from "./announcement-card";
 
 const PAGE_SIZE = 10;
@@ -12,6 +13,14 @@ type AnnouncementResultsProps = {
     page: number;
     search?: string;
     category: Category;
+    labels: {
+        loadError: string;
+        emptyFor: string;
+        emptyAll: string;
+        emptyUpdates: string;
+        emptyImportant: string;
+        emptyNews: string;
+    };
 };
 
 function getPageHref(target: number, search?: string, category: Category = "all"): string {
@@ -34,7 +43,7 @@ function getPageHref(target: number, search?: string, category: Category = "all"
     return queryString ? `/announcements?${queryString}` : "/announcements";
 }
 
-export async function AnnouncementResults({ page, search, category }: AnnouncementResultsProps) {
+export async function AnnouncementResults({ page, search, category, labels }: AnnouncementResultsProps) {
     const result = await listPublishedAnnouncements({
         page,
         pageSize: PAGE_SIZE,
@@ -57,25 +66,38 @@ export async function AnnouncementResults({ page, search, category }: Announceme
     const items = result.ok ? result.data.items : [];
     const meta = result.ok ? result.data.meta : null;
 
+    let emptyMessage = "";
+
+    if (search) {
+        emptyMessage = `${labels.emptyFor} "${search}".`;
+    } else {
+        switch (category) {
+            case "all":
+                emptyMessage = labels.emptyAll;
+                break;
+            case "update":
+                emptyMessage = labels.emptyUpdates;
+                break;
+            case "important":
+                emptyMessage = labels.emptyImportant;
+                break;
+            case "news":
+                emptyMessage = labels.emptyNews;
+                break;
+        }
+    }
+
     return (
         <>
             {!result.ok && (
-                <p className="py-10 text-center text-sm text-muted-foreground">
-                    Failed to load announcements. Please try again later.
+                <p role="alert" className="py-10 text-center text-sm text-muted-foreground">
+                    {labels.loadError}
                 </p>
             )}
 
             {result.ok && items.length === 0 && (
                 <p className="rounded-2xl border border-dashed border-border bg-white/70 py-10 text-center text-sm text-muted-foreground">
-                    {search
-                        ? `No announcements match "${search}".`
-                        : category === "all"
-                          ? "No announcements yet. Check back soon."
-                          : category === "update"
-                            ? "No updates found."
-                            : category === "important"
-                              ? "No important announcements found."
-                              : "No news found."}
+                    {emptyMessage}
                 </p>
             )}
 
