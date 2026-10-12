@@ -34,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TeamMemberRole } from "@/generated/prisma/enums";
 import type { EducationProgram } from "@/lib/contracts/registration";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
+import { getMessages } from "@/lib/i18n/messages";
 import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 
@@ -62,11 +63,14 @@ export function RegistrationForm({
     minTeamSize,
     maxTeamSize,
     programSlots,
+    locale,
 }: {
     minTeamSize: number;
     maxTeamSize: number;
     programSlots: ProgramSlot[];
+    locale: "en" | "th";
 }) {
+    const t = getMessages(locale).register;
     const [submitted, setSubmitted] = useState(false);
     const [selectedTeamSize, setSelectedTeamSize] = useState(minTeamSize);
     const [informationOpen, setInformationOpen] = useState(false);
@@ -306,7 +310,7 @@ export function RegistrationForm({
                         className="w-full sm:w-auto"
                         onClick={() => setInformationOpen(true)}
                     >
-                        Read before submitting
+                        {t.readBeforeSubmit}
                     </Button>
                     <Button
                         type="submit"
@@ -317,10 +321,10 @@ export function RegistrationForm({
                         {form.formState.isSubmitting ? (
                             <>
                                 <Loader2 className="size-4 animate-spin" />
-                                Submitting...
+                                {t.submitting}
                             </>
                         ) : (
-                            "Submit registration"
+                            t.submitRegistration
                         )}
                     </Button>
                 </div>
@@ -328,22 +332,14 @@ export function RegistrationForm({
             <AlertDialog open={informationOpen} onOpenChange={setInformationOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Before you submit</AlertDialogTitle>
+                        <AlertDialogTitle>{t.beforeSubmit}</AlertDialogTitle>
                         <AlertDialogDescription render={<div />}>
                             <ol className="list-decimal space-y-2 pl-5">
-                                <li className="text-start">
-                                    Carefully check every team member&apos;s student email address. We will send each
-                                    member a verification link, and an incorrect email may prevent verification.
-                                </li>
-                                <li className="text-start">
-                                    Every team member must verify their student email address.
-                                </li>
-                                <li className="text-start">
-                                    After everyone verifies, the team will be automatically approved.
-                                </li>
-                                <li className="text-start">
-                                    The leader will receive a password-setup link after approval.
-                                </li>
+                                {t.submitSteps.map((step) => (
+                                    <li className="text-start" key={step}>
+                                        {step}
+                                    </li>
+                                ))}
                             </ol>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
@@ -357,15 +353,14 @@ export function RegistrationForm({
                                 className="mt-1 size-4 accent-orange-600"
                             />
                             <FieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
-                                I acknowledge that the information I provided is accurate and understand the
-                                registration requirements.
+                                {t.acknowledgment}
                             </FieldLabel>
                         </Field>
                     </FieldSet>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Close</AlertDialogCancel>
+                        <AlertDialogCancel>{t.close}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => setInformationOpen(false)} disabled={!acknowledged}>
-                            I understand
+                            {t.understand}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

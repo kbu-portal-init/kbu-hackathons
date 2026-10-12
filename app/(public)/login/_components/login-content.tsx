@@ -21,15 +21,18 @@ import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
 import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
 
-export function LoginContent() {
+export function LoginContent({ locale }: { locale: Locale }) {
+    const t = getMessages(locale).login;
     const [audience, setAudience] = useState<"participant" | "management">("participant");
     const isParticipant = audience === "participant";
 
     return (
         <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
             <section className="mx-auto w-full max-w-md">
-                <h1 className="text-3xl font-bold tracking-tight">Sign in to KBU Hackathon 2026</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t.title}</h1>
                 <div className="mt-6 flex w-full gap-1 rounded-xl bg-muted p-1">
                     <Button
                         type="button"
@@ -39,7 +42,7 @@ export function LoginContent() {
                         onClick={() => setAudience("participant")}
                     >
                         <Users data-icon="inline-start" />
-                        Participant
+                        {t.participant}
                     </Button>
                     <Button
                         type="button"
@@ -49,16 +52,19 @@ export function LoginContent() {
                         onClick={() => setAudience("management")}
                     >
                         <ShieldCheck data-icon="inline-start" />
-                        Management
+                        {t.management}
                     </Button>
                 </div>
-                <div className="mt-8">{isParticipant ? <TeamLoginForm /> : <StaffLoginForm />}</div>
+                <div className="mt-8">
+                    {isParticipant ? <TeamLoginForm locale={locale} /> : <StaffLoginForm locale={locale} />}
+                </div>
             </section>
         </main>
     );
 }
 
-function TeamLoginForm() {
+function TeamLoginForm({ locale }: { locale: Locale }) {
+    const t = getMessages(locale).login;
     const [loginError, setLoginError] = useState<string>();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -74,7 +80,7 @@ function TeamLoginForm() {
             setLoginError(result.error.message);
             return;
         }
-        toast.success("Sign in successful");
+        toast.success(t.success);
         window.location.href = "/team";
     };
 
@@ -86,7 +92,7 @@ function TeamLoginForm() {
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={usernameError ? true : undefined}>
-                    <FieldLabel htmlFor="username">Team username</FieldLabel>
+                    <FieldLabel htmlFor="username">{t.teamUsername}</FieldLabel>
                     <Input
                         id="username"
                         type="text"
@@ -99,7 +105,7 @@ function TeamLoginForm() {
                 </Field>
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor="team-password">Password</FieldLabel>
+                        <FieldLabel htmlFor="team-password">{t.password}</FieldLabel>
                         <ForgotPasswordButton
                             identifier="username"
                             getValue={() => form.getValues("username")}
@@ -126,14 +132,15 @@ function TeamLoginForm() {
                     <FieldError errors={[passwordError]} />
                 </Field>
                 <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+                    {form.formState.isSubmitting ? t.signingIn : t.signIn}
                 </Button>
             </FieldGroup>
         </form>
     );
 }
 
-function StaffLoginForm() {
+function StaffLoginForm({ locale }: { locale: Locale }) {
+    const t = getMessages(locale).login;
     const [loginError, setLoginError] = useState<string>();
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
@@ -149,7 +156,7 @@ function StaffLoginForm() {
             return;
         }
         router.push("/panel");
-        toast.success("Sign in successful");
+        toast.success(t.success);
     };
 
     const emailError = form.formState.errors.email;
@@ -160,7 +167,7 @@ function StaffLoginForm() {
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={emailError ? true : undefined}>
-                    <FieldLabel htmlFor="email">Email address</FieldLabel>
+                    <FieldLabel htmlFor="email">{t.email}</FieldLabel>
                     <Input
                         id="email"
                         type="email"
@@ -173,7 +180,7 @@ function StaffLoginForm() {
                 </Field>
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor="staff-password">Password</FieldLabel>
+                        <FieldLabel htmlFor="staff-password">{t.password}</FieldLabel>
                         <ForgotPasswordButton
                             identifier="email"
                             getValue={() => form.getValues("email")}
@@ -200,7 +207,7 @@ function StaffLoginForm() {
                     <FieldError errors={[passwordError]} />
                 </Field>
                 <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+                    {form.formState.isSubmitting ? t.signingIn : t.signIn}
                 </Button>
             </FieldGroup>
         </form>

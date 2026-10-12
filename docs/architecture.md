@@ -37,6 +37,10 @@ Prefer Server Components. Use client components only for browser state, events, 
 - `app/(public)/page.tsx` is the exception: its read stays outside any boundary because `components/scroll-fx` scans `[data-reveal]` once on mount, and content that streams in afterwards would be skipped and stay hidden under `.fx-armed`.
 - Work that follows these rules is guided by the `nextjs-app-architecture` skill in `.agents/skills/`.
 
+## Public localization
+
+Public locale state is resolved server-side from the `kbu-locale` cookie in `lib/i18n`. Supported values are `en` and `th`, with English as the fallback. Typed dictionaries provide public interface copy, while database-authored announcement and resource content remains unchanged until bilingual content fields are introduced. The client language switcher updates the cookie and refreshes the current route; authenticated workspaces are currently English-only.
+
 ## Styling
 
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.

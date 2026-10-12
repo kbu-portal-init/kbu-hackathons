@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { ListPublicAnnouncementSchema } from "@/lib/contracts/announcements";
+import { getMessages } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
 
 export const metadata: Metadata = {
@@ -73,14 +75,10 @@ function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDT
     );
 }
 
-function AnnouncementResultsFallback() {
+function AnnouncementResultsFallback({ loadingLabel }: { loadingLabel: string }) {
     return (
-        <div
-            className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
-            role="status"
-            aria-label="Loading announcements"
-        >
-            <span className="sr-only">Loading announcements</span>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3" role="status" aria-label={loadingLabel}>
+            <span className="sr-only">{loadingLabel}</span>
             {(["one", "two", "three", "four", "five", "six"] as const).map((card) => (
                 <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm" key={card}>
                     <Skeleton className="aspect-video w-full bg-zinc-100" />
@@ -93,7 +91,21 @@ function AnnouncementResultsFallback() {
     );
 }
 
-async function AnnouncementResults({ page, search }: { page: number; search?: string }) {
+async function AnnouncementResults({
+    page,
+    search,
+    emptyLabel,
+    emptyForLabel,
+    errorLabel,
+    publishedLabel,
+}: {
+    page: number;
+    search?: string;
+    emptyLabel: string;
+    emptyForLabel: string;
+    errorLabel: string;
+    publishedLabel: string;
+}) {
     const getPageHref = (target: number) => {
         const query = new URLSearchParams();
 
@@ -129,23 +141,16 @@ async function AnnouncementResults({ page, search }: { page: number; search?: st
 
     return (
         <>
-            {!result.ok && (
-                <p className="py-16 text-center text-sm text-muted-foreground">
-                    Failed to load announcements. Please try again later.
-                </p>
-            )}
+            {!result.ok && <p className="py-16 text-center text-sm text-muted-foreground">{errorLabel}</p>}
 
             {result.ok && items.length === 0 && (
                 <p className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-                    {search ? `No announcements match "${search}".` : "No announcements yet. Check back soon."}
+                    {search ? `${emptyForLabel} "${search}".` : emptyLabel}
                 </p>
             )}
 
             {items.length > 0 && (
-                <section
-                    aria-label="Published announcements"
-                    className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
-                >
+                <section aria-label={publishedLabel} className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {items.map((announcement) => (
                         <AnnouncementCard key={announcement.id} announcement={announcement} />
                     ))}
@@ -168,11 +173,12 @@ async function AnnouncementResults({ page, search }: { page: number; search?: st
     );
 }
 
-export default function AnnouncementsPage({
+export default async function AnnouncementsPage({
     searchParams,
 }: {
     searchParams: Promise<{ page?: string; search?: string }>;
 }) {
+    const t = getMessages(await getLocale());
     return (
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="mb-8">
@@ -181,16 +187,13 @@ export default function AnnouncementsPage({
 
             <section className="mb-8 max-w-3xl">
                 <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
-                    Announcements
+                    {t.announcementsPage.title}
                 </h1>
 
-                <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-                    Stay up to date with registration deadlines, event news, and important updates from KBU Hackathon
-                    2026.
-                </p>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{t.announcementsPage.intro}</p>
             </section>
 
-            <Suspense fallback={<AnnouncementSearchFallback />}>
+            <Suspense fallback={<AnnouncementSearchFallback loadingLabel={t.home.loadingAnnouncements} />}>
                 {searchParams.then((params) => {
                     const parsed = ListPublicAnnouncementSchema.safeParse(params);
                     const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
@@ -211,32 +214,41 @@ export default function AnnouncementsPage({
                                             type="search"
                                             name="search"
                                             defaultValue={search}
-                                            placeholder="Search announcements..."
-                                            aria-label="Search announcements"
+                                            placeholder={t.announcementsPage.search}
+                                            aria-label={t.announcementsPage.search}
                                             maxLength={MAX_SEARCH_LENGTH}
                                             className="h-11"
                                         />
 
                                         <Button type="submit" className="h-11 px-6">
-                                            Search
+                                            {t.announcementsPage.searchButton}
                                         </Button>
 
                                         {search && (
                                             <Link
                                                 href="/announcements"
                                                 className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}
-                                                aria-label="Clear search"
+                                                aria-label={t.announcementsPage.clearSearch}
                                             >
                                                 <X aria-hidden="true" />
-                                                Clear
+                                                {t.announcementsPage.clearSearch}
                                             </Link>
                                         )}
                                     </form>
                                 </search>
                             </section>
 
-                            <Suspense fallback={<AnnouncementResultsFallback />}>
-                                <AnnouncementResults page={filters.page} search={search} />
+                            <Suspense
+                                fallback={<AnnouncementResultsFallback loadingLabel={t.home.loadingAnnouncements} />}
+                            >
+                                <AnnouncementResults
+                                    page={filters.page}
+                                    search={search}
+                                    emptyLabel={t.announcementsPage.empty}
+                                    emptyForLabel={t.announcementsPage.emptyFor}
+                                    errorLabel={t.home.announcementsUnavailable}
+                                    publishedLabel={t.common.announcements}
+                                />
                             </Suspense>
                         </>
                     );
@@ -246,9 +258,9 @@ export default function AnnouncementsPage({
     );
 }
 
-function AnnouncementSearchFallback() {
+function AnnouncementSearchFallback({ loadingLabel }: { loadingLabel: string }) {
     return (
-        <section className="mb-10" role="status" aria-label="Loading search controls">
+        <section className="mb-10" role="status" aria-label={loadingLabel}>
             <Skeleton className="h-11 w-full max-w-3xl bg-zinc-100" />
         </section>
     );

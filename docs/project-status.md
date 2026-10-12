@@ -21,4 +21,6 @@ The branch currently provides:
 
 ## Remaining / follow-up work
 
+The public shell and core homepage interface support English/Thai switching through the `kbu-locale` cookie and typed dictionaries. Extending translations across every public form state, adding bilingual database-authored content, and translating authenticated workspaces remain follow-up work.
+
 Participant registration workflows, broader organizer management workflows, and broader account-management UI remain follow-up work. Announcement management supports editing both draft and published announcements; published announcements can also be archived. Admins can browse and permanently delete audit records individually; deletion does not create a replacement audit record. The admin audit browser loads user/team-member filter options manually through the paginated `/api/admin/users` route, defaulting to 200 records per request. Admin profile settings update name, email, password, and profile image; admin profile uploads use `uploads/admins/<admin-id>/`.
