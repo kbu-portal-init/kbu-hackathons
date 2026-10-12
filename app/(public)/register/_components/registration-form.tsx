@@ -129,11 +129,7 @@ export function RegistrationForm({
             toast.error(result.error.message);
             return;
         }
-        toast.success(
-            result.data.verificationEmailsSent
-                ? "Registration submitted!"
-                : "Registration saved, but some verification emails could not be sent.",
-        );
+        toast.success(result.data.verificationEmailsSent ? t.submitted : t.verificationFailed);
         setVerificationEmailsSent(result.data.verificationEmailsSent);
         setSubmitted(true);
     };
@@ -144,11 +140,9 @@ export function RegistrationForm({
                 <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
                     <CheckCircle2 className="size-7" />
                 </div>
-                <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
+                <h2 className="mt-6 text-2xl font-bold tracking-tight">{t.submitted}</h2>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    {verificationEmailsSent
-                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
-                        : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
+                    {verificationEmailsSent ? t.verificationSent : t.verificationFailed}
                 </p>
                 <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
             </div>
@@ -161,7 +155,7 @@ export function RegistrationForm({
                 {/* Team Information */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        About Your Team
+                        {locale === "th" ? "ข้อมูลทีม" : "About Your Team"}
                     </FieldLegend>
                     <FieldGroup>
                         <Controller
@@ -169,7 +163,9 @@ export function RegistrationForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>Team name</FieldLabel>
+                                    <FieldLabel htmlFor={field.name}>
+                                        {locale === "th" ? "ชื่อทีม" : "Team name"}
+                                    </FieldLabel>
                                     <Input
                                         {...field}
                                         id={field.name}
@@ -186,14 +182,16 @@ export function RegistrationForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="program">Education program</FieldLabel>
+                                    <FieldLabel htmlFor="program">
+                                        {locale === "th" ? "หลักสูตรการศึกษา" : "Education program"}
+                                    </FieldLabel>
                                     <Select value={field.value ?? ""} onValueChange={field.onChange}>
                                         <SelectTrigger
                                             id="program"
                                             className="w-full"
                                             aria-invalid={fieldState.invalid}
                                         >
-                                            <SelectValue placeholder="Select a program" />
+                                            <SelectValue placeholder={t.selectProgram} />
                                         </SelectTrigger>
                                         <SelectContent alignItemWithTrigger={false}>
                                             {programSlots.map((slot) => (
@@ -216,7 +214,7 @@ export function RegistrationForm({
                             )}
                         />
                         <Field>
-                            <FieldLabel htmlFor="team-size">Team size</FieldLabel>
+                            <FieldLabel htmlFor="team-size">{locale === "th" ? "ขนาดทีม" : "Team size"}</FieldLabel>
                             <Select value={String(selectedTeamSize)} onValueChange={changeTeamSize}>
                                 <SelectTrigger id="team-size" className="w-full">
                                     <SelectValue />
@@ -233,7 +231,7 @@ export function RegistrationForm({
                                 </SelectContent>
                             </Select>
                             <FieldDescription>
-                                Choose between {minTeamSize} and {maxTeamSize} total members, including the leader.
+                                {t.teamSizeHelp} {minTeamSize} and {maxTeamSize} {t.totalMembers}
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
@@ -242,7 +240,7 @@ export function RegistrationForm({
                 {/* Team Leader */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Team Leader
+                        {locale === "th" ? "หัวหน้าทีม" : "Team Leader"}
                     </FieldLegend>
                     <FieldGroup>
                         <div className="grid gap-5 sm:grid-cols-2">
@@ -251,7 +249,9 @@ export function RegistrationForm({
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Full name</FieldLabel>
+                                        <FieldLabel htmlFor={field.name}>
+                                            {locale === "th" ? "ชื่อเต็ม" : "Full name"}
+                                        </FieldLabel>
                                         <Input
                                             {...field}
                                             id={field.name}
@@ -263,7 +263,7 @@ export function RegistrationForm({
                                 )}
                             />
                             <Field>
-                                <FieldLabel>Role</FieldLabel>
+                                <FieldLabel>{t.role}</FieldLabel>
                                 <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
                                     Leader
                                 </div>
@@ -274,7 +274,9 @@ export function RegistrationForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>Student email</FieldLabel>
+                                    <FieldLabel htmlFor={field.name}>
+                                        {locale === "th" ? "อีเมลนักศึกษา" : "Student email"}
+                                    </FieldLabel>
                                     <Input
                                         {...field}
                                         id={field.name}
@@ -293,11 +295,11 @@ export function RegistrationForm({
                 {/* Team Members */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Other Team Members ({teamSize - 1})
+                        {locale === "th" ? "สมาชิกทีมคนอื่น ๆ" : "Other Team Members"} ({teamSize - 1})
                     </FieldLegend>
                     <FieldGroup className="gap-3">
                         {fields.map((field, index) => (
-                            <MemberRow key={field.id} index={index} control={form.control} />
+                            <MemberRow key={field.id} index={index} control={form.control} locale={locale} />
                         ))}
                     </FieldGroup>
                 </FieldSet>
@@ -369,7 +371,16 @@ export function RegistrationForm({
     );
 }
 
-function MemberRow({ index, control }: { index: number; control: Control<FormValues, unknown, SubmittedFormValues> }) {
+function MemberRow({
+    index,
+    control,
+    locale,
+}: {
+    index: number;
+    control: Control<FormValues, unknown, SubmittedFormValues>;
+    locale: "en" | "th";
+}) {
+    const t = getMessages(locale).register;
     return (
         <FieldGroup>
             <div className="flex gap-3 rounded-lg border border-zinc-200 p-3">
@@ -379,7 +390,7 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>{locale === "th" ? "ชื่อ" : "Name"}</FieldLabel>
                                 <InputGroup>
                                     <InputGroupInput
                                         {...field}
@@ -397,17 +408,18 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Role</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>{locale === "th" ? "บทบาท" : "Role"}</FieldLabel>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
                                         <SelectValue>
-                                            {roleOptions.find((option) => option.value === field.value)?.label}
+                                            {t.roles[field.value as keyof typeof t.roles] ??
+                                                roleOptions.find((option) => option.value === field.value)?.label}
                                         </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent alignItemWithTrigger={false}>
                                         {roleOptions.map((opt) => (
                                             <SelectItem key={opt.value} value={opt.value}>
-                                                {opt.label}
+                                                {t.roles[opt.value as keyof typeof t.roles] ?? opt.label}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -421,7 +433,7 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Student email</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>{t.email}</FieldLabel>
                                 <InputGroup>
                                     <InputGroupInput
                                         {...field}
