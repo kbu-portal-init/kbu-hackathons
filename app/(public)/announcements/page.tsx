@@ -173,8 +173,9 @@ export default async function AnnouncementsPage({
                                 emptyUpdates: t.emptyUpdates,
                                 emptyImportant: t.emptyImportant,
                                 emptyNews: t.emptyNews,
+                                readAnnouncement: t.readAnnouncement,
                             }}
-                        />{" "}
+                        />
                     </Suspense>
                 </section>
 

@@ -251,6 +251,14 @@ export const messages = {
             emptyUpdates: "No updates found.",
             emptyImportant: "No important announcements found.",
             emptyNews: "No news found.",
+
+            sidebar: {
+                important: "Important",
+                latestNews: "Latest News",
+                empty: "No announcements yet.",
+                viewAll: "View all",
+            },
+            readAnnouncement: "Read announcement",
         },
         references: {
             title: "References",
@@ -506,6 +514,14 @@ export const messages = {
             emptyUpdates: "ไม่พบการอัปเดต",
             emptyImportant: "ไม่พบประกาศสำคัญ",
             emptyNews: "ไม่พบข่าวสาร",
+
+            sidebar: {
+                important: "ประกาศสำคัญ",
+                latestNews: "ข่าวล่าสุด",
+                empty: "ยังไม่มีประกาศ",
+                viewAll: "ดูทั้งหมด",
+            },
+            readAnnouncement: "อ่านประกาศ",
         },
         references: {
             title: "ข้อมูลอ้างอิง",

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { listPublishedAnnouncements } from "@/actions/management/announcements";
 import { PaginationFooter } from "@/components/pagination-footer";
+import { getLocale } from "@/lib/i18n/server";
 
 import AnnouncementCard from "./announcement-card";
 
@@ -20,6 +21,7 @@ type AnnouncementResultsProps = {
         emptyUpdates: string;
         emptyImportant: string;
         emptyNews: string;
+        readAnnouncement: string;
     };
 };
 
@@ -44,6 +46,8 @@ function getPageHref(target: number, search?: string, category: Category = "all"
 }
 
 export async function AnnouncementResults({ page, search, category, labels }: AnnouncementResultsProps) {
+    const locale = await getLocale();
+
     const result = await listPublishedAnnouncements({
         page,
         pageSize: PAGE_SIZE,
@@ -104,7 +108,12 @@ export async function AnnouncementResults({ page, search, category, labels }: An
             {items.length > 0 && (
                 <div className="flex min-w-0 flex-col gap-3">
                     {items.map((announcement) => (
-                        <AnnouncementCard key={announcement.id} announcement={announcement} />
+                        <AnnouncementCard
+                            key={announcement.id}
+                            announcement={announcement}
+                            locale={locale}
+                            readAnnouncement={labels.readAnnouncement}
+                        />
                     ))}
                 </div>
             )}

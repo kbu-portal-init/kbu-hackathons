@@ -4,12 +4,8 @@ import Link from "next/link";
 
 import { AnnouncementCategoryBadge } from "@/components/announcements/announcement-badge";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
+import type { Locale } from "@/lib/i18n/config";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
-
-const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeZone: "Asia/Bangkok",
-});
 
 function getCategory(category: PublicAnnouncementDTO["category"]) {
     switch (category) {
@@ -24,9 +20,11 @@ function getCategory(category: PublicAnnouncementDTO["category"]) {
 
 type AnnouncementCardProps = {
     announcement: PublicAnnouncementDTO;
+    locale: Locale;
+    readAnnouncement: string;
 };
 
-export default function AnnouncementCard({ announcement }: AnnouncementCardProps) {
+export default function AnnouncementCard({ announcement, locale, readAnnouncement }: AnnouncementCardProps) {
     const publishedDate = announcement.publishedAt ?? announcement.createdAt;
 
     const imageUrl =
@@ -36,7 +34,10 @@ export default function AnnouncementCard({ announcement }: AnnouncementCardProps
             ? announcement.imageUrl
             : "/images/kbu.webp";
 
-    const formattedDate = dateFormatter.format(new Date(publishedDate));
+    const formattedDate = new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
+        dateStyle: "medium",
+        timeZone: "Asia/Bangkok",
+    }).format(new Date(publishedDate));
 
     return (
         <Link
@@ -59,7 +60,6 @@ export default function AnnouncementCard({ announcement }: AnnouncementCardProps
                         category={getCategory(announcement.category)}
                         className="px-2 py-0.5 text-[10px]"
                     />
-
                     <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
                         <CalendarDays aria-hidden="true" className="size-3 shrink-0 text-primary" />
                         <time dateTime={publishedDate}>{formattedDate}</time>
@@ -74,7 +74,7 @@ export default function AnnouncementCard({ announcement }: AnnouncementCardProps
                     {announcement.content}
                 </p>
 
-                <span className="mt-1.5 text-xs font-semibold text-primary">Read announcement</span>
+                <span className="mt-1.5 text-xs font-semibold text-primary">{readAnnouncement}</span>
             </article>
         </Link>
     );
