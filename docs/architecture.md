@@ -39,6 +39,10 @@ Prefer Server Components. Use client components only for browser state, events, 
 
 ## Styling
 
+## Public localization
+
+Public locale state is resolved server-side from the `kbu-locale` cookie in `lib/i18n`. Supported values are `en` and `th`, with English as the fallback. Typed dictionaries provide public interface copy, while database-authored announcement and resource content remains unchanged until bilingual content fields are introduced. The client language switcher updates the cookie and refreshes the current route; authenticated workspaces are currently English-only.
+
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
 - Orange is the product primary color. Use the existing semantic primary utilities or Tailwind orange utilities such as `bg-orange-600`, `text-orange-500`, and `bg-orange-900` when appropriate.
 - Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.

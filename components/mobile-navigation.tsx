@@ -4,11 +4,16 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
 import { isActivePath, publicLinks } from "@/lib/navigation";
 
-export function MobileNavigation() {
+export function MobileNavigation({ locale }: { locale: Locale }) {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
+    const t = getMessages(locale).common;
+    const labels = { "/register": t.register, "/announcements": t.announcements, "/resources": t.resources };
 
     useEffect(() => {
         if (!open) {
@@ -30,7 +35,7 @@ export function MobileNavigation() {
                 className="flex size-11 items-center justify-center rounded-lg text-brand-muted-foreground hover:bg-orange-50"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
-                aria-label={open ? "Close menu" : "Open menu"}
+                aria-label={open ? t.closeMenu : t.openMenu}
                 onClick={() => setOpen((isOpen) => !isOpen)}
             >
                 {open ? <X className="size-6" /> : <Menu className="size-6" />}
@@ -39,7 +44,7 @@ export function MobileNavigation() {
                 <nav
                     id="mobile-navigation"
                     className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto bg-white px-6 py-6"
-                    aria-label="Mobile navigation"
+                    aria-label={t.mobileNavigation}
                 >
                     <div className="flex flex-col gap-2">
                         {publicLinks.map(({ label, href }) => {
@@ -56,7 +61,7 @@ export function MobileNavigation() {
                                             : "rounded-xl px-4 py-3 text-base font-medium text-brand-muted-foreground hover:bg-orange-50 hover:text-orange-700"
                                     }
                                 >
-                                    {label}
+                                    {labels[href as keyof typeof labels] ?? label}
                                 </Link>
                             );
                         })}
@@ -68,8 +73,11 @@ export function MobileNavigation() {
                             aria-current={isActivePath(pathname, "/login") ? "page" : undefined}
                             className="block rounded-full bg-gradient-accent px-4 py-3 text-center text-sm font-semibold text-white"
                         >
-                            Sign in
+                            {t.signIn}
                         </Link>
+                        <div className="mt-4 flex justify-center">
+                            <LanguageSwitcher locale={locale} />
+                        </div>
                     </div>
                 </nav>
             ) : null}

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { LoginContent } from "@/app/(public)/login/_components/login-content";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirectHomeIfAlreadyAuthenticated } from "@/lib/auth/guards";
+import { getLocale } from "@/lib/i18n/server";
 
 export default function LoginPage() {
     return (
@@ -13,7 +14,7 @@ export default function LoginPage() {
 
 async function LoginRedirect() {
     await redirectHomeIfAlreadyAuthenticated();
-    return <LoginContent />;
+    return <LoginContent locale={await getLocale()} />;
 }
 
 function LoginFallback() {
