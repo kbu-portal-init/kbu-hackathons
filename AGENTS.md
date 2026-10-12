@@ -101,4 +101,4 @@ Before starting UI work, ask the user when antislop applies: during the work, or
 
 ## Public language support
 
-The public site supports English and Thai through the `kbu-locale` cookie and typed dictionaries in `lib/i18n`. English is the fallback. The switcher preserves the current URL and refreshes server-rendered public pages. The dashboard shell, navigation controls, and selected team reference content are translated; remaining authenticated-workspace content and database-authored announcements/resources remain English-only.
+The public site supports English and Thai through the `kbu-locale` cookie and typed dictionaries in `lib/i18n`. English is the fallback. The switcher preserves the current URL and refreshes server-rendered public pages. Phase one translates interface copy only; database-authored announcements and resources, plus authenticated workspaces, remain English-only.

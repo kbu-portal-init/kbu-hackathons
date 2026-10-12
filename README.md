@@ -255,4 +255,4 @@ Unit tests live under tests/unit and use helpers from tests/helpers. External bo
 
 ## Public languages
 
-The public site supports English and Thai through the `kbu-locale` cookie. English is the default; the language switcher keeps the current URL and refreshes the server-rendered page. The dashboard shell, navigation controls, and selected team reference content are translated; remaining authenticated-workspace content and database-authored announcements/resources remain English-only.
+The public site supports English and Thai through the `kbu-locale` cookie. English is the default; the language switcher keeps the current URL and refreshes the server-rendered page. Phase one translates public interface copy only. Announcements and student-benefit content remain in the language in which they were authored, and authenticated workspaces remain English-only.
