@@ -15,6 +15,8 @@ require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
 mock("next/cache", {
     revalidatePath: () => {},
+    revalidateTag: () => {},
+    unstable_cache: (fn: () => unknown) => fn,
 });
 
 mock("@/lib/auth/guards", {

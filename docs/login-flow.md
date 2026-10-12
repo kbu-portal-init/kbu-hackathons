@@ -10,6 +10,8 @@ AI coding agents should treat this document as the source of truth for team logi
 
 ## 1. Team Authentication Model
 
+Authenticated users who visit `/login` or `/register` are redirected to their approved workspace. The public homepage remains available after authentication and offers a role-aware workspace link.
+
 Each approved team has exactly one shared Better Auth user account.
 
 Example:
