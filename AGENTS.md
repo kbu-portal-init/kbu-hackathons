@@ -50,6 +50,8 @@ pnpm build
 
 Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
 
+Pull requests targeting `dev` also use the separate `Vercel Preview` workflow, which requires the `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` GitHub Actions secrets.
+
 ## Git rules summary
 
 - Create or claim the GitHub issue first; assign yourself and comment `Working on this`.

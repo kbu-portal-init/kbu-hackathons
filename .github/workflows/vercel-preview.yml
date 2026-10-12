@@ -1,0 +1,94 @@
+name: Vercel Preview
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+        branches:
+            - dev
+
+concurrency:
+    group: vercel-preview-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    deploy:
+        name: Deploy Preview
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout pull request
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.pull_request.head.sha }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.27.0
+
+            - name: Deploy to Vercel
+              id: vercel
+              env:
+                  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+                  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+                  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+              run: |
+                  mkdir -p .vercel
+                  printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
+                  preview_url="$(pnpm dlx vercel@latest deploy --token "$VERCEL_TOKEN" --yes --cwd .)"
+                  echo "preview_url=$preview_url" >> "$GITHUB_OUTPUT"
+
+            - name: Smoke test Preview
+              env:
+                  PREVIEW_URL: ${{ steps.vercel.outputs.preview_url }}
+              run: |
+                  curl --fail-with-body --location --retry 5 --retry-delay 5 --retry-all-errors --silent --show-error "$PREVIEW_URL" > /dev/null
+
+            - name: Add Preview URL to pull request
+              uses: actions/github-script@v7
+              env:
+                  PREVIEW_URL: ${{ steps.vercel.outputs.preview_url }}
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  script: |
+                      const marker = '<!-- vercel-preview-url -->';
+                      const body = [
+                        marker,
+                        '### Vercel Preview',
+                        '',
+                        `Preview deployment: ${process.env.PREVIEW_URL}`,
+                      ].join('\n');
+                      const { owner, repo } = context.repo;
+                      const issue = context.issue;
+                      const comments = await github.paginate(
+                        github.rest.issues.listComments,
+                        { owner, repo, issue_number: issue.number },
+                      );
+                      const existing = comments.find(
+                        (comment) =>
+                          comment.user?.login === 'github-actions[bot]' &&
+                          comment.body?.includes(marker),
+                      );
+                      if (existing) {
+                        await github.rest.issues.updateComment({
+                          owner,
+                          repo,
+                          comment_id: existing.id,
+                          body,
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner,
+                          repo,
+                          issue_number: issue.number,
+                          body,
+                        });
+                      }
