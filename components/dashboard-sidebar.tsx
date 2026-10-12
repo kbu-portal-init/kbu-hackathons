@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import {
     Popover,
     PopoverContent,
@@ -31,6 +32,8 @@ import {
 } from "@/components/ui/sidebar";
 import { clearSessionHint } from "@/lib/auth/session-hint";
 import { authClient } from "@/lib/auth-client";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
 import {
     adminDashboardLinks,
     isActivePath,
@@ -41,6 +44,8 @@ import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
 
 type DashboardSidebarProps = {
     area: "participant" | "management" | "admin";
+    locale: Locale;
+    lineContact: { url: string; name: string };
     children: ReactNode;
     role: "admin" | "organizer" | "team" | null;
     account: {
@@ -51,29 +56,31 @@ type DashboardSidebarProps = {
     };
 };
 
-export function DashboardSidebar({ area, children, role, account }: DashboardSidebarProps) {
+export function DashboardSidebar({ area, locale, lineContact, children, role, account }: DashboardSidebarProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const t = getMessages(locale).dashboard;
 
     const config = {
         participant: {
-            label: "Team",
-            title: "Team dashboard",
+            label: t.team,
+            title: t.teamTitle,
             links: participantDashboardLinks,
         },
         management: {
-            label: "Management panel",
-            title: "Management panel",
+            label: t.management,
+            title: t.management,
             links: managementDashboardLinks,
         },
         admin: {
-            label: "Administrator panel",
-            title: "Administrator dashboard",
+            label: t.admin,
+            title: t.adminTitle,
             links: adminDashboardLinks,
         },
     } as const;
 
     const { label: sidebarLabel, title: headerTitle, links } = config[area];
+    const localizedLinks = t.links[area === "participant" ? "team" : area];
     const adminActive = isActivePath(pathname, "/admin");
 
     return (
@@ -96,16 +103,17 @@ export function DashboardSidebar({ area, children, role, account }: DashboardSid
                         <SidebarGroupContent>
                             <SidebarMenu className="gap-1">
                                 {links.map(({ href, label, icon: Icon }) => {
+                                    const localizedLabel = localizedLinks[href as keyof typeof localizedLinks] ?? label;
                                     const active = isActivePath(pathname, href);
                                     return (
                                         <SidebarMenuItem key={href}>
                                             <SidebarMenuButton
                                                 render={<Link href={href} aria-current={active ? "page" : undefined} />}
-                                                tooltip={label}
+                                                tooltip={localizedLabel}
                                                 isActive={active}
                                             >
                                                 <Icon />
-                                                <span>{label}</span>
+                                                <span>{localizedLabel}</span>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>
                                     );
@@ -117,11 +125,11 @@ export function DashboardSidebar({ area, children, role, account }: DashboardSid
                                             render={
                                                 <Link href="/admin" aria-current={adminActive ? "page" : undefined} />
                                             }
-                                            tooltip="Admin Panel"
+                                            tooltip={t.adminPanel}
                                             isActive={adminActive}
                                         >
                                             <ShieldCheck />
-                                            <span>Admin Panel</span>
+                                            <span>{t.adminPanel}</span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 )}
@@ -132,6 +140,7 @@ export function DashboardSidebar({ area, children, role, account }: DashboardSid
                 <SidebarFooter>
                     <AccountFooter
                         account={account}
+                        locale={locale}
                         onSignOut={async () => {
                             await authClient.signOut();
                             clearSessionHint();
@@ -144,8 +153,29 @@ export function DashboardSidebar({ area, children, role, account }: DashboardSid
                 <header className="flex h-14 items-center gap-3 border-b border-orange-100 bg-white px-4">
                     <SidebarTrigger className="size-11 md:size-8" />
                     <p className="text-sm font-semibold text-zinc-700">{headerTitle}</p>
+                    <div className="ml-auto">
+                        <LanguageSwitcher locale={locale} />
+                    </div>
                 </header>
                 {children}
+                <footer className="border-t border-orange-100 bg-orange-50/60 px-4 py-4 text-sm text-muted-foreground sm:px-6 lg:px-8">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <span className="font-medium text-zinc-700">{t.needHelp}</span>
+                        {lineContact.url ? (
+                            <a
+                                className="text-orange-700 hover:underline"
+                                href={lineContact.url}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {lineContact.name || "LINE"}
+                            </a>
+                        ) : null}
+                        <Link className="text-orange-700 hover:underline" href="/announcements">
+                            {t.announcements}
+                        </Link>
+                    </div>
+                </footer>
             </div>
         </SidebarProvider>
     );
@@ -153,11 +183,14 @@ export function DashboardSidebar({ area, children, role, account }: DashboardSid
 
 function AccountFooter({
     account,
+    locale,
     onSignOut,
 }: {
     account: DashboardSidebarProps["account"];
+    locale: Locale;
     onSignOut: () => Promise<void>;
 }) {
+    const t = getMessages(locale).dashboard;
     const initials = account.name
         .split(/\s+/)
         .filter(Boolean)
@@ -181,7 +214,7 @@ function AccountFooter({
                     <button
                         type="button"
                         className="flex w-full items-center gap-2 rounded-lg p-1.5 text-left outline-none transition-colors hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring group-data-[collapsible=icon]:justify-center"
-                        aria-label={`Open account menu for ${account.name}`}
+                        aria-label={`${t.openAccount} ${account.name}`}
                     />
                 }
             >
@@ -209,13 +242,13 @@ function AccountFooter({
                             className="cursor-pointer flex w-full items-center gap-2 rounded-md bg-orange-600 px-2 py-2 text-sm font-medium text-white outline-none hover:bg-orange-700 hover:text-white focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             <LogOut className="size-4" />
-                            <span>Sign out</span>
+                            <span>{t.signOut}</span>
                         </button>
                     }
-                    title="Sign out?"
-                    description="You will need to sign in again to access this workspace."
-                    confirmLabel="Sign out"
-                    pendingLabel="Signing out..."
+                    title={t.signOutQuestion}
+                    description={t.signOutDescription}
+                    confirmLabel={t.signOut}
+                    pendingLabel={t.signingOut}
                     onConfirm={onSignOut}
                 />
             </PopoverContent>

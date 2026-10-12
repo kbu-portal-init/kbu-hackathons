@@ -34,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TeamMemberRole } from "@/generated/prisma/enums";
 import type { EducationProgram } from "@/lib/contracts/registration";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
+import { getMessages } from "@/lib/i18n/messages";
 import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
 
@@ -62,11 +63,14 @@ export function RegistrationForm({
     minTeamSize,
     maxTeamSize,
     programSlots,
+    locale,
 }: {
     minTeamSize: number;
     maxTeamSize: number;
     programSlots: ProgramSlot[];
+    locale: "en" | "th";
 }) {
+    const t = getMessages(locale).register;
     const [submitted, setSubmitted] = useState(false);
     const [selectedTeamSize, setSelectedTeamSize] = useState(minTeamSize);
     const [informationOpen, setInformationOpen] = useState(false);
@@ -125,11 +129,7 @@ export function RegistrationForm({
             toast.error(result.error.message);
             return;
         }
-        toast.success(
-            result.data.verificationEmailsSent
-                ? "Registration submitted!"
-                : "Registration saved, but some verification emails could not be sent.",
-        );
+        toast.success(result.data.verificationEmailsSent ? t.submitted : t.verificationFailed);
         setVerificationEmailsSent(result.data.verificationEmailsSent);
         setSubmitted(true);
     };
@@ -140,11 +140,9 @@ export function RegistrationForm({
                 <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
                     <CheckCircle2 className="size-7" />
                 </div>
-                <h2 className="mt-6 text-2xl font-bold tracking-tight">Registration submitted!</h2>
+                <h2 className="mt-6 text-2xl font-bold tracking-tight">{t.submitted}</h2>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    {verificationEmailsSent
-                        ? "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link."
-                        : "Your registration was saved, but some verification emails could not be sent. Please contact the organizers so they can resend them."}
+                    {verificationEmailsSent ? t.verificationSent : t.verificationFailed}
                 </p>
                 <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
             </div>
@@ -157,7 +155,7 @@ export function RegistrationForm({
                 {/* Team Information */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        About Your Team
+                        {locale === "th" ? "ข้อมูลทีม" : "About Your Team"}
                     </FieldLegend>
                     <FieldGroup>
                         <Controller
@@ -165,14 +163,16 @@ export function RegistrationForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>Team name</FieldLabel>
+                                    <FieldLabel htmlFor={field.name}>
+                                        {locale === "th" ? "ชื่อทีม" : "Team name"}
+                                    </FieldLabel>
                                     <Input
                                         {...field}
                                         id={field.name}
                                         aria-invalid={fieldState.invalid}
                                         placeholder="e.g. Byte Builders"
                                     />
-                                    <FieldDescription>Choose a unique name for your team.</FieldDescription>
+                                    <FieldDescription>{t.uniqueTeamName}</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -182,14 +182,16 @@ export function RegistrationForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="program">Education program</FieldLabel>
+                                    <FieldLabel htmlFor="program">
+                                        {locale === "th" ? "หลักสูตรการศึกษา" : "Education program"}
+                                    </FieldLabel>
                                     <Select value={field.value ?? ""} onValueChange={field.onChange}>
                                         <SelectTrigger
                                             id="program"
                                             className="w-full"
                                             aria-invalid={fieldState.invalid}
                                         >
-                                            <SelectValue placeholder="Select a program" />
+                                            <SelectValue placeholder={t.selectProgram} />
                                         </SelectTrigger>
                                         <SelectContent alignItemWithTrigger={false}>
                                             {programSlots.map((slot) => (
@@ -199,20 +201,18 @@ export function RegistrationForm({
                                                     disabled={slot.remaining <= 0}
                                                 >
                                                     {programLabels[slot.program]} ({slot.remaining} of {slot.limit}{" "}
-                                                    slots left)
+                                                    {t.slotsLeft})
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <FieldDescription>
-                                        Your team competes in either the Thai or the International program.
-                                    </FieldDescription>
+                                    <FieldDescription>{t.programDescription}</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
                         />
                         <Field>
-                            <FieldLabel htmlFor="team-size">Team size</FieldLabel>
+                            <FieldLabel htmlFor="team-size">{locale === "th" ? "ขนาดทีม" : "Team size"}</FieldLabel>
                             <Select value={String(selectedTeamSize)} onValueChange={changeTeamSize}>
                                 <SelectTrigger id="team-size" className="w-full">
                                     <SelectValue />
@@ -222,14 +222,14 @@ export function RegistrationForm({
                                         const size = minTeamSize + index;
                                         return (
                                             <SelectItem key={size} value={String(size)}>
-                                                {size} members
+                                                {size} {t.membersLabel}
                                             </SelectItem>
                                         );
                                     })}
                                 </SelectContent>
                             </Select>
                             <FieldDescription>
-                                Choose between {minTeamSize} and {maxTeamSize} total members, including the leader.
+                                {t.teamSizeHelp} {minTeamSize} and {maxTeamSize} {t.totalMembers}
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
@@ -238,7 +238,7 @@ export function RegistrationForm({
                 {/* Team Leader */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Team Leader
+                        {locale === "th" ? "หัวหน้าทีม" : "Team Leader"}
                     </FieldLegend>
                     <FieldGroup>
                         <div className="grid gap-5 sm:grid-cols-2">
@@ -247,7 +247,9 @@ export function RegistrationForm({
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Full name</FieldLabel>
+                                        <FieldLabel htmlFor={field.name}>
+                                            {locale === "th" ? "ชื่อเต็ม" : "Full name"}
+                                        </FieldLabel>
                                         <Input
                                             {...field}
                                             id={field.name}
@@ -259,9 +261,9 @@ export function RegistrationForm({
                                 )}
                             />
                             <Field>
-                                <FieldLabel>Role</FieldLabel>
+                                <FieldLabel>{t.role}</FieldLabel>
                                 <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
-                                    Leader
+                                    {t.leaderRole}
                                 </div>
                             </Field>
                         </div>
@@ -270,7 +272,9 @@ export function RegistrationForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>Student email</FieldLabel>
+                                    <FieldLabel htmlFor={field.name}>
+                                        {locale === "th" ? "อีเมลนักศึกษา" : "Student email"}
+                                    </FieldLabel>
                                     <Input
                                         {...field}
                                         id={field.name}
@@ -278,7 +282,7 @@ export function RegistrationForm({
                                         aria-invalid={fieldState.invalid}
                                         placeholder="u...@ms.kbu.ac.th"
                                     />
-                                    <FieldDescription>Must be a valid @ms.kbu.ac.th email address.</FieldDescription>
+                                    <FieldDescription>{t.validStudentEmail}</FieldDescription>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
@@ -289,11 +293,11 @@ export function RegistrationForm({
                 {/* Team Members */}
                 <FieldSet>
                     <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        Other Team Members ({teamSize - 1})
+                        {locale === "th" ? "สมาชิกทีมคนอื่น ๆ" : "Other Team Members"} ({teamSize - 1})
                     </FieldLegend>
                     <FieldGroup className="gap-3">
                         {fields.map((field, index) => (
-                            <MemberRow key={field.id} index={index} control={form.control} />
+                            <MemberRow key={field.id} index={index} control={form.control} locale={locale} />
                         ))}
                     </FieldGroup>
                 </FieldSet>
@@ -306,7 +310,7 @@ export function RegistrationForm({
                         className="w-full sm:w-auto"
                         onClick={() => setInformationOpen(true)}
                     >
-                        Read before submitting
+                        {t.readBeforeSubmit}
                     </Button>
                     <Button
                         type="submit"
@@ -317,10 +321,10 @@ export function RegistrationForm({
                         {form.formState.isSubmitting ? (
                             <>
                                 <Loader2 className="size-4 animate-spin" />
-                                Submitting...
+                                {t.submitting}
                             </>
                         ) : (
-                            "Submit registration"
+                            t.submitRegistration
                         )}
                     </Button>
                 </div>
@@ -328,22 +332,14 @@ export function RegistrationForm({
             <AlertDialog open={informationOpen} onOpenChange={setInformationOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Before you submit</AlertDialogTitle>
+                        <AlertDialogTitle>{t.beforeSubmit}</AlertDialogTitle>
                         <AlertDialogDescription render={<div />}>
                             <ol className="list-decimal space-y-2 pl-5">
-                                <li className="text-start">
-                                    Carefully check every team member&apos;s student email address. We will send each
-                                    member a verification link, and an incorrect email may prevent verification.
-                                </li>
-                                <li className="text-start">
-                                    Every team member must verify their student email address.
-                                </li>
-                                <li className="text-start">
-                                    After everyone verifies, the team will be automatically approved.
-                                </li>
-                                <li className="text-start">
-                                    The leader will receive a password-setup link after approval.
-                                </li>
+                                {t.submitSteps.map((step) => (
+                                    <li className="text-start" key={step}>
+                                        {step}
+                                    </li>
+                                ))}
                             </ol>
                         </AlertDialogDescription>
                     </AlertDialogHeader>
@@ -357,15 +353,14 @@ export function RegistrationForm({
                                 className="mt-1 size-4 accent-orange-600"
                             />
                             <FieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
-                                I acknowledge that the information I provided is accurate and understand the
-                                registration requirements.
+                                {t.acknowledgment}
                             </FieldLabel>
                         </Field>
                     </FieldSet>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Close</AlertDialogCancel>
+                        <AlertDialogCancel>{t.close}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => setInformationOpen(false)} disabled={!acknowledged}>
-                            I understand
+                            {t.understand}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -374,7 +369,16 @@ export function RegistrationForm({
     );
 }
 
-function MemberRow({ index, control }: { index: number; control: Control<FormValues, unknown, SubmittedFormValues> }) {
+function MemberRow({
+    index,
+    control,
+    locale,
+}: {
+    index: number;
+    control: Control<FormValues, unknown, SubmittedFormValues>;
+    locale: "en" | "th";
+}) {
+    const t = getMessages(locale).register;
     return (
         <FieldGroup>
             <div className="flex gap-3 rounded-lg border border-zinc-200 p-3">
@@ -384,13 +388,13 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>{locale === "th" ? "ชื่อ" : "Name"}</FieldLabel>
                                 <InputGroup>
                                     <InputGroupInput
                                         {...field}
                                         id={field.name}
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Member name"
+                                        placeholder={t.memberPlaceholder}
                                     />
                                 </InputGroup>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -402,17 +406,18 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Role</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>{locale === "th" ? "บทบาท" : "Role"}</FieldLabel>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
                                         <SelectValue>
-                                            {roleOptions.find((option) => option.value === field.value)?.label}
+                                            {t.roles[field.value as keyof typeof t.roles] ??
+                                                roleOptions.find((option) => option.value === field.value)?.label}
                                         </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent alignItemWithTrigger={false}>
                                         {roleOptions.map((opt) => (
                                             <SelectItem key={opt.value} value={opt.value}>
-                                                {opt.label}
+                                                {t.roles[opt.value as keyof typeof t.roles] ?? opt.label}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -426,7 +431,7 @@ function MemberRow({ index, control }: { index: number; control: Control<FormVal
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Student email</FieldLabel>
+                                <FieldLabel htmlFor={field.name}>{t.email}</FieldLabel>
                                 <InputGroup>
                                     <InputGroupInput
                                         {...field}

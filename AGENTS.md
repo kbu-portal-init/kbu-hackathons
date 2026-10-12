@@ -98,3 +98,7 @@ For UI, copy, people, mobile layout, or code comments work, read `.agents/skills
 
 Before starting UI work, ask the user when antislop applies: during the work, or after it is done.
 <!-- antislop:end -->
+
+## Public language support
+
+The public site supports English and Thai through the `kbu-locale` cookie and typed dictionaries in `lib/i18n`. English is the fallback. The switcher preserves the current URL and refreshes server-rendered pages. Interface copy is translated across the homepage, announcements, resources, registration, login, and reset-password flows. Database-authored announcement/resource content remains in its authored language. Authenticated workspaces are not fully bilingual; translated coverage is limited to shared shells and the participant references page where implemented.

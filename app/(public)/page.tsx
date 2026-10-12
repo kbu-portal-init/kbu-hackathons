@@ -8,6 +8,9 @@ import ScrollFx from "@/components/scroll-fx";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { listPublicAnnouncements } from "@/lib/data/announcements";
 import { getEventSettings } from "@/lib/data/event-settings";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -24,7 +27,8 @@ const glowBackground = "bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,rgba(109
 
 type RegistrationState = "open" | "not-started" | "closed" | "unavailable";
 
-function RegistrationButton({ state }: { state: RegistrationState }) {
+function RegistrationButton({ state, locale }: { state: RegistrationState; locale: Locale }) {
+    const t = getMessages(locale).register;
     if (state === "open") {
         return (
             <Link
@@ -32,7 +36,7 @@ function RegistrationButton({ state }: { state: RegistrationState }) {
                 className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
             >
                 <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
-                Register Your Team
+                {t.title}
             </Link>
         );
     }
@@ -44,11 +48,7 @@ function RegistrationButton({ state }: { state: RegistrationState }) {
             className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-orange-600/45 px-5 py-3 font-semibold text-white/90 opacity-80"
         >
             <NotebookPen className="size-5" />
-            {state === "not-started"
-                ? "Registration opens soon"
-                : state === "closed"
-                  ? "Registration closed"
-                  : "Registration unavailable"}
+            {state === "not-started" ? t.notOpened : state === "closed" ? t.closed : t.unavailable}
         </button>
     );
 }
@@ -58,12 +58,13 @@ const announcementDateFormatter = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Asia/Bangkok",
 });
 
-async function HomeAnnouncements() {
+async function HomeAnnouncements({ locale }: { locale: Locale }) {
+    const t = getMessages(locale).home;
     try {
         const result = await listPublicAnnouncements({ page: 1, pageSize: 2 });
 
         if (result.items.length === 0) {
-            return <p className="p-5 text-sm text-brand-muted-foreground">No announcements have been published yet.</p>;
+            return <p className="p-5 text-sm text-brand-muted-foreground">{t.noAnnouncements}</p>;
         }
 
         return (
@@ -98,7 +99,7 @@ async function HomeAnnouncements() {
     } catch {
         return (
             <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm text-brand-muted-foreground">
-                <p>Announcements are temporarily unavailable.</p>
+                <p>{t.announcementsUnavailable}</p>
                 <Link href="/announcements" className="mt-2 inline-flex font-semibold text-orange-700 underline">
                     View all announcements
                 </Link>
@@ -107,10 +108,10 @@ async function HomeAnnouncements() {
     }
 }
 
-function HomeAnnouncementsFallback() {
+function HomeAnnouncementsFallback({ locale }: { locale: Locale }) {
     return (
         <div className="overflow-hidden rounded-2xl glass" role="status" aria-label="Loading announcements">
-            <span className="sr-only">Loading announcements</span>
+            <span className="sr-only">{getMessages(locale).home.loadingAnnouncements}</span>
             {["one", "two"].map((item) => (
                 <div className="animate-pulse border-b border-orange-200 p-5 last:border-b-0" key={item}>
                     <div className="h-3 w-24 rounded bg-orange-100" />
@@ -125,6 +126,8 @@ function HomeAnnouncementsFallback() {
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+    const locale = await getLocale();
+    const t = getMessages(locale);
     const event = await getEventSettings();
     const eventImage = event?.imageUrls.find((url) => isOwnedR2PublicUrl(url, "uploads/events"));
     const now = Date.now();
@@ -157,10 +160,10 @@ export default async function Home() {
                             data-reveal
                             className="mt-6 max-w-3xl text-5xl font-black tracking-tight text-foreground sm:text-7xl"
                         >
-                            {event?.title ?? "Build. Connect. Compete."}
+                            {event?.title ?? t.home.slogan}
                         </h1>
                         <p data-reveal className="mt-4 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                            Build. <span className="text-primary">Connect.</span> Compete.
+                            {t.home.slogan}
                         </p>
                         <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-brand-muted-foreground">
                             {event?.description ??
@@ -211,7 +214,7 @@ export default async function Home() {
                             </div>
                         )}
                         <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
-                            <RegistrationButton state={registrationState} />
+                            <RegistrationButton state={registrationState} locale={locale} />
                             <Link
                                 href="/login"
                                 className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
@@ -282,22 +285,23 @@ export default async function Home() {
                 <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
                     <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
                         <div data-reveal>
-                            <p className="font-mono text-sm font-medium text-orange-600">Latest announcements</p>
-                            <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                                Latest from the community
-                            </h2>
-                            <p className="mt-4 text-brand-muted-foreground">
-                                News, deadlines, and updates from the KBU Hackathon 2026.
+                            <p className="font-mono text-sm font-medium text-orange-600">
+                                {t.home.latestAnnouncements}
                             </p>
+                            <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                                {t.home.communityTitle}
+                            </h2>
+                            <p className="mt-4 text-brand-muted-foreground">{t.home.announcementsIntro}</p>
                             <Link
                                 href="/announcements"
                                 className="mt-6 inline-flex items-center gap-1 font-semibold text-orange-600 transition hover:text-orange-700"
                             >
-                                Read all announcements <ArrowRight className="size-4" />
+                                {locale === "th" ? "อ่านประกาศทั้งหมด" : "Read all announcements"}{" "}
+                                <ArrowRight className="size-4" />
                             </Link>
                         </div>
-                        <Suspense fallback={<HomeAnnouncementsFallback />}>
-                            <HomeAnnouncements />
+                        <Suspense fallback={<HomeAnnouncementsFallback locale={locale} />}>
+                            <HomeAnnouncements locale={locale} />
                         </Suspense>
                     </div>
                 </div>
@@ -311,13 +315,13 @@ export default async function Home() {
                         data-reveal
                         className="mx-auto mt-5 max-w-2xl text-4xl font-black tracking-tight text-foreground sm:text-5xl"
                     >
-                        Your team is one commit away
+                        {t.home.calloutTitle}
                     </h2>
                     <p data-reveal className="mx-auto mt-5 max-w-xl text-brand-muted-foreground">
-                        Register, find your team, and start building before the next kickoff.
+                        {t.home.finalTitle}
                     </p>
                     <div data-reveal className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                        <RegistrationButton state={registrationState} />
+                        <RegistrationButton state={registrationState} locale={locale} />
                     </div>
                 </div>
             </section>
