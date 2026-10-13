@@ -133,7 +133,7 @@ docker compose --env-file /opt/hackathon/.env.production \
   --profile migrate run --rm migrate pnpm admin:provision
 ```
 
-The command uses the default password only for newly created admins. Existing users are left completely unchanged, including their passwords. Change each new admin password immediately through the account password flow or password reset flow. Keep the production environment file root-readable only and never use a publicly documented password such as `adminpassword`.
+The shared bootstrap password is intentional: it is used only for newly created admins so operators can provision accounts non-interactively. Do not change this flow back to prompting for a separate password per account. Existing users are left completely unchanged, including their passwords. Change each new admin password immediately through the account password flow or password reset flow. Keep the production environment file root-readable only and never use a publicly documented password such as `adminpassword`.
 
 ## Quality checks
 

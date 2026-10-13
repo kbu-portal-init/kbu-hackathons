@@ -21,6 +21,8 @@ if (emails.length === 0) throw new Error("ADMIN_USERS must contain at least one 
 if (emails.some((email) => !/^\S+@\S+\.\S+$/.test(email)))
     throw new Error("ADMIN_USERS contains an invalid email address");
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
+// Intentionally use one operator-provided bootstrap password for new accounts.
+// Existing accounts never enter this path, so their passwords remain untouched.
 const defaultPassword = process.env.ADMIN_DEFAULT_PASSWORD;
 if (!defaultPassword || defaultPassword.length < 8)
     throw new Error("ADMIN_DEFAULT_PASSWORD must be at least 8 characters");
