@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { MobileNavigation } from "@/components/mobile-navigation";
 import { SiteHeaderNav } from "@/components/site-header-nav";
 import type { Locale } from "@/lib/i18n/config";
@@ -14,9 +13,6 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                     <span className="text-lg font-bold tracking-tight text-foreground">KBU Hackathon 2026</span>
                 </Link>
                 <SiteHeaderNav locale={locale} />
-                <div className="hidden md:block">
-                    <LanguageSwitcher locale={locale} />
-                </div>
                 <div className="md:hidden">
                     <MobileNavigation locale={locale} />
                 </div>

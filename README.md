@@ -20,8 +20,8 @@ Team members are roster records. They do not receive Better Auth accounts; their
 
 | Area | Routes | Status |
 | --- | --- | --- |
-| Public | `/`, `/announcements`, `/resources` | Available without authentication; the homepage contains the participant information and two-day event flow |
-| Registration and login | `/register`, `/login` | Public entry points; login selects participant or management access with tabs, while registration collects the roster plus the Thai/International program choice and enforces per-program and total team caps |
+| Public | `/`, `/announcements`, `/resources` | Available without authentication; the homepage contains the participant information and two-day event flow, and shows authenticated users a link to their workspace |
+| Registration and login | `/register`, `/login` | Unauthenticated entry points; authenticated users are redirected to their workspace, while login selects participant or management access with tabs and registration collects the roster plus the Thai/International program choice |
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes branded per-member digital cards generated from the reference artwork and configured event dates, with downloads and sharing |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
@@ -122,6 +122,18 @@ pnpm db:seed
 ```
 
 Migration, push, and seed commands mutate database state. The development seed clears existing development data and recreates fixtures; never point it at production.
+
+Production administrators are not created by the seed or deployment workflow. Set `ADMIN_USERS` and a temporary `ADMIN_DEFAULT_PASSWORD` in `/opt/hackathon/.env.production`, then run this manually on Debian from the released migration image:
+
+```bash
+cd /opt/hackathon
+IMAGE_REPOSITORY=ghcr.io/kbu-portal-init/kbu-hackathons \
+IMAGE_TAG=<deployed-commit-sha> \
+docker compose --env-file /opt/hackathon/.env.production \
+  --profile migrate run --rm migrate pnpm admin:provision
+```
+
+The shared bootstrap password is intentional: it is used only for newly created admins so operators can provision accounts non-interactively. Do not change this flow back to prompting for a separate password per account. Existing users are left completely unchanged, including their passwords. Change each new admin password immediately through the account password flow or password reset flow. Keep the production environment file root-readable only.
 
 ## Quality checks
 

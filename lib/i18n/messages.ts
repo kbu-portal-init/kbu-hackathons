@@ -8,6 +8,7 @@ export const messages = {
             announcements: "Announcements",
             resources: "Resources",
             signIn: "Sign in",
+            openWorkspace: "Open your workspace",
             language: "Language",
             english: "English",
             thai: "ไทย",
@@ -214,7 +215,7 @@ export const messages = {
         login: {
             title: "Sign in to KBU Hackathon 2026",
             participant: "Participant",
-            management: "Management",
+            management: "Organizer",
             teamUsername: "Team username",
             email: "Email address",
             password: "Password",
@@ -295,6 +296,7 @@ export const messages = {
             announcements: "ประกาศ",
             resources: "แหล่งข้อมูล",
             signIn: "เข้าสู่ระบบ",
+            openWorkspace: "เปิดพื้นที่ทำงานของคุณ",
             language: "ภาษา",
             english: "English",
             thai: "ไทย",
@@ -477,7 +479,7 @@ export const messages = {
         login: {
             title: "เข้าสู่ระบบ KBU Hackathon 2026",
             participant: "ผู้เข้าร่วม",
-            management: "ฝ่ายจัดการ",
+            management: "ผู้จัดงาน",
             teamUsername: "ชื่อผู้ใช้ทีม",
             email: "อีเมล",
             password: "รหัสผ่าน",

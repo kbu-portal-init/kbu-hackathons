@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AboutContent } from "@/app/(public)/_components/about-content";
-import { HomeAuthRedirect } from "@/app/(public)/_components/home-auth-redirect";
+import { HomeAuthAction } from "@/app/(public)/_components/home-auth-action";
 import ScrollFx from "@/components/scroll-fx";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { listPublicAnnouncements } from "@/lib/data/announcements";
@@ -76,7 +76,7 @@ async function HomeAnnouncements({ locale }: { locale: Locale }) {
                         <Link
                             key={announcement.id}
                             href={`/announcements/${announcement.id}`}
-                            className="flex items-start gap-4 border-b border-orange-200 p-5 transition last:border-b-0 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-orange-600"
+                            className="flex items-start gap-4 border-b border-orange-200 p-5 transition last:border-b-0 hover:bg-orange-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-orange-600"
                         >
                             <Megaphone className="mt-0.5 size-5 shrink-0 text-orange-600" />
                             <div>
@@ -123,8 +123,6 @@ function HomeAnnouncementsFallback({ locale }: { locale: Locale }) {
     );
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
     const locale = await getLocale();
     const t = getMessages(locale);
@@ -142,7 +140,6 @@ export default async function Home() {
 
     return (
         <main className="overflow-hidden">
-            <HomeAuthRedirect />
             <ScrollFx />
             {/* Hero — terminal-inspired light band with a static workspace card */}
             <section id="hero" className={`relative bg-background dot-grid ${glowBackground}`}>
@@ -215,12 +212,7 @@ export default async function Home() {
                         )}
                         <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
                             <RegistrationButton state={registrationState} locale={locale} />
-                            <Link
-                                href="/login"
-                                className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
-                            >
-                                ./sign-in
-                            </Link>
+                            <HomeAuthAction locale={locale} />
                         </div>
                     </div>
                     <div data-reveal className="relative">
@@ -235,7 +227,7 @@ export default async function Home() {
                                 </span>
                             </div>
                             {eventImage ? (
-                                <div className="relative aspect-[1672/941] w-full bg-orange-100">
+                                <div className="relative aspect-1672/941 w-full bg-orange-100">
                                     <Image
                                         src={eventImage}
                                         alt={event?.title ?? "KBU Hackathon event"}
@@ -246,7 +238,7 @@ export default async function Home() {
                                     />
                                 </div>
                             ) : (
-                                <div className="relative aspect-[1672/941] w-full bg-orange-100">
+                                <div className="relative aspect-1672/941 w-full bg-orange-100">
                                     <Image
                                         src="/images/kbu.webp"
                                         alt="KBU Hackathon event"

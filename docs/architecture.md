@@ -41,6 +41,8 @@ Prefer Server Components. Use client components only for browser state, events, 
 
 Public locale state is resolved server-side from the `kbu-locale` cookie in `lib/i18n`. Supported values are `en` and `th`, with English as the fallback. Typed dictionaries provide public interface copy and selected dashboard shell/reference content, while remaining authenticated-workspace text and database-authored announcement/resource content remain unchanged until further localization work is introduced. The client language switcher updates the cookie and refreshes the current route.
 
+The homepage remains public for authenticated users. `/login` and `/register` redirect authenticated users to their approved workspace, while the homepage renders a role-aware workspace link instead of a sign-in CTA. Public event settings are cached for 30 seconds and invalidated after organizer/admin updates; registration state is still calculated from the current request time.
+
 ## Styling
 
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
