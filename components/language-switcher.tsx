@@ -57,7 +57,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
                 aria-label={getMessages(locale).common.language}
                 disabled={isPending}
                 onClick={() => setIsOpen((open) => !open)}
-                className={`inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 text-left text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:border-orange-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-200 disabled:cursor-wait disabled:opacity-60 ${className ? "w-full justify-start" : ""}`}
+                className={`inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-secondary bg-card px-3 text-left text-sm font-semibold text-muted-foreground shadow-sm transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-wait disabled:opacity-60 ${className ? "w-full justify-start" : ""}`}
             >
                 <Image
                     src={currentOption.image}
@@ -73,7 +73,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
                 />
             </button>
             {isOpen ? (
-                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-50 min-w-full overflow-hidden rounded-lg border border-zinc-200 bg-white p-1.5 shadow-lg shadow-zinc-900/10">
+                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-50 min-w-full overflow-hidden rounded-lg border border-secondary bg-card p-1.5 shadow-lg shadow-primary/25">
                     {options.map((option) => {
                         const active = option.locale === locale;
                         return (
@@ -81,7 +81,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
                                 key={option.locale}
                                 type="button"
                                 onClick={() => changeLocale(option.locale)}
-                                className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-200 ${active ? "bg-orange-50 text-orange-800" : "text-zinc-700 hover:bg-zinc-50"}`}
+                                className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${active ? "bg-primary/50 text-primary" : "text-muted-foreground hover:bg-secondary/50"}`}
                             >
                                 <Image
                                     src={option.image}
