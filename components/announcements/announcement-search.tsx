@@ -102,9 +102,9 @@ export function AnnouncementSearch({
                         size="icon"
                         aria-label={labels.closeSearch}
                         onClick={closeSearch}
-                        className="size-9 shrink-0 sm:hidden"
+                        className="size-11 shrink-0 rounded-xl bg-orange-100 text-orange-700 hover:bg-orange-200 sm:hidden"
                     >
-                        <X className="size-5" aria-hidden="true" />
+                        <X className="size-6" strokeWidth={2.25} aria-hidden="true" />
                     </Button>
                 </form>
             </search>
