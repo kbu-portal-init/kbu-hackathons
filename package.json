@@ -21,6 +21,7 @@
         "db:migrate:deploy": "prisma migrate deploy",
         "db:studio": "prisma studio",
         "db:seed": "tsx prisma/seed.ts",
+        "admin:provision": "tsx scripts/provision-admins.ts",
         "db:start": "docker compose -f docker-compose.local.yml up -d postgres",
         "db:watch": "docker compose -f docker-compose.local.yml up postgres",
         "db:stop": "docker compose -f docker-compose.local.yml stop postgres",

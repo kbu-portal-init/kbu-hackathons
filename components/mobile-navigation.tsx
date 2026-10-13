@@ -64,6 +64,10 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                                 </Link>
                             );
                         })}
+                        <div className="mt-2 border-t border-zinc-200 pt-4">
+                            <p className="px-4 pb-2 text-xs font-semibold text-zinc-500">{t.language}</p>
+                            <LanguageSwitcher locale={locale} className="w-full" />
+                        </div>
                     </div>
                     <div className="mt-auto border-t border-border/10 pt-6">
                         <Link
@@ -74,9 +78,6 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                         >
                             {t.signIn}
                         </Link>
-                        <div className="mt-4 flex justify-center">
-                            <LanguageSwitcher locale={locale} />
-                        </div>
                     </div>
                 </nav>
             ) : null}
