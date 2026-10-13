@@ -21,10 +21,9 @@ function getCategory(category: PublicAnnouncementDTO["category"]) {
 type AnnouncementCardProps = {
     announcement: PublicAnnouncementDTO;
     locale: Locale;
-    readAnnouncement: string;
 };
 
-export default function AnnouncementCard({ announcement, locale, readAnnouncement }: AnnouncementCardProps) {
+export default function AnnouncementCard({ announcement, locale }: AnnouncementCardProps) {
     const publishedDate = announcement.publishedAt ?? announcement.createdAt;
 
     const imageUrl =
@@ -42,39 +41,38 @@ export default function AnnouncementCard({ announcement, locale, readAnnouncemen
     return (
         <Link
             href={`/announcements/${announcement.id}`}
-            className="group flex min-w-0 gap-3 rounded-lg border border-orange-950/10 bg-white p-2.5 transition-colors duration-200 hover:border-orange-300 hover:bg-orange-50/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:gap-3.5 sm:p-3"
+            className="group flex min-w-0 gap-4 rounded-xl border border-stone-200/80 bg-white p-4 transition-colors duration-200 hover:border-orange-300 hover:bg-orange-50/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:gap-5 sm:p-5"
         >
-            <div className="relative aspect-[4/3] w-20 shrink-0 self-start overflow-hidden rounded-md bg-orange-50 sm:w-24">
+            <div className="relative aspect-[4/3] w-28 shrink-0 self-start overflow-hidden rounded-lg bg-orange-50 sm:w-36">
                 <Image
                     src={imageUrl}
-                    alt={announcement.title}
+                    alt=""
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                    sizes="(max-width: 640px) 80px, 96px"
+                    sizes="(max-width: 640px) 112px, 144px"
                 />
             </div>
 
             <article className="flex min-w-0 flex-1 flex-col">
-                <div className="mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-2">
                     <AnnouncementCategoryBadge
                         category={getCategory(announcement.category)}
-                        className="px-2 py-0.5 text-[10px]"
+                        className="px-2.5 py-1 text-xs"
                     />
-                    <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                        <CalendarDays aria-hidden="true" className="size-3 shrink-0 text-primary" />
+
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
+                        <CalendarDays aria-hidden="true" className="size-4 shrink-0" />
                         <time dateTime={publishedDate}>{formattedDate}</time>
                     </span>
                 </div>
 
-                <h2 className="line-clamp-2 text-sm font-semibold leading-5 tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-[15px]">
+                <h2 className="line-clamp-2 text-lg font-semibold leading-7 tracking-tight text-foreground transition-colors group-hover:text-orange-700 sm:text-xl">
                     {announcement.title}
                 </h2>
 
-                <p className="mt-1 line-clamp-2 text-xs leading-[1.4rem] text-muted-foreground">
+                <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground sm:text-base">
                     {announcement.content}
                 </p>
-
-                <span className="mt-1.5 text-xs font-semibold text-primary">{readAnnouncement}</span>
             </article>
         </Link>
     );

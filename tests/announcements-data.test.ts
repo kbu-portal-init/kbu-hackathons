@@ -60,6 +60,7 @@ async function createTestAnnouncement(input: {
         data: {
             title: input.title,
             content: input.content,
+            category: input.category,
             status,
             publishedAt: input.publishedAt ?? (status === "PUBLISHED" ? new Date() : null),
             createdById: testUserId,
@@ -215,10 +216,12 @@ describe("announcement data", () => {
         });
 
         assert.ok(result.items.some((item) => item.id === published.id));
+
         assert.equal(
             result.items.some((item) => item.id === draft.id),
             false,
         );
+
         assert.equal(
             result.items.some((item) => item.id === archived.id),
             false,
@@ -294,5 +297,28 @@ describe("announcement data", () => {
             result.data.items.some((item) => item.id === draft.id),
             false,
         );
+    });
+
+    it("filters management announcements by category", async () => {
+        const important = await createTestAnnouncement({
+            title: "Management Important Category Filter",
+            content: "Important category filter content",
+            category: "IMPORTANT",
+        });
+
+        await createTestAnnouncement({
+            title: "Management News Category Filter",
+            content: "News category filter content",
+            category: "NEWS",
+        });
+
+        const result = await listAnnouncements({
+            page: 1,
+            pageSize: 100,
+            category: "IMPORTANT",
+        });
+
+        assert.ok(result.items.some((item) => item.id === important.id));
+        assert.ok(result.items.every((item) => item.category === "IMPORTANT"));
     });
 });
