@@ -123,6 +123,18 @@ pnpm db:seed
 
 Migration, push, and seed commands mutate database state. The development seed clears existing development data and recreates fixtures; never point it at production.
 
+Production administrators are not created by the seed or deployment workflow. Set `ADMIN_USERS` and a temporary `ADMIN_DEFAULT_PASSWORD` in `/opt/hackathon/.env.production`, then run this manually on Debian from the released migration image:
+
+```bash
+cd /opt/hackathon
+IMAGE_REPOSITORY=ghcr.io/kbu-portal-init/kbu-hackathons \
+IMAGE_TAG=<deployed-commit-sha> \
+docker compose --env-file /opt/hackathon/.env.production \
+  --profile migrate run --rm migrate pnpm admin:provision
+```
+
+The shared bootstrap password is intentional: it is used only for newly created admins so operators can provision accounts non-interactively. Do not change this flow back to prompting for a separate password per account. Existing users are left completely unchanged, including their passwords. Change each new admin password immediately through the account password flow or password reset flow. Keep the production environment file root-readable only.
+
 ## Quality checks
 
 ```bash
