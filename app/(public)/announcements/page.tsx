@@ -117,6 +117,7 @@ export default async function AnnouncementsPage({
                             labels={{
                                 search: t.search,
                                 searchButton: t.searchButton,
+                                closeSearch: t.closeSearch,
                             }}
                         />
                     </div>

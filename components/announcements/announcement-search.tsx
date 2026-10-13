@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ type AnnouncementSearchProps = {
     labels: {
         search: string;
         searchButton: string;
+        closeSearch: string;
     };
 };
 
@@ -38,8 +39,21 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                             placeholder={labels.search}
                             aria-label={labels.search}
                             maxLength={100}
-                            className="h-11 w-full min-w-0 rounded-xl border-orange-200 bg-white pl-9 text-sm"
+                            className="h-11 w-full min-w-0 rounded-xl border-orange-200 bg-white pl-9 pr-11 text-sm"
                         />
+
+                        {search && (
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                aria-label={labels.closeSearch}
+                                onClick={() => setSearch("")}
+                                className="absolute right-1.5 top-1/2 size-8 -translate-y-1/2 rounded-full"
+                            >
+                                <X className="size-4" strokeWidth={2.25} aria-hidden="true" />
+                            </Button>
+                        )}
                     </div>
 
                     <Button
