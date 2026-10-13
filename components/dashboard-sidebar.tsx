@@ -150,7 +150,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                 </SidebarFooter>
             </Sidebar>
             <div className="flex min-w-0 flex-1 flex-col">
-                <header className="flex h-14 items-center gap-3 border-b border-orange-100 bg-white px-4">
+                <header className="flex h-14 items-center gap-3 border-b border-border/10 bg-white px-4">
                     <SidebarTrigger className="size-11 md:size-8" />
                     <p className="text-sm font-semibold text-zinc-700">{headerTitle}</p>
                     <div className="ml-auto">
@@ -158,12 +158,12 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                     </div>
                 </header>
                 {children}
-                <footer className="border-t border-orange-100 bg-orange-50/60 px-4 py-4 text-sm text-muted-foreground sm:px-6 lg:px-8">
+                <footer className="border-t border-border/10 bg-secondary/60 px-4 py-4 text-sm text-muted-foreground sm:px-6 lg:px-8">
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                         <span className="font-medium text-zinc-700">{t.needHelp}</span>
                         {lineContact.url ? (
                             <a
-                                className="text-orange-700 hover:underline"
+                                className="text-primary/90 hover:underline"
                                 href={lineContact.url}
                                 target="_blank"
                                 rel="noreferrer"
@@ -171,7 +171,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                                 {lineContact.name || "LINE"}
                             </a>
                         ) : null}
-                        <Link className="text-orange-700 hover:underline" href="/announcements">
+                        <Link className="text-primary/90 hover:underline" href="/announcements">
                             {t.announcements}
                         </Link>
                     </div>
@@ -202,7 +202,7 @@ function AccountFooter({
     const avatar = account.image ? (
         <Image src={account.image} alt="" width={32} height={32} className="size-8 rounded-full object-cover" />
     ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-900">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
             {initials || "?"}
         </span>
     );
@@ -239,7 +239,7 @@ function AccountFooter({
                     trigger={
                         <button
                             type="button"
-                            className="cursor-pointer flex w-full items-center gap-2 rounded-md bg-orange-600 px-2 py-2 text-sm font-medium text-white outline-none hover:bg-orange-700 hover:text-white focus-visible:ring-2 focus-visible:ring-ring"
+                            className="cursor-pointer flex w-full items-center gap-2 rounded-md bg-primary px-2 py-2 text-sm font-medium text-white outline-none hover:!bg-primary hover:!text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             <LogOut className="size-4" />
                             <span>{t.signOut}</span>

@@ -73,7 +73,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
 
     return (
         <div className="space-y-4">
-            {error ? <p className="text-sm text-red-600">{error}</p> : null}
+            {error ? <p className="text-sm text-destructive">{error}</p> : null}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {items.map((member) => (
                     <article
@@ -81,7 +81,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                         key={member.id}
                     >
                         {busyId === member.id ? (
-                            <div className="flex aspect-1600/960 items-center justify-center bg-orange-50 text-sm text-orange-900">
+                            <div className="flex aspect-1600/960 items-center justify-center bg-secondary text-secondary-foreground">
                                 Generating new card...
                             </div>
                         ) : member.cardUrl ? (
@@ -91,7 +91,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                 src={member.cardUrl}
                             />
                         ) : (
-                            <div className="flex aspect-1600/960 items-center justify-center bg-orange-50 text-sm text-orange-900">
+                            <div className="flex aspect-1600/960 items-center justify-center bg-secondary text-secondary-foreground">
                                 Card not generated
                             </div>
                         )}
@@ -127,7 +127,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                 ) : null}
                                 <Button
                                     size="lg"
-                                    className="cursor-pointer hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="cursor-pointer transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     disabled={busyId === member.id}
                                     onClick={() => handleGenerate(member.id)}
                                 >

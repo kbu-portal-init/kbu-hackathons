@@ -21,7 +21,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Area | Routes | Status |
 | --- | --- | --- |
 | Public | `/`, `/announcements`, `/resources` | Available without authentication; the homepage contains the participant information and two-day event flow, and shows authenticated users a link to their workspace |
-| Registration and login | `/register`, `/login` | Unauthenticated entry points; authenticated users are redirected to their workspace, while login selects participant or management access with tabs and registration collects the roster plus the Thai/International program choice |
+| Login | `/login` | Unauthenticated entry points; authenticated users are redirected to their workspace, while login selects participant or management access with tabs and registration collects the roster plus the Thai/International program choice |
 | Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings` | Protected workspace; `/team` includes branded per-member digital cards generated from the reference artwork and configured event dates, with downloads and sharing |
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |

@@ -32,7 +32,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                 <h2 className="text-lg font-semibold">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
-                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-full bg-orange-100 text-2xl font-bold text-orange-700">
+                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-full bg-secondary text-2xl font-bold text-primary/90">
                             {image ? (
                                 <Image
                                     src={image}

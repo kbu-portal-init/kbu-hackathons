@@ -55,7 +55,7 @@ export default async function TeamReferencesPage() {
     return (
         <main className="space-y-8 p-6 lg:p-10">
             <div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-orange-600">{t.title}</h1>
+                <h1 className="mt-2 text-3xl font-bold tracking-tight text-primary">{t.title}</h1>
                 <p className="mt-2 max-w-2xl text-muted-foreground">{t.intro}</p>
             </div>
 
@@ -68,11 +68,11 @@ export default async function TeamReferencesPage() {
                     const [title, description] = t.cards[index];
                     return (
                         <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm" key={id}>
-                            <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
+                            <div className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary/90">
                                 <Icon className="size-5" />
                             </div>
                             <h2 className="mt-5 text-xl font-bold text-zinc-950">{title}</h2>
-                            <p className="mt-2 text-sm font-medium text-orange-700">{description}</p>
+                            <p className="mt-2 text-sm font-medium text-primary/90">{description}</p>
                             <p className="mt-4 text-sm leading-6 text-muted-foreground">{body}</p>
                         </article>
                     );
@@ -82,19 +82,19 @@ export default async function TeamReferencesPage() {
             <section className="grid gap-5">
                 <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <Link2 className="size-5 text-orange-600" />
+                        <Link2 className="size-5 text-primary" />
                         <h2 className="text-xl font-bold text-zinc-950">{t.usefulLinks}</h2>
                     </div>
                     <div className="mt-4 space-y-3 text-sm">
                         <Link
-                            className="flex items-center justify-between text-orange-700 hover:text-orange-900"
+                            className="flex items-center justify-between text-primary/90 hover:text-primary/70"
                             href="/team/submit"
                         >
                             <span>{t.submissionWorkspace}</span>
                             <ArrowUpRight className="size-4" />
                         </Link>
                         <Link
-                            className="flex items-center justify-between text-orange-700 hover:text-orange-900"
+                            className="flex items-center justify-between text-primary/90 hover:text-primary/70"
                             href="/resources"
                         >
                             <span>{t.studentResources}</span>
@@ -104,8 +104,8 @@ export default async function TeamReferencesPage() {
                 </div>
             </section>
 
-            <section className="flex items-start gap-4 rounded-2xl border border-orange-100 bg-orange-50 p-6">
-                <HelpCircle className="mt-0.5 size-5 shrink-0 text-orange-600" />
+            <section className="flex items-start gap-4 rounded-2xl border border-border/10 bg-secondary/10 p-6">
+                <HelpCircle className="mt-0.5 size-5 shrink-0 text-primary" />
                 <div>
                     <h2 className="font-bold text-zinc-950">{t.help}</h2>
                     <p className="mt-1 text-sm leading-6 text-muted-foreground">{t.helpText}</p>
@@ -120,22 +120,22 @@ async function EventFacts() {
 
     return (
         <section className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
-                <CalendarDays className="size-5 text-orange-600" />
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-orange-700">Hackathon dates</p>
+            <div className="rounded-2xl border border-border/10 bg-secondary/10 p-5">
+                <CalendarDays className="size-5 text-primary" />
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary/90">Hackathon dates</p>
                 <p className="mt-1 font-semibold text-zinc-950">
                     {event ? `${formatDate(event.startsAt)} – ${formatDate(event.endsAt)}` : "Dates to be announced"}
                 </p>
             </div>
             <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-                <ClipboardCheck className="size-5 text-orange-600" />
+                <ClipboardCheck className="size-5 text-primary" />
                 <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team size</p>
                 <p className="mt-1 font-semibold text-zinc-950">
                     {event ? `${event.minTeamSize}–${event.maxTeamSize} members` : "Check event rules"}
                 </p>
             </div>
             <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-                <Trophy className="size-5 text-orange-600" />
+                <Trophy className="size-5 text-primary" />
                 <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Submission deadline
                 </p>
