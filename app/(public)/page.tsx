@@ -249,15 +249,6 @@ export default async function Home() {
                                     />
                                 </div>
                             )}
-                            <div className="border-t border-slate-200/70 px-5 py-3.5">
-                                <Link
-                                    href="/3d-demo"
-                                    className="group inline-flex items-center gap-2 font-mono text-sm font-medium text-primary transition hover:text-primary/90"
-                                >
-                                    walk_into_the_room
-                                    <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
-                                </Link>
-                            </div>
                         </div>
                     </div>
                 </div>

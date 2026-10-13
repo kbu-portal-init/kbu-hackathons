@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { heroParallax } from "./_3d/hero-parallax";
 
 /**
  * Lazily loads GSAP + ScrollTrigger (code-split out of the initial bundle) and
@@ -9,8 +8,6 @@ import { heroParallax } from "./_3d/hero-parallax";
  *
  * - fade + translateY(24px → 0) reveals on every `[data-reveal]`
  * - per-group staggering (80–100ms) via `[data-reveal-group]`
- * - scroll-linked parallax for the 3D hero, read from a ScrollTrigger and
- *   consumed inside the existing three.js render loop
  *
  * `prefers-reduced-motion` skips all of it: the page is served in its final
  * state instead. Reveal elements stay visible until this module adds
@@ -18,7 +15,7 @@ import { heroParallax } from "./_3d/hero-parallax";
  */
 
 type ScrollFxOptions = {
-    /** Set false on pages that only want the 3D parallax (default true). */
+    /** Set false on pages that do not need section reveals. */
     reveals?: boolean;
 };
 
@@ -28,11 +25,10 @@ export default function ScrollFx({ reveals = true }: ScrollFxOptions) {
     revealsRef.current = reveals;
 
     useEffect(() => {
-        const heroSection = document.querySelector<HTMLElement>("[data-hero-parallax]");
         const revealTargets = revealsRef.current
             ? document.querySelectorAll<HTMLElement>("[data-reveal]")
             : ([] as unknown as NodeListOf<HTMLElement>);
-        if (revealTargets.length === 0 && !heroSection) return;
+        if (revealTargets.length === 0) return;
 
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -106,23 +102,6 @@ export default function ScrollFx({ reveals = true }: ScrollFxOptions) {
                             },
                         );
                         if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
-                    }
-
-                    // --- 3D hero parallax -------------------------------------
-                    // Writes scroll progress into the shared singleton; the
-                    // three.js render loop consumes it so the parallax stays
-                    // in sync with the frame budget instead of running
-                    // per-scroll event.
-                    if (heroSection) {
-                        const st = ScrollTrigger.create({
-                            trigger: heroSection,
-                            start: "top top",
-                            end: "bottom top",
-                            onUpdate: (self) => {
-                                heroParallax.current = self.progress;
-                            },
-                        });
-                        triggers.push(st);
                     }
 
                     cleanup = () => {
