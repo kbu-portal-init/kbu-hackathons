@@ -25,7 +25,7 @@ export function TeamSizeStepper({
     const seats = Array.from({ length: max }, (_, i) => i + 1);
 
     return (
-        <div className="flex items-center gap-4 rounded-xl border border-border/60 bg-background p-3">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 rounded-xl border border-border/60 bg-background p-3 sm:justify-start">
             <Button
                 type="button"
                 variant="outline"
@@ -50,9 +50,12 @@ export function TeamSizeStepper({
             >
                 <Plus className="size-4" />
             </Button>
-            <div aria-hidden className="ml-auto hidden items-center gap-1 sm:flex">
+            <div
+                aria-hidden
+                className="flex basis-full items-center justify-center gap-1.5 border-t border-border/60 pt-3 sm:ml-auto sm:basis-auto sm:border-t-0 sm:pt-0"
+            >
                 {seats.map((seat) => (
-                    <User key={seat} className={seat <= value ? "size-5 text-primary" : "size-5 text-border"} />
+                    <User key={seat} className={seat <= value ? "size-6 text-primary" : "size-6 text-border"} />
                 ))}
             </div>
         </div>
