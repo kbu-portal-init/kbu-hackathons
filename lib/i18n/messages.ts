@@ -232,6 +232,7 @@ export const messages = {
         announcementsPage: {
             title: "Announcements",
             intro: "Stay up to date with registration deadlines, event news, and important updates from KBU Hackathon 2026.",
+            subtitle: "Keep up with the latest news and updates from the hackathon team.",
             home: "Home",
             filterLabel: "Filter announcements by category",
             categories: {
@@ -496,6 +497,7 @@ export const messages = {
         announcementsPage: {
             title: "ประกาศ",
             intro: "ติดตามกำหนดการลงทะเบียน ข่าวกิจกรรม และการอัปเดตสำคัญจาก KBU Hackathon 2026",
+            subtitle: "ติดตามข่าวสารและการอัปเดตล่าสุดจากทีมงานแฮกกาธอน",
             home: "หน้าหลัก",
             filterLabel: "กรองประกาศตามหมวดหมู่",
             categories: {

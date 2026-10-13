@@ -321,4 +321,53 @@ describe("announcement data", () => {
         assert.ok(result.items.some((item) => item.id === important.id));
         assert.ok(result.items.every((item) => item.category === "IMPORTANT"));
     });
+
+    it("lists published announcements through the public action", async () => {
+        const publishedNews = await createTestAnnouncement({
+            title: "Public Action News Announcement",
+            content: "Public action news content",
+            category: "NEWS",
+            status: "PUBLISHED",
+        });
+
+        const publishedImportant = await createTestAnnouncement({
+            title: "Public Action Important Announcement",
+            content: "Public action important content",
+            category: "IMPORTANT",
+            status: "PUBLISHED",
+        });
+
+        const draftNews = await createTestAnnouncement({
+            title: "Private Action Draft",
+            content: "Private action content",
+            category: "NEWS",
+            status: "DRAFT",
+        });
+
+        const { listPublishedAnnouncements } = await import("@/actions/management/announcements");
+
+        const result = await listPublishedAnnouncements({
+            page: 1,
+            pageSize: 100,
+            category: "NEWS",
+        });
+
+        assert.equal(result.ok, true);
+
+        if (!result.ok) return;
+
+        assert.ok(result.data.items.some((item) => item.id === publishedNews.id));
+
+        assert.equal(
+            result.data.items.some((item) => item.id === publishedImportant.id),
+            false,
+        );
+
+        assert.equal(
+            result.data.items.some((item) => item.id === draftNews.id),
+            false,
+        );
+
+        assert.ok(result.data.items.every((item) => item.category === "NEWS"));
+    });
 });

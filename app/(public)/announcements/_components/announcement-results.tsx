@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { listPublishedAnnouncements } from "@/actions/management/announcements";
 import { PaginationFooter } from "@/components/pagination-footer";
+import type { AnnouncementCategory } from "@/lib/contracts/announcements";
 import { getLocale } from "@/lib/i18n/server";
 
 import AnnouncementCard from "./announcement-card";
@@ -11,13 +12,14 @@ const PAGE_SIZE = 10;
 type AnnouncementResultsProps = {
     page: number;
     search?: string;
+    category?: AnnouncementCategory;
     labels: {
         loadError: string;
         emptyAll: string;
     };
 };
 
-function getPageHref(target: number, search?: string): string {
+function getPageHref(target: number, search?: string, category?: AnnouncementCategory): string {
     const query = new URLSearchParams();
 
     if (target > 1) {
@@ -28,25 +30,30 @@ function getPageHref(target: number, search?: string): string {
         query.set("search", search);
     }
 
+    if (category) {
+        query.set("category", category);
+    }
+
     const queryString = query.toString();
 
     return queryString ? `/announcements?${queryString}` : "/announcements";
 }
 
-export async function AnnouncementResults({ page, search, labels }: AnnouncementResultsProps) {
+export async function AnnouncementResults({ page, search, category, labels }: AnnouncementResultsProps) {
     const locale = await getLocale();
 
     const result = await listPublishedAnnouncements({
         page,
         pageSize: PAGE_SIZE,
         search,
+        category,
     });
 
     if (result.ok) {
         const lastPage = Math.max(1, Math.ceil(result.data.meta.total / PAGE_SIZE));
 
         if (page > lastPage) {
-            redirect(getPageHref(lastPage, search));
+            redirect(getPageHref(lastPage, search, category));
         }
     }
 
@@ -83,7 +90,7 @@ export async function AnnouncementResults({ page, search, labels }: Announcement
                         total={meta.total}
                         itemsShown={items.length}
                         hasNextPage={meta.hasNextPage}
-                        getPageHref={(target) => getPageHref(target, search)}
+                        getPageHref={(target) => getPageHref(target, search, category)}
                     />
                 </div>
             )}

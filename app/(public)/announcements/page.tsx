@@ -24,6 +24,7 @@ export default async function AnnouncementsPage({
     searchParams: Promise<{
         page?: string;
         search?: string;
+        category?: string;
     }>;
 }) {
     const params = await searchParams;
@@ -32,6 +33,7 @@ export default async function AnnouncementsPage({
     const parsed = ListPublicAnnouncementSchema.safeParse({
         page: params.page,
         search: params.search,
+        category: params.category,
     });
 
     const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
@@ -76,7 +78,7 @@ export default async function AnnouncementsPage({
                         </h1>
 
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                            Keep up with the latest news and updates from the hackathon team.
+                            {t.subtitle}
                         </p>
                     </div>
                 </div>
@@ -85,7 +87,7 @@ export default async function AnnouncementsPage({
             <section aria-label={t.search} className="relative mb-6 sm:mb-8">
                 <AnnouncementSearch
                     defaultValue={search}
-                    category="all"
+                    category={filters.category ?? "all"}
                     labels={{
                         search: t.search,
                         searchButton: t.searchButton,
@@ -100,6 +102,7 @@ export default async function AnnouncementsPage({
                     <AnnouncementResults
                         page={filters.page}
                         search={search}
+                        category={filters.category}
                         labels={{
                             loadError: t.loadError,
                             emptyAll: t.emptyAll,
