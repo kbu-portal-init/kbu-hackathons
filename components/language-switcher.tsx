@@ -23,7 +23,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
     }
 
     return (
-        <fieldset className="flex items-center gap-1 rounded-full border border-orange-100 bg-white p-1">
+        <fieldset className="flex items-center gap-1 rounded-full border border-border/10 bg-white p-1">
             <legend className="sr-only">{getMessages(locale).common.language}</legend>
             {options.map((option) => {
                 const active = option.locale === locale;
@@ -35,7 +35,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
                         aria-label={`${getMessages(locale).common.language}: ${option.label}`}
                         disabled={isPending}
                         onClick={() => changeLocale(option.locale)}
-                        className={`cursor-pointer inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${active ? "bg-orange-600 text-white" : "text-zinc-600 hover:bg-orange-50"}`}
+                        className={`cursor-pointer inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${active ? "bg-primary text-white" : "text-muted-foreground hover:bg-secondary"}`}
                     >
                         <Image
                             src={option.image}

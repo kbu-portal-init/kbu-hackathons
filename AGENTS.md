@@ -34,7 +34,8 @@ Keep dependencies flowing inward: `lib/contracts` → `lib/data` → `lib/servic
 ## Styling
 
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
-- Orange is the product primary color. Use the existing semantic primary utilities or Tailwind orange utilities such as `bg-orange-600`, `text-orange-500`, and `bg-orange-900` when appropriate.
+- The project uses a complete design system defined via CSS custom properties (CSS design tokens) exposed through `@theme inline`. These tokens are available as Tailwind utility classes (e.g., `bg-primary`, `text-primary`, `border-primary`, `hover:bg-primary/90`, `shadow-primary/25`, `focus-visible:outline-primary`, `focus-visible:ring-primary/30`) and should be used throughout the codebase.
+- Previously hardcoded Tailwind color classes (e.g., `bg-orange-600`, `text-orange-500`, `bg-orange-900`) have been systematically replaced with their semantic equivalents across all codebase files.
 - Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.
 - Use Lucide icons through `lucide-react`.
 

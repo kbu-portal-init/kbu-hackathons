@@ -7,7 +7,7 @@ import { publicLinks } from "@/lib/navigation";
 export async function SiteFooter() {
     const t = getMessages(await getLocale());
     return (
-        <footer className="border-t border-orange-100 bg-orange-50 text-brand-muted-foreground">
+        <footer className="border-t border-border/10 bg-secondary text-brand-muted-foreground">
             <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-5 lg:px-8">
                 <div className="sm:col-span-2">
                     <div className="flex items-center gap-2">
@@ -26,7 +26,7 @@ export async function SiteFooter() {
                     <p className="text-sm font-semibold text-zinc-950">{t.common.explore}</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
                         {publicLinks.map(({ href, label }) => (
-                            <Link key={href} href={href} className="hover:text-orange-700">
+                            <Link key={href} href={href} className="hover:text-primary/90">
                                 {(
                                     {
                                         "/register": t.common.register,
@@ -41,7 +41,7 @@ export async function SiteFooter() {
                 <div>
                     <p className="text-sm font-semibold text-zinc-950">{t.common.account}</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
-                        <Link href="/login" className="hover:text-orange-700">
+                        <Link href="/login" className="hover:text-primary/90">
                             {t.common.signIn}
                         </Link>
                     </div>
@@ -49,13 +49,13 @@ export async function SiteFooter() {
                 <div>
                     <p className="text-sm font-semibold text-zinc-950">{t.common.help}</p>
                     <div className="mt-3 flex flex-col gap-2 text-sm">
-                        <Link href="/#need-help" className="hover:text-orange-700">
+                        <Link href="/#need-help" className="hover:text-primary/90">
                             {t.footer.helpLink}
                         </Link>
                     </div>
                 </div>
             </div>
-            <div className="border-t border-orange-200 px-6 py-5 text-center text-xs text-brand-muted-foreground">
+            <div className="border-t border-border/15 px-6 py-5 text-center text-xs text-brand-muted-foreground">
                 Copyright {new Date().getFullYear()} KBU Hackathon 2026. Kasem Bundit University (Romklao Campus).
             </div>
         </footer>

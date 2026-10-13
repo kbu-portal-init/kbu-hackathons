@@ -19,8 +19,8 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 function RegistrationFallback() {
     return (
-        <div className="mt-8 rounded-2xl border border-orange-100 bg-white p-8 shadow-xl shadow-orange-100/40">
-            <Skeleton className="h-6 w-64 max-w-full bg-orange-100" />
+        <div className="mt-8 rounded-2xl border border-border/10 bg-secondary p-8 shadow-xl shadow-secondary/40">
+            <Skeleton className="h-6 w-64 max-w-full bg-secondary" />
             <Skeleton className="mt-4 h-4 w-full bg-zinc-100" />
             <Skeleton className="mt-3 h-4 w-5/6 bg-zinc-100" />
             <div className="mt-8 space-y-4">
@@ -46,7 +46,7 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
 
     if (!registrationOpen) {
         return (
-            <div className="mt-8 rounded-2xl border border-orange-100 bg-white p-8 shadow-xl shadow-orange-100/40">
+            <div className="mt-8 rounded-2xl border border-border/10 bg-secondary p-8 shadow-xl shadow-secondary/40">
                 <h2 className="text-xl font-semibold">
                     {registrationUnavailable ? t.unavailable : registrationNotStarted ? t.notOpened : t.closed}
                 </h2>
@@ -81,7 +81,7 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
 
     if (programSlots.every((slot) => slot.remaining === 0)) {
         return (
-            <div className="mt-8 rounded-2xl border border-orange-100 bg-white p-8 shadow-xl shadow-orange-100/40">
+            <div className="mt-8 rounded-2xl border border-border/10 bg-secondary p-8 shadow-xl shadow-secondary/40">
                 <h2 className="text-xl font-semibold">{t.allFilled}</h2>
                 <p className="mt-3 text-base leading-7 text-muted-foreground">{t.allFilledText}</p>
             </div>
@@ -107,14 +107,14 @@ export default async function TeamRegistrationPage() {
     const locale = await getLocale();
     const t = getMessages(locale).register;
     return (
-        <main className="flex-1 bg-orange-50/60">
+        <main className="flex-1 bg-secondary/60">
             <section className="mx-auto max-w-3xl px-6 py-12 text-left lg:px-8 lg:py-20">
-                <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">{t.join}</p>
+                <p className="text-sm font-semibold uppercase tracking-widest text-primary">{t.join}</p>
                 <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">{t.title}</h1>
                 <p className="mt-4 leading-6 text-brand-muted-foreground">
                     {t.learnMore}{" "}
                     <Link
-                        className="font-semibold text-orange-600 underline underline-offset-4"
+                        className="font-semibold text-primary underline underline-offset-4"
                         href="/#everything-you-need-to-know"
                     >
                         {t.learnMoreLink}

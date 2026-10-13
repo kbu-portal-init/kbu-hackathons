@@ -21,7 +21,7 @@ export function TeamConfigurationSection({ control }: Props) {
     return (
         <section className="rounded-2xl border border-zinc-200 bg-white p-6">
             <div className="flex items-center gap-2">
-                <Users className="size-5 text-orange-500" />
+                <Users className="size-5 text-primary/70" />
                 <h2 className="text-lg font-semibold">Team configuration</h2>
             </div>
             <FieldGroup className="mt-5">
