@@ -61,7 +61,6 @@
         "sonner": "^2.0.8",
         "sortablejs": "^1.15.6",
         "tailwind-merge": "^3.7.0",
-        "three": "^0.186.0",
         "zod": "^4.6.5"
     },
     "devDependencies": {
@@ -71,7 +70,6 @@
         "@types/pg": "^8.23.1",
         "@types/react": "^19",
         "@types/react-dom": "^19",
-        "@types/three": "^0.186.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.1.6",
         "prisma": "7.10.0",
