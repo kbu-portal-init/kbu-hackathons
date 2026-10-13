@@ -39,7 +39,7 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                             placeholder={labels.search}
                             aria-label={labels.search}
                             maxLength={100}
-                            className="h-11 w-full min-w-0 rounded-xl border-orange-200 bg-white pl-9 pr-11 text-sm"
+                            className="h-11 w-full min-w-0 rounded-xl border-orange-200 bg-white pl-9 pr-11 text-sm appearance-none [&::-webkit-search-cancel-button]:appearance-none"
                         />
 
                         {search && (
