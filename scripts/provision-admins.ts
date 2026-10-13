@@ -23,9 +23,8 @@ if (emails.some((email) => !/^\S+@\S+\.\S+$/.test(email)))
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 // Intentionally use one operator-provided bootstrap password for new accounts.
 // Existing accounts never enter this path, so their passwords remain untouched.
-const defaultPassword = process.env.ADMIN_DEFAULT_PASSWORD;
-if (!defaultPassword || defaultPassword.length < 8)
-    throw new Error("ADMIN_DEFAULT_PASSWORD must be at least 8 characters");
+const bootstrapPassword = process.env.ADMIN_DEFAULT_PASSWORD ?? "";
+if (bootstrapPassword.length < 8) throw new Error("ADMIN_DEFAULT_PASSWORD must be at least 8 characters");
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
@@ -40,35 +39,45 @@ const auth = betterAuth({
 });
 
 const rl = createInterface({ input, output });
-try {
-    for (const email of emails) {
-        const existing = await prisma.user.findUnique({
-            where: { email },
-            select: { id: true, role: true, emailVerified: true },
-        });
+async function main() {
+    try {
+        for (const email of emails) {
+            const existing = await prisma.user.findUnique({
+                where: { email },
+                select: { id: true, role: true, emailVerified: true },
+            });
 
-        if (existing) {
-            if (existing.role !== "admin" || !existing.emailVerified) {
+            if (existing) {
+                if (existing.role !== "admin" || !existing.emailVerified) {
+                    await prisma.user.update({
+                        where: { id: existing.id },
+                        data: { role: "admin", emailVerified: true },
+                    });
+                    console.log(`Reconciled admin access: ${email}`);
+                } else {
+                    console.log(`Existing admin unchanged: ${email}`);
+                }
+            } else {
+                const name = await rl.question(`Display name for ${email}: `);
+                const result = await auth.api.signUpEmail({
+                    body: { email, password: bootstrapPassword, name: name.trim() || "Admin" },
+                });
+                if (!result.user) throw new Error(`Could not create ${email}`);
                 await prisma.user.update({
-                    where: { id: existing.id },
+                    where: { id: result.user.id },
                     data: { role: "admin", emailVerified: true },
                 });
-                console.log(`Reconciled admin access: ${email}`);
-            } else {
-                console.log(`Existing admin unchanged: ${email}`);
+                console.log(`Created admin: ${email}`);
             }
-        } else {
-            const name = await rl.question(`Display name for ${email}: `);
-            const result = await auth.api.signUpEmail({
-                body: { email, password: defaultPassword, name: name.trim() || "Admin" },
-            });
-            if (!result.user) throw new Error(`Could not create ${email}`);
-            await prisma.user.update({ where: { id: result.user.id }, data: { role: "admin", emailVerified: true } });
-            console.log(`Created admin: ${email}`);
         }
+    } finally {
+        rl.close();
+        await prisma.$disconnect();
+        await pool.end();
     }
-} finally {
-    rl.close();
-    await prisma.$disconnect();
-    await pool.end();
 }
+
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
