@@ -1,4 +1,4 @@
-import { ChevronRight, House, Megaphone } from "lucide-react";
+import { ChevronRight, House } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -17,6 +17,37 @@ export const metadata: Metadata = {
 };
 
 const MAX_SEARCH_LENGTH = 100;
+
+type Category = "all" | "important" | "update" | "news";
+
+const categories: { value: Category }[] = [
+    { value: "all" },
+    { value: "important" },
+    { value: "update" },
+    { value: "news" },
+];
+
+const categoryQueryValues: Record<Exclude<Category, "all">, "IMPORTANT" | "UPDATES" | "NEWS"> = {
+    important: "IMPORTANT",
+    update: "UPDATES",
+    news: "NEWS",
+};
+
+function getCategoryHref(category: Category, search?: string): string {
+    const query = new URLSearchParams();
+
+    if (category !== "all") {
+        query.set("category", categoryQueryValues[category]);
+    }
+
+    if (search) {
+        query.set("search", search);
+    }
+
+    const queryString = query.toString();
+
+    return queryString ? `/announcements?${queryString}` : "/announcements";
+}
 
 export default async function AnnouncementsPage({
     searchParams,
@@ -38,6 +69,13 @@ export default async function AnnouncementsPage({
 
     const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
     const search = filters.search ? filters.search.slice(0, MAX_SEARCH_LENGTH) : undefined;
+    const activeCategory: Category = filters.category
+        ? filters.category === "IMPORTANT"
+            ? "important"
+            : filters.category === "UPDATES"
+              ? "update"
+              : "news"
+        : "all";
 
     return (
         <main className="relative mx-auto w-full max-w-5xl flex-1 overflow-hidden px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
@@ -62,39 +100,50 @@ export default async function AnnouncementsPage({
                 </span>
             </nav>
 
-            <section className="relative mb-7 sm:mb-9">
-                <div className="flex items-start gap-3">
-                    <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-primary sm:size-12">
-                        <Megaphone aria-hidden="true" className="size-5 sm:size-6" />
-                    </div>
+            <section className="mb-8 max-w-3xl">
+                <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
+                    {t.title}
+                </h1>
 
-                    <div className="min-w-0 pt-0.5">
-                        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                            KBU Hackathon 2026
-                        </p>
-
-                        <h1 className="text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
-                            {t.title}
-                        </h1>
-
-                        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                            {t.subtitle}
-                        </p>
-                    </div>
-                </div>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{t.subtitle}</p>
             </section>
 
             <section aria-label={t.search} className="relative mb-6 sm:mb-8">
-                <AnnouncementSearch
-                    defaultValue={search}
-                    category={filters.category ?? "all"}
-                    labels={{
-                        search: t.search,
-                        searchButton: t.searchButton,
-                        openSearch: t.openSearch,
-                        closeSearch: t.closeSearch,
-                    }}
-                />
+                <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
+                    <div className="min-w-0 flex-1">
+                        <AnnouncementSearch
+                            defaultValue={search}
+                            category={filters.category ?? "all"}
+                            labels={{
+                                search: t.search,
+                                searchButton: t.searchButton,
+                                openSearch: t.openSearch,
+                                closeSearch: t.closeSearch,
+                            }}
+                        />
+                    </div>
+
+                    <nav aria-label={t.filterLabel} className="flex shrink-0 flex-wrap items-center gap-2">
+                        {categories.map((item) => {
+                            const isActive = activeCategory === item.value;
+
+                            return (
+                                <Link
+                                    key={item.value}
+                                    href={getCategoryHref(item.value, search)}
+                                    aria-current={isActive ? "page" : undefined}
+                                    className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                                        isActive
+                                            ? "border-orange-600 bg-orange-600 text-white"
+                                            : "border-border bg-white text-muted-foreground hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+                                    }`}
+                                >
+                                    {t.categories[item.value]}
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
             </section>
 
             <section aria-label={t.title} className="relative min-w-0">
