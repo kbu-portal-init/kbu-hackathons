@@ -123,6 +123,14 @@ pnpm db:seed
 
 Migration, push, and seed commands mutate database state. The development seed clears existing development data and recreates fixtures; never point it at production.
 
+Production administrators are not created by the seed or deployment workflow. Set `ADMIN_USERS` in `/opt/hackathon/.env.production` as a comma-separated list, then run this manually on Debian from the released migration image:
+
+```bash
+docker compose --env-file /opt/hackathon/.env.production --profile migrate run --rm migrate pnpm admin:provision
+```
+
+The command prompts for each display name and password and safely reconciles existing accounts. Keep the production environment file root-readable only.
+
 ## Quality checks
 
 ```bash

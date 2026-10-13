@@ -22,6 +22,7 @@ lib/: auth/ contracts/ data/ services/ mappers/
 - Reuse application components from `components`. Match the existing code style; do not introduce a new pattern without flagging it in the commit/PR description.
 - Keep authorization in guards and services, never only in UI code.
 - Never run the development seed against production.
+- Production admin accounts are provisioned manually with `pnpm admin:provision` from the released migration image; they are not created by deployment or the production seed.
 
 ## Authentication summary
 
