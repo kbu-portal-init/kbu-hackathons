@@ -24,7 +24,7 @@ pnpm db:push
 
 `db:migrate`, `db:migrate:deploy`, `db:push`, and `db:seed` mutate database state. Confirm the target database before running them. The development seed resets data and recreates fixture accounts, so it must never run against production.
 
-Production administrators are provisioned separately with `pnpm admin:provision`. Set `ADMIN_USERS` in `/opt/hackathon/.env.production` to a comma-separated list and run the command manually through the released migration image. It prompts for passwords and is not part of deployment.
+Production administrators are provisioned separately with `pnpm admin:provision`. Set `ADMIN_USERS` and a temporary `ADMIN_DEFAULT_PASSWORD` in `/opt/hackathon/.env.production` and run the command manually through the released migration image. The default password is used only for new users; existing users and passwords are untouched. It is not part of deployment.
 
 ## Database environment variables
 
