@@ -20,7 +20,7 @@ async function LoginRedirect() {
 function LoginFallback() {
     return (
         <main
-            className="flex flex-1 items-center bg-orange-50/60 px-6 py-16"
+            className="flex flex-1 items-center bg-secondary/60 px-6 py-16"
             role="status"
             aria-label="Loading sign in"
         >

@@ -33,7 +33,7 @@ function RegistrationButton({ state, locale }: { state: RegistrationState; local
         return (
             <Link
                 href="/register"
-                className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600/90 hover:shadow-lg hover:shadow-orange-500/25 active:translate-y-0"
+                className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-white transition-colors duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:translate-y-0 focus-visible:outline-primary focus-visible:ring-primary/30"
             >
                 <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
                 {t.title}
@@ -45,7 +45,7 @@ function RegistrationButton({ state, locale }: { state: RegistrationState; local
         <button
             type="button"
             disabled
-            className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-orange-600/45 px-5 py-3 font-semibold text-white/90 opacity-80"
+            className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-primary/45 px-5 py-3 font-semibold text-white/90 opacity-80"
         >
             <NotebookPen className="size-5" />
             {state === "not-started" ? t.notOpened : state === "closed" ? t.closed : t.unavailable}
@@ -76,13 +76,13 @@ async function HomeAnnouncements({ locale }: { locale: Locale }) {
                         <Link
                             key={announcement.id}
                             href={`/announcements/${announcement.id}`}
-                            className="flex items-start gap-4 border-b border-orange-200 p-5 transition last:border-b-0 hover:bg-orange-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-orange-600"
+                            className="flex items-start gap-4 border-b border-primary/20 p-5 transition last:border-b-0 hover:bg-secondary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary/30"
                         >
-                            <Megaphone className="mt-0.5 size-5 shrink-0 text-orange-600" />
+                            <Megaphone className="mt-0.5 size-5 shrink-0 text-primary" />
                             <div>
                                 <time
                                     dateTime={new Date(publishedDate).toISOString()}
-                                    className="font-mono text-xs font-medium text-orange-600"
+                                    className="font-mono text-xs font-medium text-primary"
                                 >
                                     {announcementDateFormatter.format(new Date(publishedDate))}
                                 </time>
@@ -98,9 +98,9 @@ async function HomeAnnouncements({ locale }: { locale: Locale }) {
         );
     } catch {
         return (
-            <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm text-brand-muted-foreground">
+            <div className="rounded-2xl border border-secondary bg-secondary p-5 text-sm text-brand-muted-foreground">
                 <p>{t.announcementsUnavailable}</p>
-                <Link href="/announcements" className="mt-2 inline-flex font-semibold text-orange-700 underline">
+                <Link href="/announcements" className="mt-2 inline-flex font-semibold text-primary/90 underline">
                     View all announcements
                 </Link>
             </div>
@@ -113,8 +113,8 @@ function HomeAnnouncementsFallback({ locale }: { locale: Locale }) {
         <div className="overflow-hidden rounded-2xl glass" role="status" aria-label="Loading announcements">
             <span className="sr-only">{getMessages(locale).home.loadingAnnouncements}</span>
             {["one", "two"].map((item) => (
-                <div className="animate-pulse border-b border-orange-200 p-5 last:border-b-0" key={item}>
-                    <div className="h-3 w-24 rounded bg-orange-100" />
+                <div className="animate-pulse border-b border-border/20 p-5 last:border-b-0" key={item}>
+                    <div className="h-3 w-24 rounded bg-secondary" />
                     <div className="mt-3 h-5 w-3/4 rounded bg-zinc-100" />
                     <div className="mt-2 h-4 w-full rounded bg-zinc-100" />
                 </div>
@@ -147,11 +147,11 @@ export default async function Home() {
                     <div>
                         <p
                             data-reveal
-                            className="inline-flex items-center gap-2 font-mono text-sm font-medium text-orange-600"
+                            className="inline-flex items-center gap-2 font-mono text-sm font-medium text-primary"
                         >
                             <Terminal className="size-4" />
                             <span>$ start</span>
-                            <span className="inline-block h-4 w-2 animate-pulse text-orange-600" aria-hidden />
+                            <span className="inline-block h-4 w-2 animate-pulse text-primary" aria-hidden />
                         </p>
                         <h1
                             data-reveal
@@ -169,22 +169,22 @@ export default async function Home() {
                         {event && (
                             <div
                                 data-reveal
-                                className="relative mt-8 max-w-2xl overflow-hidden rounded-2xl border border-orange-200/80 bg-white/70 shadow-lg shadow-orange-500/10 backdrop-blur-sm"
+                                className="relative mt-8 max-w-2xl overflow-hidden rounded-2xl border border-primary/15 bg-white/70 shadow-lg shadow-primary/10 backdrop-blur-sm"
                             >
                                 <div className="grid md:grid-cols-3">
-                                    <div className="border-b border-orange-200/80 p-5 md:border-b-0 md:border-r">
-                                        <div className="flex items-center gap-2 text-orange-600">
+                                    <div className="border-b border-primary/15 p-5 md:border-b-0 md:border-r">
+                                        <div className="flex items-center gap-2 text-primary">
                                             <CalendarDays className="size-4" />
                                             <p className="font-mono text-xs font-semibold tracking-wide">Hackathon</p>
                                         </div>
                                         <p className="mt-3 text-base font-bold leading-6 text-foreground">
                                             {formatDate(event.startsAt)}
-                                            <span className="px-1 text-orange-500">–</span>
+                                            <span className="px-1 text-primary/70">–</span>
                                             {formatDate(event.endsAt)}
                                         </p>
                                     </div>
-                                    <div className="border-b border-orange-200/80 p-5 md:border-b-0 md:border-r">
-                                        <div className="flex items-center gap-2 text-orange-600">
+                                    <div className="border-b border-primary/15 p-5 md:border-b-0 md:border-r">
+                                        <div className="flex items-center gap-2 text-primary">
                                             <ClipboardPenLine className="size-4" />
                                             <p className="font-mono text-xs font-semibold tracking-wide">
                                                 Registration
@@ -192,13 +192,13 @@ export default async function Home() {
                                         </div>
                                         <p className="mt-3 text-base font-bold leading-6 text-foreground">
                                             {formatDate(event.registrationOpensAt)}
-                                            <span className="px-1 text-orange-500">–</span>
+                                            <span className="px-1 text-primary/70">–</span>
                                             {formatDate(event.registrationClosesAt)}
                                         </p>
                                     </div>
                                     {event.venue && (
                                         <div className="p-5">
-                                            <div className="flex items-center gap-2 text-orange-600">
+                                            <div className="flex items-center gap-2 text-primary">
                                                 <MapPin className="size-4" />
                                                 <p className="font-mono text-xs font-semibold tracking-wide">Venue</p>
                                             </div>
@@ -216,8 +216,8 @@ export default async function Home() {
                         </div>
                     </div>
                     <div data-reveal className="relative">
-                        <div className="absolute -inset-4 rounded-4xl bg-orange-500/10 blur-2xl" aria-hidden />
-                        <div className="relative overflow-hidden rounded-2xl glass shadow-2xl shadow-orange-500/10">
+                        <div className="absolute -inset-4 rounded-4xl bg-primary/10 blur-2xl" aria-hidden />
+                        <div className="relative overflow-hidden rounded-2xl glass shadow-2xl shadow-primary/10">
                             <div className="flex items-center gap-2 border-b border-slate-200/70 px-4 py-3">
                                 <span className="size-3 rounded-full bg-rose-300" aria-hidden />
                                 <span className="size-3 rounded-full bg-amber-300" aria-hidden />
@@ -227,7 +227,7 @@ export default async function Home() {
                                 </span>
                             </div>
                             {eventImage ? (
-                                <div className="relative aspect-1672/941 w-full bg-orange-100">
+                                <div className="relative aspect-1672/941 w-full bg-secondary">
                                     <Image
                                         src={eventImage}
                                         alt={event?.title ?? "KBU Hackathon event"}
@@ -238,7 +238,7 @@ export default async function Home() {
                                     />
                                 </div>
                             ) : (
-                                <div className="relative aspect-1672/941 w-full bg-orange-100">
+                                <div className="relative aspect-1672/941 w-full bg-secondary">
                                     <Image
                                         src="/images/kbu.webp"
                                         alt="KBU Hackathon event"
@@ -252,7 +252,7 @@ export default async function Home() {
                             <div className="border-t border-slate-200/70 px-5 py-3.5">
                                 <Link
                                     href="/3d-demo"
-                                    className="group inline-flex items-center gap-2 font-mono text-sm font-medium text-orange-600 transition hover:text-orange-700"
+                                    className="group inline-flex items-center gap-2 font-mono text-sm font-medium text-primary transition hover:text-primary/90"
                                 >
                                     walk_into_the_room
                                     <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
@@ -266,27 +266,25 @@ export default async function Home() {
                 <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-accent" aria-hidden />
             </section>
 
-            <section className="bg-orange-50/60">
+            <section className="bg-secondary/60">
                 <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
                     <AboutContent />
                 </div>
             </section>
 
             {/* Announcements */}
-            <section className="relative bg-background border-t border-orange-100/80 dot-grid">
+            <section className="relative bg-background border-t border-border/80 dot-grid">
                 <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
                     <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
                         <div data-reveal>
-                            <p className="font-mono text-sm font-medium text-orange-600">
-                                {t.home.latestAnnouncements}
-                            </p>
+                            <p className="font-mono text-sm font-medium text-primary">{t.home.latestAnnouncements}</p>
                             <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                                 {t.home.communityTitle}
                             </h2>
                             <p className="mt-4 text-brand-muted-foreground">{t.home.announcementsIntro}</p>
                             <Link
                                 href="/announcements"
-                                className="mt-6 inline-flex items-center gap-1 font-semibold text-orange-600 transition hover:text-orange-700"
+                                className="mt-6 inline-flex items-center gap-1 font-semibold text-primary transition hover:text-primary/90"
                             >
                                 {locale === "th" ? "อ่านประกาศทั้งหมด" : "Read all announcements"}{" "}
                                 <ArrowRight className="size-4" />
@@ -300,9 +298,9 @@ export default async function Home() {
             </section>
 
             {/* Final CTA */}
-            <section className="relative bg-background border-t border-orange-100/80 dot-grid">
+            <section className="relative bg-background border-t border-border/80 dot-grid">
                 <div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
-                    <p className="font-mono text-sm font-medium text-orange-600">$ ready_to_build --join</p>
+                    <p className="font-mono text-sm font-medium text-primary">$ ready_to_build --join</p>
                     <h2
                         data-reveal
                         className="mx-auto mt-5 max-w-2xl text-4xl font-black tracking-tight text-foreground sm:text-5xl"

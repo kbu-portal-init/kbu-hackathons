@@ -32,7 +32,7 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
         <>
             <button
                 type="button"
-                className="flex size-11 items-center justify-center rounded-lg text-brand-muted-foreground hover:bg-orange-50"
+                className="flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? t.closeMenu : t.openMenu}
@@ -49,17 +49,16 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                     <div className="flex flex-col gap-2">
                         {publicLinks.map(({ label, href }) => {
                             const active = isActivePath(pathname, href);
+                            const linkClassName = active
+                                ? "rounded-xl bg-secondary px-4 py-3 text-base font-semibold text-primary/90"
+                                : "rounded-xl px-4 py-3 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-primary/90";
                             return (
                                 <Link
                                     key={href}
                                     href={href}
                                     onClick={() => setOpen(false)}
                                     aria-current={active ? "page" : undefined}
-                                    className={
-                                        active
-                                            ? "rounded-xl bg-orange-50 px-4 py-3 text-base font-semibold text-orange-700"
-                                            : "rounded-xl px-4 py-3 text-base font-medium text-brand-muted-foreground hover:bg-orange-50 hover:text-orange-700"
-                                    }
+                                    className={linkClassName}
                                 >
                                     {labels[href as keyof typeof labels] ?? label}
                                 </Link>
@@ -70,7 +69,7 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                             <LanguageSwitcher locale={locale} className="w-full" />
                         </div>
                     </div>
-                    <div className="mt-auto border-t border-orange-100 pt-6">
+                    <div className="mt-auto border-t border-border/10 pt-6">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}

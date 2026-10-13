@@ -43,7 +43,7 @@ async function TeamDetailContent({ params }: { params: Promise<{ teamId: string 
                             />
                         ) : (
                             <div
-                                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700"
+                                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary/90"
                                 aria-hidden="true"
                             >
                                 {getInitials(team.displayName)}
@@ -92,7 +92,7 @@ async function TeamDetailContent({ params }: { params: Promise<{ teamId: string 
                                     />
                                 ) : (
                                     <div
-                                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-100 text-sm font-semibold text-orange-700"
+                                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary/90"
                                         aria-hidden="true"
                                     >
                                         {getInitials(member.name)}

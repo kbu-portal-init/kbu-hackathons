@@ -11,9 +11,7 @@ export function DashboardPageHeader({ eyebrow, title, description, actions }: Da
     return (
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
-                {eyebrow && (
-                    <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">{eyebrow}</p>
-                )}
+                {eyebrow && <p className="text-sm font-semibold uppercase tracking-widest text-primary">{eyebrow}</p>}
                 <h1
                     className={eyebrow ? "mt-2 text-3xl font-bold tracking-tight" : "text-3xl font-bold tracking-tight"}
                 >

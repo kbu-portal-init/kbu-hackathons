@@ -15,13 +15,13 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge variant="outline" className="border-amber-300 text-amber-700">
+                <Badge variant="outline" className="border-primary/15 text-primary/90">
                     Pending
                 </Badge>
             );
         case "APPROVED":
             return (
-                <Badge variant="outline" className="border-green-300 text-green-700">
+                <Badge variant="outline" className="border-success/15 text-success">
                     Approved
                 </Badge>
             );

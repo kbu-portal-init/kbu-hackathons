@@ -3,61 +3,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { type Control, Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import type { z } from "zod";
 import { submitTeamRegistration } from "@/actions/management/registrations";
 import { BackButton } from "@/components/back-button";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-    Field,
-    FieldDescription,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-    FieldLegend,
-    FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TeamMemberRole } from "@/generated/prisma/enums";
-import type { EducationProgram } from "@/lib/contracts/registration";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
 import { getMessages } from "@/lib/i18n/messages";
-import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
-
-type FormValues = z.input<typeof submitRegistrationSchema>;
-type SubmittedFormValues = z.output<typeof submitRegistrationSchema>;
-
-export type ProgramSlot = { program: EducationProgram; remaining: number; limit: number };
-
-const programLabels: Record<EducationProgram, string> = {
-    THAI_PROGRAM: "Thai program",
-    INTERNATIONAL_PROGRAM: "International program",
-};
-
-const roleOptions = [
-    { value: TeamMemberRole.DEVELOPER, label: formatRole(TeamMemberRole.DEVELOPER) },
-    { value: TeamMemberRole.DESIGNER, label: formatRole(TeamMemberRole.DESIGNER) },
-    { value: TeamMemberRole.PRODUCT_MANAGER, label: formatRole(TeamMemberRole.PRODUCT_MANAGER) },
-    { value: TeamMemberRole.MARKETER, label: formatRole(TeamMemberRole.MARKETER) },
-    { value: TeamMemberRole.PRESENTER, label: formatRole(TeamMemberRole.PRESENTER) },
-    { value: TeamMemberRole.RESEARCHER, label: formatRole(TeamMemberRole.RESEARCHER) },
-    { value: TeamMemberRole.TESTER, label: formatRole(TeamMemberRole.TESTER) },
-    { value: TeamMemberRole.OTHER, label: formatRole(TeamMemberRole.OTHER) },
-] as const;
+import { AcknowledgmentDialog } from "./acknowledgment-dialog";
+import { MemberRow } from "./member-row";
+import { ProgramPicker } from "./program-picker";
+import { RosterSummary } from "./roster-summary";
+import { SectionHeading } from "./section-heading";
+import { TeamSizeStepper } from "./team-size-stepper";
+import type { FormValues, Locale, ProgramSlot, SubmittedFormValues } from "./types";
 
 export function RegistrationForm({
     minTeamSize,
@@ -68,9 +31,10 @@ export function RegistrationForm({
     minTeamSize: number;
     maxTeamSize: number;
     programSlots: ProgramSlot[];
-    locale: "en" | "th";
+    locale: Locale;
 }) {
     const t = getMessages(locale).register;
+    const th = locale === "th";
     const [submitted, setSubmitted] = useState(false);
     const [selectedTeamSize, setSelectedTeamSize] = useState(minTeamSize);
     const [informationOpen, setInformationOpen] = useState(false);
@@ -92,23 +56,35 @@ export function RegistrationForm({
         },
     });
 
-    const { fields, replace } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "members",
     });
 
-    const teamSize = selectedTeamSize;
+    const [watchedTeamName, watchedProgram, watchedLeaderName, watchedMembers] = form.watch([
+        "teamName",
+        "program",
+        "leaderName",
+        "members",
+    ]);
 
-    const changeTeamSize = (value: string | null) => {
-        if (!value) return;
-        const nextTeamSize = Number(value);
+    const changeTeamSize = (nextTeamSize: number) => {
+        if (nextTeamSize === selectedTeamSize) return;
+
+        const targetMembers = Math.max(0, nextTeamSize - 1);
+        const currentMembers = form.getValues("members")?.length ?? 0;
+
+        if (targetMembers > currentMembers) {
+            // Add only the new empty rows; existing rows keep their typed values
+            for (let i = currentMembers; i < targetMembers; i++) {
+                append({ name: "", role: TeamMemberRole.DEVELOPER, email: "" }, { shouldFocus: false });
+            }
+        } else if (targetMembers < currentMembers) {
+            // Remove only the rows at the end
+            remove(Array.from({ length: currentMembers - targetMembers }, (_, i) => targetMembers + i));
+        }
+
         setSelectedTeamSize(nextTeamSize);
-        replace(
-            Array.from(
-                { length: Math.max(0, nextTeamSize - 1) },
-                (_, index) => fields[index] ?? { name: "", role: TeamMemberRole.DEVELOPER, email: "" },
-            ),
-        );
     };
 
     const onSubmit = async (values: SubmittedFormValues) => {
@@ -136,8 +112,8 @@ export function RegistrationForm({
 
     if (submitted) {
         return (
-            <div className="mx-auto max-w-xl rounded-2xl border border-green-200 bg-white p-8 text-center shadow-xl shadow-green-100/40">
-                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="mx-auto max-w-xl rounded-2xl border border-primary/30 bg-card p-8 text-center shadow-xl shadow-primary/10">
+                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-success/15 text-success">
                     <CheckCircle2 className="size-7" />
                 </div>
                 <h2 className="mt-6 text-2xl font-bold tracking-tight">{t.submitted}</h2>
@@ -149,304 +125,221 @@ export function RegistrationForm({
         );
     }
 
+    const rosterNames = [watchedLeaderName ?? "", ...(watchedMembers ?? []).map((m) => m?.name ?? "")];
+
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-8 rounded-2xl border border-orange-100 bg-white p-6 shadow-xl shadow-orange-100/40">
-                {/* Team Information */}
-                <FieldSet>
-                    <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        {locale === "th" ? "ข้อมูลทีม" : "About Your Team"}
-                    </FieldLegend>
-                    <FieldGroup>
-                        <Controller
-                            name="teamName"
-                            control={form.control}
-                            render={({ field, fieldState }) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>
-                                        {locale === "th" ? "ชื่อทีม" : "Team name"}
-                                    </FieldLabel>
-                                    <Input
-                                        {...field}
-                                        id={field.name}
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="e.g. Byte Builders"
-                                    />
-                                    <FieldDescription>{t.uniqueTeamName}</FieldDescription>
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
+                <div className="space-y-6">
+                    {/* 1 · Team */}
+                    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                        <SectionHeading
+                            step={1}
+                            title={th ? "ข้อมูลทีม" : "About your team"}
+                            hint={th ? "ตั้งชื่อทีมและเลือกหลักสูตร" : "Name your team and pick your program."}
                         />
-                        <Controller
-                            name="program"
-                            control={form.control}
-                            render={({ field, fieldState }) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="program">
-                                        {locale === "th" ? "หลักสูตรการศึกษา" : "Education program"}
-                                    </FieldLabel>
-                                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
-                                        <SelectTrigger
-                                            id="program"
-                                            className="w-full"
-                                            aria-invalid={fieldState.invalid}
-                                        >
-                                            <SelectValue placeholder={t.selectProgram} />
-                                        </SelectTrigger>
-                                        <SelectContent alignItemWithTrigger={false}>
-                                            {programSlots.map((slot) => (
-                                                <SelectItem
-                                                    key={slot.program}
-                                                    value={slot.program}
-                                                    disabled={slot.remaining <= 0}
-                                                >
-                                                    {programLabels[slot.program]} ({slot.remaining} of {slot.limit}{" "}
-                                                    {t.slotsLeft})
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FieldDescription>{t.programDescription}</FieldDescription>
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
-                        />
-                        <Field>
-                            <FieldLabel htmlFor="team-size">{locale === "th" ? "ขนาดทีม" : "Team size"}</FieldLabel>
-                            <Select value={String(selectedTeamSize)} onValueChange={changeTeamSize}>
-                                <SelectTrigger id="team-size" className="w-full">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent alignItemWithTrigger={false}>
-                                    {Array.from({ length: maxTeamSize - minTeamSize + 1 }, (_, index) => {
-                                        const size = minTeamSize + index;
-                                        return (
-                                            <SelectItem key={size} value={String(size)}>
-                                                {size} {t.membersLabel}
-                                            </SelectItem>
-                                        );
-                                    })}
-                                </SelectContent>
-                            </Select>
-                            <FieldDescription>
-                                {t.teamSizeHelp} {minTeamSize} and {maxTeamSize} {t.totalMembers}
-                            </FieldDescription>
-                        </Field>
-                    </FieldGroup>
-                </FieldSet>
+                        <FieldSet className="mt-6">
+                            <FieldGroup>
+                                <Controller
+                                    name="teamName"
+                                    control={form.control}
+                                    render={({ field, fieldState }) => (
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <FieldLabel htmlFor={field.name}>{th ? "ชื่อทีม" : "Team name"}</FieldLabel>
+                                            <Input
+                                                {...field}
+                                                id={field.name}
+                                                aria-invalid={fieldState.invalid}
+                                                placeholder="e.g. Byte Builders"
+                                                className="h-11 text-base"
+                                            />
+                                            <FieldDescription>{t.uniqueTeamName}</FieldDescription>
+                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        </Field>
+                                    )}
+                                />
 
-                {/* Team Leader */}
-                <FieldSet>
-                    <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        {locale === "th" ? "หัวหน้าทีม" : "Team Leader"}
-                    </FieldLegend>
-                    <FieldGroup>
-                        <div className="grid gap-5 sm:grid-cols-2">
-                            <Controller
-                                name="leaderName"
-                                control={form.control}
-                                render={({ field, fieldState }) => (
-                                    <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>
-                                            {locale === "th" ? "ชื่อเต็ม" : "Full name"}
-                                        </FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            aria-invalid={fieldState.invalid}
-                                            placeholder="Jane Doe"
-                                        />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                <Controller
+                                    name="program"
+                                    control={form.control}
+                                    render={({ field, fieldState }) => (
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <FieldLabel id="program-label">
+                                                {th ? "หลักสูตรการศึกษา" : "Education program"}
+                                            </FieldLabel>
+                                            <ProgramPicker
+                                                name={field.name}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                onBlur={field.onBlur}
+                                                invalid={fieldState.invalid}
+                                                slots={programSlots}
+                                                labelledBy="program-label"
+                                                locale={locale}
+                                            />
+                                            <FieldDescription>{t.programDescription}</FieldDescription>
+                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        </Field>
+                                    )}
+                                />
+
+                                <Field>
+                                    <FieldLabel id="team-size-label">{th ? "ขนาดทีม" : "Team size"}</FieldLabel>
+                                    <TeamSizeStepper
+                                        value={selectedTeamSize}
+                                        min={minTeamSize}
+                                        max={maxTeamSize}
+                                        onChange={changeTeamSize}
+                                        labelledBy="team-size-label"
+                                        locale={locale}
+                                    />
+                                    <FieldDescription>
+                                        {t.teamSizeHelp} {minTeamSize} and {maxTeamSize} {t.totalMembers}
+                                    </FieldDescription>
+                                </Field>
+                            </FieldGroup>
+                        </FieldSet>
+                    </section>
+
+                    {/* 2 · Leader */}
+                    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                        <SectionHeading
+                            step={2}
+                            title={th ? "หัวหน้าทีม" : "Team leader"}
+                            hint={th ? "หัวหน้าทีมจะเป็นผู้ติดต่อหลักของทีม" : "Your leader is the main contact for the team."}
+                        />
+                        <FieldSet className="mt-6">
+                            <FieldGroup>
+                                <div className="grid gap-5 sm:grid-cols-2">
+                                    <Controller
+                                        name="leaderName"
+                                        control={form.control}
+                                        render={({ field, fieldState }) => (
+                                            <Field data-invalid={fieldState.invalid}>
+                                                <FieldLabel htmlFor={field.name}>
+                                                    {th ? "ชื่อเต็ม" : "Full name"}
+                                                </FieldLabel>
+                                                <Input
+                                                    {...field}
+                                                    id={field.name}
+                                                    aria-invalid={fieldState.invalid}
+                                                    placeholder="Jane Doe"
+                                                    className="h-11 text-base"
+                                                />
+                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                            </Field>
+                                        )}
+                                    />
+                                    <Field>
+                                        <FieldLabel>{t.role}</FieldLabel>
+                                        <div className="flex h-11 items-center rounded-md border border-input bg-muted/60 px-3 text-base text-muted-foreground">
+                                            {t.leaderRole}
+                                        </div>
                                     </Field>
-                                )}
-                            />
-                            <Field>
-                                <FieldLabel>{t.role}</FieldLabel>
-                                <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
-                                    {t.leaderRole}
                                 </div>
-                            </Field>
-                        </div>
-                        <Controller
-                            name="leaderEmail"
-                            control={form.control}
-                            render={({ field, fieldState }) => (
-                                <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={field.name}>
-                                        {locale === "th" ? "อีเมลนักศึกษา" : "Student email"}
-                                    </FieldLabel>
-                                    <Input
-                                        {...field}
-                                        id={field.name}
-                                        type="email"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="u...@ms.kbu.ac.th"
-                                    />
-                                    <FieldDescription>{t.validStudentEmail}</FieldDescription>
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                </Field>
-                            )}
+                                <Controller
+                                    name="leaderEmail"
+                                    control={form.control}
+                                    render={({ field, fieldState }) => (
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <FieldLabel htmlFor={field.name}>
+                                                {th ? "อีเมลนักศึกษา" : "Student email"}
+                                            </FieldLabel>
+                                            <Input
+                                                {...field}
+                                                id={field.name}
+                                                type="email"
+                                                aria-invalid={fieldState.invalid}
+                                                placeholder="u...@ms.kbu.ac.th"
+                                                className="h-11 text-base"
+                                            />
+                                            <FieldDescription>{t.validStudentEmail}</FieldDescription>
+                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        </Field>
+                                    )}
+                                />
+                            </FieldGroup>
+                        </FieldSet>
+                    </section>
+
+                    {/* 3 · Members */}
+                    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                        <SectionHeading
+                            step={3}
+                            title={`${th ? "สมาชิกทีมคนอื่น ๆ" : "Other team members"} (${selectedTeamSize - 1})`}
+                            hint={
+                                th ? "เปลี่ยนจำนวนสมาชิกได้ที่ขนาดทีมด้านบน" : "Change the number of rows with team size above."
+                            }
                         />
-                    </FieldGroup>
-                </FieldSet>
-
-                {/* Team Members */}
-                <FieldSet>
-                    <FieldLegend className="border-b border-primary/30 pb-1 text-base font-semibold text-foreground">
-                        {locale === "th" ? "สมาชิกทีมคนอื่น ๆ" : "Other Team Members"} ({teamSize - 1})
-                    </FieldLegend>
-                    <FieldGroup className="gap-3">
-                        {fields.map((field, index) => (
-                            <MemberRow key={field.id} index={index} control={form.control} locale={locale} />
-                        ))}
-                    </FieldGroup>
-                </FieldSet>
-
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="lg"
-                        className="w-full sm:w-auto"
-                        onClick={() => setInformationOpen(true)}
-                    >
-                        {t.readBeforeSubmit}
-                    </Button>
-                    <Button
-                        type="submit"
-                        size={"lg"}
-                        disabled={form.formState.isSubmitting || !acknowledged}
-                        className="w-full min-w-40 sm:w-auto"
-                    >
-                        {form.formState.isSubmitting ? (
-                            <>
-                                <Loader2 className="size-4 animate-spin" />
-                                {t.submitting}
-                            </>
-                        ) : (
-                            t.submitRegistration
-                        )}
-                    </Button>
-                </div>
-            </div>
-            <AlertDialog open={informationOpen} onOpenChange={setInformationOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t.beforeSubmit}</AlertDialogTitle>
-                        <AlertDialogDescription render={<div />}>
-                            <ol className="list-decimal space-y-2 pl-5">
-                                {t.submitSteps.map((step) => (
-                                    <li className="text-start" key={step}>
-                                        {step}
-                                    </li>
+                        <FieldSet className="mt-6">
+                            <FieldGroup className="gap-4">
+                                {fields.map((field, index) => (
+                                    <MemberRow key={field.id} index={index} control={form.control} locale={locale} />
                                 ))}
-                            </ol>
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <FieldSet className="border-t pt-4">
-                        <Field orientation="horizontal" className="items-start">
-                            <input
-                                id="registration-acknowledgment"
-                                type="checkbox"
-                                checked={acknowledged}
-                                onChange={(event) => setAcknowledged(event.target.checked)}
-                                className="mt-1 size-4 accent-orange-600"
-                            />
-                            <FieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
-                                {t.acknowledgment}
-                            </FieldLabel>
-                        </Field>
-                    </FieldSet>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{t.close}</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => setInformationOpen(false)} disabled={!acknowledged}>
-                            {t.understand}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </form>
-    );
-}
-
-function MemberRow({
-    index,
-    control,
-    locale,
-}: {
-    index: number;
-    control: Control<FormValues, unknown, SubmittedFormValues>;
-    locale: "en" | "th";
-}) {
-    const t = getMessages(locale).register;
-    return (
-        <FieldGroup>
-            <div className="flex gap-3 rounded-lg border border-zinc-200 p-3">
-                <div className="grid flex-1 gap-4 sm:grid-cols-3">
-                    <Controller
-                        name={`members.${index}.name`}
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>{locale === "th" ? "ชื่อ" : "Name"}</FieldLabel>
-                                <InputGroup>
-                                    <InputGroupInput
-                                        {...field}
-                                        id={field.name}
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder={t.memberPlaceholder}
-                                    />
-                                </InputGroup>
-                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                            </Field>
-                        )}
-                    />
-                    <Controller
-                        name={`members.${index}.role`}
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>{locale === "th" ? "บทบาท" : "Role"}</FieldLabel>
-                                <Select value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
-                                        <SelectValue>
-                                            {t.roles[field.value as keyof typeof t.roles] ??
-                                                roleOptions.find((option) => option.value === field.value)?.label}
-                                        </SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent alignItemWithTrigger={false}>
-                                        {roleOptions.map((opt) => (
-                                            <SelectItem key={opt.value} value={opt.value}>
-                                                {t.roles[opt.value as keyof typeof t.roles] ?? opt.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                            </Field>
-                        )}
-                    />
-                    <Controller
-                        name={`members.${index}.email`}
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>{t.email}</FieldLabel>
-                                <InputGroup>
-                                    <InputGroupInput
-                                        {...field}
-                                        id={field.name}
-                                        type="email"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="u...@ms.kbu.ac.th"
-                                    />
-                                </InputGroup>
-                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                            </Field>
-                        )}
-                    />
+                            </FieldGroup>
+                        </FieldSet>
+                    </section>
                 </div>
+
+                <aside className="space-y-4 lg:sticky lg:top-6">
+                    <RosterSummary
+                        teamName={watchedTeamName}
+                        program={watchedProgram}
+                        names={rosterNames}
+                        teamSize={selectedTeamSize}
+                        locale={locale}
+                    />
+
+                    <div className="flex flex-col gap-3">
+                        <Button
+                            type="submit"
+                            size="lg"
+                            disabled={form.formState.isSubmitting || !acknowledged}
+                            className="h-12 w-full bg-gradient-accent text-base font-semibold text-white hover:opacity-90"
+                        >
+                            {form.formState.isSubmitting ? (
+                                <>
+                                    <Loader2 className="size-4 animate-spin" />
+                                    {t.submitting}
+                                </>
+                            ) : (
+                                t.submitRegistration
+                            )}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="lg"
+                            className="w-full"
+                            onClick={() => setInformationOpen(true)}
+                        >
+                            {acknowledged ? (
+                                <>
+                                    <CheckCircle2 className="size-4 text-success" />
+                                    {th ? "อ่านข้อมูลแล้ว" : "Read and acknowledged"}
+                                </>
+                            ) : (
+                                t.readBeforeSubmit
+                            )}
+                        </Button>
+                        {!acknowledged ? (
+                            <p className="text-center text-sm leading-5 text-brand-muted-foreground">
+                                {th
+                                    ? "อ่านและยืนยันข้อมูลก่อน จึงจะส่งใบสมัครได้"
+                                    : "Read and confirm the info first to unlock submit."}
+                            </p>
+                        ) : null}
+                    </div>
+                </aside>
             </div>
-        </FieldGroup>
+
+            <AcknowledgmentDialog
+                open={informationOpen}
+                onOpenChange={setInformationOpen}
+                acknowledged={acknowledged}
+                onAcknowledgedChange={setAcknowledged}
+                locale={locale}
+            />
+        </form>
     );
 }

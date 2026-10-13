@@ -25,7 +25,7 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
     return (
         <section className="rounded-2xl border border-zinc-200 bg-white p-6">
             <div className="flex items-center gap-2">
-                <ImageIcon className="size-5 text-orange-500" />
+                <ImageIcon className="size-5 text-primary/70" />
                 <h2 className="text-lg font-semibold">Event images</h2>
                 {imageUrls.length > 0 && (
                     <Badge variant="secondary" className="ml-auto">

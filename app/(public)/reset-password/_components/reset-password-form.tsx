@@ -42,8 +42,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
     if (completed) {
         return (
-            <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
-                <div className="w-full max-w-md rounded-2xl border border-orange-100 bg-white p-7 shadow-xl">
+            <main className="flex flex-1 items-center justify-center bg-secondary/60 px-6 py-16">
+                <div className="w-full max-w-md rounded-2xl border border-border/10 bg-white p-7 shadow-xl shadow-secondary/40">
                     <h1 className="text-3xl font-bold tracking-tight">Password set</h1>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         Your password has been saved. You can now sign in with the account credentials associated with
@@ -58,22 +58,20 @@ export function ResetPasswordForm({ token }: { token: string }) {
     }
 
     return (
-        <main className="flex flex-1 items-center justify-center bg-orange-50/60 px-6 py-16">
+        <main className="flex flex-1 items-center justify-center bg-secondary/60 px-6 py-16">
             <div className="w-full max-w-md">
                 <BackButton fallbackHref="/" label="Back to KBU Hackathon 2026" className="mb-8" />
-                <div className="rounded-2xl border border-orange-100 bg-white p-7 shadow-xl shadow-orange-100/40">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
+                <div className="rounded-2xl border border-border/10 bg-white p-7 shadow-xl shadow-secondary/40">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary/90">
                         <LockKeyhole className="size-5" />
                     </div>
-                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-orange-600">
-                        Password setup
-                    </p>
+                    <p className="mt-6 text-sm font-semibold uppercase tracking-widest text-primary">Password setup</p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight">Set your password</h1>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         Choose a password for your KBU Hackathon 2026 account.
                     </p>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
-                        <p className="text-sm text-red-500">{submitError}</p>
+                        <p className="text-sm text-destructive">{submitError}</p>
                         <div className="space-y-2">
                             <label htmlFor="newPassword" className="text-sm font-medium">
                                 New password
@@ -137,5 +135,5 @@ export function ResetPasswordForm({ token }: { token: string }) {
 }
 
 function FormError({ message }: { message?: string }) {
-    return message ? <p className="text-sm text-red-500">{message}</p> : null;
+    return message ? <p className="text-sm text-destructive">{message}</p> : null;
 }
