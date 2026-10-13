@@ -2,7 +2,7 @@
 
 import { Megaphone } from "lucide-react";
 import Image from "next/image";
-import type { UseFormReturn } from "react-hook-form";
+import type { FieldValues, UseFormReturn } from "react-hook-form";
 import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,27 +15,31 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+
+type AnnouncementCategory = "IMPORTANT" | "UPDATES" | "NEWS";
 
 type FormFields = {
     title?: string;
     content?: string;
     imageUrl?: string;
+    category?: AnnouncementCategory;
 };
 
-type AnnouncementFormDialogProps<T extends FormFields> = {
+type AnnouncementFormDialogProps<TInput extends FormFields, TOutput extends FieldValues = TInput> = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    form: UseFormReturn<T>;
+    form: UseFormReturn<TInput, unknown, TOutput>;
     title: string;
     description: string;
     submitLabel: string;
     pendingLabel: string;
     isPending: boolean;
-    onSubmit: (values: T) => void;
+    onSubmit: (values: TOutput) => void;
 };
 
-export function AnnouncementFormDialog<T extends FormFields>({
+export function AnnouncementFormDialog<TInput extends FormFields, TOutput extends FieldValues = TInput>({
     open,
     onOpenChange,
     form,
@@ -45,10 +49,13 @@ export function AnnouncementFormDialog<T extends FormFields>({
     pendingLabel,
     isPending,
     onSubmit,
-}: AnnouncementFormDialogProps<T>) {
-    const { register, watch, setValue, formState } = form as unknown as UseFormReturn<FormFields>;
+}: AnnouncementFormDialogProps<TInput, TOutput>) {
+    // Keep the existing UI generic while allowing Zod input/output types to differ.
+    const typedForm = form as unknown as UseFormReturn<FormFields>;
+    const { register, watch, setValue, formState } = typedForm;
     const errors = formState.errors;
     const imageUrl = watch("imageUrl");
+    const category = watch("category");
 
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
@@ -56,6 +63,17 @@ export function AnnouncementFormDialog<T extends FormFields>({
         }
 
         onOpenChange(nextOpen);
+    };
+
+    const handleCategoryChange = (value: FormFields["category"] | null) => {
+        if (value === null) {
+            return;
+        }
+
+        setValue("category", value, {
+            shouldDirty: true,
+            shouldValidate: true,
+        });
     };
 
     return (
@@ -111,6 +129,30 @@ export function AnnouncementFormDialog<T extends FormFields>({
                                 />
 
                                 {errors.content && <FieldError errors={[errors.content]} />}
+                            </Field>
+
+                            <Field data-invalid={!!errors.category}>
+                                <FieldLabel htmlFor="announcement-category">
+                                    Category <span className="text-destructive">*</span>
+                                </FieldLabel>
+
+                                <Select value={category ?? "NEWS"} onValueChange={handleCategoryChange}>
+                                    <SelectTrigger
+                                        id="announcement-category"
+                                        className="h-11"
+                                        aria-invalid={!!errors.category}
+                                    >
+                                        <SelectValue placeholder="Select a category" />
+                                    </SelectTrigger>
+
+                                    <SelectContent>
+                                        <SelectItem value="IMPORTANT">Important</SelectItem>
+                                        <SelectItem value="UPDATES">Updates</SelectItem>
+                                        <SelectItem value="NEWS">News</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                {errors.category && <FieldError errors={[errors.category]} />}
                             </Field>
 
                             <Field data-invalid={!!errors.imageUrl}>

@@ -1,267 +1,163 @@
-import { cn } from "cn";
-import { X } from "lucide-react";
+import { ChevronRight, House } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { listPublishedAnnouncements } from "@/actions/management/announcements";
-import { BackButton } from "@/components/back-button";
-import { PaginationFooter } from "@/components/pagination-footer";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
+
+import { AnnouncementSearch } from "@/components/announcements/announcement-search";
 import { ListPublicAnnouncementSchema } from "@/lib/contracts/announcements";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
-import { isOwnedR2PublicUrl } from "@/lib/r2";
+
+import { AnnouncementResults } from "./_components/announcement-results";
+import AnnouncementResultsFallback from "./_components/announcement-results-fallback";
 
 export const metadata: Metadata = {
     title: "Announcements | KBU Hackathon 2026",
     description: "Registration dates, community news, and important updates from the KBU Hackathon 2026 team.",
 };
 
-const PAGE_SIZE = 10;
 const MAX_SEARCH_LENGTH = 100;
 
-const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeZone: "Asia/Bangkok",
-});
+type Category = "all" | "important" | "update" | "news";
 
-function AnnouncementCard({ announcement }: { announcement: PublicAnnouncementDTO }) {
-    const publishedDate = announcement.publishedAt ?? announcement.createdAt;
+const categories: { value: Category }[] = [
+    { value: "all" },
+    { value: "important" },
+    { value: "update" },
+    { value: "news" },
+];
 
-    const imageUrl =
-        announcement.imageUrl &&
-        (isOwnedR2PublicUrl(announcement.imageUrl, "uploads/announcements") ||
-            isOwnedR2PublicUrl(announcement.imageUrl, "uploads/events"))
-            ? announcement.imageUrl
-            : "/images/kbu.webp";
+const categoryQueryValues: Record<Exclude<Category, "all">, "IMPORTANT" | "UPDATES" | "NEWS"> = {
+    important: "IMPORTANT",
+    update: "UPDATES",
+    news: "NEWS",
+};
 
-    return (
-        <Link
-            href={`/announcements/${announcement.id}`}
-            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 hover:border-orange-300 transition hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-            <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                <Image
-                    src={imageUrl}
-                    alt={announcement.title}
-                    fill
-                    className="object-cover transition duration-300 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-            </div>
+function getCategoryHref(category: Category, search?: string): string {
+    const query = new URLSearchParams();
 
-            <article className="flex flex-1 flex-col p-5">
-                <time
-                    dateTime={new Date(publishedDate).toISOString()}
-                    className="text-xs font-semibold uppercase tracking-[0.16em] text-primary"
-                >
-                    {dateFormatter.format(new Date(publishedDate))}
-                </time>
-
-                <h2 className="mt-3 line-clamp-2 text-lg font-bold tracking-tight text-foreground">
-                    {announcement.title}
-                </h2>
-
-                <p className="mt-2 line-clamp-3 text-sm leading-6 text-brand-muted-foreground">
-                    {announcement.content}
-                </p>
-            </article>
-        </Link>
-    );
-}
-
-function AnnouncementResultsFallback({ loadingLabel }: { loadingLabel: string }) {
-    return (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3" role="status" aria-label={loadingLabel}>
-            <span className="sr-only">{loadingLabel}</span>
-            {(["one", "two", "three", "four", "five", "six"] as const).map((card) => (
-                <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm" key={card}>
-                    <Skeleton className="aspect-video w-full bg-zinc-100" />
-                    <Skeleton className="mt-4 h-3 w-24 bg-orange-100" />
-                    <Skeleton className="mt-3 h-5 w-3/4 bg-zinc-100" />
-                    <Skeleton className="mt-2 h-4 w-full bg-zinc-100" />
-                </div>
-            ))}
-        </div>
-    );
-}
-
-async function AnnouncementResults({
-    page,
-    search,
-    emptyLabel,
-    emptyForLabel,
-    errorLabel,
-    publishedLabel,
-}: {
-    page: number;
-    search?: string;
-    emptyLabel: string;
-    emptyForLabel: string;
-    errorLabel: string;
-    publishedLabel: string;
-}) {
-    const getPageHref = (target: number) => {
-        const query = new URLSearchParams();
-
-        if (search) {
-            query.set("search", search);
-        }
-
-        if (target > 1) {
-            query.set("page", String(target));
-        }
-
-        const queryString = query.toString();
-
-        return queryString ? `/announcements?${queryString}` : "/announcements";
-    };
-
-    const result = await listPublishedAnnouncements({
-        page,
-        pageSize: PAGE_SIZE,
-        search,
-    });
-
-    if (result.ok) {
-        const lastPage = Math.max(1, Math.ceil(result.data.meta.total / PAGE_SIZE));
-
-        if (page > lastPage) {
-            redirect(getPageHref(lastPage));
-        }
+    if (category !== "all") {
+        query.set("category", categoryQueryValues[category]);
     }
 
-    const items = result.ok ? result.data.items : [];
-    const meta = result.ok ? result.data.meta : null;
+    if (search) {
+        query.set("search", search);
+    }
 
-    return (
-        <>
-            {!result.ok && <p className="py-16 text-center text-sm text-muted-foreground">{errorLabel}</p>}
+    const queryString = query.toString();
 
-            {result.ok && items.length === 0 && (
-                <p className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-                    {search ? `${emptyForLabel} "${search}".` : emptyLabel}
-                </p>
-            )}
-
-            {items.length > 0 && (
-                <section aria-label={publishedLabel} className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {items.map((announcement) => (
-                        <AnnouncementCard key={announcement.id} announcement={announcement} />
-                    ))}
-                </section>
-            )}
-
-            {meta && items.length > 0 && (
-                <div className="mt-10">
-                    <PaginationFooter
-                        page={meta.page}
-                        pageSize={meta.pageSize}
-                        total={meta.total}
-                        itemsShown={items.length}
-                        hasNextPage={meta.hasNextPage}
-                        getPageHref={getPageHref}
-                    />
-                </div>
-            )}
-        </>
-    );
+    return queryString ? `/announcements?${queryString}` : "/announcements";
 }
 
 export default async function AnnouncementsPage({
     searchParams,
 }: {
-    searchParams: Promise<{ page?: string; search?: string }>;
+    searchParams: Promise<{
+        page?: string;
+        search?: string;
+        category?: string;
+    }>;
 }) {
-    const t = getMessages(await getLocale());
+    const params = await searchParams;
+    const t = getMessages(await getLocale()).announcementsPage;
+
+    const parsed = ListPublicAnnouncementSchema.safeParse({
+        page: params.page,
+        search: params.search,
+        category: params.category,
+    });
+
+    const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
+    const search = filters.search ? filters.search.slice(0, MAX_SEARCH_LENGTH) : undefined;
+    const activeCategory: Category = filters.category
+        ? filters.category === "IMPORTANT"
+            ? "important"
+            : filters.category === "UPDATES"
+              ? "update"
+              : "news"
+        : "all";
+
     return (
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-            <div className="mb-8">
-                <BackButton fallbackHref="/" />
-            </div>
+        <main className="relative mx-auto w-full max-w-5xl flex-1 overflow-hidden px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-24 -top-20 size-72 rounded-full bg-orange-100/40 blur-3xl"
+            />
+
+            <nav aria-label="Breadcrumb" className="relative mb-5 flex items-center gap-2 text-sm">
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary"
+                >
+                    <House aria-hidden="true" className="size-4" />
+                    {t.home}
+                </Link>
+
+                <ChevronRight aria-hidden="true" className="size-4 text-muted-foreground/60" />
+
+                <span aria-current="page" className="font-medium text-foreground">
+                    {t.title}
+                </span>
+            </nav>
 
             <section className="mb-8 max-w-3xl">
                 <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
-                    {t.announcementsPage.title}
+                    {t.title}
                 </h1>
 
-                <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{t.announcementsPage.intro}</p>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{t.subtitle}</p>
             </section>
 
-            <Suspense fallback={<AnnouncementSearchFallback loadingLabel={t.home.loadingAnnouncements} />}>
-                {searchParams.then((params) => {
-                    const parsed = ListPublicAnnouncementSchema.safeParse(params);
-                    const filters = parsed.success ? parsed.data : ListPublicAnnouncementSchema.parse({});
+            <section aria-label={t.search} className="relative mb-6 sm:mb-8">
+                <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
+                    <div className="min-w-0 flex-1">
+                        <AnnouncementSearch
+                            defaultValue={search}
+                            category={filters.category ?? "all"}
+                            labels={{
+                                search: t.search,
+                                searchButton: t.searchButton,
+                                closeSearch: t.closeSearch,
+                            }}
+                        />
+                    </div>
 
-                    const search = filters.search ? filters.search.slice(0, MAX_SEARCH_LENGTH) : undefined;
+                    <nav aria-label={t.filterLabel} className="flex shrink-0 flex-wrap items-center gap-2">
+                        {categories.map((item) => {
+                            const isActive = activeCategory === item.value;
 
-                    return (
-                        <>
-                            <section className="mb-10">
-                                <search>
-                                    <form
-                                        action="/announcements"
-                                        method="get"
-                                        className="flex max-w-3xl items-center gap-2"
-                                    >
-                                        <Input
-                                            key={search ?? ""}
-                                            type="search"
-                                            name="search"
-                                            defaultValue={search}
-                                            placeholder={t.announcementsPage.search}
-                                            aria-label={t.announcementsPage.search}
-                                            maxLength={MAX_SEARCH_LENGTH}
-                                            className="h-11"
-                                        />
+                            return (
+                                <Link
+                                    key={item.value}
+                                    href={getCategoryHref(item.value, search)}
+                                    aria-current={isActive ? "page" : undefined}
+                                    className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                                        isActive
+                                            ? "border-orange-600 bg-orange-600 text-white"
+                                            : "border-border bg-white text-muted-foreground hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+                                    }`}
+                                >
+                                    {t.categories[item.value]}
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
+            </section>
 
-                                        <Button type="submit" className="h-11 px-6">
-                                            {t.announcementsPage.searchButton}
-                                        </Button>
-
-                                        {search && (
-                                            <Link
-                                                href="/announcements"
-                                                className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}
-                                                aria-label={t.announcementsPage.clearSearch}
-                                            >
-                                                <X aria-hidden="true" />
-                                                {t.announcementsPage.clearSearch}
-                                            </Link>
-                                        )}
-                                    </form>
-                                </search>
-                            </section>
-
-                            <Suspense
-                                fallback={<AnnouncementResultsFallback loadingLabel={t.home.loadingAnnouncements} />}
-                            >
-                                <AnnouncementResults
-                                    page={filters.page}
-                                    search={search}
-                                    emptyLabel={t.announcementsPage.empty}
-                                    emptyForLabel={t.announcementsPage.emptyFor}
-                                    errorLabel={t.home.announcementsUnavailable}
-                                    publishedLabel={t.common.announcements}
-                                />
-                            </Suspense>
-                        </>
-                    );
-                })}
-            </Suspense>
+            <section aria-label={t.title} className="relative min-w-0">
+                <Suspense fallback={<AnnouncementResultsFallback />}>
+                    <AnnouncementResults
+                        page={filters.page}
+                        search={search}
+                        category={filters.category}
+                        labels={{
+                            loadError: t.loadError,
+                            emptyAll: t.emptyAll,
+                        }}
+                    />
+                </Suspense>
+            </section>
         </main>
-    );
-}
-
-function AnnouncementSearchFallback({ loadingLabel }: { loadingLabel: string }) {
-    return (
-        <section className="mb-10" role="status" aria-label={loadingLabel}>
-            <Skeleton className="h-11 w-full max-w-3xl bg-zinc-100" />
-        </section>
     );
 }

@@ -25,7 +25,7 @@ const nextConfig: NextConfig = {
                   {
                       protocol: "https",
                       hostname: r2Hostname,
-                      pathname: "/uploads/**",
+                      pathname: "/**",
                   },
               ]
             : [],

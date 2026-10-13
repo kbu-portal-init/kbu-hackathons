@@ -4,7 +4,7 @@ Prisma 7 uses `prisma7.config.ts`, PostgreSQL, the generated client in `generate
 
 See also: [`database-design.md`](database-design.md) — data-model decisions, constraints, and adoption plan (design reference only).
 
-Local development uses `docker-compose.local.yml` to run a postgres container on `localhost:5432`. The production `docker-compose.yml` is a full-stack spec with internal networking and no host port mapping. The `db:start`/`db:watch`/`db:stop`/`db:down` scripts reference the local file explicitly via `-f docker-compose.local.yml`.
+Local development uses `docker-compose.local.yml` to run a postgres container on `localhost:5433`. The production `docker-compose.yml` is a full-stack spec with internal networking and no host port mapping. The `db:start`/`db:watch`/`db:stop`/`db:down` scripts reference the local file explicitly via `-f docker-compose.local.yml`.
 
 ## Commands
 

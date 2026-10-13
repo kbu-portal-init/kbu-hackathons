@@ -23,6 +23,11 @@ export async function listAnnouncements(input: ListAnnouncementInput): Promise<L
                   status: input.status,
               }
             : {}),
+        ...(input.category
+            ? {
+                  category: input.category,
+              }
+            : {}),
         ...(search
             ? {
                   OR: [
@@ -105,6 +110,7 @@ export async function listPublicAnnouncements(
 
     const where = {
         status: "PUBLISHED" as const,
+        ...(input.category ? { category: input.category } : {}),
         ...(search
             ? {
                   OR: [
