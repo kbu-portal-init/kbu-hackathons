@@ -126,7 +126,11 @@ Migration, push, and seed commands mutate database state. The development seed c
 Production administrators are not created by the seed or deployment workflow. Set `ADMIN_USERS` and a temporary `ADMIN_DEFAULT_PASSWORD` in `/opt/hackathon/.env.production`, then run this manually on Debian from the released migration image:
 
 ```bash
-docker compose --env-file /opt/hackathon/.env.production --profile migrate run --rm migrate pnpm admin:provision
+cd /opt/hackathon
+IMAGE_REPOSITORY=ghcr.io/kbu-portal-init/kbu-hackathons \
+IMAGE_TAG=<deployed-commit-sha> \
+docker compose --env-file /opt/hackathon/.env.production \
+  --profile migrate run --rm migrate pnpm admin:provision
 ```
 
 The command uses the default password only for newly created admins. Existing users are left completely unchanged, including their passwords. Change each new admin password immediately through the account password flow or password reset flow. Keep the production environment file root-readable only and never use a publicly documented password such as `adminpassword`.

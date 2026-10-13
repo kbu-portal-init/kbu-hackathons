@@ -40,12 +40,23 @@ const auth = betterAuth({
 const rl = createInterface({ input, output });
 try {
     for (const email of emails) {
-        const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
-        const name = await rl.question(`Display name for ${email}${existing ? " [unchanged]" : ""}: `);
+        const existing = await prisma.user.findUnique({
+            where: { email },
+            select: { id: true, role: true, emailVerified: true },
+        });
 
         if (existing) {
-            console.log(`Existing admin unchanged: ${email}`);
+            if (existing.role !== "admin" || !existing.emailVerified) {
+                await prisma.user.update({
+                    where: { id: existing.id },
+                    data: { role: "admin", emailVerified: true },
+                });
+                console.log(`Reconciled admin access: ${email}`);
+            } else {
+                console.log(`Existing admin unchanged: ${email}`);
+            }
         } else {
+            const name = await rl.question(`Display name for ${email}: `);
             const result = await auth.api.signUpEmail({
                 body: { email, password: defaultPassword, name: name.trim() || "Admin" },
             });
