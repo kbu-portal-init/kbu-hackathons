@@ -5,7 +5,8 @@ import { getEventSettings } from "@/lib/data/event-settings";
 import { countApprovedTeams } from "@/lib/data/registrations";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
-import { type ProgramSlot, RegistrationForm } from "./_components/registration-form";
+import { RegistrationForm } from "./_components/registration-form";
+import type { ProgramSlot } from "./_components/types";
 
 export const dynamic = "force-dynamic";
 
@@ -17,17 +18,28 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 // because eventSettings is database-driven.
 // If /register is statically generated, the page may contain the old value until revalidation/rebuild.
 
+function StatusCard({ title, text }: { title: string; text: string }) {
+    return (
+        <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-border/60 bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-bold tracking-tight">{title}</h2>
+            <p className="mt-3 text-base leading-7 text-muted-foreground">{text}</p>
+        </div>
+    );
+}
+
 function RegistrationFallback() {
     return (
-        <div className="mt-8 rounded-2xl border border-border/10 bg-secondary p-8 shadow-xl shadow-secondary/40">
-            <Skeleton className="h-6 w-64 max-w-full bg-secondary" />
-            <Skeleton className="mt-4 h-4 w-full bg-zinc-100" />
-            <Skeleton className="mt-3 h-4 w-5/6 bg-zinc-100" />
-            <div className="mt-8 space-y-4">
-                {(["one", "two", "three"] as const).map((row) => (
-                    <Skeleton className="h-11 w-full bg-zinc-100" key={row} />
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <div className="space-y-6">
+                {(["team", "leader", "members"] as const).map((section) => (
+                    <div className="rounded-2xl border border-border/60 bg-card p-6" key={section}>
+                        <Skeleton className="h-6 w-56 max-w-full" />
+                        <Skeleton className="mt-6 h-11 w-full" />
+                        <Skeleton className="mt-4 h-11 w-full" />
+                    </div>
                 ))}
             </div>
+            <Skeleton className="hidden h-72 rounded-2xl lg:block" />
         </div>
     );
 }
@@ -46,18 +58,16 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
 
     if (!registrationOpen) {
         return (
-            <div className="mt-8 rounded-2xl border border-border/10 bg-secondary p-8 shadow-xl shadow-secondary/40">
-                <h2 className="text-xl font-semibold">
-                    {registrationUnavailable ? t.unavailable : registrationNotStarted ? t.notOpened : t.closed}
-                </h2>
-                <p className="mt-3 text-base leading-7 text-muted-foreground">
-                    {registrationUnavailable
+            <StatusCard
+                title={registrationUnavailable ? t.unavailable : registrationNotStarted ? t.notOpened : t.closed}
+                text={
+                    registrationUnavailable
                         ? t.unavailableText
                         : registrationNotStarted
                           ? `${t.notOpenedText} ${dateFormatter.format(new Date(settings.registrationOpensAt))}. ${t.returnDuring}`
-                          : t.closedText}
-                </p>
-            </div>
+                          : t.closedText
+                }
+            />
         );
     }
 
@@ -80,18 +90,13 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
     ];
 
     if (programSlots.every((slot) => slot.remaining === 0)) {
-        return (
-            <div className="mt-8 rounded-2xl border border-border/10 bg-secondary p-8 shadow-xl shadow-secondary/40">
-                <h2 className="text-xl font-semibold">{t.allFilled}</h2>
-                <p className="mt-3 text-base leading-7 text-muted-foreground">{t.allFilledText}</p>
-            </div>
-        );
+        return <StatusCard title={t.allFilled} text={t.allFilledText} />;
     }
 
     return (
         <>
-            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-brand-muted-foreground">{t.formIntro}</p>
-            <div className="mt-6">
+            <p className="mt-4 max-w-2xl text-left text-lg leading-8 text-brand-muted-foreground">{t.formIntro}</p>
+            <div className="mt-8">
                 <RegistrationForm
                     minTeamSize={settings.minTeamSize}
                     maxTeamSize={settings.maxTeamSize}
@@ -108,10 +113,9 @@ export default async function TeamRegistrationPage() {
     const t = getMessages(locale).register;
     return (
         <main className="flex-1 bg-secondary/60">
-            <section className="mx-auto max-w-3xl px-6 py-12 text-left lg:px-8 lg:py-20">
-                <p className="text-sm font-semibold uppercase tracking-widest text-primary">{t.join}</p>
-                <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">{t.title}</h1>
-                <p className="mt-4 leading-6 text-brand-muted-foreground">
+            <section className="mx-auto max-w-5xl px-6 py-12 text-left lg:px-8 lg:py-16">
+                <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{t.title}</h1>
+                <p className="mt-4 max-w-2xl leading-6 text-brand-muted-foreground">
                     {t.learnMore}{" "}
                     <Link
                         className="font-semibold text-primary underline underline-offset-4"
