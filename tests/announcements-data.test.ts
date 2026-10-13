@@ -50,6 +50,7 @@ async function createTestUser() {
 async function createTestAnnouncement(input: {
     title: string;
     content: string;
+    category: "IMPORTANT" | "UPDATES" | "NEWS";
     status?: AnnouncementStatus;
     publishedAt?: Date | null;
 }) {
@@ -59,6 +60,7 @@ async function createTestAnnouncement(input: {
         data: {
             title: input.title,
             content: input.content,
+            category: input.category,
             status,
             publishedAt: input.publishedAt ?? (status === "PUBLISHED" ? new Date() : null),
             createdById: testUserId,
@@ -102,16 +104,19 @@ describe("announcement data", () => {
         await createTestAnnouncement({
             title: "Pagination Announcement 1",
             content: "Pagination content 1",
+            category: "NEWS",
         });
 
         await createTestAnnouncement({
             title: "Pagination Announcement 2",
             content: "Pagination content 2",
+            category: "NEWS",
         });
 
         await createTestAnnouncement({
             title: "Pagination Announcement 3",
             content: "Pagination content 3",
+            category: "NEWS",
         });
 
         const result = await listAnnouncements({
@@ -130,12 +135,14 @@ describe("announcement data", () => {
         await createTestAnnouncement({
             title: "Status Draft Announcement",
             content: "Status filter content",
+            category: "NEWS",
             status: "DRAFT",
         });
 
         await createTestAnnouncement({
             title: "Status Published Announcement",
             content: "Status filter content",
+            category: "NEWS",
             status: "PUBLISHED",
         });
 
@@ -153,6 +160,7 @@ describe("announcement data", () => {
         const announcement = await createTestAnnouncement({
             title: "Unique Database Search Title",
             content: "Normal announcement content",
+            category: "NEWS",
         });
 
         const result = await listAnnouncements({
@@ -168,6 +176,7 @@ describe("announcement data", () => {
         const announcement = await createTestAnnouncement({
             title: "Normal Search Title",
             content: "Unique content keyword for testing",
+            category: "NEWS",
         });
 
         const result = await listAnnouncements({
@@ -183,18 +192,21 @@ describe("announcement data", () => {
         const published = await createTestAnnouncement({
             title: "Public Published Announcement",
             content: "Public content",
+            category: "NEWS",
             status: "PUBLISHED",
         });
 
         const draft = await createTestAnnouncement({
             title: "Private Draft Announcement",
             content: "Private draft content",
+            category: "NEWS",
             status: "DRAFT",
         });
 
         const archived = await createTestAnnouncement({
             title: "Private Archived Announcement",
             content: "Private archived content",
+            category: "NEWS",
             status: "ARCHIVED",
         });
 
@@ -204,10 +216,12 @@ describe("announcement data", () => {
         });
 
         assert.ok(result.items.some((item) => item.id === published.id));
+
         assert.equal(
             result.items.some((item) => item.id === draft.id),
             false,
         );
+
         assert.equal(
             result.items.some((item) => item.id === archived.id),
             false,
@@ -225,6 +239,7 @@ describe("announcement data", () => {
         const older = await createTestAnnouncement({
             title: "Older Public Announcement",
             content: "Older content",
+            category: "NEWS",
             status: "PUBLISHED",
             publishedAt: olderDate,
         });
@@ -232,6 +247,7 @@ describe("announcement data", () => {
         const newer = await createTestAnnouncement({
             title: "Newer Public Announcement",
             content: "Newer content",
+            category: "NEWS",
             status: "PUBLISHED",
             publishedAt: newerDate,
         });
@@ -253,12 +269,14 @@ describe("announcement data", () => {
         const published = await createTestAnnouncement({
             title: "Public Action Announcement",
             content: "Public action content",
+            category: "NEWS",
             status: "PUBLISHED",
         });
 
         const draft = await createTestAnnouncement({
             title: "Private Action Draft",
             content: "Private action content",
+            category: "NEWS",
             status: "DRAFT",
         });
 
@@ -279,5 +297,77 @@ describe("announcement data", () => {
             result.data.items.some((item) => item.id === draft.id),
             false,
         );
+    });
+
+    it("filters management announcements by category", async () => {
+        const important = await createTestAnnouncement({
+            title: "Management Important Category Filter",
+            content: "Important category filter content",
+            category: "IMPORTANT",
+        });
+
+        await createTestAnnouncement({
+            title: "Management News Category Filter",
+            content: "News category filter content",
+            category: "NEWS",
+        });
+
+        const result = await listAnnouncements({
+            page: 1,
+            pageSize: 100,
+            category: "IMPORTANT",
+        });
+
+        assert.ok(result.items.some((item) => item.id === important.id));
+        assert.ok(result.items.every((item) => item.category === "IMPORTANT"));
+    });
+
+    it("lists published announcements through the public action", async () => {
+        const publishedNews = await createTestAnnouncement({
+            title: "Public Action News Announcement",
+            content: "Public action news content",
+            category: "NEWS",
+            status: "PUBLISHED",
+        });
+
+        const publishedImportant = await createTestAnnouncement({
+            title: "Public Action Important Announcement",
+            content: "Public action important content",
+            category: "IMPORTANT",
+            status: "PUBLISHED",
+        });
+
+        const draftNews = await createTestAnnouncement({
+            title: "Private Action Draft",
+            content: "Private action content",
+            category: "NEWS",
+            status: "DRAFT",
+        });
+
+        const { listPublishedAnnouncements } = await import("@/actions/management/announcements");
+
+        const result = await listPublishedAnnouncements({
+            page: 1,
+            pageSize: 100,
+            category: "NEWS",
+        });
+
+        assert.equal(result.ok, true);
+
+        if (!result.ok) return;
+
+        assert.ok(result.data.items.some((item) => item.id === publishedNews.id));
+
+        assert.equal(
+            result.data.items.some((item) => item.id === publishedImportant.id),
+            false,
+        );
+
+        assert.equal(
+            result.data.items.some((item) => item.id === draftNews.id),
+            false,
+        );
+
+        assert.ok(result.data.items.every((item) => item.category === "NEWS"));
     });
 });

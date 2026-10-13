@@ -69,6 +69,7 @@ export async function createAnnouncement(
                 data: {
                     title: input.title,
                     content: input.content,
+                    category: input.category,
                     imageUrl: input.imageUrl || null,
                     status: "DRAFT",
                     createdById: actorId,
@@ -129,6 +130,7 @@ export async function updateAnnouncement(
                 data: {
                     ...(input.title !== undefined ? { title: input.title } : {}),
                     ...(input.content !== undefined ? { content: input.content } : {}),
+                    ...(input.category !== undefined ? { category: input.category } : {}),
                     ...(input.imageUrl !== undefined ? { imageUrl: input.imageUrl || null } : {}),
                 },
             });
@@ -142,6 +144,7 @@ export async function updateAnnouncement(
                     details: {
                         title: updated.title,
                         content: updated.content,
+                        category: updated.category,
                         imageUrl: updated.imageUrl,
                         status: updated.status,
                     },

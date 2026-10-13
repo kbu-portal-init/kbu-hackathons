@@ -82,6 +82,7 @@ model Announcement {
   id          String             @id @default(cuid())
   title       String
   content     String
+  category    AnnouncementCategory @default(NEWS)
   imageUrl    String?
   status      AnnouncementStatus @default(DRAFT)
   publishedAt DateTime?          @db.Timestamptz(3)
@@ -94,6 +95,13 @@ model Announcement {
   @@index([createdById])
   @@index([createdAt])
   @@map("announcement")
+}
+
+
+enum AnnouncementCategory {
+  IMPORTANT
+  UPDATES
+  NEWS
 }
 
 model Team {

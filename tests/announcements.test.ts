@@ -110,6 +110,7 @@ describe("announcement service", () => {
             {
                 title: "New Test Announcement",
                 content: "This is test content.",
+                category: "NEWS",
                 imageUrl: "",
             },
             testUserId,
