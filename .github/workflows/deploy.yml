@@ -194,13 +194,13 @@ jobs:
                     echo "✅ Health check passed."
                     # Remove old application image tags while retaining the current release and rollback target.
                     docker image ls "$IMAGE_REPOSITORY" --format '{{.Repository}}:{{.Tag}}' | while IFS= read -r image; do
-                        case "$image" in
-                            "$IMAGE_REPOSITORY:$IMAGE_TAG"|"$IMAGE_REPOSITORY:$IMAGE_TAG-builder"|"$IMAGE_REPOSITORY:rollback")
-                                ;;
-                            *)
-                                docker image rm "$image" || echo "Could not remove obsolete image tag: $image" >&2
-                                ;;
-                        esac
+                        if [ "$image" = "$IMAGE_REPOSITORY:$IMAGE_TAG" ] ||
+                            [ "$image" = "$IMAGE_REPOSITORY:$IMAGE_TAG-builder" ] ||
+                            [ "$image" = "$IMAGE_REPOSITORY:rollback" ]; then
+                            continue
+                        fi
+
+                        docker image rm "$image" || echo "Could not remove obsolete image tag: $image" >&2
                     done
 
                     docker image prune -f
