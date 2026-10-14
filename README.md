@@ -232,6 +232,9 @@ Closes #<issue-number>
 | `pnpm lint:fix` | Apply Biome lint and formatting fixes. |
 | `pnpm format` | Format files with Biome. |
 | `pnpm exec tsc --noEmit` | Run TypeScript checking. |
+| `pnpm test:unit` | Run unit and environment tests. |
+| `pnpm test:unit:watch` | Run unit tests in watch mode. |
+| `pnpm test:announcements` | Run announcement-focused tests. |
 | `pnpm db:start` | Start local postgres via docker-compose.local.yml. |
 | `pnpm db:watch` | Start postgres in foreground with logs. |
 | `pnpm db:stop` | Stop postgres container. |
@@ -242,7 +245,7 @@ Closes #<issue-number>
 - **Next.js App Router** with TypeScript and the `@/*` import alias.
 - **Prisma 7** with PostgreSQL and the `@prisma/adapter-pg` driver adapter.
 - **Better Auth** for sessions and credentials.
-- **Tailwind CSS v4** with the full default palette. Orange is the semantic primary color, so utilities such as `bg-orange-600` and `text-orange-500` are available alongside semantic theme classes.
+- **Tailwind CSS v4** with the full default palette and semantic design tokens. Prefer utilities such as `bg-primary`, `text-primary`, and `border-primary` for the product primary color; the default palette remains available for intentional non-primary styling.
 - **shadcn/ui** using the Base UI, Nova, neutral-base configuration and **Lucide** icons.
 - **Biome** for linting and formatting, with Husky and lint-staged running checks before commits.
 
