@@ -23,6 +23,27 @@ const REQUIRED_ENV_VARS = [
 export type RequiredEnvVar = (typeof REQUIRED_ENV_VARS)[number];
 export type EnvironmentValues = Record<string, string | undefined>;
 
+export function assertAdminProvisioningEnvironment(env: EnvironmentValues = process.env): string[] {
+    const emails = Array.from(
+        new Set(
+            (env.ADMIN_USERS ?? "")
+                .split(",")
+                .map((email) => email.trim().toLowerCase())
+                .filter(Boolean),
+        ),
+    );
+
+    if (emails.length === 0) throw new Error("ADMIN_USERS must contain at least one email address");
+    if (emails.some((email) => !/^\S+@\S+\.\S+$/.test(email)))
+        throw new Error("ADMIN_USERS contains an invalid email address");
+    if (!env.DATABASE_URL || env.DATABASE_URL.trim().length === 0) throw new Error("DATABASE_URL is required");
+
+    const bootstrapPassword = env.ADMIN_DEFAULT_PASSWORD ?? "";
+    if (bootstrapPassword.length < 8) throw new Error("ADMIN_DEFAULT_PASSWORD must be at least 8 characters");
+
+    return emails;
+}
+
 function isBlank(value: string | undefined): boolean {
     return !value || value.trim().length === 0;
 }

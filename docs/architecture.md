@@ -46,7 +46,7 @@ The homepage remains public for authenticated users. `/login` and `/register` re
 ## Styling
 
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
-- Orange is the product primary color. Use the existing semantic primary utilities or Tailwind orange utilities such as `bg-orange-600`, `text-orange-500`, and `bg-orange-900` when appropriate.
+- Orange is the product primary color. Prefer the semantic design-token utilities (`bg-primary`, `text-primary`, `border-primary`, and related variants) so components follow the shared theme. The default Tailwind palette remains available for intentionally non-primary states and illustrations.
 - Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.
 - Use Lucide icons through `lucide-react`.
 
