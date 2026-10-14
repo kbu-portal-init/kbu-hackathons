@@ -65,6 +65,8 @@ Pull requests targeting `dev` also use the separate `Vercel Preview` workflow, w
 
 This repo is shared by several AI coding agents with assigned roles, model mappings, branch rules (`agent/<tool-name>/<short-task-name>`), one-agent-per-file/branch rules, and review expectations. Read [`docs/ai-workflow.md`](docs/ai-workflow.md) before starting a task.
 
+When using GitHub CLI, distinguish between tool availability, authentication, and authorization. If a command fails, report the exact failure before concluding what is unavailable. For example, `gh` may be installed and available while its stored GitHub token is invalid or lacks permission; describe that as an authentication or permission failure, not as an unavailable CLI.
+
 ## Documentation Routing
 
 | Area | Documentation |

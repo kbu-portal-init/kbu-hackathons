@@ -8,23 +8,12 @@ import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import { Pool } from "pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { assertAdminProvisioningEnvironment } from "@/lib/env";
 
-const emails = [
-    ...new Set(
-        (process.env.ADMIN_USERS ?? "")
-            .split(",")
-            .map((email) => email.trim().toLowerCase())
-            .filter(Boolean),
-    ),
-];
-if (emails.length === 0) throw new Error("ADMIN_USERS must contain at least one email address");
-if (emails.some((email) => !/^\S+@\S+\.\S+$/.test(email)))
-    throw new Error("ADMIN_USERS contains an invalid email address");
-if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
+const emails = assertAdminProvisioningEnvironment();
 // Intentionally use one operator-provided bootstrap password for new accounts.
 // Existing accounts never enter this path, so their passwords remain untouched.
 const bootstrapPassword = process.env.ADMIN_DEFAULT_PASSWORD ?? "";
-if (bootstrapPassword.length < 8) throw new Error("ADMIN_DEFAULT_PASSWORD must be at least 8 characters");
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });

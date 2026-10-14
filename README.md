@@ -26,7 +26,7 @@ Team members are roster records. They do not receive Better Auth accounts; their
 | Shared cards | `/cards/[token]` | Public participant card page using a revocable share token |
 | Management | `/panel`, `/panel/announcements`, `/panel/registrations`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/event`, `/panel/settings` | Organizer-protected workspace; team browsing/detail and event settings management are implemented |
 | Notifications | `/panel/notifications`, `/team/notifications` | Organizer/admin manual sending by email, in-app inbox, or both; team in-app inbox |
-| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management is implemented, audit browsing/deletion are implemented, while settings remain pending |
+| Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Admin-protected workspace; organizer management, audit browsing/deletion, and administrator profile settings are implemented |
 | Auth protocol | `/api/auth/[...all]` | Better Auth handler; application mutations use server actions |
 
 Unknown routes and invalid public detail records use the branded global 404 page at `app/not-found.tsx`.
@@ -37,7 +37,7 @@ Pull requests targeting `dev` receive a Vercel Preview deployment through the `V
 
 ## Architecture boundaries
 
-The backend is organized as contracts ? actions/data ? services ? persistence:
+The backend is organized as contracts → actions/data → services → persistence:
 
 - `lib/contracts`: Zod schemas and public input/output DTOs.
 - `actions`: thin authenticated server actions that validate input and return `ActionResult` envelopes.
@@ -60,7 +60,7 @@ Pages and client components consume contracts only. Prisma models, Better Auth o
 - File storage uses authenticated server-side proxy uploads to Cloudflare R2. Approved teams can upload team images/submissions under `uploads/<team-id>/`; organizers/admins can upload event images under `uploads/events/`. Uploads are validated by the proxy and returned as public R2 URLs.
 - The active Prisma schema models the single event, teams, team members, registrations, submissions, accounts, sessions, bans, audits, and verification tokens.
 
-Participant registration, broader organizer operational workflows, and general account-management UI are intentionally deferred. Admins can browse and permanently delete audit records individually. The audit browser provides a manually opened, paginated user/team-member picker through `/api/admin/users`.
+Broader organizer operational workflows remain intentionally deferred. Participant registration, team settings, administrator profile settings, audit browsing/deletion, and the audit browser's manually opened paginated user/team-member picker through `/api/admin/users` are implemented.
 
 ## Getting started
 
@@ -232,6 +232,9 @@ Closes #<issue-number>
 | `pnpm lint:fix` | Apply Biome lint and formatting fixes. |
 | `pnpm format` | Format files with Biome. |
 | `pnpm exec tsc --noEmit` | Run TypeScript checking. |
+| `pnpm test:unit` | Run unit and environment tests. |
+| `pnpm test:unit:watch` | Run unit tests in watch mode. |
+| `pnpm test:announcements` | Run announcement-focused tests. |
 | `pnpm db:start` | Start local postgres via docker-compose.local.yml. |
 | `pnpm db:watch` | Start postgres in foreground with logs. |
 | `pnpm db:stop` | Stop postgres container. |
@@ -242,7 +245,7 @@ Closes #<issue-number>
 - **Next.js App Router** with TypeScript and the `@/*` import alias.
 - **Prisma 7** with PostgreSQL and the `@prisma/adapter-pg` driver adapter.
 - **Better Auth** for sessions and credentials.
-- **Tailwind CSS v4** with the full default palette. Orange is the semantic primary color, so utilities such as `bg-orange-600` and `text-orange-500` are available alongside semantic theme classes.
+- **Tailwind CSS v4** with the full default palette and semantic design tokens. Prefer utilities such as `bg-primary`, `text-primary`, and `border-primary` for the product primary color; the default palette remains available for intentional non-primary styling.
 - **shadcn/ui** using the Base UI, Nova, neutral-base configuration and **Lucide** icons.
 - **Biome** for linting and formatting, with Husky and lint-staged running checks before commits.
 

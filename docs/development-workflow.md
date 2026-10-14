@@ -4,12 +4,16 @@ Requirements: Node.js, pnpm, and Docker for the local database.
 
 ## Setup
 
+Copy `.env.example` to `.env` and configure the local database and authentication values before running the setup commands.
+
 ```bash
 pnpm install
+pnpm db:start
+pnpm db:migrate
 pnpm dev
 ```
 
-Database startup, Prisma validation/generation/format, migration, and seed commands are documented in `docs/database.md`.
+Database startup, Prisma validation/generation/format, migration, and seed commands are documented in `docs/database.md`. Copy `.env.example` to `.env` and configure the local database and authentication values before starting the app.
 
 ## Quality checks
 
@@ -19,6 +23,13 @@ Run the relevant checks before finishing a change:
 pnpm lint
 pnpm exec tsc --noEmit
 pnpm build
+```
+
+For the focused unit and environment suites, run:
+
+```bash
+pnpm test:unit
+pnpm test:announcements
 ```
 
 Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
