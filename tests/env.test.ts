@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { assertProductionEnvironment, getInvalidEnvironmentVariables, getMissingEnvironmentVariables } from "@/lib/env";
+import {
+    assertAdminProvisioningEnvironment,
+    assertProductionEnvironment,
+    getInvalidEnvironmentVariables,
+    getMissingEnvironmentVariables,
+} from "@/lib/env";
 
 const completeEnvironment: Record<string, string | undefined> = {
     NEXT_PUBLIC_APP_URL: "https://hackathon.example.com",
@@ -78,5 +83,34 @@ describe("production environment validation", () => {
             "BETTER_AUTH_URL",
             "SMTP_PORT",
         ]);
+    });
+});
+
+describe("admin provisioning environment validation", () => {
+    it("accepts normalized admin addresses and a valid bootstrap password", () => {
+        assert.deepEqual(
+            assertAdminProvisioningEnvironment({
+                ADMIN_USERS: " Admin@Example.com, admin@example.com ",
+                ADMIN_DEFAULT_PASSWORD: "temporary-password",
+                DATABASE_URL: "postgresql://user:password@localhost:5432/kbu",
+            }),
+            ["admin@example.com"],
+        );
+    });
+
+    it("rejects missing or invalid provisioning values", () => {
+        assert.throws(
+            () => assertAdminProvisioningEnvironment({ ADMIN_USERS: "", ADMIN_DEFAULT_PASSWORD: "short" }),
+            /ADMIN_USERS must contain at least one email address/,
+        );
+        assert.throws(
+            () =>
+                assertAdminProvisioningEnvironment({
+                    ADMIN_USERS: "not-an-email",
+                    ADMIN_DEFAULT_PASSWORD: "temporary-password",
+                    DATABASE_URL: "postgresql://example",
+                }),
+            /ADMIN_USERS contains an invalid email address/,
+        );
     });
 });
