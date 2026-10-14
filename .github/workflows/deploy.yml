@@ -201,6 +201,6 @@ jobs:
                         fi
 
                         docker image rm "$image" || echo "Could not remove obsolete image tag: $image" >&2
-                    done
+                    done || echo "Could not enumerate obsolete image tags; continuing deployment." >&2
 
-                    docker image prune -f
+                    docker image prune -f || echo "Could not prune dangling images; continuing deployment." >&2
