@@ -74,6 +74,10 @@ export const messages = {
             helpText: "Join our official LINE group to connect with organizers and get event support.",
             faqTitle: "Questions, answered",
             faq: [
+                [
+                    "Will the event be held in both Thai and English?",
+                    "Yes. The event will be conducted in both Thai and English, so participants can follow the activities and guidance in either language.",
+                ],
                 ["Who can participate?", "The hackathon is open to current KBU students."],
                 [
                     "Can I register by myself or join more than one team?",
@@ -351,6 +355,10 @@ export const messages = {
             helpText: "เข้าร่วมกลุ่ม LINE อย่างเป็นทางการเพื่อติดต่อผู้จัดงานและรับการสนับสนุน",
             faqTitle: "คำถามที่พบบ่อย",
             faq: [
+                [
+                    "กิจกรรมจะจัดขึ้นทั้งภาษาไทยและภาษาอังกฤษหรือไม่?",
+                    "ใช่ กิจกรรมจะจัดขึ้นทั้งภาษาไทยและภาษาอังกฤษ ผู้เข้าร่วมสามารถติดตามกิจกรรมและคำแนะนำได้ทั้งสองภาษา",
+                ],
                 ["ใครเข้าร่วมได้บ้าง?", "แฮกกาธอนเปิดสำหรับนักศึกษา KBU ปัจจุบัน"],
                 ["สมัครคนเดียวหรือเข้าร่วมมากกว่าหนึ่งทีมได้ไหม?", "การสมัครเป็นการสมัครแบบทีม และผู้เข้าร่วมแต่ละคนเข้าร่วมได้เพียงหนึ่งทีม"],
                 ["ทีมหนึ่งมีสมาชิกได้กี่คน?", "จำนวนสมาชิกขั้นต่ำและสูงสุดจะแสดงในแบบฟอร์มสมัครและตั้งค่าตามกิจกรรม"],
