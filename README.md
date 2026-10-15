@@ -88,11 +88,12 @@ Optional feature-specific settings:
 - SMTP email delivery: `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM_EMAIL`.
 - Hackathon support contact: `LINE_CONTACT_URL` and `LINE_CONTACT_NAME`.
 - Sentry error monitoring: `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_AUTH_TOKEN`.
+- Google Analytics: `NEXT_PUBLIC_GA_ID` (optional; the GA4 measurement ID).
 - Cloudflare Turnstile: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 - Cloudflare R2 storage: `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, and `NEXT_PUBLIC_R2_PUBLIC_URL`.
 - Upstash Redis rate limiting: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (optional locally, required in production).
 
-Production startup requires the SMTP, Cloudflare R2, Upstash Redis, and LINE contact settings in addition to the local-development settings, and stops when required values are missing or invalid. Redis-backed limits are shared across application instances; local development falls back to in-memory Better Auth limits and disables the application-specific Redis limits. Sentry DSNs are public project identifiers; set `NEXT_PUBLIC_SENTRY_DSN` at build time so browser bundles receive it.
+Production startup requires the SMTP, Cloudflare R2, Upstash Redis, and LINE contact settings in addition to the local-development settings, and stops when required values are missing or invalid. Redis-backed limits are shared across application instances; local development falls back to in-memory Better Auth limits and disables the application-specific Redis limits. Sentry DSNs and Google Analytics measurement IDs are public identifiers; set `NEXT_PUBLIC_SENTRY_DSN` and, optionally, `NEXT_PUBLIC_GA_ID` at build time so browser bundles receive them.
 
 ## File storage
 
@@ -145,7 +146,7 @@ pnpm build
 
 ## Production Docker deployment
 
-The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Production images are built and cached in GitHub Actions, published to GHCR with the commit SHA, and pulled by the host; GitHub Actions transfers only the matching `docker-compose.yml`, so the host does not need a Git checkout, source code, or a local build. `NEXT_PUBLIC_SENTRY_DSN` is supplied from the GitHub Actions repository variable during the image build, while `SENTRY_AUTH_TOKEN` is supplied from the GitHub Actions secret only for the BuildKit build step. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
+The image uses Node.js 24 LTS, pnpm 10.27.0, and Next.js standalone output. Docker Compose is configured for a Linux production host with Docker Compose 2.24.0 or later. Production images are built and cached in GitHub Actions, published to GHCR with the commit SHA, and pulled by the host; GitHub Actions transfers only the matching `docker-compose.yml`, so the host does not need a Git checkout, source code, or a local build. `NEXT_PUBLIC_SENTRY_DSN` and the optional `NEXT_PUBLIC_GA_ID` are supplied from GitHub Actions repository variables during the image build, while `SENTRY_AUTH_TOKEN` is supplied from the GitHub Actions secret only for the BuildKit build step. Both services require `/opt/hackathon/.env.production`; local `.env` and `.env.local` files are not loaded into the containers.
 
 Create that file on the host with restricted permissions and the required database values:
 
@@ -155,7 +156,7 @@ POSTGRES_USER=kbu_hackathon
 POSTGRES_PASSWORD=<set-a-unique-production-password>
 ```
 
-Replace the password placeholder before deployment. Runtime credentials are read from this file. Set the GitHub Actions repository variable `NEXT_PUBLIC_SENTRY_DSN` to the public project DSN, or leave it empty to disable Sentry reporting. Set the GitHub Actions secret `SENTRY_AUTH_TOKEN` if you want source maps uploaded during the image build; it is mounted only for that BuildKit step and is never included in the runtime container. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
+Replace the password placeholder before deployment. Runtime credentials are read from this file. Set the GitHub Actions repository variable `NEXT_PUBLIC_SENTRY_DSN` to the public project DSN, or leave it empty to disable Sentry reporting. Set the optional GitHub Actions repository variable `NEXT_PUBLIC_GA_ID` to enable Google Analytics. Set the GitHub Actions secret `SENTRY_AUTH_TOKEN` if you want source maps uploaded during the image build; it is mounted only for that BuildKit step and is never included in the runtime container. Existing PostgreSQL volumes retain their original credentials; changing this file does not rotate an existing database password.
 
 From the repository directory on the production host:
 
@@ -176,7 +177,7 @@ Expect UID `1001`, a healthy database, and a successful HTTP response. Verify a 
 
 After the health check passes, the deployment workflow removes old local tags for `ghcr.io/kbu-portal-init/kbu-hackathons`, retaining only the current runtime tag, current `-builder` tag, and `:rollback`; it then performs lightweight dangling-image cleanup. This cleanup affects local Docker images only and never deletes GHCR registry tags. BuildKit cache cleanup is intentionally excluded from the deployment path because it can exceed the remote command timeout. Run it separately during maintenance after checking available disk space, for example with `docker builder prune -f --filter "until=168h"`.
 
-Environment files are excluded from image builds. `NEXT_PUBLIC_SENTRY_DSN` and other `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
+Environment files are excluded from image builds. `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_GA_ID`, and other `NEXT_PUBLIC_*` settings must be supplied at build time; runtime environment injection cannot change values already bundled into browser assets.
 
 ## Branching
 
