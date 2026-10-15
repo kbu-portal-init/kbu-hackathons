@@ -12,6 +12,11 @@ import { PASSWORD_RESET_TOKEN_TTL_SECONDS } from "@/lib/services/password-reset"
 import { upstashSecondaryStorage } from "@/lib/services/rate-limit";
 
 export const auth = betterAuth({
+    advanced: {
+        ipAddress: {
+            ipAddressHeaders: ["cf-connecting-ip"],
+        },
+    },
     hooks: {
         before: createAuthMiddleware(async (context) => {
             if (context.path === "/update-user") {
