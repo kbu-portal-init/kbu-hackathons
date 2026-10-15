@@ -1,6 +1,6 @@
 # Local development and quality checks
 
-Requirements: Node.js, pnpm, and Docker for the local database.
+Requirements: Node.js 22+, pnpm 10.27+, and Docker for the local database.
 
 ## Setup
 
@@ -40,9 +40,11 @@ Biome intentionally excludes `components/ui`. Do not use a whole-project formatt
 
 ## Environment variables
 
-Required environment categories are `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `SMTP_*` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`), and Cloudflare R2 (`R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `NEXT_PUBLIC_R2_PUBLIC_URL`). Production Node.js startup validates these values and stops when any are missing or invalid; build-time validation is skipped. Sentry reporting uses `NEXT_PUBLIC_SENTRY_DSN`; it is a public project identifier and must be set at build time for browser bundles. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
+Local development requires `PORT`, `NODE_ENV`, `NEXT_PUBLIC_APP_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and PostgreSQL settings (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, and `DATABASE_URL`).
 
-Production also requires `LINE_CONTACT_URL` and `LINE_CONTACT_NAME`; these values are shared by the public support link and outgoing email footers.
+Production additionally requires SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`), Cloudflare R2 (`R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `NEXT_PUBLIC_R2_PUBLIC_URL`), and `LINE_CONTACT_URL` / `LINE_CONTACT_NAME`. Production Node.js startup validates required values and stops if any are missing or invalid; build-time validation is skipped.
+
+Cloudflare Turnstile uses `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`. Upstash rate limiting uses `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`; these are optional locally, where application-specific Redis limits are disabled and Better Auth uses in-memory limits, but required in production. `NEXT_PUBLIC_SENTRY_DSN` and `NEXT_PUBLIC_GA_ID` are optional public identifiers that must be supplied at build time to appear in browser assets. `SENTRY_AUTH_TOKEN` is an optional build secret used for source-map uploads. Node.js instrumentation emits one info event per server instance startup. Keep provider names out of application configuration.
 
 ## Pull request previews
 
@@ -53,5 +55,3 @@ The `Vercel Preview` workflow deploys pull requests targeting `dev` with the Ver
 - `VERCEL_PROJECT_ID`
 
 The workflow smoke-tests the deployed URL and fails the PR check when the Preview cannot be reached or returns an HTTP error. It also creates or updates a Preview URL comment on the pull request. Branch push deployments remain restricted by `vercel.json` to `main`, `dev`, and `wip`.
-
-See `README.md` for the full `.env.example`-based setup, including optional Turnstile and Upstash Redis settings.
