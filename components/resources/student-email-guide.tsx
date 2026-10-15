@@ -2,10 +2,14 @@
 
 import { AlertCircle, Check, Copy, ExternalLink, HelpCircle, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { studentEmailGuide } from "@/lib/public-data/student-benefits";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
+import { formatBenefitDate, getStudentEmailGuide } from "@/lib/public-data/student-benefits";
 
-export function StudentEmailGuideSection() {
+export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
     const [copied, setCopied] = useState(false);
+    const t = getMessages(locale).resourcesPage.emailGuide;
+    const studentEmailGuide = getStudentEmailGuide(locale);
 
     const handleCopyFormat = async () => {
         try {
@@ -41,18 +45,18 @@ export function StudentEmailGuideSection() {
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700">
-                                    Official KBU Student Verification
+                                    {t.badge}
                                 </span>
                                 <span className="text-zinc-300">•</span>
                                 <span className="text-xs text-zinc-400">
-                                    Updated for {studentEmailGuide.postedDate}
+                                    {t.updated(formatBenefitDate(studentEmailGuide.postedDate, locale))}
                                 </span>
                             </div>
                             <h2
                                 id="student-email-guide-heading"
                                 className="mt-1 text-lg font-bold tracking-tight text-zinc-900 sm:text-2xl"
                             >
-                                How to Access Your KBU Student Email
+                                {t.heading}
                             </h2>
                         </div>
                     </div>
@@ -63,7 +67,7 @@ export function StudentEmailGuideSection() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-accent px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:shadow-lg hover:shadow-orange-500/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 sm:text-sm"
                     >
-                        <span>Open Outlook Webmail</span>
+                        <span>{getMessages(locale).resourcesPage.openWebmail}</span>
                         <ExternalLink className="h-4 w-4" />
                     </a>
                 </div>
@@ -83,14 +87,15 @@ export function StudentEmailGuideSection() {
                         </div>
                         <div>
                             <p className="text-[10px] font-bold uppercase tracking-wider text-orange-700 sm:text-xs">
-                                Your Institutional Email Format
+                                {t.formatLabel}
                             </p>
                             <p className="mt-0.5 font-mono text-sm font-bold text-zinc-900 sm:text-lg">
                                 {studentEmailGuide.formatExample}
                             </p>
                             <p className="mt-0.5 text-xs text-muted-foreground">
-                                Replace <span className="font-semibold text-zinc-800">xxxxxxxxxxxx</span> with your
-                                12-digit student ID number.
+                                {t.replaceBefore}
+                                <span className="font-semibold text-zinc-800">xxxxxxxxxxxx</span>
+                                {t.replaceAfter}
                             </p>
                         </div>
                     </div>
@@ -103,12 +108,12 @@ export function StudentEmailGuideSection() {
                         {copied ? (
                             <>
                                 <Check className="h-3.5 w-3.5 text-emerald-600" />
-                                <span className="font-bold text-emerald-700">Format Copied!</span>
+                                <span className="font-bold text-emerald-700">{t.copied}</span>
                             </>
                         ) : (
                             <>
                                 <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                                <span>Copy Format</span>
+                                <span>{t.copy}</span>
                             </>
                         )}
                     </button>
@@ -116,9 +121,7 @@ export function StudentEmailGuideSection() {
 
                 {/* 4-Step Login Walkthrough */}
                 <div>
-                    <h3 className="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-400">
-                        4-Step Login Walkthrough
-                    </h3>
+                    <h3 className="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-400">{t.walkthrough}</h3>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {studentEmailGuide.steps.map((step) => (
                             <div
@@ -141,7 +144,7 @@ export function StudentEmailGuideSection() {
                 <div className="rounded-2xl border border-zinc-200/80 bg-zinc-50/70 p-4 sm:p-5">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700">
                         <HelpCircle className="h-4 w-4 text-orange-600" />
-                        <span>Important Tips for Student Verification</span>
+                        <span>{t.tips}</span>
                     </div>
                     <ul className="mt-3 grid gap-3 sm:grid-cols-3">
                         {studentEmailGuide.tips.map((tip) => (

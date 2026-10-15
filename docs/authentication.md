@@ -15,6 +15,10 @@ Team members are roster records, not Better Auth users. Their `studentEmail` is 
 - Admin and organizer account-ban permissions: admins may target organizers and teams; organizers may target teams only.
 - Bans revoke sessions and write audit records.
 
+## Authentication rate limits
+
+Better Auth resolves the client IP from Cloudflare's `cf-connecting-ip` header so IP-based sign-in rate limits remain per client behind the Cloudflare and Nginx proxy chain. This header is trusted only when the application origin accepts traffic from Cloudflare, preventing clients from supplying their own value.
+
 ## Verification and reset links
 
 - Organizer/team onboarding links are single-use and valid for seven days; ordinary password-reset links remain valid for one hour.
