@@ -13,11 +13,13 @@ import {
     NotionIcon,
 } from "@/components/resources/brand-icons";
 import { StudentEmailGuideSection } from "@/components/resources/student-email-guide";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
 import {
+    getStudentBenefits,
     type StudentBenefit,
     type StudentBenefitCategory,
     studentBenefitCategories,
-    studentBenefits,
 } from "@/lib/public-data/student-benefits";
 
 function renderCardIcon(iconName: StudentBenefit["iconName"]) {
@@ -42,9 +44,11 @@ function renderCardIcon(iconName: StudentBenefit["iconName"]) {
     }
 }
 
-export function StudentBenefitsCatalog() {
+export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
     const [selectedCategory, setSelectedCategory] = useState<StudentBenefitCategory>("All");
     const [searchQuery, setSearchQuery] = useState("");
+    const t = getMessages(locale).resourcesPage;
+    const studentBenefits = useMemo(() => getStudentBenefits(locale), [locale]);
 
     const filteredBenefits = useMemo(() => {
         return studentBenefits.filter((item) => {
@@ -62,7 +66,7 @@ export function StudentBenefitsCatalog() {
 
             return matchesCategory && matchesSearch;
         });
-    }, [selectedCategory, searchQuery]);
+    }, [studentBenefits, selectedCategory, searchQuery]);
 
     const scrollToEmailGuide = () => {
         const el = document.getElementById("student-email-guide");
@@ -78,17 +82,17 @@ export function StudentBenefitsCatalog() {
                 <div className="relative z-10 max-w-3xl">
                     <div className="inline-flex items-center gap-2 rounded-full border border-orange-200/80 bg-white/90 px-3 py-1 text-xs font-semibold text-orange-700 shadow-2xs backdrop-blur-xs">
                         <Sparkles className="h-3.5 w-3.5 text-orange-600" />
-                        <span>Available for All Enrolled KBU Students</span>
+                        <span>{t.availableBadge}</span>
                     </div>
 
                     <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl">
-                        Student Benefits &amp; Developer Packs
+                        {t.heading}
                     </h1>
 
                     <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground sm:text-base lg:text-lg">
-                        Unlock over <span className="font-semibold text-zinc-900">$200,000+</span> in industry-standard
-                        software, AI coding assistants, cloud credits, and educational licenses using your official KBU
-                        student credentials.
+                        {t.introBefore}
+                        <span className="font-semibold text-zinc-900">{t.introValue}</span>
+                        {t.introAfter}
                     </p>
 
                     {/* Quick Access Actions */}
@@ -99,7 +103,7 @@ export function StudentBenefitsCatalog() {
                             className="inline-flex items-center justify-center gap-2 rounded-xl border border-orange-300/80 bg-orange-100/70 px-4 py-2.5 text-xs font-semibold text-orange-800 transition hover:bg-orange-200/80 active:scale-95 sm:text-sm"
                         >
                             <Mail className="h-4 w-4 text-orange-600" />
-                            <span>Need student email? View Login Guide</span>
+                            <span>{t.emailGuideButton}</span>
                             <span className="text-orange-600">↓</span>
                         </button>
                         <a
@@ -108,7 +112,7 @@ export function StudentBenefitsCatalog() {
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-semibold text-zinc-700 shadow-2xs transition hover:border-zinc-300 hover:bg-zinc-50 active:scale-95 sm:text-sm"
                         >
-                            <span>Open Outlook Webmail</span>
+                            <span>{t.openWebmail}</span>
                             <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
                         </a>
                     </div>
@@ -125,10 +129,9 @@ export function StudentBenefitsCatalog() {
             <div className="mb-6 space-y-3 sm:mb-8 sm:space-y-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">Explore Verified Offers</h2>
+                        <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t.exploreTitle}</h2>
                         <p className="mt-0.5 text-xs text-muted-foreground">
-                            Showing {filteredBenefits.length} of {studentBenefits.length} developer packs and student
-                            benefits
+                            {t.showing(filteredBenefits.length, studentBenefits.length)}
                         </p>
                     </div>
 
@@ -139,7 +142,7 @@ export function StudentBenefitsCatalog() {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search tools, cloud, IDEs..."
+                            placeholder={t.searchPlaceholder}
                             className="w-full min-w-0 bg-transparent text-xs text-zinc-800 placeholder-zinc-400 outline-none"
                         />
                         {searchQuery && (
@@ -147,7 +150,7 @@ export function StudentBenefitsCatalog() {
                                 type="button"
                                 onClick={() => setSearchQuery("")}
                                 className="shrink-0 rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-muted-foreground"
-                                aria-label="Clear search"
+                                aria-label={t.clearSearch}
                             >
                                 <X className="h-3.5 w-3.5" />
                             </button>
@@ -171,7 +174,7 @@ export function StudentBenefitsCatalog() {
                                         : "border border-zinc-200 bg-white text-muted-foreground hover:border-zinc-300 hover:bg-zinc-50"
                                 }`}
                             >
-                                {cat}
+                                {t.categories[cat]}
                             </button>
                         );
                     })}
@@ -192,7 +195,7 @@ export function StudentBenefitsCatalog() {
                                     <Link
                                         href={`/resources/${benefit.id}`}
                                         className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 transition group-hover:bg-orange-600 group-hover:text-white sm:h-12 sm:w-12"
-                                        aria-label={`View ${benefit.title} details`}
+                                        aria-label={t.viewDetails(benefit.title)}
                                     >
                                         {renderCardIcon(benefit.iconName)}
                                     </Link>
@@ -217,7 +220,7 @@ export function StudentBenefitsCatalog() {
                                             key={cat}
                                             className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground"
                                         >
-                                            {cat}
+                                            {t.categories[cat]}
                                         </span>
                                     ))}
                                 </div>
@@ -229,7 +232,7 @@ export function StudentBenefitsCatalog() {
                                 >
                                     {benefit.title}
                                 </Link>
-                                <p className="mt-0.5 text-xs text-zinc-400">By {benefit.provider}</p>
+                                <p className="mt-0.5 text-xs text-zinc-400">{t.byProvider(benefit.provider)}</p>
 
                                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
                                     {benefit.tagline}
@@ -238,7 +241,7 @@ export function StudentBenefitsCatalog() {
                                 {/* Key Highlights */}
                                 <div className="mt-3.5 border-t border-zinc-100 pt-3">
                                     <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                                        Highlights
+                                        {t.highlights}
                                     </p>
                                     <ul className="mt-2 space-y-1.5">
                                         {benefit.perks.slice(0, 3).map((perk) => (
@@ -261,7 +264,7 @@ export function StudentBenefitsCatalog() {
                                         href={`/resources/${benefit.id}`}
                                         className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-orange-50 px-3.5 py-2 text-xs font-semibold text-orange-700 transition hover:bg-orange-600 hover:text-white"
                                     >
-                                        <span>View Claim Guide</span>
+                                        <span>{t.viewClaimGuide}</span>
                                         <ArrowRight className="h-3.5 w-3.5" />
                                     </Link>
                                     <a
@@ -269,10 +272,10 @@ export function StudentBenefitsCatalog() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white p-2 text-muted-foreground shadow-2xs transition hover:border-zinc-300 hover:bg-zinc-50"
-                                        title={`Direct claim link on ${benefit.provider}`}
+                                        title={t.directClaimLink(benefit.provider)}
                                     >
                                         <ExternalLink className="h-4 w-4" />
-                                        <span className="sr-only">Claim on {benefit.provider}</span>
+                                        <span className="sr-only">{t.claimOn(benefit.provider)}</span>
                                     </a>
                                 </div>
                             </div>
@@ -282,11 +285,8 @@ export function StudentBenefitsCatalog() {
             ) : (
                 <div className="rounded-3xl border border-dashed border-zinc-300 bg-white p-12 text-center">
                     <Gift className="mx-auto h-12 w-12 text-zinc-300" />
-                    <h3 className="mt-4 text-base font-semibold text-zinc-900">No student benefits found</h3>
-                    <p className="mt-1.5 text-xs text-muted-foreground">
-                        No perks matched your query &quot;{searchQuery}&quot;. Try adjusting your keywords or reset
-                        filters.
-                    </p>
+                    <h3 className="mt-4 text-base font-semibold text-zinc-900">{t.noResultsTitle}</h3>
+                    <p className="mt-1.5 text-xs text-muted-foreground">{t.noResults(searchQuery)}</p>
                     <button
                         type="button"
                         onClick={() => {
@@ -295,14 +295,14 @@ export function StudentBenefitsCatalog() {
                         }}
                         className="mt-4 rounded-full bg-gradient-accent px-5 py-2 text-xs font-semibold text-white transition hover:shadow-lg hover:shadow-orange-500/30"
                     >
-                        Reset Filters
+                        {t.resetFilters}
                     </button>
                 </div>
             )}
 
             {/* Student Institutional Email Guide Section */}
             <div className="mt-12 border-t border-zinc-200 pt-8 sm:mt-16 sm:pt-10">
-                <StudentEmailGuideSection />
+                <StudentEmailGuideSection locale={locale} />
             </div>
         </div>
     );
