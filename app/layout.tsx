@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { resolveOgImageUrl } from "@/lib/data/og-image";
 import { getLocale } from "@/lib/i18n/server";
 import "./globals.css";
+import SmoothScroll from "@/components/smooth-scroll";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     variable: "--font-plus-jakarta-sans",
@@ -64,6 +65,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     <NextTopLoader color="#f97316" height={3} showSpinner={false} crawl crawlSpeed={200} speed={200} />
                     {children}
                     <Toaster richColors />
+                    <SmoothScroll />
                 </TooltipProvider>
             </body>
         </html>
