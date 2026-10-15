@@ -83,6 +83,7 @@ jobs:
                   build-args: |
                       NEXT_PUBLIC_R2_PUBLIC_URL=${{ vars.NEXT_PUBLIC_R2_PUBLIC_URL }}
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+                      NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
                   secrets: |
                       sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
                   cache-from: type=gha,scope=production-runtime
@@ -99,6 +100,7 @@ jobs:
                   build-args: |
                       NEXT_PUBLIC_R2_PUBLIC_URL=${{ vars.NEXT_PUBLIC_R2_PUBLIC_URL }}
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+                      NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
                   secrets: |
                       sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
                   cache-from: |
