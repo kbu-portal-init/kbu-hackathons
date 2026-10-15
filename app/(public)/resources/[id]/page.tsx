@@ -23,7 +23,14 @@ import {
     JetBrainsIcon,
     NotionIcon,
 } from "@/components/resources/brand-icons";
-import { type StudentBenefit, studentBenefits } from "@/lib/public-data/student-benefits";
+import { getMessages } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
+import {
+    formatBenefitDate,
+    getStudentBenefits,
+    type StudentBenefit,
+    studentBenefits,
+} from "@/lib/public-data/student-benefits";
 
 function renderBrandIcon(iconName: StudentBenefit["iconName"], className = "h-8 w-8 sm:h-10 sm:w-10") {
     switch (iconName) {
@@ -54,29 +61,35 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
-    const benefit = studentBenefits.find((b) => b.id === id);
+    const locale = await getLocale();
+    const t = getMessages(locale).resourcesPage;
+    const benefit = getStudentBenefits(locale).find((b) => b.id === id);
 
     if (!benefit) {
         return {
-            title: "Student Benefit Not Found | KBU Hackathon 2026",
+            title: t.notFoundTitle,
         };
     }
 
     return {
-        title: `${benefit.title} — Student Claim Guide | KBU Hackathon 2026`,
+        title: t.claimGuideTitle(benefit.title),
         description: benefit.description,
     };
 }
 
 export default async function StudentBenefitDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const benefit = studentBenefits.find((b) => b.id === id);
+    const locale = await getLocale();
+    const messages = getMessages(locale);
+    const t = messages.resourcesPage.detail;
+    const benefits = getStudentBenefits(locale);
+    const benefit = benefits.find((b) => b.id === id);
 
     if (!benefit) {
         notFound();
     }
 
-    const otherBenefits = studentBenefits.filter((b) => b.id !== benefit.id).slice(0, 3);
+    const otherBenefits = benefits.filter((b) => b.id !== benefit.id).slice(0, 3);
 
     return (
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 sm:px-6 sm:py-10 sm:pb-16 lg:px-8">
@@ -86,7 +99,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     <ol className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-muted-foreground">
                         <li>
                             <Link href="/" className="transition hover:text-orange-600">
-                                Home
+                                {messages.common.home}
                             </Link>
                         </li>
                         <li>
@@ -94,7 +107,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                         </li>
                         <li>
                             <Link href="/resources" className="transition hover:text-orange-600">
-                                Resources
+                                {messages.common.resources}
                             </Link>
                         </li>
                         <li>
@@ -106,7 +119,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     </ol>
                 </nav>
 
-                <BackButton fallbackHref="/resources" label="Back to all benefits" className="self-start" />
+                <BackButton fallbackHref="/resources" label={t.backToAll} className="self-start" />
             </div>
 
             {/* Hero Header Card */}
@@ -124,7 +137,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                         key={cat}
                                         className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700"
                                     >
-                                        {cat}
+                                        {messages.resourcesPage.categories[cat]}
                                     </span>
                                 ))}
                                 {benefit.badge && (
@@ -144,11 +157,11 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             </h1>
 
                             <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                                <span>Provided by {benefit.provider}</span>
+                                <span>{t.providedBy(benefit.provider)}</span>
                                 {benefit.postedDate && (
                                     <>
                                         <span>•</span>
-                                        <span>Verified {benefit.postedDate}</span>
+                                        <span>{t.verified(formatBenefitDate(benefit.postedDate, locale))}</span>
                                     </>
                                 )}
                             </div>
@@ -163,7 +176,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-accent px-5 py-3 text-sm font-semibold text-white shadow-xs transition hover:shadow-lg hover:shadow-orange-500/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
                         >
-                            <span>Claim on {benefit.provider}</span>
+                            <span>{messages.resourcesPage.claimOn(benefit.provider)}</span>
                             <ExternalLink className="h-4 w-4" />
                         </a>
                     </div>
@@ -174,7 +187,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                     <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-orange-200/80 bg-orange-50/80 p-3.5 text-xs font-medium text-orange-900 sm:mt-6 sm:p-4 sm:text-sm">
                         <Tag className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                         <div>
-                            <span className="font-semibold">Special Student Pricing: </span>
+                            <span className="font-semibold">{t.specialPricing}</span>
                             {benefit.pricingNote}
                         </div>
                     </div>
@@ -189,11 +202,9 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 <section className="rounded-3xl border border-zinc-200/80 bg-white p-5 sm:p-8">
                     <div className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-orange-600" />
-                        <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">What&apos;s Included Free</h2>
+                        <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">{t.includedTitle}</h2>
                     </div>
-                    <p className="mt-0.5 text-xs text-zinc-400">
-                        Exclusive features unlocked with student academic status
-                    </p>
+                    <p className="mt-0.5 text-xs text-zinc-400">{t.includedSubtitle}</p>
 
                     <ul className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
                         {benefit.perks.map((perk) => (
@@ -212,7 +223,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                         <div className="mt-5 flex items-start gap-2.5 rounded-2xl border border-zinc-200/80 bg-zinc-50 p-3.5 text-xs text-muted-foreground sm:p-4">
                             <Info className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
                             <div>
-                                <span className="font-semibold">Terms &amp; Restrictions: </span>
+                                <span className="font-semibold">{t.restrictions}</span>
                                 {benefit.restrictionsNote}
                             </div>
                         </div>
@@ -223,9 +234,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 <section className="rounded-3xl border border-emerald-200/70 bg-linear-to-r from-emerald-50/80 to-teal-50/40 p-5 sm:p-6">
                     <div className="flex items-center gap-2 text-emerald-800">
                         <ShieldCheck className="h-5 w-5 shrink-0" />
-                        <h2 className="text-sm font-bold uppercase tracking-wider sm:text-base">
-                            Eligibility Requirement
-                        </h2>
+                        <h2 className="text-sm font-bold uppercase tracking-wider sm:text-base">{t.eligibility}</h2>
                     </div>
                     <p className="mt-2 text-xs leading-relaxed text-emerald-950 sm:text-sm">{benefit.eligibility}</p>
                 </section>
@@ -234,9 +243,9 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                 <section className="rounded-3xl border border-zinc-200/80 bg-white p-5 sm:p-8">
                     <div className="flex items-center gap-2">
                         <Clock className="h-5 w-5 text-orange-600" />
-                        <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">How to Claim This Student Offer</h2>
+                        <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">{t.howToClaimTitle}</h2>
                     </div>
-                    <p className="mt-0.5 text-xs text-zinc-400">Follow these exact steps to complete verification</p>
+                    <p className="mt-0.5 text-xs text-zinc-400">{t.howToClaimSubtitle}</p>
 
                     <ol className="mt-5 space-y-3.5 sm:mt-6 sm:space-y-4">
                         {benefit.howToClaim.map((step, idx) => (
@@ -257,9 +266,10 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                         <div className="flex items-start gap-2.5">
                             <Mail className="mt-0.5 h-4 w-4 shrink-0 text-orange-600" />
                             <div>
-                                <p className="text-xs font-bold text-orange-900">Need to check your student email?</p>
+                                <p className="text-xs font-bold text-orange-900">{t.checkEmail}</p>
                                 <p className="text-xs text-orange-800/80">
-                                    Format: <code className="font-mono font-bold">u[StudentID]@ms.kbu.ac.th</code>
+                                    {t.emailFormat}
+                                    <code className="font-mono font-bold">u[StudentID]@ms.kbu.ac.th</code>
                                 </p>
                             </div>
                         </div>
@@ -269,7 +279,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 self-start text-xs font-semibold text-orange-700 underline underline-offset-2 hover:text-orange-800 sm:self-center"
                         >
-                            Open Outlook Webmail
+                            {messages.resourcesPage.openWebmail}
                             <ExternalLink className="h-3.5 w-3.5" />
                         </a>
                     </div>
@@ -277,10 +287,8 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
 
                 {/* Section: Other Recommended Perks */}
                 <section className="pt-4">
-                    <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">Other Recommended Perks</h2>
-                    <p className="mt-0.5 text-xs text-zinc-400">
-                        Explore more developer packs available for KBU students
-                    </p>
+                    <h2 className="text-lg font-bold text-zinc-900 sm:text-xl">{t.otherPerks}</h2>
+                    <p className="mt-0.5 text-xs text-zinc-400">{t.otherPerksSubtitle}</p>
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-3">
                         {otherBenefits.map((item) => (
@@ -306,7 +314,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                                     <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.tagline}</p>
                                 </div>
                                 <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-orange-600">
-                                    <span>Read Guide</span>
+                                    <span>{t.readGuide}</span>
                                     <ArrowRight className="h-3 w-3 transition group-hover:translate-x-1" />
                                 </div>
                             </Link>
@@ -330,7 +338,7 @@ export default async function StudentBenefitDetailPage({ params }: { params: Pro
                         rel="noopener noreferrer"
                         className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-gradient-accent px-4 py-2.5 text-xs font-semibold text-white shadow-xs active:scale-95"
                     >
-                        <span>Claim Now</span>
+                        <span>{t.claimNow}</span>
                         <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                 </div>

@@ -2,14 +2,21 @@ import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StudentBenefitsCatalog } from "@/components/resources/student-benefits-catalog";
+import { getMessages } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-    title: "Student Benefits & Developer Packs | KBU Hackathon 2026",
-    description:
-        "Unlock over $200,000+ in free industry-standard software, AI coding assistants, cloud credits, and developer tools using your official KBU student credentials.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = getMessages(await getLocale()).resourcesPage;
+    return {
+        title: t.metaTitle,
+        description: t.metaDescription,
+    };
+}
 
-export default function ResourcesPage() {
+export default async function ResourcesPage() {
+    const locale = await getLocale();
+    const messages = getMessages(locale);
+
     return (
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
             {/* Accessible Breadcrumb */}
@@ -17,19 +24,19 @@ export default function ResourcesPage() {
                 <ol className="flex items-center gap-1.5 font-medium text-muted-foreground">
                     <li>
                         <Link href="/" className="transition hover:text-orange-600">
-                            Home
+                            {messages.common.home}
                         </Link>
                     </li>
                     <li>
                         <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
                     </li>
                     <li className="font-semibold text-orange-600" aria-current="page">
-                        Resources &amp; Student Benefits
+                        {messages.resourcesPage.title}
                     </li>
                 </ol>
             </nav>
 
-            <StudentBenefitsCatalog />
+            <StudentBenefitsCatalog locale={locale} />
         </main>
     );
 }
