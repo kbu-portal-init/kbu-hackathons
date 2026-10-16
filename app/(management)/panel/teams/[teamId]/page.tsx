@@ -15,14 +15,15 @@ export default function PanelTeamDetailPage({ params }: { params: Promise<{ team
     return (
         <main className="space-y-8">
             <Suspense fallback={<DashboardDetailSkeleton />}>
-                <TeamDetailContent params={params} />
+                {params.then(({ teamId }) => (
+                    <TeamDetailContent teamId={teamId} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function TeamDetailContent({ params }: { params: Promise<{ teamId: string }> }) {
-    const { teamId } = await params;
+async function TeamDetailContent({ teamId }: { teamId: string }) {
     const result = await getTeam({ teamId });
     if (!result.ok) notFound();
     const team = result.data;

@@ -4,14 +4,14 @@ import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardListSkeleton } from "@/components/dashboard-skeletons";
 import { AnnouncementManagement } from "./_components/announcement-management";
 
-type searchParams = {
+type AnnouncementsQuery = {
     page?: string;
     pageSize?: string;
     search?: string;
     status?: string;
 };
 
-export default function PanelAnnouncementsPage({ searchParams }: { searchParams: Promise<searchParams> }) {
+export default function PanelAnnouncementsPage({ searchParams }: { searchParams: Promise<AnnouncementsQuery> }) {
     return (
         <main className="space-y-8">
             <DashboardPageHeader
@@ -20,20 +20,30 @@ export default function PanelAnnouncementsPage({ searchParams }: { searchParams:
                 description="Create, publish, and manage platform announcements."
             />
             <Suspense fallback={<DashboardListSkeleton />}>
-                <AnnouncementContent searchParams={searchParams} />
+                {searchParams.then(({ page, pageSize, search, status }) => (
+                    <AnnouncementContent page={page} pageSize={pageSize} search={search} status={status} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function AnnouncementContent({ searchParams }: { searchParams: Promise<searchParams> }) {
-    const params = await searchParams;
-
+async function AnnouncementContent({
+    page,
+    pageSize,
+    search,
+    status,
+}: {
+    page?: string;
+    pageSize?: string;
+    search?: string;
+    status?: string;
+}) {
     const result = await listAnnouncements({
-        page: params.page ?? "1",
-        pageSize: params.pageSize ?? "10",
-        search: params.search,
-        status: params.status,
+        page: page ?? "1",
+        pageSize: pageSize ?? "10",
+        search,
+        status,
     });
 
     if (!result.ok) {
