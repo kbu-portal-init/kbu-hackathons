@@ -6,7 +6,8 @@ import { Suspense } from "react";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
 
-import { AnnouncementsContent, AnnouncementsContentSkeleton } from "./_components/announcements-content";
+import AnnouncementResultsFallback from "./_components/announcement-results-fallback";
+import { AnnouncementsContent } from "./_components/announcements-content";
 
 export const metadata: Metadata = {
     title: "Announcements | KBU Hackathon 2026",
@@ -56,7 +57,7 @@ export default async function AnnouncementsPage({
                 <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{t.subtitle}</p>
             </section>
 
-            <Suspense fallback={<AnnouncementsContentSkeleton />}>
+            <Suspense fallback={<AnnouncementResultsFallback />}>
                 {searchParams.then((query) => (
                     <AnnouncementsContent query={query} locale={locale} />
                 ))}

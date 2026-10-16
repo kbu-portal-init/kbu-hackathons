@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
 import { getStudentBenefits, studentBenefits } from "@/lib/public-data/student-benefits";
-import { StudentBenefitDetail, StudentBenefitDetailSkeleton } from "./_components/student-benefit-detail";
+import { StudentBenefitDetail } from "./_components/student-benefit-detail";
 
 export async function generateStaticParams() {
     return studentBenefits.map((benefit) => ({
@@ -29,12 +28,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     };
 }
 
-export default function StudentBenefitDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    return (
-        <Suspense fallback={<StudentBenefitDetailSkeleton />}>
-            {params.then(({ id }) => (
-                <StudentBenefitDetail id={id} />
-            ))}
-        </Suspense>
-    );
+export default async function StudentBenefitDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
+    return <StudentBenefitDetail id={id} />;
 }

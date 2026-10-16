@@ -28,17 +28,7 @@ export default function PanelAnnouncementsPage({ searchParams }: { searchParams:
     );
 }
 
-async function AnnouncementContent({
-    page,
-    pageSize,
-    search,
-    status,
-}: {
-    page?: string;
-    pageSize?: string;
-    search?: string;
-    status?: string;
-}) {
+async function AnnouncementContent({ page, pageSize, search, status }: AnnouncementsQuery) {
     const result = await listAnnouncements({
         page: page ?? "1",
         pageSize: pageSize ?? "10",

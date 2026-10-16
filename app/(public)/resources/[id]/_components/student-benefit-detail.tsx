@@ -315,17 +315,3 @@ export async function StudentBenefitDetail({ id }: { id: string }) {
         </main>
     );
 }
-
-export function StudentBenefitDetailSkeleton() {
-    return (
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-10">
-            <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-            <div className="mt-6 h-64 animate-pulse rounded-3xl bg-muted" />
-            <div className="mt-8 space-y-8">
-                <div className="h-48 animate-pulse rounded-3xl bg-muted" />
-                <div className="h-32 animate-pulse rounded-3xl bg-muted" />
-                <div className="h-56 animate-pulse rounded-3xl bg-muted" />
-            </div>
-        </main>
-    );
-}

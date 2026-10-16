@@ -40,20 +40,11 @@ function getCategoryHref(category: Category, search?: string): string {
     return queryString ? `/announcements?${queryString}` : "/announcements";
 }
 
-export type AnnouncementQuery = {
+type AnnouncementQuery = {
     page?: string;
     search?: string;
     category?: string;
 };
-
-export function AnnouncementsContentSkeleton() {
-    return (
-        <div role="status" aria-label="Loading announcements" aria-busy="true" className="flex flex-col gap-3">
-            <div className="h-11 w-full animate-pulse rounded-lg bg-muted" />
-            <div className="mt-3 h-6 w-48 animate-pulse rounded bg-muted" />
-        </div>
-    );
-}
 
 export function AnnouncementsContent({ query, locale }: { query: AnnouncementQuery; locale: Locale }) {
     const t = getMessages(locale).announcementsPage;
