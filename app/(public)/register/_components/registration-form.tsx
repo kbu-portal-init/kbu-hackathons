@@ -281,7 +281,7 @@ export function RegistrationForm({
                     </section>
                 </div>
 
-                <aside className="space-y-4 lg:sticky lg:top-6">
+                <aside className="space-y-4 lg:sticky lg:top-24">
                     <RosterSummary
                         teamName={watchedTeamName}
                         program={watchedProgram}
