@@ -8,6 +8,7 @@ import { resolveOgImageUrl } from "@/lib/data/og-image";
 import { getLocale } from "@/lib/i18n/server";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import SmoothScroll from "@/components/smooth-scroll";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     variable: "--font-plus-jakarta-sans",
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     <NextTopLoader color="#f97316" height={3} showSpinner={false} crawl crawlSpeed={200} speed={200} />
                     {children}
                     <Toaster richColors />
+                    <SmoothScroll />
                     {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
                 </TooltipProvider>
             </body>
