@@ -127,6 +127,32 @@
     --font-mono: "Fira Code", monospace;
 }
 
+/* FAQ accordion open/close animation (native <details> via ::details-content) */
+.faq-disclosure {
+    interpolate-size: allow-keywords;
+}
+
+.faq-disclosure::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+        block-size 250ms ease,
+        opacity 200ms ease,
+        content-visibility 250ms allow-discrete;
+}
+
+.faq-disclosure[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .faq-disclosure::details-content {
+        transition: none;
+    }
+}
+
 html,
 body {
     min-height: 100%;
