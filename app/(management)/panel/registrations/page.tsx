@@ -17,22 +17,20 @@ export default function PanelRegistrationsPage({
                 description="Review team applications and manage approval decisions."
             />
             <Suspense fallback={<DashboardListSkeleton />}>
-                <RegistrationListContent searchParams={searchParams} />
+                {searchParams.then(({ status, page }) => (
+                    <RegistrationListContent status={status} page={page} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function RegistrationListContent({
-    searchParams,
-}: {
-    searchParams: Promise<{ status?: string; page?: string }>;
-}) {
-    const params = await searchParams;
+async function RegistrationListContent({ status, page }: { status?: string; page?: string }) {
+    const typedStatus = status as "PENDING" | "APPROVED" | "REJECTED" | undefined;
 
     const result = await listRegistrationRequests({
-        status: params.status as "PENDING" | "APPROVED" | "REJECTED" | undefined,
-        page: params.page ? Number(params.page) : 1,
+        status: typedStatus,
+        page: page ? Number(page) : 1,
         pageSize: 20,
     });
 
@@ -44,11 +42,5 @@ async function RegistrationListContent({
         );
     }
 
-    return (
-        <RegistrationManagement
-            items={result.data.items}
-            meta={result.data.meta}
-            status={params.status as "PENDING" | "APPROVED" | "REJECTED" | undefined}
-        />
-    );
+    return <RegistrationManagement items={result.data.items} meta={result.data.meta} status={typedStatus} />;
 }

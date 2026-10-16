@@ -24,16 +24,16 @@ export default function AdminAuditsPage({ searchParams }: { searchParams: Promis
                 description="Review and permanently delete administrative activity records."
             />
             <Suspense fallback={<DashboardListSkeleton />}>
-                <AuditLogContent searchParams={searchParams} />
+                {searchParams.then((resolved) => (
+                    <AuditLogContent query={resolved} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function AuditLogContent({ searchParams }: { searchParams: Promise<AuditSearchParams> }) {
-    const params = await searchParams;
-
-    const parsedParams = listAuditLogsSchema.safeParse(params);
+async function AuditLogContent({ query }: { query: AuditSearchParams }) {
+    const parsedParams = listAuditLogsSchema.safeParse(query);
     const filters = parsedParams.success ? parsedParams.data : listAuditLogsSchema.parse({});
     const data = await listAuditLogs(filters);
 
