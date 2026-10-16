@@ -89,16 +89,18 @@ export async function AboutContent() {
 
                 <div className="mt-8 divide-y divide-orange-200 border-y border-orange-200">
                     {t.faq.map(([question, answer]) => (
-                        <details key={question} className="group py-5 first:pt-6 last:pb-6">
+                        <details key={question} className="faq-disclosure group py-5 first:pt-6 last:pb-6">
                             <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600 [&::-webkit-details-marker]:hidden">
                                 <span>{question}</span>
+
                                 <span
-                                    className="text-2xl leading-none text-orange-600 transition-transform group-open:rotate-45"
-                                    aria-hidden
+                                    className="shrink-0 text-2xl leading-none text-orange-600 transition-transform duration-200 group-open:rotate-45"
+                                    aria-hidden="true"
                                 >
                                     +
                                 </span>
                             </summary>
+
                             <p className="mt-3 max-w-3xl pr-10 leading-7 text-brand-muted-foreground">{answer}</p>
                         </details>
                     ))}
