@@ -53,7 +53,7 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
             <div className="rounded-2xl border border-secondary bg-secondary p-5 text-sm text-brand-muted-foreground">
                 <p>{t.announcementsUnavailable}</p>
                 <Link href="/announcements" className="mt-2 inline-flex font-semibold text-primary/90 underline">
-                    View all announcements
+                    {locale === "th" ? "อ่านประกาศทั้งหมด" : "View all announcements"}
                 </Link>
             </div>
         );
