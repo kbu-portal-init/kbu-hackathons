@@ -18,16 +18,16 @@ export default function AdminOrganizersPage({
                 description="Manage organizer accounts and elevated access."
             />
             <Suspense fallback={<DashboardListSkeleton />}>
-                <OrganizerContent searchParams={searchParams} />
+                {searchParams.then(({ page, pageSize }) => (
+                    <OrganizerContent page={page} pageSize={pageSize} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function OrganizerContent({ searchParams }: { searchParams: Promise<{ page?: string; pageSize?: string }> }) {
-    const params = await searchParams;
-
-    const data = await listOrganizers({ page: Number(params.page ?? 1), pageSize: Number(params.pageSize ?? 20) });
+async function OrganizerContent({ page, pageSize }: { page?: string; pageSize?: string }) {
+    const data = await listOrganizers({ page: Number(page ?? 1), pageSize: Number(pageSize ?? 20) });
     const { items, meta } = data;
 
     const pageHref = (page: number) => `/admin/organizers?page=${page}&pageSize=${meta.pageSize}`;

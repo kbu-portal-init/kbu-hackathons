@@ -17,17 +17,18 @@ export default function PanelTeamsPage({
                 description="Browse approved teams and monitor their submissions."
             />
             <Suspense fallback={<DashboardListSkeleton />}>
-                <TeamListContent searchParams={searchParams} />
+                {searchParams.then(({ page, status }) => (
+                    <TeamListContent page={page} status={status} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function TeamListContent({ searchParams }: { searchParams: Promise<{ page?: string; status?: string }> }) {
-    const params = await searchParams;
-    const status = params.status === "ACTIVE" || params.status === "BANNED" ? params.status : undefined;
-    const result = await listTeams({ page: params.page ? Number(params.page) : 1, pageSize: 20, status });
+async function TeamListContent({ page, status }: { page?: string; status?: string }) {
+    const normalizedStatus = status === "ACTIVE" || status === "BANNED" ? status : undefined;
+    const result = await listTeams({ page: page ? Number(page) : 1, pageSize: 20, status: normalizedStatus });
     if (!result.ok) throw new Error(result.error.message);
 
-    return <TeamManagement items={result.data.items} meta={result.data.meta} status={status} />;
+    return <TeamManagement items={result.data.items} meta={result.data.meta} status={normalizedStatus} />;
 }

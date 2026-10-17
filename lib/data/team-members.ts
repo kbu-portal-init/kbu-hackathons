@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import prisma from "@/lib/prisma";
 

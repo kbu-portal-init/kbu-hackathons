@@ -38,14 +38,15 @@ export default async function RegistrationDetailPage({ params }: { params: Promi
     return (
         <main className="space-y-8">
             <Suspense fallback={<DashboardDetailSkeleton />}>
-                <RegistrationDetailContent params={params} />
+                {params.then(({ id }) => (
+                    <RegistrationDetailContent id={id} />
+                ))}
             </Suspense>
         </main>
     );
 }
 
-async function RegistrationDetailContent({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+async function RegistrationDetailContent({ id }: { id: string }) {
     const item = await getRegistrationDetail(id);
 
     if (!item) notFound();
