@@ -14,7 +14,7 @@ export default async function Home() {
         <main className="bg-background">
             <HomeHero locale={locale} />
 
-            <section className="border-b-2 border-border/10">
+            <section className="border-b-2 border-border/10 bg-background">
                 <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-20 lg:py-24">
                     <AboutContent />
                 </div>

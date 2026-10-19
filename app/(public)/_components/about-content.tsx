@@ -8,7 +8,7 @@ export async function AboutContent() {
     const t = getMessages(await getLocale()).about;
 
     return (
-        <section id="everything-you-need-to-know" className="scroll-mt-24 bg-background">
+        <section id="everything-you-need-to-know" className="scroll-mt-24">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
                 <div>
                     <h2 className="max-w-md font-display text-[clamp(2.4rem,6vw,4.5rem)] font-bold leading-[0.92] tracking-tight text-foreground">
