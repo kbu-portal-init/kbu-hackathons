@@ -109,7 +109,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
                         </div>
 
                         {registrationState === "open" && event && (
-                            <p className="mt-4 font-display text-sm font-semibold">
+                            <p className="mt-4 font-display text-sm font-semibold text-primary">
                                 {t.home.registrationCloses} {formatDate(event.registrationClosesAt, locale)}
                             </p>
                         )}
