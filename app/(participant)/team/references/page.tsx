@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { PosterPanel } from "@/components/poster";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { getMessages } from "@/lib/i18n/messages";
@@ -87,7 +88,7 @@ export default async function TeamReferencesPage() {
             </section>
 
             <section className="grid gap-5">
-                <div className="border-2 border-border bg-card p-6">
+                <PosterPanel className="p-6">
                     <div className="flex items-center gap-3">
                         <Link2 className="size-5 text-primary" />
                         <h2 className="font-display text-xl font-bold tracking-tight text-foreground">
@@ -110,7 +111,7 @@ export default async function TeamReferencesPage() {
                             <ArrowUpRight className="size-4" />
                         </Link>
                     </div>
-                </div>
+                </PosterPanel>
             </section>
 
             <section className="flex items-start gap-4 border-2 border-border/15 bg-background p-6">
@@ -138,7 +139,7 @@ async function EventFacts() {
                     {event ? `${formatDate(event.startsAt)} – ${formatDate(event.endsAt)}` : "Dates to be announced"}
                 </p>
             </div>
-            <div className="border-2 border-border bg-card p-5">
+            <PosterPanel className="p-5">
                 <ClipboardCheck className="size-5 text-primary" />
                 <p className="mt-4 font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     Team size
@@ -146,8 +147,8 @@ async function EventFacts() {
                 <p className="mt-1 font-semibold text-foreground">
                     {event ? `${event.minTeamSize}–${event.maxTeamSize} members` : "Check event rules"}
                 </p>
-            </div>
-            <div className="border-2 border-border bg-card p-5">
+            </PosterPanel>
+            <PosterPanel className="p-5">
                 <Trophy className="size-5 text-primary" />
                 <p className="mt-4 font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     Submission deadline
@@ -155,7 +156,7 @@ async function EventFacts() {
                 <p className="mt-1 font-semibold text-foreground">
                     {event ? formatDate(event.submissionDeadline) : "To be announced"}
                 </p>
-            </div>
+            </PosterPanel>
         </section>
     );
 }
@@ -166,11 +167,11 @@ function EventFactsSkeleton() {
             <span className="sr-only">Loading event details</span>
             <div className="grid gap-4 sm:grid-cols-3">
                 {["one", "two", "three"].map((key) => (
-                    <div className="border-2 border-border bg-card p-5" key={key}>
+                    <PosterPanel className="p-5" key={key}>
                         <Skeleton className="size-5 bg-accent text-accent-foreground" />
                         <Skeleton className="mt-4 h-4 w-28 bg-background" />
                         <Skeleton className="mt-2 h-5 w-40 max-w-full bg-background" />
-                    </div>
+                    </PosterPanel>
                 ))}
             </div>
         </div>

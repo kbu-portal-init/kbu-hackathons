@@ -1,3 +1,4 @@
+import { PosterPanel } from "@/components/poster";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type SkeletonProps = { header?: boolean };
@@ -31,14 +32,14 @@ export function DashboardListSkeleton({ header = false }: SkeletonProps) {
                         <Skeleton className="h-9 w-24 bg-foreground/10" key={key} />
                     ))}
                 </div>
-                <div className="border-2 border-border bg-card p-6">
+                <PosterPanel className="p-6">
                     <Skeleton className="h-6 w-44 bg-foreground/10" />
                     <div className="mt-6 space-y-4">
                         {["one", "two", "three", "four", "five"].map((key) => (
                             <Skeleton className="h-12 w-full bg-foreground/10" key={key} />
                         ))}
                     </div>
-                </div>
+                </PosterPanel>
                 <div className="flex justify-end">
                     <Skeleton className="h-9 w-56 bg-foreground/10" />
                 </div>
@@ -52,7 +53,7 @@ export function DashboardFormSkeleton({ header = false }: SkeletonProps) {
         <StatusRegion label="Loading form">
             <div className="space-y-6">
                 {header ? <HeadingBars /> : null}
-                <div className="space-y-8 border-2 border-border bg-card p-6">
+                <PosterPanel className="space-y-8 p-6">
                     <div className="space-y-3">
                         <Skeleton className="h-5 w-40 bg-primary/20" />
                         <Skeleton className="h-4 w-72 max-w-full bg-foreground/10" />
@@ -69,7 +70,7 @@ export function DashboardFormSkeleton({ header = false }: SkeletonProps) {
                         <Skeleton className="h-4 w-24 bg-foreground/10" />
                         <Skeleton className="h-24 w-full bg-foreground/10" />
                     </div>
-                </div>
+                </PosterPanel>
                 <div className="flex justify-end gap-3">
                     <Skeleton className="h-10 w-28 bg-primary/20" />
                 </div>
@@ -97,22 +98,22 @@ export function DashboardDetailSkeleton() {
                         </div>
                     ))}
                 </div>
-                <div className="border-2 border-border bg-card p-6">
+                <PosterPanel className="p-6">
                     <Skeleton className="h-5 w-40 bg-foreground/10" />
                     <div className="mt-4 space-y-3">
                         {["one", "two", "three", "four", "five"].map((key) => (
                             <Skeleton className="h-10 w-full bg-foreground/10" key={key} />
                         ))}
                     </div>
-                </div>
-                <div className="border-2 border-border bg-card p-6">
+                </PosterPanel>
+                <PosterPanel className="p-6">
                     <Skeleton className="h-5 w-36 bg-foreground/10" />
                     <div className="mt-4 space-y-3">
                         {["one", "two"].map((key) => (
                             <Skeleton className="h-10 w-full bg-foreground/10" key={key} />
                         ))}
                     </div>
-                </div>
+                </PosterPanel>
             </div>
         </StatusRegion>
     );
@@ -155,10 +156,10 @@ export function DashboardStatGridSkeleton({
             <div className={`grid gap-4 ${className}`}>
                 {Array.from({ length: count }, (_, index) => (
                     // biome-ignore lint/suspicious/noArrayIndexKey: static placeholder grid
-                    <div className="space-y-3 border-2 border-border bg-card p-5" key={index}>
+                    <PosterPanel className="space-y-3 p-5" key={index}>
                         <Skeleton className="h-4 w-24 bg-foreground/10" />
                         <Skeleton className="h-8 w-20 bg-primary/20" />
-                    </div>
+                    </PosterPanel>
                 ))}
             </div>
         </StatusRegion>

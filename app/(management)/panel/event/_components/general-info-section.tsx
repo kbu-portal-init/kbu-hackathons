@@ -3,9 +3,8 @@
 import { CalendarDays } from "lucide-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { PosterFieldLabel, PosterInput, PosterPanel, PosterTextarea } from "@/components/poster";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 
 type Props = {
@@ -14,7 +13,7 @@ type Props = {
 
 export function GeneralInfoSection({ control }: Props) {
     return (
-        <section className="border-2 border-border bg-card p-6">
+        <PosterPanel className="p-6">
             <div className="flex items-center gap-2">
                 <CalendarDays className="size-5 text-muted-foreground" />
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">General information</h2>
@@ -25,13 +24,13 @@ export function GeneralInfoSection({ control }: Props) {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel
+                            <PosterFieldLabel
                                 htmlFor={field.name}
                                 className="font-display text-sm font-semibold text-foreground"
                             >
                                 Title
-                            </FieldLabel>
-                            <Input
+                            </PosterFieldLabel>
+                            <PosterInput
                                 {...field}
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
@@ -47,13 +46,13 @@ export function GeneralInfoSection({ control }: Props) {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel
+                            <PosterFieldLabel
                                 htmlFor={field.name}
                                 className="font-display text-sm font-semibold text-foreground"
                             >
                                 Description
-                            </FieldLabel>
-                            <Textarea
+                            </PosterFieldLabel>
+                            <PosterTextarea
                                 {...field}
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
@@ -71,13 +70,13 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel
+                                <PosterFieldLabel
                                     htmlFor={field.name}
                                     className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Venue
-                                </FieldLabel>
-                                <Input
+                                </PosterFieldLabel>
+                                <PosterInput
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
@@ -93,13 +92,13 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel
+                                <PosterFieldLabel
                                     htmlFor={field.name}
                                     className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Promo URL <span className="font-normal text-muted-foreground">(optional)</span>
-                                </FieldLabel>
-                                <Input
+                                </PosterFieldLabel>
+                                <PosterInput
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
@@ -112,6 +111,6 @@ export function GeneralInfoSection({ control }: Props) {
                     />
                 </div>
             </FieldGroup>
-        </section>
+        </PosterPanel>
     );
 }

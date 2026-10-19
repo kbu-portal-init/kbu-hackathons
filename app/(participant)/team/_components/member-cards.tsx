@@ -5,8 +5,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { generateMemberCard } from "@/actions/participant/member-cards";
 import { CardImageViewer } from "@/components/card-image-viewer";
+import { PosterButton } from "@/components/poster";
 import { ShareButton } from "@/components/share-button";
-import { Button } from "@/components/ui/button";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
 
@@ -105,9 +105,9 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                             </div>
                             <div className="mt-auto flex flex-wrap gap-2">
                                 {member.cardUrl ? (
-                                    <Button
+                                    <PosterButton
+                                        tone="outline"
                                         size="lg"
-                                        variant="outline"
                                         className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                         disabled={downloadingId === member.id}
                                         onClick={() => handleDownload(member)}
@@ -118,7 +118,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                             <Download />
                                         )}
                                         {downloadingId === member.id ? "Preparing…" : "Download"}
-                                    </Button>
+                                    </PosterButton>
                                 ) : null}
                                 {member.cardUrl && member.cardShareToken ? (
                                     <ShareButton
@@ -127,7 +127,8 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                         className="border-2 border-border/20 text-sm font-semibold text-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
                                     />
                                 ) : null}
-                                <Button
+                                <PosterButton
+                                    tone="solid"
                                     size="lg"
                                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     disabled={busyId === member.id}
@@ -139,7 +140,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                         : member.cardUrl
                                           ? "Regenerate"
                                           : "Generate"}
-                                </Button>
+                                </PosterButton>
                             </div>
                         </div>
                     </article>

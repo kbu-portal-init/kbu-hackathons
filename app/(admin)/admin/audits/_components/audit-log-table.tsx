@@ -5,8 +5,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { deleteAuditLog } from "@/actions/admin/audits";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PosterButton, PosterTableHead } from "@/components/poster";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import type { AuditLogListItem } from "@/lib/contracts/audits";
 
 export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
@@ -30,24 +30,24 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Created
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </PosterTableHead>
+                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Actor
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </PosterTableHead>
+                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Action
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </PosterTableHead>
+                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Target
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </PosterTableHead>
+                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Details
-                        </TableHead>
-                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </PosterTableHead>
+                        <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Actions
-                        </TableHead>
+                        </PosterTableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -84,19 +84,20 @@ export function AuditLogTable({ items }: { items: AuditLogListItem[] }) {
                                 <TableCell className="text-right">
                                     <ConfirmActionAlertDialog
                                         trigger={
-                                            <Button
-                                                variant="destructive"
+                                            <PosterButton
+                                                tone="destructive"
                                                 size="sm"
                                                 className="border-2 border-destructive/40 font-display text-xs font-semibold"
                                                 disabled={deletingId !== null}
                                             >
                                                 Delete
-                                            </Button>
+                                            </PosterButton>
                                         }
                                         title="Delete audit log"
                                         description={`Permanently delete the ${item.action} audit record? This cannot be undone.`}
                                         confirmLabel="Delete"
                                         pendingLabel="Deleting..."
+                                        destructive
                                         onConfirm={() => onDelete(item)}
                                     />
                                 </TableCell>

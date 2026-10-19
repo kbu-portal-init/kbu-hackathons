@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { updateMemberImage } from "@/actions/participant/team-members";
 import { updateTeamLogo } from "@/actions/participant/team-settings";
 import { FileUpload } from "@/components/file-upload";
-import { Badge } from "@/components/ui/badge";
+import { PosterBadge, PosterPanel } from "@/components/poster";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
 
@@ -44,7 +44,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
 
     return (
         <div className="space-y-8">
-            <section className="border-2 border-border/15 bg-card p-6">
+            <PosterPanel className="p-6">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">
                         <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden bg-accent font-display text-2xl font-bold text-accent-foreground">
@@ -77,9 +77,12 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                 {team.displayName}
                             </h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <Badge className="border-2 border-border bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground">
+                                <PosterBadge
+                                    tone="accent"
+                                    className="border-2 border-border bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground"
+                                >
                                     <CheckCircle2 /> Approved
-                                </Badge>
+                                </PosterBadge>
                                 <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                                     <Users className="size-4" />
                                     {members.length} {members.length === 1 ? "member" : "members"}
@@ -114,9 +117,9 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                     This shared username is used by your team to sign in to the workspace. Keep it and the team password
                     available to approved members only.
                 </p>
-            </section>
+            </PosterPanel>
 
-            <section className="border-2 border-border/15 bg-card p-6">
+            <PosterPanel className="p-6">
                 <div className="mb-5">
                     <h2 className="font-display text-xl font-bold tracking-tight text-foreground">Member profiles</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
@@ -161,16 +164,16 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                             {member.name}
                                         </h3>
                                     </div>
-                                    <Badge variant="outline" className="border-2 border-border/20 text-foreground">
+                                    <PosterBadge tone="neutral" className="border-2 border-border/20 text-foreground">
                                         {formatRole(member.role)}
-                                    </Badge>
+                                    </PosterBadge>
                                 </div>
                                 <p className="break-all text-sm text-muted-foreground">{member.studentEmail}</p>
                             </div>
                         </article>
                     ))}
                 </div>
-            </section>
+            </PosterPanel>
         </div>
     );
 }

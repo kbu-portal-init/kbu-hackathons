@@ -4,7 +4,7 @@ import { GripVertical, ImageIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
 import { FileUpload } from "@/components/file-upload";
-import { Badge } from "@/components/ui/badge";
+import { PosterBadge, PosterPanel } from "@/components/poster";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -23,14 +23,14 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
     const sortableImages: SortableImage[] = imageUrls.map((url) => ({ id: url, url }));
 
     return (
-        <section className="border-2 border-border bg-card p-6">
+        <PosterPanel className="p-6">
             <div className="flex items-center gap-2">
                 <ImageIcon className="size-5 text-muted-foreground" />
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Event images</h2>
                 {imageUrls.length > 0 && (
-                    <Badge variant="secondary" className="ml-auto border-2 border-border/15">
+                    <PosterBadge tone="muted" className="ml-auto border-2 border-border/15">
                         {imageUrls.length}
-                    </Badge>
+                    </PosterBadge>
                 )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -66,8 +66,8 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                                     <GripVertical className="size-4" aria-hidden="true" />
                                 </button>
                                 <Button
-                                    type="button"
                                     variant="destructive"
+                                    type="button"
                                     size="icon"
                                     className="absolute right-2 top-2 size-8 bg-destructive text-destructive-foreground opacity-100 transition-opacity hover:bg-destructive/90 sm:opacity-0 sm:group-hover:opacity-100"
                                     onClick={() => onRemove(index)}
@@ -76,12 +76,12 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                                 </Button>
                             </div>
                             {index === 0 && (
-                                <Badge
+                                <PosterBadge
+                                    tone="primary"
                                     className="absolute left-2 top-2 border-2 border-border bg-accent text-accent-foreground"
-                                    variant="default"
                                 >
                                     Primary
-                                </Badge>
+                                </PosterBadge>
                             )}
                         </div>
                     ))}
@@ -98,6 +98,6 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                     uploadHint="JPG, PNG, WEBP, or GIF"
                 />
             </div>
-        </section>
+        </PosterPanel>
     );
 }

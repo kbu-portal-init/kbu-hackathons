@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { changeAdminPassword, updateAdminProfile } from "@/actions/admin/profile";
 import { FileUpload } from "@/components/file-upload";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput, PosterPanel } from "@/components/poster";
 import { Label } from "@/components/ui/label";
 import type { AdminProfileDTO } from "@/lib/contracts/admin-profile";
 
@@ -31,7 +30,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
 
     return (
         <div className="grid max-w-4xl gap-6 lg:grid-cols-2">
-            <section className="border-2 border-border bg-card p-6">
+            <PosterPanel className="p-6">
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row sm:items-center">
@@ -71,7 +70,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         <Label htmlFor="name" className="font-display text-sm font-semibold text-foreground">
                             Name
                         </Label>
-                        <Input
+                        <PosterInput
                             id="name"
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
@@ -83,7 +82,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         <Label htmlFor="email" className="font-display text-sm font-semibold text-foreground">
                             Email
                         </Label>
-                        <Input
+                        <PosterInput
                             id="email"
                             type="email"
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -94,22 +93,23 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                     </div>
                     <div className="space-y-2">
                         <Label className="font-display text-sm font-semibold text-foreground">Role</Label>
-                        <Input
+                        <PosterInput
                             value={profile.role}
                             readOnly
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         />
                     </div>
-                    <Button
+                    <PosterButton
+                        tone="solid"
                         type="submit"
                         disabled={saving}
                         className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                     >
                         {saving ? "Saving..." : "Save profile"}
-                    </Button>
+                    </PosterButton>
                 </form>
-            </section>
-            <section className="border-2 border-border bg-card p-6">
+            </PosterPanel>
+            <PosterPanel className="p-6">
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Change password</h2>
                 <PasswordChangeForm
                     idPrefix="admin"
@@ -119,7 +119,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         return result.ok ? { ok: true } : { ok: false, error: result.error };
                     }}
                 />
-            </section>
+            </PosterPanel>
         </div>
     );
 }

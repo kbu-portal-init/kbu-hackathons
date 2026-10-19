@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { sendManualNotificationAction } from "@/actions/management/notifications";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { PosterButton, PosterInput, PosterSelectTrigger, PosterTextarea } from "@/components/poster";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectValue } from "@/components/ui/select";
 import type { TeamListItem } from "@/lib/contracts/teams";
 import { submitNotification } from "./notification-submission";
 
@@ -42,7 +40,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                 <div className="flex flex-col gap-2 font-display text-sm font-semibold text-foreground">
                     <span>Recipient</span>
                     <Select value={mode} onValueChange={(value) => setMode(value as typeof mode)}>
-                        <SelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
+                        <PosterSelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
                             <SelectValue>
                                 {mode === "TEAM"
                                     ? "Specific team"
@@ -50,7 +48,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                                       ? "All approved teams"
                                       : "Specific email"}
                             </SelectValue>
-                        </SelectTrigger>
+                        </PosterSelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 <SelectItem value="TEAM">Specific team</SelectItem>
@@ -63,7 +61,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                 <div className="flex flex-col gap-2 font-display text-sm font-semibold text-foreground">
                     <span>Delivery channel</span>
                     <Select value={channel} onValueChange={(value) => value && setChannel(value as typeof channel)}>
-                        <SelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
+                        <PosterSelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
                             <SelectValue>
                                 {channel === "EMAIL"
                                     ? "Email only"
@@ -71,7 +69,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                                       ? "In-app only"
                                       : "Email and in-app"}
                             </SelectValue>
-                        </SelectTrigger>
+                        </PosterSelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 <SelectItem value="EMAIL">Email only</SelectItem>
@@ -89,11 +87,11 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                             if (value !== null) setTeamId(value);
                         }}
                     >
-                        <SelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
+                        <PosterSelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
                             <SelectValue placeholder="Choose a team">
                                 {teams.find((team) => team.id === teamId)?.displayName ?? "Choose a team"}
                             </SelectValue>
-                        </SelectTrigger>
+                        </PosterSelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 {teams.map((team) => (
@@ -109,7 +107,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                     </Select>
                 )}
                 {mode === "EMAIL" && (
-                    <Input
+                    <PosterInput
                         required
                         type="email"
                         placeholder="recipient@example.com"
@@ -123,7 +121,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                     className="flex flex-col gap-2 font-display text-sm font-semibold text-foreground"
                 >
                     Subject
-                    <Input
+                    <PosterInput
                         id="notification-subject"
                         required
                         maxLength={200}
@@ -137,7 +135,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                     className="flex flex-col gap-2 font-display text-sm font-semibold text-foreground"
                 >
                     Message
-                    <Textarea
+                    <PosterTextarea
                         id="notification-body"
                         required
                         maxLength={10000}
@@ -152,13 +150,14 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                         {message}
                     </p>
                 )}
-                <Button
+                <PosterButton
+                    tone="solid"
                     type="submit"
                     disabled={pending}
                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     {pending ? "Sending..." : "Send notification"}
-                </Button>
+                </PosterButton>
             </form>
         </div>
     );

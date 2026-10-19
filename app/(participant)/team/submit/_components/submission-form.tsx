@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveSubmission } from "@/actions/participant/submissions";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import { Button } from "@/components/ui/button";
+import { PosterButton } from "@/components/poster";
 import type { SubmissionDTO } from "@/lib/contracts/submissions";
 
 const fields = [
@@ -149,12 +149,13 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                     </button>
                     <ConfirmActionAlertDialog
                         trigger={
-                            <Button
+                            <PosterButton
+                                tone="solid"
                                 className="border-2 border-border bg-foreground px-5 py-3 font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                 disabled={locked || isPending}
                             >
                                 Finalize submission
-                            </Button>
+                            </PosterButton>
                         }
                         title="Finalize submission?"
                         description="After finalizing, your team cannot edit this submission unless an organizer reopens it."

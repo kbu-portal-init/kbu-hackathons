@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { Badge } from "@/components/ui/badge";
+import { PosterBadge, PosterPanel } from "@/components/poster";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
 import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
@@ -107,15 +107,15 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="border-2 border-border/20 text-foreground">
+                                <PosterBadge tone="neutral" className="border-2 border-border/20 text-foreground">
                                     {member.role}
-                                </Badge>
-                                <Badge
-                                    variant={member.verifiedAt ? "default" : "secondary"}
-                                    className="border-2 border-border/20"
+                                </PosterBadge>
+                                <PosterBadge
+                                    tone={member.verifiedAt ? "primary" : "muted"}
+                                    className="border-border/20"
                                 >
                                     {member.verifiedAt ? "Verified" : "Unverified"}
-                                </Badge>
+                                </PosterBadge>
                             </div>
                         </div>
                     ))}
@@ -181,13 +181,13 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         </div>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex flex-wrap items-center gap-3">
-                                <Badge
-                                    variant={
+                                <PosterBadge
+                                    tone={
                                         team.submission.status === "SUBMITTED"
-                                            ? "default"
+                                            ? "primary"
                                             : team.submission.status === "REOPENED"
-                                              ? "outline"
-                                              : "secondary"
+                                              ? "neutral"
+                                              : "muted"
                                     }
                                 >
                                     {team.submission.status === "SUBMITTED"
@@ -195,7 +195,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                         : team.submission.status === "REOPENED"
                                           ? "Reopened for editing"
                                           : "Draft"}
-                                </Badge>
+                                </PosterBadge>
                                 <p className="text-sm text-muted-foreground">
                                     {team.submission.status === "SUBMITTED" && team.submission.submittedAt
                                         ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
@@ -217,7 +217,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         {team.reviews.map((review) => (
                             <div key={review.id} className="py-3 text-sm">
                                 <div className="flex justify-between gap-2">
-                                    <Badge variant="outline">{review.decision}</Badge>
+                                    <PosterBadge tone="neutral">{review.decision}</PosterBadge>
                                     <span className="text-muted-foreground">
                                         {format(new Date(review.createdAt), "PPP p")}
                                     </span>
@@ -247,10 +247,10 @@ function Info({ label, value }: { label: string; value: string }) {
 
 function Panel({ title, children }: { title: string; children: ReactNode }) {
     return (
-        <section className="border-2 border-border bg-card p-6">
+        <PosterPanel className="p-6">
             <h2 className="font-display text-lg font-bold tracking-tight text-foreground">{title}</h2>
             <div className="mt-4">{children}</div>
-        </section>
+        </PosterPanel>
     );
 }
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { PosterPanel } from "@/components/poster";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { countApprovedTeams } from "@/lib/data/registrations";
@@ -20,10 +21,10 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 function StatusCard({ title, text }: { title: string; text: string }) {
     return (
-        <div className="mx-auto mt-8 max-w-xl border-2 border-border bg-card p-8">
+        <PosterPanel className="mx-auto mt-8 max-w-xl p-8">
             <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">{title}</h2>
             <p className="mt-3 text-base leading-7 text-muted-foreground">{text}</p>
-        </div>
+        </PosterPanel>
     );
 }
 
@@ -32,11 +33,11 @@ function RegistrationFallback() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
             <div className="space-y-6">
                 {(["team", "leader", "members"] as const).map((section) => (
-                    <div className="border-2 border-border/15 bg-card p-6" key={section}>
+                    <PosterPanel className="p-6" key={section}>
                         <Skeleton className="h-6 w-56 max-w-full bg-foreground/10" />
                         <Skeleton className="mt-6 h-11 w-full bg-foreground/10" />
                         <Skeleton className="mt-4 h-11 w-full bg-foreground/10" />
-                    </div>
+                    </PosterPanel>
                 ))}
             </div>
             <Skeleton className="hidden h-72 bg-foreground/10 lg:block" />

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BackButton } from "@/components/back-button";
-import { Button } from "@/components/ui/button";
+import { PosterButton } from "@/components/poster";
 import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { authClient } from "@/lib/auth-client";
 import { type PasswordResetInput, passwordResetSchema } from "@/lib/contracts/auth";
@@ -54,12 +54,13 @@ export function ResetPasswordForm({ token }: { token: string }) {
                         Your password has been saved. You can now sign in with the account credentials associated with
                         this reset link.
                     </p>
-                    <Button
+                    <PosterButton
+                        tone="solid"
                         className="mt-6 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                         onClick={() => router.push("/login")}
                     >
                         Go to login
-                    </Button>
+                    </PosterButton>
                 </div>
             </main>
         );
@@ -141,13 +142,14 @@ export function ResetPasswordForm({ token }: { token: string }) {
                             </InputGroup>
                             <FormError message={form.formState.errors.confirmPassword?.message} />
                         </div>
-                        <Button
+                        <PosterButton
+                            tone="solid"
                             type="submit"
                             className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                             disabled={form.formState.isSubmitting}
                         >
                             {form.formState.isSubmitting ? "Saving password..." : "Set password"}
-                        </Button>
+                        </PosterButton>
                     </form>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Control } from "react-hook-form";
+import { PosterPanel } from "@/components/poster";
 import { FieldGroup } from "@/components/ui/field";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 import { DateTimeField } from "./date-time-field";
@@ -26,7 +27,7 @@ type Props = {
 
 export function DateSection({ title, control, fields }: Props) {
     return (
-        <section className="border-2 border-border bg-card p-6">
+        <PosterPanel className="p-6">
             <h2 className="font-display text-lg font-bold tracking-tight text-foreground">{title}</h2>
             <FieldGroup className="mt-5">
                 {fields.map((f) => (
@@ -40,6 +41,6 @@ export function DateSection({ title, control, fields }: Props) {
                     />
                 ))}
             </FieldGroup>
-        </section>
+        </PosterPanel>
     );
 }

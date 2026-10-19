@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { changeOrganizerPassword, updateOrganizerProfile } from "@/actions/management/organizer-profile";
 import { FileUpload } from "@/components/file-upload";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput, PosterPanel } from "@/components/poster";
 import { Label } from "@/components/ui/label";
 import type { OrganizerProfileDTO } from "@/lib/contracts/organizer-profile";
 
@@ -28,7 +27,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
 
     return (
         <div className="grid max-w-4xl gap-6 lg:grid-cols-2">
-            <section className="border-2 border-border bg-card p-6">
+            <PosterPanel className="p-6">
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
@@ -60,7 +59,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         <Label htmlFor="organizer-name" className="font-display text-sm font-semibold text-foreground">
                             Name
                         </Label>
-                        <Input
+                        <PosterInput
                             id="organizer-name"
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
@@ -72,7 +71,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         <Label htmlFor="organizer-email" className="font-display text-sm font-semibold text-foreground">
                             Email
                         </Label>
-                        <Input
+                        <PosterInput
                             id="organizer-email"
                             type="email"
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -81,16 +80,17 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                             required
                         />
                     </div>
-                    <Button
+                    <PosterButton
+                        tone="solid"
                         type="submit"
                         disabled={saving}
                         className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                     >
                         {saving ? "Saving..." : "Save profile"}
-                    </Button>
+                    </PosterButton>
                 </form>
-            </section>
-            <section className="border-2 border-border bg-card p-6">
+            </PosterPanel>
+            <PosterPanel className="p-6">
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Change password</h2>
                 <PasswordChangeForm
                     idPrefix="organizer"
@@ -100,7 +100,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         return result.ok ? { ok: true } : { ok: false, error: result.error };
                     }}
                 />
-            </section>
+            </PosterPanel>
         </div>
     );
 }

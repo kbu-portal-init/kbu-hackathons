@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PosterBadge, PosterTableHead } from "@/components/poster";
+import { Table, TableBody, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
 import { formatRole } from "@/lib/util";
@@ -15,27 +15,27 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge variant="outline" className="border-2 border-border bg-accent text-accent-foreground">
+                <PosterBadge tone="accent" className="border-2 border-border bg-accent text-accent-foreground">
                     Pending
-                </Badge>
+                </PosterBadge>
             );
         case "APPROVED":
             return (
-                <Badge variant="outline" className="border-2 border-border text-foreground">
+                <PosterBadge tone="neutral" className="border-2 border-border text-foreground">
                     Approved
-                </Badge>
+                </PosterBadge>
             );
         case "REJECTED":
             return (
-                <Badge variant="destructive" className="border-2 border-destructive/40">
+                <PosterBadge tone="danger" className="border-2 border-destructive/40">
                     Rejected
-                </Badge>
+                </PosterBadge>
             );
         default:
             return (
-                <Badge variant="secondary" className="border-2 border-border/15 text-muted-foreground">
+                <PosterBadge tone="muted" className="border-2 border-border/15 text-muted-foreground">
                     {status}
-                </Badge>
+                </PosterBadge>
             );
     }
 }
@@ -95,18 +95,18 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                     Name
-                                </TableHead>
-                                <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                </PosterTableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                     Role
-                                </TableHead>
-                                <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                </PosterTableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                     Email
-                                </TableHead>
-                                <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                </PosterTableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                     Verification
-                                </TableHead>
+                                </PosterTableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

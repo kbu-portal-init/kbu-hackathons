@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { PosterPanel } from "@/components/poster";
 
 export default function NotFound() {
     return (
         <main className="flex min-h-screen flex-1 items-center justify-center bg-background px-5 py-16 sm:px-8 sm:py-24">
-            <section className="w-full max-w-xl border-2 border-border bg-card p-6 text-center sm:p-10">
+            <PosterPanel className="w-full max-w-xl p-6 text-center sm:p-10">
                 <p className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     KBU Hackathon 2026
                 </p>
@@ -28,7 +29,7 @@ export default function NotFound() {
                         Go home
                     </Link>
                 </div>
-            </section>
+            </PosterPanel>
         </main>
     );
 }

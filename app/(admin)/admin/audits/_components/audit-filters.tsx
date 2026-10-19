@@ -1,8 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput } from "@/components/poster";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type AuditAction, auditActions } from "@/lib/contracts/audits";
@@ -86,9 +85,9 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger
                         render={
-                            <Button
+                            <PosterButton
+                                tone="outline"
                                 type="button"
-                                variant="outline"
                                 className="h-9 w-full justify-start border-2 border-border/25 bg-card font-normal text-foreground"
                             />
                         }
@@ -108,7 +107,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 >
                                     Search users
                                 </Label>
-                                <Input
+                                <PosterInput
                                     id="user-search"
                                     className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={search}
@@ -123,7 +122,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 >
                                     Limit
                                 </Label>
-                                <Input
+                                <PosterInput
                                     id="user-limit"
                                     type="number"
                                     min={1}
@@ -163,15 +162,15 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
                             </div>
                             {hasNext && (
-                                <Button
+                                <PosterButton
+                                    tone="outline"
                                     type="button"
-                                    variant="outline"
                                     className="w-full"
                                     disabled={loading}
                                     onClick={() => void loadMore()}
                                 >
                                     Load more
-                                </Button>
+                                </PosterButton>
                             )}
                         </div>
                     </PopoverContent>
@@ -196,20 +195,21 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 </select>
             </div>
             <div className="flex gap-2">
-                <Button
+                <PosterButton
+                    tone="solid"
                     type="submit"
                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     Filter
-                </Button>
-                <Button
+                </PosterButton>
+                <PosterButton
+                    tone="outline"
                     type="button"
-                    variant="outline"
                     className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                     onClick={clear}
                 >
                     Clear
-                </Button>
+                </PosterButton>
             </div>
         </form>
     );

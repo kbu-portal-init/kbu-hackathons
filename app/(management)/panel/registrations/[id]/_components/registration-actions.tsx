@@ -7,17 +7,15 @@ import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { approveRegistrationRequest, rejectRegistrationRequest } from "@/actions/management/registrations";
-import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
+    PosterButton,
+    PosterDialogContent,
+    PosterDialogFooter,
+    PosterFieldLabel,
+    PosterTextarea,
+} from "@/components/poster";
+import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { RejectRegistrationInput } from "@/lib/contracts/registration";
 import { rejectRegistrationSchema } from "@/lib/contracts/registration";
@@ -75,7 +73,8 @@ export function RegistrationActions({
                 <Tooltip>
                     <TooltipTrigger
                         render={
-                            <Button
+                            <PosterButton
+                                tone="solid"
                                 className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                 onClick={onApprove}
                                 disabled={approveDisabled}
@@ -88,7 +87,7 @@ export function RegistrationActions({
                                 ) : (
                                     "Approve registration"
                                 )}
-                            </Button>
+                            </PosterButton>
                         }
                     />
                     {hasUnverified && (
@@ -102,18 +101,18 @@ export function RegistrationActions({
                         </TooltipContent>
                     )}
                 </Tooltip>
-                <Button
-                    variant="destructive"
+                <PosterButton
+                    tone="destructive"
                     className="border-2 border-destructive/40 font-display text-sm font-semibold"
                     onClick={() => setRejectOpen(true)}
                     disabled={isPending}
                 >
                     Reject
-                </Button>
+                </PosterButton>
             </div>
 
             <Dialog open={rejectOpen} onOpenChange={(open) => !open && setRejectOpen(false)}>
-                <DialogContent className="border-2 border-border">
+                <PosterDialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Reject registration</DialogTitle>
                         <DialogDescription>This action sends a rejection email to the team leader.</DialogDescription>
@@ -125,13 +124,13 @@ export function RegistrationActions({
                                 control={rejectForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
+                                        <PosterFieldLabel
                                             className="font-display text-sm font-semibold text-foreground"
                                             htmlFor={field.name}
                                         >
                                             Reason
-                                        </FieldLabel>
-                                        <Textarea
+                                        </PosterFieldLabel>
+                                        <PosterTextarea
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
@@ -143,26 +142,26 @@ export function RegistrationActions({
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
-                            <Button
+                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <PosterButton
+                                tone="outline"
                                 type="button"
-                                variant="outline"
                                 onClick={() => setRejectOpen(false)}
                                 disabled={isPending}
                             >
                                 Cancel
-                            </Button>
-                            <Button
+                            </PosterButton>
+                            <PosterButton
+                                tone="destructive"
                                 type="submit"
-                                variant="destructive"
                                 disabled={isPending}
                                 className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {isPending ? "Rejecting..." : "Reject registration"}
-                            </Button>
-                        </DialogFooter>
+                            </PosterButton>
+                        </PosterDialogFooter>
                     </form>
-                </DialogContent>
+                </PosterDialogContent>
             </Dialog>
         </TooltipProvider>
     );

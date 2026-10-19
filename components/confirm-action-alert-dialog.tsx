@@ -19,6 +19,7 @@ type ConfirmActionAlertDialogProps = {
     description: string;
     confirmLabel?: string;
     pendingLabel?: string;
+    destructive?: boolean;
     onConfirm: () => Promise<boolean> | Promise<void>;
 };
 
@@ -28,6 +29,7 @@ export function ConfirmActionAlertDialog({
     description,
     confirmLabel = "Confirm",
     pendingLabel = "Please wait...",
+    destructive = false,
     onConfirm,
 }: ConfirmActionAlertDialogProps) {
     const [open, setOpen] = useState(false);
@@ -53,16 +55,29 @@ export function ConfirmActionAlertDialog({
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger render={trigger} />
 
-            <AlertDialogContent className="border-2 border-border">
+            <AlertDialogContent className="border-2 border-border bg-card ring-0">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="font-display">{title}</AlertDialogTitle>
                     <AlertDialogDescription>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel
+                        disabled={isPending}
+                        className="border-2 border-border bg-background font-display font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                    >
+                        Cancel
+                    </AlertDialogCancel>
 
-                    <AlertDialogAction disabled={isPending} onClick={handleConfirm}>
+                    <AlertDialogAction
+                        disabled={isPending}
+                        onClick={handleConfirm}
+                        className={
+                            destructive
+                                ? "border-2 border-destructive/40 bg-destructive/10 font-display font-semibold text-destructive hover:bg-destructive/20"
+                                : "border-2 border-border bg-foreground font-display font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                        }
+                    >
                         {isPending ? pendingLabel : confirmLabel}
                     </AlertDialogAction>
                 </AlertDialogFooter>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { markTeamNotificationRead } from "@/actions/participant/notifications";
-import { Button } from "@/components/ui/button";
+import { PosterButton } from "@/components/poster";
 import type { NotificationDTO } from "@/lib/contracts/notifications";
 
 export function NotificationInbox({ initial, unreadCount }: { initial: NotificationDTO[]; unreadCount: number }) {
@@ -60,14 +60,14 @@ export function NotificationInbox({ initial, unreadCount }: { initial: Notificat
                                     </p>
                                 </div>
                                 {!item.readAt && (
-                                    <Button
+                                    <PosterButton
+                                        tone="outline"
                                         size="sm"
-                                        variant="outline"
                                         className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                         onClick={() => markRead(item.id)}
                                     >
                                         Mark as read
-                                    </Button>
+                                    </PosterButton>
                                 )}
                             </div>
                             <p className="mt-4 whitespace-pre-wrap text-sm text-muted-foreground">{item.body}</p>

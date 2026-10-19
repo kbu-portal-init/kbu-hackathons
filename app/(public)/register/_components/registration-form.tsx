@@ -7,9 +7,8 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { submitTeamRegistration } from "@/actions/management/registrations";
 import { BackButton } from "@/components/back-button";
-import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterFieldLabel, PosterInput, PosterPanel } from "@/components/poster";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldSet } from "@/components/ui/field";
 import { TeamMemberRole } from "@/generated/prisma/enums";
 import { submitRegistrationSchema } from "@/lib/contracts/registration";
 import { getMessages } from "@/lib/i18n/messages";
@@ -132,7 +131,7 @@ export function RegistrationForm({
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
                 <div className="space-y-6">
                     {/* 1 · Team */}
-                    <section className="border-2 border-border bg-card p-6">
+                    <PosterPanel className="p-6">
                         <SectionHeading
                             step={1}
                             title={th ? "ข้อมูลทีม" : "About your team"}
@@ -145,8 +144,10 @@ export function RegistrationForm({
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel htmlFor={field.name}>{th ? "ชื่อทีม" : "Team name"}</FieldLabel>
-                                            <Input
+                                            <PosterFieldLabel htmlFor={field.name}>
+                                                {th ? "ชื่อทีม" : "Team name"}
+                                            </PosterFieldLabel>
+                                            <PosterInput
                                                 {...field}
                                                 id={field.name}
                                                 aria-invalid={fieldState.invalid}
@@ -164,9 +165,9 @@ export function RegistrationForm({
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel id="program-label">
+                                            <PosterFieldLabel id="program-label">
                                                 {th ? "หลักสูตรการศึกษา" : "Education program"}
-                                            </FieldLabel>
+                                            </PosterFieldLabel>
                                             <ProgramPicker
                                                 name={field.name}
                                                 value={field.value}
@@ -184,7 +185,9 @@ export function RegistrationForm({
                                 />
 
                                 <Field>
-                                    <FieldLabel id="team-size-label">{th ? "ขนาดทีม" : "Team size"}</FieldLabel>
+                                    <PosterFieldLabel id="team-size-label">
+                                        {th ? "ขนาดทีม" : "Team size"}
+                                    </PosterFieldLabel>
                                     <TeamSizeStepper
                                         value={selectedTeamSize}
                                         min={minTeamSize}
@@ -199,10 +202,10 @@ export function RegistrationForm({
                                 </Field>
                             </FieldGroup>
                         </FieldSet>
-                    </section>
+                    </PosterPanel>
 
                     {/* 2 · Leader */}
-                    <section className="border-2 border-border bg-card p-6">
+                    <PosterPanel className="p-6">
                         <SectionHeading
                             step={2}
                             title={th ? "หัวหน้าทีม" : "Team leader"}
@@ -216,10 +219,10 @@ export function RegistrationForm({
                                         control={form.control}
                                         render={({ field, fieldState }) => (
                                             <Field data-invalid={fieldState.invalid}>
-                                                <FieldLabel htmlFor={field.name}>
+                                                <PosterFieldLabel htmlFor={field.name}>
                                                     {th ? "ชื่อเต็ม" : "Full name"}
-                                                </FieldLabel>
-                                                <Input
+                                                </PosterFieldLabel>
+                                                <PosterInput
                                                     {...field}
                                                     id={field.name}
                                                     aria-invalid={fieldState.invalid}
@@ -231,7 +234,7 @@ export function RegistrationForm({
                                         )}
                                     />
                                     <Field>
-                                        <FieldLabel>{t.role}</FieldLabel>
+                                        <PosterFieldLabel>{t.role}</PosterFieldLabel>
                                         <div className="flex h-11 items-center border-2 border-border/15 bg-background px-3 text-base text-muted-foreground">
                                             {t.leaderRole}
                                         </div>
@@ -242,10 +245,10 @@ export function RegistrationForm({
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel htmlFor={field.name}>
+                                            <PosterFieldLabel htmlFor={field.name}>
                                                 {th ? "อีเมลนักศึกษา" : "Student email"}
-                                            </FieldLabel>
-                                            <Input
+                                            </PosterFieldLabel>
+                                            <PosterInput
                                                 {...field}
                                                 id={field.name}
                                                 type="email"
@@ -260,10 +263,10 @@ export function RegistrationForm({
                                 />
                             </FieldGroup>
                         </FieldSet>
-                    </section>
+                    </PosterPanel>
 
                     {/* 3 · Members */}
-                    <section className="border-2 border-border bg-card p-6">
+                    <PosterPanel className="p-6">
                         <SectionHeading
                             step={3}
                             title={`${th ? "สมาชิกทีมคนอื่น ๆ" : "Other team members"} (${selectedTeamSize - 1})`}
@@ -278,7 +281,7 @@ export function RegistrationForm({
                                 ))}
                             </FieldGroup>
                         </FieldSet>
-                    </section>
+                    </PosterPanel>
                 </div>
 
                 <aside className="space-y-4 lg:sticky lg:top-24">
@@ -291,7 +294,8 @@ export function RegistrationForm({
                     />
 
                     <div className="flex flex-col gap-3">
-                        <Button
+                        <PosterButton
+                            tone="solid"
                             type="submit"
                             size="lg"
                             disabled={form.formState.isSubmitting || !acknowledged}
@@ -305,10 +309,10 @@ export function RegistrationForm({
                             ) : (
                                 t.submitRegistration
                             )}
-                        </Button>
-                        <Button
+                        </PosterButton>
+                        <PosterButton
+                            tone="outline"
                             type="button"
-                            variant="outline"
                             size="lg"
                             className="w-full border-2 border-border bg-card font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                             onClick={() => setInformationOpen(true)}
@@ -321,7 +325,7 @@ export function RegistrationForm({
                             ) : (
                                 t.readBeforeSubmit
                             )}
-                        </Button>
+                        </PosterButton>
                         {!acknowledged ? (
                             <p className="text-center text-sm leading-5 text-muted-foreground">
                                 {th
