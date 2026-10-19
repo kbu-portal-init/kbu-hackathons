@@ -97,7 +97,16 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
 
     return (
         <>
-            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-muted-foreground">{t.formIntro}</p>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
+                {t.learnMore}{" "}
+                <Link
+                    className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4"
+                    href="/#everything-you-need-to-know"
+                >
+                    {t.learnMoreLink}
+                </Link>{" "}
+                {t.beforeRegistering}
+            </p>
             <div className="mt-8">
                 <RegistrationForm
                     minTeamSize={settings.minTeamSize}
@@ -125,16 +134,7 @@ export default async function TeamRegistrationPage() {
                     <h1 className="font-display text-[clamp(2.75rem,7vw,5rem)] font-bold leading-[0.9] tracking-tight text-foreground">
                         {t.title}
                     </h1>
-                    <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
-                        {t.learnMore}{" "}
-                        <Link
-                            className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4"
-                            href="/#everything-you-need-to-know"
-                        >
-                            {t.learnMoreLink}
-                        </Link>{" "}
-                        {t.beforeRegistering}
-                    </p>
+                    <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t.formIntro}</p>
                 </div>
                 <Suspense fallback={<RegistrationFallback />}>
                     <RegistrationContent locale={locale} />
