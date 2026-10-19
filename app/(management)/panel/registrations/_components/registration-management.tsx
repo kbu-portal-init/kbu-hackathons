@@ -9,19 +9,18 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { approveRegistrationRequest, rejectRegistrationRequest } from "@/actions/management/registrations";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
+    PosterBadge,
+    PosterButton,
+    PosterDialogContent,
+    PosterDialogFooter,
+    PosterFieldLabel,
+    PosterTableHead,
+    PosterTextarea,
+} from "@/components/poster";
+import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import type { PaginationMeta } from "@/lib/contracts/common";
 import {
     type RegistrationListItem,
@@ -57,7 +56,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved — password setup link sent to leader");
+            toast.success("Registration approved. Password setup link sent to leader");
             router.refresh();
         });
     };
@@ -89,28 +88,47 @@ export function RegistrationManagement({ items, meta, status }: Props) {
         <>
             <div className="flex flex-wrap items-center gap-2">
                 {statusFilters.map((s) => (
-                    <Button
+                    <PosterButton
                         key={s}
-                        variant={statusFilter === s ? "default" : "outline"}
+                        tone={statusFilter === s ? "solid" : "outline"}
                         size="sm"
+                        className={
+                            statusFilter === s
+                                ? "border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-foreground"
+                                : "border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                        }
                         onClick={() => handleFilterChange(s)}
                     >
                         {s.charAt(0) + s.slice(1).toLowerCase()}
-                    </Button>
+                    </PosterButton>
                 ))}
             </div>
 
-            <div className="mt-4 rounded-2xl border border-zinc-200 bg-white">
+            <div className="mt-4 border-2 border-border bg-card">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Team</TableHead>
-                            <TableHead>Program</TableHead>
-                            <TableHead>Leader</TableHead>
-                            <TableHead>Members</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Submitted</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Team
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Program
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Leader
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Members
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Status
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Submitted
+                            </PosterTableHead>
+                            <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Actions
+                            </PosterTableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -122,38 +140,43 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                             </TableRow>
                         ) : (
                             items.map((item) => (
-                                <TableRow key={item.id}>
+                                <TableRow className="hover:bg-accent/20" key={item.id}>
                                     <TableCell className="font-medium">{item.teamName}</TableCell>
                                     <TableCell>{formatRole(item.program)}</TableCell>
-                                    <TableCell>{item.leaderName || "—"}</TableCell>
+                                    <TableCell>{item.leaderName || "Not set"}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         <StatusBadge status={item.status} />
                                     </TableCell>
                                     <TableCell>
-                                        {item.submittedAt ? format(new Date(item.submittedAt), "MMM d, yyyy") : "—"}
+                                        {item.submittedAt
+                                            ? format(new Date(item.submittedAt), "MMM d, yyyy")
+                                            : "Not submitted"}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                variant="outline"
+                                            <PosterButton
+                                                tone="outline"
                                                 size="sm"
+                                                className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                 onClick={() => router.push(`/panel/registrations/${item.id}`)}
                                             >
                                                 <Eye className="size-4" />
                                                 View
-                                            </Button>
+                                            </PosterButton>
                                             {item.status === "PENDING" && (
                                                 <>
-                                                    <Button
+                                                    <PosterButton
+                                                        tone="solid"
                                                         size="sm"
+                                                        className="border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                                         onClick={() => onApprove(item.id)}
                                                         disabled={isPending}
                                                     >
                                                         Approve
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
+                                                    </PosterButton>
+                                                    <PosterButton
+                                                        tone="destructive"
                                                         size="sm"
                                                         onClick={() => {
                                                             rejectForm.reset({
@@ -165,7 +188,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                                         disabled={isPending}
                                                     >
                                                         Reject
-                                                    </Button>
+                                                    </PosterButton>
                                                 </>
                                             )}
                                         </div>
@@ -191,9 +214,9 @@ export function RegistrationManagement({ items, meta, status }: Props) {
             />
 
             <Dialog open={!!rejectItem} onOpenChange={(open) => !open && setRejectItem(null)}>
-                <DialogContent>
+                <PosterDialogContent className="border-2 border-border">
                     <DialogHeader>
-                        <DialogTitle>Reject registration</DialogTitle>
+                        <DialogTitle className="font-display">Reject registration</DialogTitle>
                         <DialogDescription>
                             Rejecting &quot;{rejectItem?.teamName}&quot;. This action sends a rejection email to the
                             team leader.
@@ -207,33 +230,44 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                 control={rejectForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
-                                        <Textarea
+                                        <PosterFieldLabel
+                                            className="font-display text-sm font-semibold text-foreground"
+                                            htmlFor={field.name}
+                                        >
+                                            Reason
+                                        </PosterFieldLabel>
+                                        <PosterTextarea
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
                                             placeholder="Explain why this registration was rejected..."
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4">
-                            <Button
+                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <PosterButton
+                                tone="outline"
                                 type="button"
-                                variant="outline"
                                 onClick={() => setRejectItem(null)}
                                 disabled={isPending}
                             >
                                 Cancel
-                            </Button>
-                            <Button type="submit" variant="destructive" disabled={isPending}>
+                            </PosterButton>
+                            <PosterButton
+                                tone="destructive"
+                                type="submit"
+                                disabled={isPending}
+                                className="border-2 border-destructive/40 font-display text-sm font-semibold"
+                            >
                                 {isPending ? "Rejecting..." : "Reject registration"}
-                            </Button>
-                        </DialogFooter>
+                            </PosterButton>
+                        </PosterDialogFooter>
                     </form>
-                </DialogContent>
+                </PosterDialogContent>
             </Dialog>
         </>
     );
@@ -243,19 +277,27 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge variant="outline" className="border-amber-300 text-amber-700">
+                <PosterBadge tone="accent" className="border-2 border-border bg-accent text-accent-foreground">
                     Pending
-                </Badge>
+                </PosterBadge>
             );
         case "APPROVED":
             return (
-                <Badge variant="outline" className="border-green-300 text-green-700">
+                <PosterBadge tone="neutral" className="border-2 border-border text-foreground">
                     Approved
-                </Badge>
+                </PosterBadge>
             );
         case "REJECTED":
-            return <Badge variant="destructive">Rejected</Badge>;
+            return (
+                <PosterBadge tone="danger" className="border-2 border-destructive/40">
+                    Rejected
+                </PosterBadge>
+            );
         default:
-            return <Badge variant="secondary">{status}</Badge>;
+            return (
+                <PosterBadge tone="muted" className="border-2 border-border/15 text-muted-foreground">
+                    {status}
+                </PosterBadge>
+            );
     }
 }

@@ -4,7 +4,7 @@ import { cn } from "cn";
 import { Check, Copy, ExternalLink, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { PosterButton } from "@/components/poster";
 import {
     Popover,
     PopoverContent,
@@ -70,52 +70,58 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
     }
 
     const trigger = (
-        <Button
+        <PosterButton
+            tone="outline"
             size="lg"
             type="button"
-            variant="outline"
             className={cn(
-                "transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground",
+                "border-2 border-border bg-transparent font-display text-sm font-semibold text-accent-foreground hover:!border-border hover:!bg-accent hover:!text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 className,
             )}
         >
             <Share2 data-icon="inline-start" />
             Share
-        </Button>
+        </PosterButton>
     );
 
     if (canUseNativeShare) {
         return (
-            <Button
+            <PosterButton
+                tone="outline"
                 size="lg"
                 type="button"
-                variant="outline"
                 onClick={handleShare}
                 className={cn(
-                    "transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground",
+                    "border-2 border-border bg-transparent font-display text-sm font-semibold text-accent-foreground hover:!border-border hover:!bg-accent hover:!text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     className,
                 )}
             >
                 <Share2 data-icon="inline-start" />
                 Share
-            </Button>
+            </PosterButton>
         );
     }
 
     return (
         <Popover>
             <PopoverTrigger render={trigger} />
-            <PopoverContent>
+            <PopoverContent className="border-2 border-border">
                 <PopoverHeader>
-                    <PopoverTitle>Share this link</PopoverTitle>
+                    <PopoverTitle className="font-display">Share this link</PopoverTitle>
                     <PopoverDescription>Copy the link or share it through LINE.</PopoverDescription>
                 </PopoverHeader>
                 <div className="flex flex-col gap-1">
-                    <Button type="button" variant="outline" onClick={handleCopy}>
+                    <PosterButton
+                        tone="outline"
+                        type="button"
+                        onClick={handleCopy}
+                        className="border-2 border-border font-display text-foreground hover:bg-accent hover:text-accent-foreground"
+                    >
                         {copied ? <Check data-icon="inline-start" /> : <Copy data-icon="inline-start" />}
                         {copied ? "Copied" : "Copy link"}
-                    </Button>
-                    <Button
+                    </PosterButton>
+                    <PosterButton
+                        tone="outline"
                         render={
                             <a
                                 href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url ?? (typeof window !== "undefined" ? window.location.href : ""))}`}
@@ -123,11 +129,11 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                                 rel="noreferrer"
                             />
                         }
-                        variant="outline"
+                        className="border-2 border-border font-display text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                         <ExternalLink data-icon="inline-start" />
                         Share to LINE
-                    </Button>
+                    </PosterButton>
                 </div>
             </PopoverContent>
         </Popover>

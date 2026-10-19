@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PosterBadge, PosterButton, PosterTableHead } from "@/components/poster";
+import { buttonVariants } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import type { PaginationMeta } from "@/lib/contracts/common";
 import type { TeamListItem } from "@/lib/contracts/teams";
 import { formatRole } from "@/lib/util";
@@ -29,28 +29,49 @@ export function TeamManagement({ items, meta, status }: Props) {
         <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
                 {filters.map((value) => (
-                    <Button
+                    <PosterButton
                         key={value}
                         size="sm"
-                        variant={filter === value ? "default" : "outline"}
+                        tone={filter === value ? "solid" : "outline"}
+                        className={
+                            filter === value
+                                ? "border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-foreground"
+                                : "border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                        }
                         onClick={() => changeFilter(value)}
                     >
                         {value[0] + value.slice(1).toLowerCase()}
-                    </Button>
+                    </PosterButton>
                 ))}
             </div>
-            <div className="rounded-2xl border border-zinc-200 bg-white">
+            <div className="border-2 border-border bg-card">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Team</TableHead>
-                            <TableHead>Program</TableHead>
-                            <TableHead>Login</TableHead>
-                            <TableHead>Members</TableHead>
-                            <TableHead>Submission</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Team
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Program
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Login
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Members
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Submission
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Status
+                            </PosterTableHead>
+                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Created
+                            </PosterTableHead>
+                            <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                Actions
+                            </PosterTableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -62,23 +83,40 @@ export function TeamManagement({ items, meta, status }: Props) {
                             </TableRow>
                         ) : (
                             items.map((item) => (
-                                <TableRow key={item.id}>
+                                <TableRow className="hover:bg-accent/20" key={item.id}>
                                     <TableCell className="font-medium">{item.displayName}</TableCell>
                                     <TableCell>{formatRole(item.program)}</TableCell>
                                     <TableCell>{item.loginName}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         {item.submissionCount > 0 ? (
-                                            <Badge>Submitted</Badge>
+                                            <PosterBadge
+                                                tone="accent"
+                                                className="border-2 border-border bg-accent text-accent-foreground"
+                                            >
+                                                Submitted
+                                            </PosterBadge>
                                         ) : (
-                                            <Badge variant="secondary">Not submitted</Badge>
+                                            <PosterBadge
+                                                tone="muted"
+                                                className="border-2 border-border/15 text-muted-foreground"
+                                            >
+                                                Not submitted
+                                            </PosterBadge>
                                         )}
                                     </TableCell>
                                     <TableCell>
                                         {item.banned ? (
-                                            <Badge variant="destructive">Banned</Badge>
+                                            <PosterBadge tone="danger" className="border-2 border-destructive/40">
+                                                Banned
+                                            </PosterBadge>
                                         ) : (
-                                            <Badge variant="outline">Active</Badge>
+                                            <PosterBadge
+                                                tone="neutral"
+                                                className="border-2 border-border text-foreground"
+                                            >
+                                                Active
+                                            </PosterBadge>
                                         )}
                                     </TableCell>
                                     <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>
@@ -86,7 +124,12 @@ export function TeamManagement({ items, meta, status }: Props) {
                                         <div className="flex justify-end gap-2">
                                             <Link
                                                 href={`/panel/teams/${item.id}`}
-                                                className={buttonVariants({ variant: "outline", size: "sm" })}
+                                                className={buttonVariants({
+                                                    variant: "outline",
+                                                    size: "sm",
+                                                    className:
+                                                        "border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground",
+                                                })}
                                             >
                                                 View
                                             </Link>

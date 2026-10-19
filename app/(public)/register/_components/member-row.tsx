@@ -1,9 +1,10 @@
 "use client";
 
 import { type Control, Controller } from "react-hook-form";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { PosterFieldLabel, PosterSelectTrigger } from "@/components/poster";
+import { Field, FieldError } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { getMessages } from "@/lib/i18n/messages";
 import { roleOptions } from "./constants";
 import type { FormValues, Locale, SubmittedFormValues } from "./types";
@@ -20,8 +21,8 @@ export function MemberRow({
     const t = getMessages(locale).register;
     const th = locale === "th";
     return (
-        <div className="flex gap-4 rounded-xl border border-border/60 bg-background p-4">
-            <span className="mt-7 hidden size-8 shrink-0 items-center justify-center rounded-full border border-dashed border-primary/50 text-xs font-bold text-brand-muted-foreground sm:flex">
+        <div className="flex gap-4 border-2 border-border/15 bg-background p-4">
+            <span className="mt-7 hidden size-8 shrink-0 items-center justify-center border-2 border-dashed border-border/30 font-display text-xs font-bold text-muted-foreground sm:flex">
                 {index + 1}
             </span>
             <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1.4fr]">
@@ -30,9 +31,10 @@ export function MemberRow({
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor={field.name}>{th ? "ชื่อ" : "Name"}</FieldLabel>
-                            <InputGroup>
+                            <PosterFieldLabel htmlFor={field.name}>{th ? "ชื่อ" : "Name"}</PosterFieldLabel>
+                            <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                                 <InputGroupInput
+                                    className="h-full px-3 text-base"
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
@@ -48,14 +50,18 @@ export function MemberRow({
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor={field.name}>{th ? "บทบาท" : "Role"}</FieldLabel>
+                            <PosterFieldLabel htmlFor={field.name}>{th ? "บทบาท" : "Role"}</PosterFieldLabel>
                             <Select value={field.value} onValueChange={field.onChange}>
-                                <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
+                                <PosterSelectTrigger
+                                    id={field.name}
+                                    aria-invalid={fieldState.invalid}
+                                    className="h-11 w-full border-2 border-border/25 bg-card"
+                                >
                                     <SelectValue>
                                         {t.roles[field.value as keyof typeof t.roles] ??
                                             roleOptions.find((option) => option.value === field.value)?.label}
                                     </SelectValue>
-                                </SelectTrigger>
+                                </PosterSelectTrigger>
                                 <SelectContent alignItemWithTrigger={false}>
                                     {roleOptions.map((opt) => (
                                         <SelectItem key={opt.value} value={opt.value}>
@@ -73,9 +79,10 @@ export function MemberRow({
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid} className="sm:col-span-2 xl:col-span-1">
-                            <FieldLabel htmlFor={field.name}>{t.email}</FieldLabel>
-                            <InputGroup>
+                            <PosterFieldLabel htmlFor={field.name}>{t.email}</PosterFieldLabel>
+                            <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                                 <InputGroupInput
+                                    className="h-full px-3 text-base"
                                     {...field}
                                     id={field.name}
                                     type="email"

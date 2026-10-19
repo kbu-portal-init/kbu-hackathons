@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { manuallyVerifyStudentEmail, resendStudentEmailVerification } from "@/actions/management/registrations";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PosterBadge, PosterButton } from "@/components/poster";
 import { TableCell, TableRow } from "@/components/ui/table";
 
 type Member = {
@@ -58,22 +57,22 @@ export function MemberRow({ member }: MemberRowProps) {
             <TableCell>
                 <div className="flex items-center gap-2">
                     {isVerified ? (
-                        <Badge variant="outline" className="gap-1">
+                        <PosterBadge tone="neutral" className="gap-1">
                             <CheckCircle2 className="size-3" />
                             Verified
-                        </Badge>
+                        </PosterBadge>
                     ) : (
                         <>
-                            <Badge variant="secondary" className="gap-1">
+                            <PosterBadge tone="muted" className="gap-1">
                                 <Mail className="size-3" />
                                 Pending
-                            </Badge>
-                            <Button variant="outline" size="sm" onClick={handleResend} disabled={isPending}>
+                            </PosterBadge>
+                            <PosterButton tone="outline" size="sm" onClick={handleResend} disabled={isPending}>
                                 {isPending ? <Loader2 className="size-4 animate-spin" /> : "Resend"}
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={handleManualVerify} disabled={isPending}>
+                            </PosterButton>
+                            <PosterButton tone="outline" size="sm" onClick={handleManualVerify} disabled={isPending}>
                                 {isPending ? <Loader2 className="size-4 animate-spin" /> : "Manually Verify"}
-                            </Button>
+                            </PosterButton>
                         </>
                     )}
                 </div>

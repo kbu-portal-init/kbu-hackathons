@@ -6,18 +6,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+    PosterButton,
+    PosterDialogContent,
+    PosterDialogFooter,
+    PosterFieldLabel,
+    PosterInput,
+} from "@/components/poster";
+import { Dialog, DialogClose, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
 import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
@@ -30,33 +27,48 @@ export function LoginContent({ locale }: { locale: Locale }) {
     const isParticipant = audience === "participant";
 
     return (
-        <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
-            <section className="mx-auto w-full max-w-md">
-                <h1 className="text-3xl font-bold tracking-tight">{t.title}</h1>
-                <div className="mt-6 flex w-full gap-1 rounded-xl bg-muted p-1">
-                    <Button
-                        type="button"
-                        variant={isParticipant ? "default" : "outline"}
-                        className="h-10 flex-1 gap-2 px-4"
-                        aria-pressed={isParticipant}
-                        onClick={() => setAudience("participant")}
-                    >
-                        <Users data-icon="inline-start" />
-                        {t.participant}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant={!isParticipant ? "default" : "outline"}
-                        className="h-10 flex-1 gap-2 px-4"
-                        aria-pressed={!isParticipant}
-                        onClick={() => setAudience("management")}
-                    >
-                        <ShieldCheck data-icon="inline-start" />
-                        {t.management}
-                    </Button>
+        <main className="flex flex-1 items-center bg-background px-5 py-16 sm:px-8">
+            <section className="mx-auto w-full max-w-lg border-2 border-border bg-card">
+                <div className="border-b-2 border-border bg-accent text-accent-foreground px-6 py-5 sm:px-8">
+                    <p className="font-display text-xs font-semibold uppercase tracking-widest text-foreground/70">
+                        KBU Hackathon 2026
+                    </p>
+                    <h1 className="mt-2 font-display text-[clamp(2.25rem,6vw,3.5rem)] font-bold leading-[0.9] tracking-tight text-foreground">
+                        {t.title}
+                    </h1>
                 </div>
-                <div className="mt-8">
-                    {isParticipant ? <TeamLoginForm locale={locale} /> : <StaffLoginForm locale={locale} />}
+                <div className="p-6 sm:p-8">
+                    <div className="flex w-full border-2 border-border">
+                        <button
+                            type="button"
+                            className={`flex h-11 flex-1 items-center justify-center gap-2 border-r-2 border-border px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
+                                isParticipant
+                                    ? "bg-foreground text-background"
+                                    : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
+                            }`}
+                            aria-pressed={isParticipant}
+                            onClick={() => setAudience("participant")}
+                        >
+                            <Users data-icon="inline-start" />
+                            {t.participant}
+                        </button>
+                        <button
+                            type="button"
+                            className={`flex h-11 flex-1 items-center justify-center gap-2 px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
+                                !isParticipant
+                                    ? "bg-foreground text-background"
+                                    : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
+                            }`}
+                            aria-pressed={!isParticipant}
+                            onClick={() => setAudience("management")}
+                        >
+                            <ShieldCheck data-icon="inline-start" />
+                            {t.management}
+                        </button>
+                    </div>
+                    <div className="mt-8">
+                        {isParticipant ? <TeamLoginForm locale={locale} /> : <StaffLoginForm locale={locale} />}
+                    </div>
                 </div>
             </section>
         </main>
@@ -88,33 +100,35 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
     const passwordError = form.formState.errors.password;
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 lg:mt-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2">
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={usernameError ? true : undefined}>
-                    <FieldLabel htmlFor="username">{t.teamUsername}</FieldLabel>
-                    <Input
+                    <PosterFieldLabel htmlFor="username">{t.teamUsername}</PosterFieldLabel>
+                    <PosterInput
                         id="username"
                         type="text"
                         autoComplete="username"
                         placeholder="your-team-username"
                         aria-invalid={!!usernameError}
+                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...form.register("username")}
                     />
                     <FieldError errors={[usernameError]} />
                 </Field>
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor="team-password">{t.password}</FieldLabel>
+                        <PosterFieldLabel htmlFor="team-password">{t.password}</PosterFieldLabel>
                         <ForgotPasswordButton
                             identifier="username"
                             getValue={() => form.getValues("username")}
                             focusInput={() => form.setFocus("username")}
                         />
                     </div>
-                    <InputGroup>
+                    <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                         <InputGroupInput
                             id="team-password"
+                            className="h-full px-3 text-base"
                             type={showPassword ? "text" : "password"}
                             autoComplete="current-password"
                             placeholder="Enter your password"
@@ -131,9 +145,14 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                <PosterButton
+                    tone="solid"
+                    type="submit"
+                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    disabled={form.formState.isSubmitting}
+                >
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
-                </Button>
+                </PosterButton>
             </FieldGroup>
         </form>
     );
@@ -163,33 +182,35 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
     const passwordError = form.formState.errors.password;
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 lg:mt-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2">
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={emailError ? true : undefined}>
-                    <FieldLabel htmlFor="email">{t.email}</FieldLabel>
-                    <Input
+                    <PosterFieldLabel htmlFor="email">{t.email}</PosterFieldLabel>
+                    <PosterInput
                         id="email"
                         type="email"
                         autoComplete="email"
                         placeholder="you@example.com"
                         aria-invalid={!!emailError}
+                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...form.register("email")}
                     />
                     <FieldError errors={[emailError]} />
                 </Field>
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor="staff-password">{t.password}</FieldLabel>
+                        <PosterFieldLabel htmlFor="staff-password">{t.password}</PosterFieldLabel>
                         <ForgotPasswordButton
                             identifier="email"
                             getValue={() => form.getValues("email")}
                             focusInput={() => form.setFocus("email")}
                         />
                     </div>
-                    <InputGroup>
+                    <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                         <InputGroupInput
                             id="staff-password"
+                            className="h-full px-3 text-base"
                             type={showPassword ? "text" : "password"}
                             autoComplete="current-password"
                             placeholder="Enter your password"
@@ -206,9 +227,14 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                <PosterButton
+                    tone="solid"
+                    type="submit"
+                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    disabled={form.formState.isSubmitting}
+                >
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
-                </Button>
+                </PosterButton>
             </FieldGroup>
         </form>
     );
@@ -276,18 +302,24 @@ function ForgotPasswordButton({
 
     return (
         <>
-            <Button type="button" variant="link" size="sm" className="h-auto px-0 text-xs" onClick={openDialog}>
+            <PosterButton
+                tone="link"
+                type="button"
+                size="sm"
+                className="h-auto px-0 font-display text-xs font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:text-foreground"
+                onClick={openDialog}
+            >
                 Forgot password?
-            </Button>
+            </PosterButton>
             <Dialog
                 open={open}
                 onOpenChange={(nextOpen) => {
                     if (!isRequesting) setOpen(nextOpen);
                 }}
             >
-                <DialogContent>
+                <PosterDialogContent className="border-2 border-border">
                     <DialogHeader>
-                        <DialogTitle>Reset your password</DialogTitle>
+                        <DialogTitle className="font-display">Reset your password</DialogTitle>
                         <DialogDescription>
                             {isTeam
                                 ? "We will send password-reset instructions to the verified leader email for this team."
@@ -313,15 +345,17 @@ function ForgotPasswordButton({
                             </p>
                         )}
                     </div>
-                    <DialogFooter>
-                        <DialogClose render={<Button variant="outline" disabled={isRequesting} />}>Close</DialogClose>
+                    <PosterDialogFooter>
+                        <DialogClose render={<PosterButton tone="outline" disabled={isRequesting} />}>
+                            Close
+                        </DialogClose>
                         {messageType !== "success" && (
-                            <Button type="button" onClick={requestReset} disabled={isRequesting}>
+                            <PosterButton tone="brand" type="button" onClick={requestReset} disabled={isRequesting}>
                                 {isRequesting ? "Sending..." : "Send reset link"}
-                            </Button>
+                            </PosterButton>
                         )}
-                    </DialogFooter>
-                </DialogContent>
+                    </PosterDialogFooter>
+                </PosterDialogContent>
             </Dialog>
         </>
     );

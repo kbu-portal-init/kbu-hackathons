@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
 /*
@@ -6,79 +5,93 @@
  * energetic orange/coral accents. The dark block is kept as the invert for
  * prefers-dark dashboards, but the public site is a light experience.
  */
+@custom-variant dark (&:is(.dark *));
+
 :root {
-    --background: #fffdfb;
-    --foreground: #27180f;
-    --card: #ffffff;
-    --card-foreground: #27180f;
-    --popover: #ffffff;
-    --popover-foreground: #27180f;
+    /* Event-poster palette. Paper and ink carry the layout; orange stays the
+       product accent and yellow is reserved for emphasis. */
+    --background: #f7f4ee;
+    --foreground: #241a14;
+    --card: #fffdfb;
+    --card-foreground: #241a14;
+    --popover: #fffdfb;
+    --popover-foreground: #241a14;
 
     --primary: #ea580c;
-    --primary-foreground: #ffffff;
+    --primary-foreground: #fffdfb;
 
     --secondary: #fdf0e6;
     --secondary-foreground: #6b2f10;
 
-    --muted: #f4f4f5;
-    --brand-muted-foreground: #6b5140;
-    --muted-foreground: var(--brand-muted-foreground);
+    --muted: #efe9df;
+    --muted-foreground: #6b5140;
 
-    --accent: #ffedd5;
-    --accent-foreground: #9a3412;
+    --accent: #ffd43b;
+    --accent-foreground: #241a14;
 
     --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
-    --border: #fed7aa;
-    --input: #e4e4e7;
+    --destructive-foreground: #fffdfb;
+    --border: #241a14;
+    --input: #cdbfae;
     --ring: #ea580c;
 
-    --sidebar: #ffffff;
-    --sidebar-foreground: #27180f;
+    --sidebar: #f7f4ee;
+    --sidebar-foreground: #241a14;
     --sidebar-primary: #ea580c;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ffedd5;
-    --sidebar-accent-foreground: #9a3412;
-    --sidebar-border: #f3dcbd;
+    --sidebar-primary-foreground: #fffdfb;
+    --sidebar-accent: #ffd43b;
+    --sidebar-accent-foreground: #241a14;
+    --sidebar-border: #241a14;
     --sidebar-ring: #ea580c;
 
     --success: #0d9488;
+
+    --radius: 0rem;
+    --shadow-2xs: none;
+    --shadow-xs: none;
+    --shadow-sm: none;
+    --shadow: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
+    --shadow-2xl: none;
+    --tracking-normal: -0.01em;
+    --spacing: 0.25rem;
 }
 
 .dark {
-    --background: #1c1206;
-    --foreground: #fdf3e7;
-    --card: #2a1b0d;
-    --card-foreground: #fdf3e7;
-    --popover: #2a1b0d;
-    --popover-foreground: #fdf3e7;
+    --background: #1c1511;
+    --foreground: #f7f4ee;
+    --card: #2a211b;
+    --card-foreground: #f7f4ee;
+    --popover: #2a211b;
+    --popover-foreground: #f7f4ee;
 
     --primary: #fb923c;
-    --primary-foreground: #2a0e03;
+    --primary-foreground: #1c1511;
 
-    --secondary: #3a2514;
-    --secondary-foreground: #fdf3e7;
+    --secondary: #3a2a1c;
+    --secondary-foreground: #f7f4ee;
 
-    --muted: #3a2514;
-    --brand-muted-foreground: #c0a488;
-    --muted-foreground: var(--brand-muted-foreground);
+    --muted: #3a2a1c;
+    --muted-foreground: #c0a488;
 
-    --accent: #451a03;
-    --accent-foreground: #fdba74;
+    --accent: #ffd43b;
+    --accent-foreground: #1c1511;
 
     --destructive: #f87171;
     --destructive-foreground: #450a0a;
-    --border: #7c2d12;
-    --input: #3f3f46;
+    --border: #f7f4ee;
+    --input: #4a3a2f;
     --ring: #fb923c;
 
-    --sidebar: #1c1206;
-    --sidebar-foreground: #fdf3e7;
+    --sidebar: #1c1511;
+    --sidebar-foreground: #f7f4ee;
     --sidebar-primary: #fb923c;
-    --sidebar-primary-foreground: #431407;
-    --sidebar-accent: #431407;
-    --sidebar-accent-foreground: #fed7aa;
-    --sidebar-border: #7c2d12;
+    --sidebar-primary-foreground: #1c1511;
+    --sidebar-accent: #ffd43b;
+    --sidebar-accent-foreground: #1c1511;
+    --sidebar-border: #4a3a2f;
     --sidebar-ring: #fb923c;
 
     --success: #2dd4bf;
@@ -94,20 +107,14 @@
 
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
-
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
-
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
-    --color-brand-muted-foreground: var(--brand-muted-foreground);
-
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
-
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
-
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
@@ -123,8 +130,44 @@
 
     --color-success: var(--success);
 
-    --font-sans: "Plus Jakarta Sans", sans-serif;
-    --font-mono: "Fira Code", monospace;
+    --font-sans: var(--font-ibm-plex-sans-thai), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-chakra-petch), var(--font-ibm-plex-sans-thai), ui-sans-serif, sans-serif;
+    --font-mono: var(--font-fira-code), ui-monospace, monospace;
+
+    --radius-sm: 0rem;
+    --radius-md: 0rem;
+    --radius-lg: 0rem;
+    --radius-xl: 0rem;
+    --radius-2xl: 0rem;
+    --radius-3xl: 0rem;
+    --radius-4xl: 0rem;
+
+    --shadow-2xs: var(--shadow-2xs);
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow: var(--shadow);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+    --shadow-2xl: var(--shadow-2xl);
+
+    --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+    --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+    --tracking-normal: var(--tracking-normal);
+    --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+    --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+    --tracking-widest: calc(var(--tracking-normal) + 0.13em);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        letter-spacing: var(--tracking-normal);
+    }
 }
 
 /* FAQ accordion open/close animation (native <details> via ::details-content) */
@@ -161,54 +204,14 @@ body {
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: var(--font-sans);
 }
 
 code,
 pre,
 kbd,
 samp {
-    font-family: "Fira Code", monospace;
-}
-
-/*
- * Warm Light Mode utilities. The orange→coral gradient is reserved for
- * primary CTAs, key headline text, and section dividers only — everything
- * else uses flat accents so accent use stays minimal and consistent.
- */
-
-/* Orange→coral gradient. Usable as gradient text (transparent color) or as a
- * background fill for primary CTAs and section dividers. */
-.text-gradient {
-    background-image: linear-gradient(90deg, #ea580c, #ff5d6c);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.bg-gradient-accent {
-    background-image: linear-gradient(90deg, #ea580c, #ff5d6c);
-}
-
-/* Glassmorphism for cards and panels. Frosted white on the light canvas. */
-.glass {
-    background-color: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(69, 38, 14, 0.08);
-}
-
-.glass-accent {
-    background-color: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(234, 88, 12, 0.22);
-}
-
-/* Dot-grid texture used behind the hero and final-CTA bands. */
-.dot-grid {
-    background-image: radial-gradient(circle, rgba(122, 90, 68, 0.18) 1px, transparent 1px);
-    background-size: 25px 25px;
+    font-family: var(--font-mono);
 }
 
 /*

@@ -32,12 +32,18 @@ export function PaginationFooter({
                 <PaginationContent>
                     {page > 1 && (
                         <PaginationItem>
-                            <PaginationPrevious href={getPageHref(page - 1)} />
+                            <PaginationPrevious
+                                href={getPageHref(page - 1)}
+                                className="border-2 border-border bg-card font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                            />
                         </PaginationItem>
                     )}
                     {hasNextPage && (
                         <PaginationItem>
-                            <PaginationNext href={getPageHref(page + 1)} />
+                            <PaginationNext
+                                href={getPageHref(page + 1)}
+                                className="border-2 border-border bg-card font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                            />
                         </PaginationItem>
                     )}
                 </PaginationContent>
