@@ -89,7 +89,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
     const posterSrc = eventImage ?? "/images/kbu1.webp";
 
     return (
-        <section className="relative bg-primary text-foreground">
+        <section className="relative text-foreground">
             <div className="mx-auto max-w-6xl px-5 pb-10 pt-8 sm:px-8 sm:pb-14 sm:pt-12 lg:pt-10">
                 <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-start lg:gap-12">
                     <div>
