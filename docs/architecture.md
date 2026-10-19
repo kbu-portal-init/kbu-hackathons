@@ -47,6 +47,8 @@ The homepage remains public for authenticated users. `/login` and `/register` re
 
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
 - Orange is the product primary color. Prefer the semantic design-token utilities (`bg-primary`, `text-primary`, `border-primary`, and related variants) so components follow the shared theme. The default Tailwind palette remains available for intentionally non-primary states and illustrations.
+- The public site loads IBM Plex Sans Thai for body text and Chakra Petch for display headings through `next/font` in `app/layout.tsx`; both include Thai and Latin glyphs. Use the `font-display` utility for poster-style headings, not body copy.
+- The homepage uses the event-poster palette tokens `brand-paper`, `brand-ink`, and `brand-yellow` with flat orange, sharp borders, and no decorative gradients, glass panels, or dot grids. Keep that visual language scoped to the homepage and public chrome unless another page adopts it deliberately.
 - Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.
 - Use Lucide icons through `lucide-react`.
 

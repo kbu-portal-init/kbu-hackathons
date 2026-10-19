@@ -1,4 +1,4 @@
-import { Coffee, ExternalLink, Info, MessageCircle, Trophy, Wifi } from "lucide-react";
+import { ExternalLink, MessageCircle } from "lucide-react";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
 import { getLineContact } from "@/lib/public-data/line-contact";
@@ -9,99 +9,112 @@ export async function AboutContent() {
 
     return (
         <section id="everything-you-need-to-know" className="scroll-mt-24">
-            <p className="font-mono text-sm font-medium text-orange-600">{"// everything_you_need_to_know"}</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{t.title}</h2>
-            <p className="mt-4 max-w-3xl text-lg leading-8 text-brand-muted-foreground">{t.description}</p>
-            <div className="mt-6">
-                <p className="font-semibold text-foreground">{t.directionsLabel}</p>
-                <ul className="mt-3 grid list-disc gap-2 pl-5 text-brand-muted-foreground sm:grid-cols-2">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+                <div>
+                    <h2 className="max-w-md font-display text-[clamp(2.4rem,6vw,4.5rem)] font-bold leading-[0.92] tracking-[-0.035em] text-foreground">
+                        {t.title}
+                    </h2>
+                    <p className="mt-5 max-w-md text-lg leading-8 text-brand-muted-foreground">{t.description}</p>
+                </div>
+
+                <div className="border-t-2 border-brand-ink">
+                    {[
+                        { number: "01", title: t.day1, body: t.day1Text },
+                        { number: "02", title: t.day2, body: t.day2Text },
+                    ].map((day) => (
+                        <article
+                            key={day.number}
+                            className="grid grid-cols-[3rem_1fr] gap-4 border-b-2 border-brand-ink/15 py-5 last:border-b-0 sm:grid-cols-[4rem_1fr] sm:gap-6 sm:py-6"
+                        >
+                            <p className="font-display text-3xl font-bold leading-none text-primary sm:text-4xl">
+                                {day.number}
+                            </p>
+                            <div>
+                                <h3 className="font-display text-xl font-semibold leading-7 text-foreground sm:text-2xl">
+                                    {day.title}
+                                </h3>
+                                <p className="mt-2 max-w-xl leading-7 text-brand-muted-foreground">{day.body}</p>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mt-14 border-2 border-brand-ink">
+                <div className="border-b-2 border-brand-ink bg-brand-yellow px-5 py-4">
+                    <h3 className="font-display text-xl font-semibold text-brand-ink">{t.directionsLabel}</h3>
+                </div>
+                <ul className="grid sm:grid-cols-2 lg:grid-cols-3">
                     {t.directions.map((direction) => (
-                        <li key={direction}>{direction}</li>
+                        <li
+                            key={direction}
+                            className="flex items-start gap-3 border-b border-brand-ink/15 px-5 py-3.5 text-base font-medium text-foreground last:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-last-child(-n+3)]:border-b-0"
+                        >
+                            <span className="mt-2 size-1.5 shrink-0 bg-primary" aria-hidden="true" />
+                            {direction}
+                        </li>
                     ))}
                 </ul>
-                <p className="mt-4 text-base text-brand-muted-foreground">{t.directionsNote}</p>
+                <p className="border-t border-brand-ink/15 px-5 py-4 text-sm leading-6 text-brand-muted-foreground">
+                    {t.directionsNote}
+                </p>
             </div>
 
-            <div className="mt-10 grid gap-5 md:grid-cols-2">
-                <article className="border-l-2 border-orange-500 pl-5">
-                    <p className="text-sm font-semibold text-orange-700">Day 1</p>
-                    <h3 className="mt-2 text-xl font-bold text-foreground">{t.day1}</h3>
-                    <p className="mt-3 leading-6 text-brand-muted-foreground">{t.day1Text}</p>
+            <div className="mt-14 grid border-t-2 border-brand-ink lg:grid-cols-3">
+                <article className="border-b-2 border-brand-ink/15 py-6 lg:border-b-0 lg:border-r-2 lg:pr-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground">{t.teamsKnow}</h3>
+                    <p className="mt-2 max-w-sm leading-7 text-brand-muted-foreground">{t.teamsKnowText}</p>
                 </article>
-                <article className="border-l-2 border-orange-500 pl-5">
-                    <p className="text-sm font-semibold text-orange-700">Day 2</p>
-                    <h3 className="mt-2 text-xl font-bold text-foreground">{t.day2}</h3>
-                    <p className="mt-3 leading-6 text-brand-muted-foreground">{t.day2Text}</p>
+                <article className="border-b-2 border-brand-ink/15 py-6 lg:border-b-0 lg:border-r-2 lg:px-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground">{t.support}</h3>
+                    <p className="mt-2 max-w-sm leading-7 text-brand-muted-foreground">{t.supportText}</p>
                 </article>
-            </div>
-
-            <div className="mt-10 grid gap-3 sm:grid-cols-2">
-                <div className="border border-orange-200 bg-white p-5">
-                    <Info className="size-5 text-orange-600" />
-                    <h3 className="mt-4 font-bold text-foreground">{t.teamsKnow}</h3>
-                    <p className="mt-2 leading-6 text-brand-muted-foreground">{t.teamsKnowText}</p>
-                </div>
-                <div className="border border-orange-200 bg-white p-5">
-                    <div className="flex items-center gap-3 text-orange-600">
-                        <Coffee className="size-5" />
-                        <Wifi className="size-5" />
-                    </div>
-                    <h3 className="mt-4 font-bold text-foreground">{t.support}</h3>
-                    <p className="mt-2 leading-6 text-brand-muted-foreground">{t.supportText}</p>
-                </div>
-            </div>
-
-            <div className="mt-8 border border-orange-200 bg-orange-100/70 p-5">
-                <div className="flex items-start gap-2 text-orange-700">
-                    <Trophy className="mt-0.5 size-5 shrink-0" />
-                    <div>
-                        <h3 className="font-bold">{t.prizes}</h3>
-                        <p className="mt-2 text-orange-950/70">{t.prizesText}</p>
-                    </div>
-                </div>
+                <article className="py-6 lg:pl-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground">{t.prizes}</h3>
+                    <p className="mt-2 max-w-sm leading-7 text-brand-muted-foreground">{t.prizesText}</p>
+                </article>
             </div>
 
             <div
                 id="need-help"
-                className="mt-8 flex scroll-mt-24 flex-col gap-4 border border-orange-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between"
+                className="mt-10 flex scroll-mt-24 flex-col gap-5 border-2 border-brand-ink bg-brand-yellow p-5 text-brand-ink sm:flex-row sm:items-center sm:justify-between sm:p-6"
             >
                 <div className="flex items-start gap-3">
-                    <MessageCircle className="mt-0.5 size-5 shrink-0 text-orange-600" />
+                    <MessageCircle className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
                     <div>
-                        <h3 className="font-bold text-foreground">{t.help}</h3>
-                        <p className="mt-1 text-brand-muted-foreground">{t.helpText}</p>
+                        <h3 className="font-display text-lg font-semibold">{t.help}</h3>
+                        <p className="mt-1 max-w-xl text-sm leading-6 text-brand-ink/75">{t.helpText}</p>
                     </div>
                 </div>
                 <a
                     href={lineContact.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600/90"
+                    className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 border-2 border-brand-ink bg-brand-ink px-5 py-3 font-display text-sm font-semibold text-brand-paper transition-colors hover:bg-brand-paper hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink"
                 >
-                    <span>{lineContact.name}</span>
-                    <ExternalLink className="size-4" />
+                    {lineContact.name}
+                    <ExternalLink className="size-4" aria-hidden="true" />
                 </a>
             </div>
 
-            <div id="faq" className="mt-14 scroll-mt-24 border-t border-orange-200 pt-10">
-                <p className="font-mono text-sm font-medium text-orange-600">{"// faq"}</p>
-                <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{t.faqTitle}</h2>
+            <div id="faq" className="mt-16 scroll-mt-24 border-t-2 border-brand-ink pt-10">
+                <h2 className="font-display text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-foreground">
+                    {t.faqTitle}
+                </h2>
 
-                <div className="mt-8 divide-y divide-orange-200 border-y border-orange-200">
+                <div className="mt-7 max-w-4xl border-t-2 border-brand-ink">
                     {t.faq.map(([question, answer]) => (
-                        <details key={question} className="faq-disclosure group py-5 first:pt-6 last:pb-6">
-                            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600 [&::-webkit-details-marker]:hidden">
+                        <details key={question} className="faq-disclosure group border-b-2 border-brand-ink/15">
+                            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 text-left font-display text-base font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary [&::-webkit-details-marker]:hidden sm:text-lg">
                                 <span>{question}</span>
-
                                 <span
-                                    className="shrink-0 text-2xl leading-none text-orange-600 transition-transform duration-200 group-open:rotate-45"
+                                    className="shrink-0 text-2xl leading-none text-primary transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
                                     aria-hidden="true"
                                 >
                                     +
                                 </span>
                             </summary>
-
-                            <p className="mt-3 max-w-3xl pr-10 leading-7 text-brand-muted-foreground">{answer}</p>
+                            <p className="max-w-3xl pb-5 pr-8 leading-7 text-brand-muted-foreground">{answer}</p>
                         </details>
                     ))}
                 </div>

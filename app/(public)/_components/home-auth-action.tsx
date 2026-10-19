@@ -4,25 +4,15 @@ import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 
 export async function HomeAuthAction({ locale }: { locale: Locale }) {
+    const t = getMessages(locale).common;
     const destination = await getAuthenticatedDestination();
-    if (!destination) {
-        return (
-            <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
-            >
-                ./sign-in
-            </Link>
-        );
-    }
 
-    const label = getMessages(locale).common.openWorkspace;
     return (
         <Link
-            href={destination}
-            className="inline-flex items-center justify-center rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-600 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-50 active:translate-y-0"
+            href={destination ?? "/login"}
+            className="inline-flex min-h-12 items-center justify-center border-2 border-brand-ink px-6 py-3 font-display text-base font-semibold text-brand-ink transition-colors hover:bg-brand-ink hover:text-brand-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink"
         >
-            {label}
+            {destination ? t.openWorkspace : t.signIn}
         </Link>
     );
 }

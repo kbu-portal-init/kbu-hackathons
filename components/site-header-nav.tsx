@@ -14,8 +14,8 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
     const signInActive = isActivePath(pathname, "/login");
 
     return (
-        <div className="hidden items-center gap-10 md:flex">
-            <nav className="hidden items-center gap-7 md:flex" aria-label={t.primaryNavigation}>
+        <div className="hidden items-center gap-10 lg:flex">
+            <nav className="hidden items-center gap-7 lg:flex" aria-label={t.primaryNavigation}>
                 {publicLinks.map(({ label, href }) => {
                     const active = isActivePath(pathname, href);
                     return (
@@ -25,8 +25,8 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
                             aria-current={active ? "page" : undefined}
                             className={
                                 active
-                                    ? "text-sm font-semibold text-orange-700"
-                                    : "text-sm font-medium text-brand-muted-foreground hover:text-orange-600"
+                                    ? "font-display text-sm font-semibold text-primary"
+                                    : "font-display text-sm font-medium text-brand-muted-foreground hover:text-primary"
                             }
                         >
                             {labels[href as keyof typeof labels] ?? label}
@@ -40,8 +40,8 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
                     aria-current={signInActive ? "page" : undefined}
                     className={
                         signInActive
-                            ? "inline-flex rounded-full bg-orange-700 px-4 py-2 text-sm font-semibold text-white ring-2 ring-orange-200"
-                            : "inline-flex rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
+                            ? "inline-flex min-h-10 items-center border-2 border-brand-ink bg-brand-yellow px-4 py-2 font-display text-sm font-semibold text-brand-ink"
+                            : "inline-flex min-h-10 items-center border-2 border-primary bg-primary px-4 py-2 font-display text-sm font-semibold text-foreground transition-colors hover:border-brand-ink hover:bg-brand-ink hover:text-brand-paper"
                     }
                 >
                     {t.signIn}

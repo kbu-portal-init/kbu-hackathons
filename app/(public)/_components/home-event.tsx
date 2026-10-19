@@ -1,4 +1,4 @@
-import { CalendarDays, ClipboardPenLine, MapPin, NotebookPen, Terminal } from "lucide-react";
+import { NotebookPen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { EventSettingsDTO } from "@/lib/contracts/event-settings";
@@ -7,18 +7,6 @@ import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
 import { HomeAuthAction } from "./home-auth-action";
-
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    timeZone: "Asia/Bangkok",
-});
-
-function formatDate(value: string) {
-    return dateFormatter.format(new Date(value));
-}
-
-const glowBackground = "bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,rgba(109,40,217,0.12),transparent)]";
 
 type RegistrationState = "open" | "not-started" | "closed" | "unavailable";
 
@@ -30,15 +18,39 @@ function registrationStateFrom(event: EventSettingsDTO | null): RegistrationStat
     return "open";
 }
 
-function RegistrationButton({ state, locale }: { state: RegistrationState; locale: Locale }) {
+function formatDate(value: string, locale: Locale): string {
+    return new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "Asia/Bangkok",
+    }).format(new Date(value));
+}
+
+function formatRange(start: string, end: string, locale: Locale): string {
+    return `${formatDate(start, locale)} – ${formatDate(end, locale)}`;
+}
+
+function RegistrationButton({
+    state,
+    locale,
+    tone = "light",
+}: {
+    state: RegistrationState;
+    locale: Locale;
+    tone?: "light" | "dark";
+}) {
     const t = getMessages(locale).register;
+
     if (state === "open") {
+        const className =
+            tone === "dark"
+                ? "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-primary bg-primary px-6 py-3 font-display text-base font-semibold text-foreground transition-colors hover:border-brand-yellow hover:bg-brand-yellow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow"
+                : "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-brand-ink bg-brand-ink px-6 py-3 font-display text-base font-semibold text-brand-paper transition-colors hover:border-brand-yellow hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink";
+
         return (
-            <Link
-                href="/register"
-                className="group relative inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-white transition-colors duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:translate-y-0 focus-visible:outline-primary focus-visible:ring-primary/30"
-            >
-                <NotebookPen className="size-5 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110 motion-reduce:transition-none" />
+            <Link href="/register" className={className}>
+                <NotebookPen className="size-5" aria-hidden="true" />
                 {t.title}
             </Link>
         );
@@ -48,11 +60,24 @@ function RegistrationButton({ state, locale }: { state: RegistrationState; local
         <button
             type="button"
             disabled
-            className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-primary/45 px-5 py-3 font-semibold text-white/90 opacity-80"
+            className={
+                tone === "dark"
+                    ? "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-brand-paper/25 bg-brand-paper/10 px-6 py-3 font-display text-base font-semibold text-brand-paper/60"
+                    : "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-foreground/25 px-6 py-3 font-display text-base font-semibold text-foreground/60"
+            }
         >
-            <NotebookPen className="size-5" />
+            <NotebookPen className="size-5" aria-hidden="true" />
             {state === "not-started" ? t.notOpened : state === "closed" ? t.closed : t.unavailable}
         </button>
+    );
+}
+
+function EventFact({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="border-b-2 border-foreground/20 px-1 py-4 last:border-b-0 sm:border-b-0 sm:border-r-2 sm:px-5 sm:last:border-r-0">
+            <p className="font-display text-xs font-semibold text-foreground/75">{label}</p>
+            <p className="mt-1 text-sm font-semibold leading-6 text-foreground">{value}</p>
+        </div>
     );
 }
 
@@ -61,142 +86,105 @@ export async function HomeHero({ locale }: { locale: Locale }) {
     const event = await getEventSettings();
     const eventImage = event?.imageUrls.find((url) => isOwnedR2PublicUrl(url, "uploads/events"));
     const registrationState = registrationStateFrom(event);
+    const posterSrc = eventImage ?? "/images/kbu.webp";
 
     return (
-        <section id="hero" className={`relative bg-background dot-grid ${glowBackground}`}>
-            <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
-                <div>
-                    <p
-                        data-reveal
-                        className="inline-flex items-center gap-2 font-mono text-sm font-medium text-primary"
-                    >
-                        <Terminal className="size-4" />
-                        <span>$ start</span>
-                        <span className="inline-block h-4 w-2 animate-pulse text-primary" aria-hidden />
-                    </p>
-                    <h1
-                        data-reveal
-                        className="mt-6 max-w-3xl text-5xl font-black tracking-tight text-foreground sm:text-7xl"
-                    >
-                        {event?.title ?? t.home.slogan}
-                    </h1>
-                    <p data-reveal className="mt-4 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                        {t.home.slogan}
-                    </p>
-                    <p data-reveal className="mt-6 max-w-xl text-lg leading-8 text-brand-muted-foreground">
-                        {event?.description ??
-                            "Step into the KBU hackathon workspace. Find your team, build something real, and get ready to compete."}
-                    </p>
-                    {event && (
-                        <div
-                            data-reveal
-                            className="relative mt-8 max-w-2xl overflow-hidden rounded-2xl border border-primary/15 bg-white/70 shadow-lg shadow-primary/10 backdrop-blur-sm"
-                        >
-                            <div className="grid md:grid-cols-3">
-                                <div className="border-b border-primary/15 p-5 md:border-b-0 md:border-r">
-                                    <div className="flex items-center gap-2 text-primary">
-                                        <CalendarDays className="size-4" />
-                                        <p className="font-mono text-xs font-semibold tracking-wide">Hackathon</p>
-                                    </div>
-                                    <p className="mt-3 text-base font-bold leading-6 text-foreground">
-                                        {formatDate(event.startsAt)}
-                                        <span className="px-1 text-primary/70">–</span>
-                                        {formatDate(event.endsAt)}
-                                    </p>
-                                </div>
-                                <div className="border-b border-primary/15 p-5 md:border-b-0 md:border-r">
-                                    <div className="flex items-center gap-2 text-primary">
-                                        <ClipboardPenLine className="size-4" />
-                                        <p className="font-mono text-xs font-semibold tracking-wide">Registration</p>
-                                    </div>
-                                    <p className="mt-3 text-base font-bold leading-6 text-foreground">
-                                        {formatDate(event.registrationOpensAt)}
-                                        <span className="px-1 text-primary/70">–</span>
-                                        {formatDate(event.registrationClosesAt)}
-                                    </p>
-                                </div>
-                                {event.venue && (
-                                    <div className="p-5">
-                                        <div className="flex items-center gap-2 text-primary">
-                                            <MapPin className="size-4" />
-                                            <p className="font-mono text-xs font-semibold tracking-wide">Venue</p>
-                                        </div>
-                                        <p className="mt-3 text-base font-bold leading-6 text-foreground">
-                                            {event.venue}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+        <section className="relative bg-primary text-foreground">
+            <div className="mx-auto max-w-6xl px-5 pb-10 pt-8 sm:px-8 sm:pb-14 sm:pt-12 lg:pt-10">
+                <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-start lg:gap-12">
+                    <div>
+                        <div className="flex items-center justify-between gap-4 border-b-2 border-foreground/25 pb-3">
+                            <p className="font-display text-xs font-semibold sm:text-sm">Kasem Bundit University</p>
+                            <p className="font-display text-xs font-semibold sm:text-sm">{t.home.firstEdition}</p>
                         </div>
-                    )}
-                    <div data-reveal className="mt-9 flex flex-col gap-3 sm:flex-row">
-                        <RegistrationButton state={registrationState} locale={locale} />
-                        <HomeAuthAction locale={locale} />
-                    </div>
-                </div>
-                <div data-reveal className="relative">
-                    <div className="absolute -inset-4 rounded-4xl bg-primary/10 blur-2xl" aria-hidden />
-                    <div className="relative overflow-hidden rounded-2xl glass shadow-2xl shadow-primary/10">
-                        <div className="flex items-center gap-2 border-b border-slate-200/70 px-4 py-3">
-                            <span className="size-3 rounded-full bg-rose-300" aria-hidden />
-                            <span className="size-3 rounded-full bg-amber-300" aria-hidden />
-                            <span className="size-3 rounded-full bg-emerald-300" aria-hidden />
-                            <span className="ml-3 font-mono text-xs text-brand-muted-foreground">
-                                {event?.title ?? "event-preview"}
-                            </span>
+
+                        <h1 className="mt-7 font-display text-[clamp(3.25rem,13vw,7rem)] font-bold leading-[0.84] tracking-[-0.045em]">
+                            {event?.title ?? "KBU Hackathon 2026"}
+                        </h1>
+
+                        <p className="mt-6 max-w-lg text-lg leading-7 font-medium sm:text-xl sm:leading-8">
+                            {t.home.heroIntro}
+                        </p>
+
+                        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                            <RegistrationButton state={registrationState} locale={locale} />
+                            <HomeAuthAction locale={locale} />
                         </div>
-                        {eventImage ? (
-                            <div className="relative aspect-1672/941 w-full bg-secondary">
-                                <Image
-                                    src={eventImage}
-                                    alt={event?.title ?? "KBU Hackathon event"}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 1024px) 100vw, 40vw"
-                                    priority
-                                />
-                            </div>
-                        ) : (
-                            <div className="relative aspect-1672/941 w-full bg-secondary">
-                                <Image
-                                    src="/images/kbu.webp"
-                                    alt="KBU Hackathon event"
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 1024px) 100vw, 40vw"
-                                    priority
-                                />
-                            </div>
+
+                        {registrationState === "open" && event && (
+                            <p className="mt-4 font-display text-sm font-semibold">
+                                {t.home.registrationCloses} {formatDate(event.registrationClosesAt, locale)}
+                            </p>
                         )}
                     </div>
+
+                    <figure className="relative mx-auto w-full max-w-sm lg:mt-4 lg:max-w-none">
+                        <div
+                            className="absolute inset-0 translate-x-2 translate-y-2 border-2 border-brand-ink bg-brand-ink"
+                            aria-hidden="true"
+                        />
+                        <div className="relative border-2 border-brand-ink bg-brand-paper p-2.5">
+                            <div className="relative aspect-16/10 overflow-hidden bg-secondary">
+                                <Image
+                                    src={posterSrc}
+                                    alt={event?.title ?? "KBU Hackathon 2026 event poster"}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 1024px) 100vw, 42vw"
+                                    priority
+                                />
+                            </div>
+                            <figcaption className="mt-2.5 flex items-center justify-between gap-3 font-display text-xs font-semibold">
+                                <span>{t.home.slogan}</span>
+                                <span className="text-foreground/60">KBU / 2026</span>
+                            </figcaption>
+                        </div>
+                    </figure>
                 </div>
+
+                {event && (
+                    <div className="mt-10 border-y-2 border-foreground/25 sm:grid sm:grid-cols-3">
+                        <EventFact
+                            label={t.home.eventDates}
+                            value={formatRange(event.startsAt, event.endsAt, locale)}
+                        />
+                        <EventFact
+                            label={t.home.registrationDates}
+                            value={formatRange(event.registrationOpensAt, event.registrationClosesAt, locale)}
+                        />
+                        <EventFact label={t.home.venue} value={event.venue ?? t.home.datesTba} />
+                    </div>
+                )}
             </div>
-            {/* Section divider — the gradient is reserved for CTAs, key
-                headlines, and dividers only. */}
-            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-accent" aria-hidden />
         </section>
     );
 }
 
 export async function HomeFinalCta({ locale }: { locale: Locale }) {
     const t = getMessages(locale);
-    const registrationState = registrationStateFrom(await getEventSettings());
+    const event = await getEventSettings();
+    const registrationState = registrationStateFrom(event);
 
     return (
-        <section className="relative bg-background border-t border-border/80 dot-grid">
-            <div className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
-                <p className="font-mono text-sm font-medium text-primary">$ ready_to_build --join</p>
-                <h2
-                    data-reveal
-                    className="mx-auto mt-5 max-w-2xl text-4xl font-black tracking-tight text-foreground sm:text-5xl"
-                >
-                    {t.home.calloutTitle}
-                </h2>
-                <p data-reveal className="mx-auto mt-5 max-w-xl text-brand-muted-foreground">
-                    {t.home.finalTitle}
-                </p>
-                <div data-reveal className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                    <RegistrationButton state={registrationState} locale={locale} />
+        <section className="bg-brand-ink text-brand-paper">
+            <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+                <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+                    <h2 className="max-w-2xl font-display text-[clamp(2.75rem,9vw,6rem)] font-bold leading-[0.88] tracking-[-0.04em]">
+                        {t.home.calloutTitle}
+                    </h2>
+                    <div>
+                        <p className="max-w-md text-base leading-7 text-brand-paper/80 sm:text-lg">
+                            {t.home.finalTitle}
+                        </p>
+                        {event && (
+                            <p className="mt-4 font-display text-sm font-semibold text-brand-yellow">
+                                {t.home.registrationCloses} {formatDate(event.registrationClosesAt, locale)}
+                            </p>
+                        )}
+                        <div className="mt-6">
+                            <RegistrationButton state={registrationState} locale={locale} tone="dark" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
