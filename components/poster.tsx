@@ -35,10 +35,7 @@ export function PosterButton({
     className,
     ...props
 }: Omit<ComponentProps<typeof Button>, "variant"> & { tone?: PosterButtonTone }) {
-    const resolvedClassName =
-        typeof className === "function"
-            ? (state: Parameters<typeof className>[0]) => cn(buttonToneClasses[tone], className(state))
-            : cn(buttonToneClasses[tone], className);
+    const resolvedClassName = cn(buttonToneClasses[tone], className);
 
     return <Button variant={buttonVariant[tone]} className={resolvedClassName} {...props} />;
 }
