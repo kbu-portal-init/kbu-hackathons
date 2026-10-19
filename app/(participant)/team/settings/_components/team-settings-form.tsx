@@ -44,10 +44,10 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
 
     return (
         <div className="space-y-8">
-            <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
+            <section className="rounded-none border-2 border-brand-ink/15 bg-card p-6">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">
-                        <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-2xl font-bold text-orange-700">
+                        <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-none bg-brand-yellow font-display text-2xl font-bold text-brand-ink">
                             {teamImageUrl ? (
                                 <Image
                                     alt={`${team.displayName} logo`}
@@ -73,9 +73,11 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                         </div>
                         <div className="min-w-0">
                             <p className="text-sm font-medium text-brand-muted-foreground">Team profile</p>
-                            <h2 className="truncate text-2xl font-bold text-zinc-950">{team.displayName}</h2>
+                            <h2 className="truncate font-display text-2xl font-bold tracking-[-0.02em] text-brand-ink">
+                                {team.displayName}
+                            </h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                                <Badge className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink hover:bg-brand-yellow">
                                     <CheckCircle2 /> Approved
                                 </Badge>
                                 <span className="inline-flex items-center gap-1.5 text-sm text-brand-muted-foreground">
@@ -87,16 +89,16 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                     </div>
                     <div className="grid gap-3 text-sm sm:min-w-56">
                         <div className="flex items-start gap-2">
-                            <KeyRound className="mt-0.5 size-4 shrink-0 text-orange-600" />
+                            <KeyRound className="mt-0.5 size-4 shrink-0 text-primary" />
                             <div className="min-w-0">
-                                <p className="font-medium text-zinc-950">Team username</p>
+                                <p className="font-medium text-brand-ink">Team username</p>
                                 <p className="break-all text-brand-muted-foreground">{team.loginName}</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-2">
-                            <CalendarDays className="mt-0.5 size-4 shrink-0 text-orange-600" />
+                            <CalendarDays className="mt-0.5 size-4 shrink-0 text-primary" />
                             <div>
-                                <p className="font-medium text-zinc-950">Approved</p>
+                                <p className="font-medium text-brand-ink">Approved</p>
                                 <p className="text-brand-muted-foreground">
                                     {team.approvalDate
                                         ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
@@ -108,15 +110,17 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                         </div>
                     </div>
                 </div>
-                <p className="mt-5 border-t border-orange-100 pt-4 text-sm text-brand-muted-foreground">
+                <p className="mt-5 border-t-2 border-brand-ink/15 pt-4 text-sm text-brand-muted-foreground">
                     This shared username is used by your team to sign in to the workspace. Keep it and the team password
                     available to approved members only.
                 </p>
             </section>
 
-            <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
+            <section className="rounded-none border-2 border-brand-ink/15 bg-card p-6">
                 <div className="mb-5">
-                    <h2 className="text-xl font-bold text-zinc-950">Member profiles</h2>
+                    <h2 className="font-display text-xl font-bold tracking-[-0.02em] text-brand-ink">
+                        Member profiles
+                    </h2>
                     <p className="mt-1 text-sm text-brand-muted-foreground">
                         Keep your roster recognizable by adding a profile image for each member. Names, roles, and
                         student emails are managed from registration.
@@ -124,8 +128,11 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                 </div>
                 <div className="grid gap-5 md:grid-cols-2">
                     {members.map((member, index) => (
-                        <article className="flex min-w-0 gap-4 rounded-xl border border-zinc-200 p-4" key={member.id}>
-                            <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-orange-100 text-xl font-bold text-orange-700">
+                        <article
+                            className="flex min-w-0 gap-4 rounded-none border-2 border-brand-ink p-4"
+                            key={member.id}
+                        >
+                            <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-none bg-brand-yellow font-display text-xl font-bold text-brand-ink">
                                 {memberImages[member.id] ? (
                                     <Image
                                         alt={`${member.name} profile`}
@@ -155,9 +162,16 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                         <p className="text-xs font-medium uppercase tracking-wide text-brand-muted-foreground">
                                             Member {index + 1}
                                         </p>
-                                        <h3 className="truncate font-semibold text-zinc-950">{member.name}</h3>
+                                        <h3 className="truncate font-display font-bold text-brand-ink">
+                                            {member.name}
+                                        </h3>
                                     </div>
-                                    <Badge variant="outline">{formatRole(member.role)}</Badge>
+                                    <Badge
+                                        variant="outline"
+                                        className="rounded-none border-2 border-brand-ink/20 text-brand-ink"
+                                    >
+                                        {formatRole(member.role)}
+                                    </Badge>
                                 </div>
                                 <p className="break-all text-sm text-brand-muted-foreground">{member.studentEmail}</p>
                             </div>

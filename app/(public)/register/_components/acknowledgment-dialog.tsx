@@ -31,9 +31,9 @@ export function AcknowledgmentDialog({
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent>
+            <AlertDialogContent className="rounded-none border-2 border-brand-ink">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{t.beforeSubmit}</AlertDialogTitle>
+                    <AlertDialogTitle className="font-display">{t.beforeSubmit}</AlertDialogTitle>
                     <AlertDialogDescription render={<div />}>
                         <ol className="list-decimal space-y-2 pl-5">
                             {t.submitSteps.map((step) => (
@@ -44,14 +44,14 @@ export function AcknowledgmentDialog({
                         </ol>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <FieldSet className="border-t pt-4">
+                <FieldSet className="border-t-2 border-brand-ink/15 pt-4">
                     <Field orientation="horizontal" className="items-start">
                         <input
                             id="registration-acknowledgment"
                             type="checkbox"
                             checked={acknowledged}
                             onChange={(event) => onAcknowledgedChange(event.target.checked)}
-                            className="mt-1 size-4 accent-orange-600"
+                            className="mt-1 size-4 accent-primary"
                         />
                         <FieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
                             {t.acknowledgment}

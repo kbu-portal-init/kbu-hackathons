@@ -36,7 +36,7 @@ async function RegistrationListContent({ status, page }: { status?: string; page
 
     if (!result.ok) {
         return (
-            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+            <div className="flex h-64 items-center justify-center text-sm text-brand-muted-foreground">
                 Failed to load registrations.
             </div>
         );

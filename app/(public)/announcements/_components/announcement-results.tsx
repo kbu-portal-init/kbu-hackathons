@@ -63,19 +63,22 @@ export async function AnnouncementResults({ page, search, category, labels }: An
     return (
         <>
             {!result.ok && (
-                <p role="alert" className="py-10 text-center text-sm text-muted-foreground">
+                <p
+                    role="alert"
+                    className="border-2 border-brand-ink bg-card py-10 text-center text-sm text-brand-muted-foreground"
+                >
                     {labels.loadError}
                 </p>
             )}
 
             {result.ok && items.length === 0 && (
-                <p className="rounded-2xl border border-dashed border-border bg-white/70 py-10 text-center text-sm text-muted-foreground">
+                <p className="border-2 border-brand-ink bg-card py-10 text-center font-display text-sm font-semibold text-brand-muted-foreground">
                     {labels.emptyAll}
                 </p>
             )}
 
             {items.length > 0 && (
-                <div className="flex min-w-0 flex-col gap-3">
+                <div className="flex min-w-0 flex-col border-t-2 border-brand-ink">
                     {items.map((announcement) => (
                         <AnnouncementCard key={announcement.id} announcement={announcement} locale={locale} />
                     ))}

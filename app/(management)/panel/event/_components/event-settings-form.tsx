@@ -126,7 +126,11 @@ export function EventSettingsForm({ settings }: Props) {
 
             <Separator />
             <div className="flex items-center gap-3">
-                <Button type="submit" disabled={isPending}>
+                <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                >
                     {isPending ? (
                         <>
                             <Loader2 data-icon="inline-start" className="animate-spin" />
@@ -139,7 +143,9 @@ export function EventSettingsForm({ settings }: Props) {
                         </>
                     )}
                 </Button>
-                {form.formState.isDirty && <p className="text-sm text-muted-foreground">You have unsaved changes.</p>}
+                {form.formState.isDirty && (
+                    <p className="text-sm text-brand-muted-foreground">You have unsaved changes.</p>
+                )}
             </div>
         </form>
     );

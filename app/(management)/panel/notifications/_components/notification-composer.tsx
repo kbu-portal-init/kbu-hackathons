@@ -38,14 +38,11 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
 
     return (
         <div className="flex max-w-2xl flex-col gap-6">
-            <form
-                onSubmit={submit}
-                className="flex flex-col gap-4 rounded-2xl border border-orange-100 bg-white p-6 shadow-sm"
-            >
-                <div className="flex flex-col gap-2 text-sm font-medium">
+            <form onSubmit={submit} className="flex flex-col gap-4 rounded-none border-2 border-brand-ink bg-card p-6">
+                <div className="flex flex-col gap-2 font-display text-sm font-semibold text-brand-ink">
                     <span>Recipient</span>
                     <Select value={mode} onValueChange={(value) => setMode(value as typeof mode)}>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="h-11 w-full rounded-none border-2 border-brand-ink/25 bg-card">
                             <SelectValue>
                                 {mode === "TEAM"
                                     ? "Specific team"
@@ -63,10 +60,10 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex flex-col gap-2 text-sm font-medium">
+                <div className="flex flex-col gap-2 font-display text-sm font-semibold text-brand-ink">
                     <span>Delivery channel</span>
                     <Select value={channel} onValueChange={(value) => value && setChannel(value as typeof channel)}>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="h-11 w-full rounded-none border-2 border-brand-ink/25 bg-card">
                             <SelectValue>
                                 {channel === "EMAIL"
                                     ? "Email only"
@@ -92,7 +89,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                             if (value !== null) setTeamId(value);
                         }}
                     >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="h-11 w-full rounded-none border-2 border-brand-ink/25 bg-card">
                             <SelectValue placeholder="Choose a team">
                                 {teams.find((team) => team.id === teamId)?.displayName ?? "Choose a team"}
                             </SelectValue>
@@ -103,7 +100,9 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                                     <SelectItem key={team.id} value={team.id}>
                                         <span className="flex flex-col">
                                             <span>{team.displayName}</span>
-                                            <span className="text-xs text-muted-foreground">@{team.loginName}</span>
+                                            <span className="text-xs text-brand-muted-foreground">
+                                                @{team.loginName}
+                                            </span>
                                         </span>
                                     </SelectItem>
                                 ))}
@@ -116,37 +115,50 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                         required
                         type="email"
                         placeholder="recipient@example.com"
+                        className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                     />
                 )}
-                <label htmlFor="notification-subject" className="flex flex-col gap-2 text-sm font-medium">
+                <label
+                    htmlFor="notification-subject"
+                    className="flex flex-col gap-2 font-display text-sm font-semibold text-brand-ink"
+                >
                     Subject
                     <Input
                         id="notification-subject"
                         required
                         maxLength={200}
+                        className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         value={subject}
                         onChange={(event) => setSubject(event.target.value)}
                     />
                 </label>
-                <label htmlFor="notification-body" className="flex flex-col gap-2 text-sm font-medium">
+                <label
+                    htmlFor="notification-body"
+                    className="flex flex-col gap-2 font-display text-sm font-semibold text-brand-ink"
+                >
                     Message
                     <Textarea
                         id="notification-body"
                         required
                         maxLength={10000}
                         rows={8}
+                        className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         value={body}
                         onChange={(event) => setBody(event.target.value)}
                     />
                 </label>
                 {message && (
-                    <p className="text-sm text-muted-foreground" role="status">
+                    <p className="text-sm text-brand-muted-foreground" role="status">
                         {message}
                     </p>
                 )}
-                <Button type="submit" disabled={pending}>
+                <Button
+                    type="submit"
+                    disabled={pending}
+                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                >
                     {pending ? "Sending..." : "Send notification"}
                 </Button>
             </form>

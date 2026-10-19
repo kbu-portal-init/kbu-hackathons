@@ -28,18 +28,18 @@ export function RosterSummary({
     const namedCount = names.filter((n) => n.trim().length > 0).length;
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-            <div className="bg-gradient-accent px-5 py-4 text-primary-foreground">
-                <p className="truncate text-lg font-bold leading-6">
+        <div className="overflow-hidden border-2 border-brand-ink bg-card">
+            <div className="border-b-2 border-brand-ink bg-brand-yellow px-5 py-4">
+                <p className="truncate font-display text-lg font-bold leading-6 text-brand-ink">
                     {teamName?.trim() || (th ? "ทีมของคุณ" : "Your team")}
                 </p>
-                <p className="text-sm leading-5 opacity-90">
+                <p className="text-sm leading-5 text-brand-ink/75">
                     {program ? programLabels[program] : th ? "ยังไม่เลือกหลักสูตร" : "No program yet"}
                 </p>
             </div>
             <div className="px-5 py-4">
                 <div className="flex items-baseline justify-between">
-                    <p className="text-sm font-semibold text-foreground">{th ? "รายชื่อทีม" : "Roster"}</p>
+                    <p className="font-display text-sm font-semibold text-brand-ink">{th ? "รายชื่อทีม" : "Roster"}</p>
                     <p className="text-sm text-brand-muted-foreground">
                         {namedCount}/{teamSize} {th ? "ชื่อแล้ว" : "named"}
                     </p>
@@ -56,10 +56,10 @@ export function RosterSummary({
                             >
                                 <span
                                     className={[
-                                        "flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                                        "flex size-8 shrink-0 items-center justify-center border-2 font-display text-xs font-bold",
                                         filled
-                                            ? "bg-primary text-primary-foreground"
-                                            : "border border-dashed border-primary/50 text-brand-muted-foreground",
+                                            ? "border-brand-ink bg-brand-yellow text-brand-ink"
+                                            : "border-dashed border-brand-ink/30 text-brand-muted-foreground",
                                     ].join(" ")}
                                 >
                                     {filled ? initials(name) : i + 1}
@@ -81,7 +81,7 @@ export function RosterSummary({
                                             : `Member ${i}`}
                                 </span>
                                 {i === 0 ? (
-                                    <span className="ml-auto rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-foreground">
+                                    <span className="ml-auto border-2 border-brand-ink/20 bg-secondary px-2 py-0.5 font-display text-[10px] font-semibold text-secondary-foreground">
                                         {t.leaderRole}
                                     </span>
                                 ) : null}

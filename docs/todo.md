@@ -1,0 +1,8 @@
+- fix loading skeleton ui in team dashboard
+- add breadcrumb in register page, just like anncou and resources page
+- instead of hardcoded tailwind classes all over the codebase, just design the single source of truth in global css (just like in https://tweakcn.com)
+- fix the buttons layout in http://localhost:3000/team/submit
+- fix the ui of the sign out dialog 
+- fix the destrcutive button in dashboard (http://localhost:3000/panel/announcements, http://localhost:3000/panel/registrations)
+- fix the filtering button in http://localhost:3000/panel/announcements
+- fix the title field input in Create announcement dialog of http://localhost:3000/panel/announcements

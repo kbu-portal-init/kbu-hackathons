@@ -75,7 +75,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
             type="button"
             variant="outline"
             className={cn(
-                "transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground",
+                "rounded-none border-2 border-brand-ink bg-transparent font-display text-sm font-semibold text-brand-ink hover:!border-brand-ink hover:!bg-brand-yellow hover:!text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 className,
             )}
         >
@@ -92,7 +92,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                 variant="outline"
                 onClick={handleShare}
                 className={cn(
-                    "transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground",
+                    "rounded-none border-2 border-brand-ink bg-transparent font-display text-sm font-semibold text-brand-ink hover:!border-brand-ink hover:!bg-brand-yellow hover:!text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     className,
                 )}
             >
@@ -105,13 +105,18 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
     return (
         <Popover>
             <PopoverTrigger render={trigger} />
-            <PopoverContent>
+            <PopoverContent className="rounded-none border-2 border-brand-ink">
                 <PopoverHeader>
-                    <PopoverTitle>Share this link</PopoverTitle>
+                    <PopoverTitle className="font-display">Share this link</PopoverTitle>
                     <PopoverDescription>Copy the link or share it through LINE.</PopoverDescription>
                 </PopoverHeader>
                 <div className="flex flex-col gap-1">
-                    <Button type="button" variant="outline" onClick={handleCopy}>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCopy}
+                        className="rounded-none border-2 border-brand-ink font-display text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                    >
                         {copied ? <Check data-icon="inline-start" /> : <Copy data-icon="inline-start" />}
                         {copied ? "Copied" : "Copy link"}
                     </Button>
@@ -124,6 +129,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                             />
                         }
                         variant="outline"
+                        className="rounded-none border-2 border-brand-ink font-display text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
                     >
                         <ExternalLink data-icon="inline-start" />
                         Share to LINE

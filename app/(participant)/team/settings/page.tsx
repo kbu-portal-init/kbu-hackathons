@@ -10,12 +10,17 @@ export default async function TeamSettingsPage() {
 
     return (
         <main className="space-y-8">
-            <div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-orange-600">Team settings</h1>
-                <p className="mt-2 text-muted-foreground">
+            <header className="border-b-2 border-brand-ink/15 pb-5">
+                <p className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
+                    Participant workspace
+                </p>
+                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-[-0.03em] text-brand-ink">
+                    Team settings
+                </h1>
+                <p className="mt-3 max-w-2xl text-brand-muted-foreground">
                     Manage your team identity, member presentation, and shared account access.
                 </p>
-            </div>
+            </header>
             <Suspense fallback={<DashboardFormSkeleton />}>
                 <TeamSettingsContent
                     team={{ displayName: team.displayName, imageUrl: team.imageUrl, loginName: team.loginName }}

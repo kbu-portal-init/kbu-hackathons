@@ -1,5 +1,5 @@
 import { cn } from "cn";
-import { FileText, Megaphone, Star } from "lucide-react";
+import { CircleAlert, FileText, Megaphone } from "lucide-react";
 
 type AnnouncementCategory = "important" | "update" | "news";
 
@@ -11,17 +11,17 @@ type Props = {
 const categoryStyles = {
     important: {
         label: "Important",
-        className: "border-orange-200 bg-orange-50 text-orange-600",
-        Icon: Star,
+        className: "border-brand-ink bg-brand-yellow text-brand-ink",
+        Icon: CircleAlert,
     },
     update: {
         label: "Update",
-        className: "border-blue-200 bg-blue-50 text-blue-600",
+        className: "border-brand-ink bg-secondary text-secondary-foreground",
         Icon: FileText,
     },
     news: {
         label: "News",
-        className: "border-emerald-200 bg-emerald-50 text-emerald-600",
+        className: "border-brand-ink bg-card text-brand-ink",
         Icon: Megaphone,
     },
 } satisfies Record<
@@ -29,7 +29,7 @@ const categoryStyles = {
     {
         label: string;
         className: string;
-        Icon: typeof Star;
+        Icon: typeof Megaphone;
     }
 >;
 
@@ -40,7 +40,7 @@ export function AnnouncementCategoryBadge({ category, className }: Props) {
     return (
         <span
             className={cn(
-                "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium",
+                "inline-flex w-fit shrink-0 items-center gap-1.5 border-2 px-2.5 py-1 font-display text-xs font-semibold",
                 item.className,
                 className,
             )}

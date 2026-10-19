@@ -67,20 +67,20 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
     return (
         <div className="mt-8 space-y-5">
             {locked && (
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                <div className="border-2 border-brand-ink bg-brand-yellow p-4 font-medium text-brand-ink">
                     This submission is finalized and is currently read-only.
                 </div>
             )}
             {error && (
-                <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+                <div
+                    role="alert"
+                    className="border-2 border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive"
+                >
                     {error}
                 </div>
             )}
             {message && (
-                <div
-                    role="status"
-                    className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
-                >
+                <div role="status" className="border-2 border-brand-ink bg-brand-yellow p-4 font-medium text-brand-ink">
                     {message}
                 </div>
             )}
@@ -93,7 +93,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
             >
                 {fields.map(([name, label, type, maxLength]) => (
                     <label className="block space-y-2" htmlFor={`submission-${name}`} key={name}>
-                        <span className="text-sm font-semibold text-foreground">
+                        <span className="font-display text-sm font-semibold text-brand-ink">
                             {label}
                             {[
                                 "title",
@@ -110,7 +110,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         {type === "textarea" ? (
                             <textarea
                                 id={`submission-${name}`}
-                                className="min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:opacity-60"
+                                className="min-h-28 w-full rounded-none border-2 border-brand-ink/25 bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 value={values[name]}
@@ -121,7 +121,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         ) : (
                             <input
                                 id={`submission-${name}`}
-                                className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:opacity-60"
+                                className="h-11 w-full rounded-none border-2 border-brand-ink/25 bg-card px-3 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 type={type}
@@ -133,15 +133,15 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         )}
                         {fieldErrors[name]?.[0] && <p className="text-sm text-destructive">{fieldErrors[name][0]}</p>}
                         {maxLength && (
-                            <p className="text-right text-xs text-muted-foreground">
+                            <p className="text-right text-xs text-brand-muted-foreground">
                                 {values[name].length}/{maxLength}
                             </p>
                         )}
                     </label>
                 ))}
-                <div className="flex flex-col gap-3 border-t pt-5 sm:flex-row">
+                <div className="flex flex-col gap-3 border-t-2 border-brand-ink/15 pt-5 sm:flex-row">
                     <button
-                        className="rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-700 disabled:opacity-50"
+                        className="rounded-none border-2 border-brand-ink px-5 py-3 font-display text-sm font-semibold text-brand-ink hover:bg-brand-yellow disabled:opacity-50"
                         disabled={locked || isPending}
                         type="submit"
                     >
@@ -150,7 +150,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                     <ConfirmActionAlertDialog
                         trigger={
                             <Button
-                                className="rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white"
+                                className="rounded-none border-2 border-brand-ink bg-brand-ink px-5 py-3 font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
                                 disabled={locked || isPending}
                             >
                                 Finalize submission

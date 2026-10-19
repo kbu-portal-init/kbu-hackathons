@@ -20,9 +20,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 function StatusCard({ title, text }: { title: string; text: string }) {
     return (
-        <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-border/60 bg-card p-8 shadow-sm">
-            <h2 className="text-xl font-bold tracking-tight">{title}</h2>
-            <p className="mt-3 text-base leading-7 text-muted-foreground">{text}</p>
+        <div className="mx-auto mt-8 max-w-xl border-2 border-brand-ink bg-card p-8">
+            <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-brand-ink">{title}</h2>
+            <p className="mt-3 text-base leading-7 text-brand-muted-foreground">{text}</p>
         </div>
     );
 }
@@ -32,14 +32,14 @@ function RegistrationFallback() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
             <div className="space-y-6">
                 {(["team", "leader", "members"] as const).map((section) => (
-                    <div className="rounded-2xl border border-border/60 bg-card p-6" key={section}>
-                        <Skeleton className="h-6 w-56 max-w-full" />
-                        <Skeleton className="mt-6 h-11 w-full" />
-                        <Skeleton className="mt-4 h-11 w-full" />
+                    <div className="border-2 border-brand-ink/15 bg-card p-6" key={section}>
+                        <Skeleton className="h-6 w-56 max-w-full rounded-none bg-brand-ink/10" />
+                        <Skeleton className="mt-6 h-11 w-full rounded-none bg-brand-ink/10" />
+                        <Skeleton className="mt-4 h-11 w-full rounded-none bg-brand-ink/10" />
                     </div>
                 ))}
             </div>
-            <Skeleton className="hidden h-72 rounded-2xl lg:block" />
+            <Skeleton className="hidden h-72 rounded-none bg-brand-ink/10 lg:block" />
         </div>
     );
 }
@@ -95,7 +95,7 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
 
     return (
         <>
-            <p className="mt-4 max-w-2xl text-left text-lg leading-8 text-brand-muted-foreground">{t.formIntro}</p>
+            <p className="mt-6 max-w-2xl text-left text-lg leading-8 text-brand-muted-foreground">{t.formIntro}</p>
             <div className="mt-8">
                 <RegistrationForm
                     minTeamSize={settings.minTeamSize}
@@ -112,19 +112,23 @@ export default async function TeamRegistrationPage() {
     const locale = await getLocale();
     const t = getMessages(locale).register;
     return (
-        <main className="flex-1 bg-secondary/60">
-            <section className="mx-auto max-w-5xl px-6 py-12 text-left lg:px-8 lg:py-16">
-                <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{t.title}</h1>
-                <p className="mt-4 max-w-2xl leading-6 text-brand-muted-foreground">
-                    {t.learnMore}{" "}
-                    <Link
-                        className="font-semibold text-primary underline underline-offset-4"
-                        href="/#everything-you-need-to-know"
-                    >
-                        {t.learnMoreLink}
-                    </Link>{" "}
-                    {t.beforeRegistering}
-                </p>
+        <main className="flex-1 bg-brand-paper">
+            <section className="mx-auto max-w-6xl px-5 py-12 text-left sm:px-8 lg:py-16">
+                <div className="border-b-2 border-brand-ink/15 pb-8">
+                    <h1 className="font-display text-[clamp(2.75rem,7vw,5rem)] font-bold leading-[0.9] tracking-[-0.04em] text-brand-ink">
+                        {t.title}
+                    </h1>
+                    <p className="mt-5 max-w-2xl text-base leading-7 text-brand-muted-foreground">
+                        {t.learnMore}{" "}
+                        <Link
+                            className="font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4"
+                            href="/#everything-you-need-to-know"
+                        >
+                            {t.learnMoreLink}
+                        </Link>{" "}
+                        {t.beforeRegistering}
+                    </p>
+                </div>
                 <Suspense fallback={<RegistrationFallback />}>
                     <RegistrationContent locale={locale} />
                 </Suspense>

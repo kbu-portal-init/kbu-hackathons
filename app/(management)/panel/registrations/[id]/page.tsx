@@ -15,20 +15,34 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge variant="outline" className="border-primary/15 text-primary/90">
+                <Badge
+                    variant="outline"
+                    className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink"
+                >
                     Pending
                 </Badge>
             );
         case "APPROVED":
             return (
-                <Badge variant="outline" className="border-success/15 text-success">
+                <Badge variant="outline" className="rounded-none border-2 border-brand-ink text-brand-ink">
                     Approved
                 </Badge>
             );
         case "REJECTED":
-            return <Badge variant="destructive">Rejected</Badge>;
+            return (
+                <Badge variant="destructive" className="rounded-none border-2 border-destructive/40">
+                    Rejected
+                </Badge>
+            );
         default:
-            return <Badge variant="secondary">{status}</Badge>;
+            return (
+                <Badge
+                    variant="secondary"
+                    className="rounded-none border-2 border-brand-ink/15 text-brand-muted-foreground"
+                >
+                    {status}
+                </Badge>
+            );
     }
 }
 
@@ -56,15 +70,17 @@ async function RegistrationDetailContent({ id }: { id: string }) {
             <div className="flex items-center gap-4">
                 <BackButton fallbackHref="/panel/registrations" />
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{item.teamName}</h1>
-                    <p className="text-sm text-muted-foreground">{item.loginName}</p>
+                    <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-[-0.03em] text-brand-ink">
+                        {item.teamName}
+                    </h1>
+                    <p className="text-sm text-brand-muted-foreground">{item.loginName}</p>
                 </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-                <DetailField label="Leader" value={item.leaderName || "\u2014"} />
+                <DetailField label="Leader" value={item.leaderName || "Not set"} />
                 <DetailField label="Leader email">
-                    <p className="text-sm break-all">{item.leaderEmail || "\u2014"}</p>
+                    <p className="text-sm break-all">{item.leaderEmail || "Not set"}</p>
                 </DetailField>
                 <DetailField label="Status">
                     <StatusBadge status={item.status} />
@@ -73,22 +89,30 @@ async function RegistrationDetailContent({ id }: { id: string }) {
             </div>
 
             {item.applicationNotes && (
-                <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground">Application notes</p>
+                <div className="space-y-1 border-2 border-brand-ink/15 bg-card p-4">
+                    <p className="text-xs font-medium text-brand-muted-foreground">Application notes</p>
                     <p className="text-sm">{item.applicationNotes}</p>
                 </div>
             )}
 
             <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">Team members ({item.members.length})</p>
-                <div className="rounded-lg border border-zinc-200">
+                <p className="text-xs font-medium text-brand-muted-foreground">Team members ({item.members.length})</p>
+                <div className="rounded-none border-2 border-brand-ink">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Verification</TableHead>
+                                <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                    Name
+                                </TableHead>
+                                <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                    Role
+                                </TableHead>
+                                <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                    Email
+                                </TableHead>
+                                <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                    Verification
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -102,14 +126,14 @@ async function RegistrationDetailContent({ id }: { id: string }) {
 
             {item.reviews.length > 0 && (
                 <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Review history</p>
+                    <p className="text-xs font-medium text-brand-muted-foreground">Review history</p>
                     <div className="space-y-2">
                         {item.reviews.map((r) => (
                             <div key={r.id} className="flex items-start gap-3 text-sm">
                                 <StatusBadge status={r.decision} />
                                 <div>
                                     {r.reason && <p>{r.reason}</p>}
-                                    <p className="text-xs text-zinc-400">
+                                    <p className="text-xs text-brand-muted-foreground">
                                         {format(new Date(r.createdAt), "MMM d, yyyy 'at' h:mm a")}
                                     </p>
                                 </div>
@@ -119,8 +143,8 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                 </div>
             )}
 
-            <div className="flex items-center justify-between text-xs text-zinc-400">
-                <span>Submitted {item.submittedAt ? format(new Date(item.submittedAt), "PPP") : "\u2014"}</span>
+            <div className="flex items-center justify-between text-xs text-brand-muted-foreground">
+                <span>Submitted {item.submittedAt ? format(new Date(item.submittedAt), "PPP") : "Not submitted"}</span>
                 <span>Created {format(new Date(item.createdAt), "PPP")}</span>
             </div>
 
@@ -137,7 +161,7 @@ async function RegistrationDetailContent({ id }: { id: string }) {
 function DetailField({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
     return (
         <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">{label}</p>
+            <p className="text-xs font-medium text-brand-muted-foreground">{label}</p>
             {children ?? <p className="text-sm">{value}</p>}
         </div>
     );

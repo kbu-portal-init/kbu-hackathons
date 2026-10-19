@@ -24,7 +24,11 @@ export function BackButton({ fallbackHref = "/", label = "Back", className, useH
     }
 
     return (
-        <Button variant="outline" onClick={handleBack} className={`${className ? ` ${className}` : ""}`}>
+        <Button
+            variant="outline"
+            onClick={handleBack}
+            className={`rounded-none border-2 border-brand-ink bg-transparent font-display text-sm font-semibold text-brand-ink hover:border-brand-ink hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${className ? ` ${className}` : ""}`}
+        >
             <ArrowLeft className="size-4" aria-hidden="true" />
             {label}
         </Button>

@@ -54,11 +54,16 @@ export function PasswordChangeForm({
                     ] as const
                 ).map(([suffix, label, key]) => (
                     <div className="space-y-2" key={suffix}>
-                        <Label htmlFor={`${idPrefix}-${suffix}`}>{label}</Label>
+                        <Label
+                            className="font-display text-sm font-semibold text-brand-ink"
+                            htmlFor={`${idPrefix}-${suffix}`}
+                        >
+                            {label}
+                        </Label>
                         <Input
                             id={`${idPrefix}-${suffix}`}
                             type={visible[key] ? "text" : "password"}
-                            className="pr-10"
+                            className="h-11 rounded-none border-2 border-brand-ink/25 bg-card pr-10 text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={values[key]}
                             onChange={(event) => setValues({ ...values, [key]: event.target.value })}
                             minLength={key === "currentPassword" ? undefined : 8}
@@ -76,7 +81,11 @@ export function PasswordChangeForm({
                         </Button>
                     </div>
                 ))}
-                <Button type="submit" disabled={saving}>
+                <Button
+                    type="submit"
+                    disabled={saving}
+                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                >
                     {saving ? "Saving..." : "Change password"}
                 </Button>
             </form>

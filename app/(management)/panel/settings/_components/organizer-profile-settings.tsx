@@ -28,17 +28,19 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
 
     return (
         <div className="grid max-w-4xl gap-6 lg:grid-cols-2">
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-                <h2 className="text-lg font-semibold">Profile information</h2>
+            <section className="rounded-none border-2 border-brand-ink bg-card p-6">
+                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">
+                    Profile information
+                </h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
-                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-full bg-secondary text-2xl font-bold text-primary/90">
+                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-none bg-brand-yellow font-display text-2xl font-bold text-brand-ink">
                             {image ? (
                                 <Image
                                     src={image}
                                     alt="Profile"
                                     fill
-                                    className="rounded-full object-cover"
+                                    className="rounded-none object-cover"
                                     unoptimized
                                 />
                             ) : (
@@ -63,31 +65,41 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-name">Name</Label>
+                        <Label htmlFor="organizer-name" className="font-display text-sm font-semibold text-brand-ink">
+                            Name
+                        </Label>
                         <Input
                             id="organizer-name"
+                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                             required
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-email">Email</Label>
+                        <Label htmlFor="organizer-email" className="font-display text-sm font-semibold text-brand-ink">
+                            Email
+                        </Label>
                         <Input
                             id="organizer-email"
                             type="email"
+                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             required
                         />
                     </div>
-                    <Button type="submit" disabled={saving}>
+                    <Button
+                        type="submit"
+                        disabled={saving}
+                        className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                    >
                         {saving ? "Saving..." : "Save profile"}
                     </Button>
                 </form>
             </section>
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-                <h2 className="text-lg font-semibold">Change password</h2>
+            <section className="rounded-none border-2 border-brand-ink bg-card p-6">
+                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">Change password</h2>
                 <PasswordChangeForm
                     idPrefix="organizer"
                     forgotPasswordEmail={email}

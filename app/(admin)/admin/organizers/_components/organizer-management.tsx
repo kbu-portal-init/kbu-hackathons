@@ -111,6 +111,7 @@ export function OrganizerManagement({ items }: Props) {
         <>
             <div className="flex justify-end">
                 <Button
+                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
                     onClick={() => {
                         createForm.reset();
                         setCreateOpen(true);
@@ -132,9 +133,9 @@ export function OrganizerManagement({ items }: Props) {
                 onUnban={onUnban}
             />
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Create organizer</DialogTitle>
+                        <DialogTitle className="font-display">Create organizer</DialogTitle>
                         <DialogDescription>Create an email-verified organizer account.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={createForm.handleSubmit(onCreate)}>
@@ -144,8 +145,18 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+                                        <FieldLabel
+                                            htmlFor={field.name}
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                        >
+                                            Name
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            aria-invalid={fieldState.invalid}
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                        />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -155,12 +166,18 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                                        <FieldLabel
+                                            htmlFor={field.name}
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                        >
+                                            Email
+                                        </FieldLabel>
                                         <Input
                                             {...field}
                                             id={field.name}
                                             type="email"
                                             aria-invalid={fieldState.invalid}
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -171,7 +188,12 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                                        <FieldLabel
+                                            htmlFor={field.name}
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                        >
+                                            Password
+                                        </FieldLabel>
                                         <div className="relative">
                                             <Input
                                                 {...field}
@@ -196,8 +218,12 @@ export function OrganizerManagement({ items }: Props) {
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4">
-                            <Button type="submit" disabled={createForm.formState.isSubmitting}>
+                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                            <Button
+                                type="submit"
+                                disabled={createForm.formState.isSubmitting}
+                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                            >
                                 {createForm.formState.isSubmitting ? "Creating..." : "Create"}
                             </Button>
                         </DialogFooter>
@@ -205,9 +231,9 @@ export function OrganizerManagement({ items }: Props) {
                 </DialogContent>
             </Dialog>
             <Dialog open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Edit organizer</DialogTitle>
+                        <DialogTitle className="font-display">Edit organizer</DialogTitle>
                         <DialogDescription>Update the organizer’s name and email address.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={editForm.handleSubmit(onEdit)}>
@@ -217,8 +243,18 @@ export function OrganizerManagement({ items }: Props) {
                                 control={editForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+                                        <FieldLabel
+                                            htmlFor={field.name}
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                        >
+                                            Name
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            aria-invalid={fieldState.invalid}
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                        />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -228,20 +264,30 @@ export function OrganizerManagement({ items }: Props) {
                                 control={editForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                                        <FieldLabel
+                                            htmlFor={field.name}
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                        >
+                                            Email
+                                        </FieldLabel>
                                         <Input
                                             {...field}
                                             id={field.name}
                                             type="email"
                                             aria-invalid={fieldState.invalid}
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4">
-                            <Button type="submit" disabled={editForm.formState.isSubmitting}>
+                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                            <Button
+                                type="submit"
+                                disabled={editForm.formState.isSubmitting}
+                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                            >
                                 {editForm.formState.isSubmitting ? "Saving..." : "Save changes"}
                             </Button>
                         </DialogFooter>
@@ -249,9 +295,9 @@ export function OrganizerManagement({ items }: Props) {
                 </DialogContent>
             </Dialog>
             <Dialog open={!!banItem} onOpenChange={(open) => !open && setBanItem(null)}>
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Ban organizer</DialogTitle>
+                        <DialogTitle className="font-display">Ban organizer</DialogTitle>
                         <DialogDescription>
                             This revokes all current sessions. Leave expiry empty for a permanent ban.
                         </DialogDescription>
@@ -263,8 +309,18 @@ export function OrganizerManagement({ items }: Props) {
                                 control={banForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
-                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+                                        <FieldLabel
+                                            htmlFor={field.name}
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                        >
+                                            Reason
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id={field.name}
+                                            aria-invalid={fieldState.invalid}
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                        />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -283,8 +339,13 @@ export function OrganizerManagement({ items }: Props) {
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4">
-                            <Button type="submit" variant="destructive" disabled={banForm.formState.isSubmitting}>
+                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                            <Button
+                                type="submit"
+                                variant="destructive"
+                                disabled={banForm.formState.isSubmitting}
+                                className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                            >
                                 {banForm.formState.isSubmitting ? "Banning..." : "Confirm ban"}
                             </Button>
                         </DialogFooter>
@@ -307,37 +368,55 @@ function OrganizerTable({
     onUnban: (item: OrganizerListItem) => Promise<void>;
 }) {
     return (
-        <div className="rounded-2xl border border-zinc-200 bg-white">
+        <div className="rounded-none border-2 border-brand-ink bg-card">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Ban details</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Name
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Email
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Created
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Status
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Ban details
+                        </TableHead>
+                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Actions
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                            <TableCell colSpan={6} className="h-24 text-center text-brand-muted-foreground">
                                 No organizers found.
                             </TableCell>
                         </TableRow>
                     ) : (
                         items.map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
                                 <TableCell className="font-medium">{item.name}</TableCell>
                                 <TableCell>{item.email}</TableCell>
                                 <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
                                 <TableCell>
-                                    <span className={item.banned ? "text-red-600" : "text-emerald-600"}>
+                                    <span
+                                        className={
+                                            item.banned
+                                                ? "inline-flex border-2 border-destructive/40 px-2 py-0.5 font-display text-xs font-semibold text-destructive"
+                                                : "inline-flex border-2 border-brand-ink px-2 py-0.5 font-display text-xs font-semibold text-brand-ink"
+                                        }
+                                    >
                                         {item.banned ? "Banned" : "Active"}
                                     </span>
                                 </TableCell>
-                                <TableCell className="max-w-56 whitespace-normal text-sm text-muted-foreground">
+                                <TableCell className="max-w-56 whitespace-normal text-sm text-brand-muted-foreground">
                                     {item.banned ? (
                                         <>
                                             {item.banReason ?? "No reason"}
@@ -346,18 +425,27 @@ function OrganizerTable({
                                                 : " · permanent"}
                                         </>
                                     ) : (
-                                        "—"
+                                        "None"
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex justify-end gap-2">
-                                        <Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                            onClick={() => onEdit(item)}
+                                        >
                                             Edit
                                         </Button>
                                         {item.banned ? (
                                             <ConfirmActionAlertDialog
                                                 trigger={
-                                                    <Button variant="outline" size="sm">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                                    >
                                                         Unban
                                                     </Button>
                                                 }
@@ -368,7 +456,12 @@ function OrganizerTable({
                                                 onConfirm={() => onUnban(item)}
                                             />
                                         ) : (
-                                            <Button variant="destructive" size="sm" onClick={() => onBan(item)}>
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                className="rounded-none border-2 border-destructive/40 font-display text-xs font-semibold"
+                                                onClick={() => onBan(item)}
+                                            >
                                                 Ban
                                             </Button>
                                         )}
@@ -388,11 +481,17 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
     const time = value ? format(value, "HH:mm") : "23:59";
     return (
         <>
-            <FieldLabel>Expires at</FieldLabel>
+            <FieldLabel className="font-display text-sm font-semibold text-brand-ink">Expires at</FieldLabel>
             <div className="flex gap-2">
                 <Popover>
                     <PopoverTrigger
-                        render={<Button type="button" variant="outline" className="flex-1 justify-start font-normal" />}
+                        render={
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1 justify-start rounded-none border-2 border-brand-ink/25 bg-card font-normal text-brand-ink"
+                            />
+                        }
                     >
                         <CalendarIcon />
                         {date ? format(date, "PPP") : "Select a date"}
@@ -414,7 +513,7 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
                     onChange={(event) => value && onChange(setExpiryTime(value, event.target.value))}
                     disabled={!date}
                     aria-label="Ban expiry time"
-                    className="w-28"
+                    className="w-28 rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                 />
                 {date && (
                     <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)}>

@@ -112,12 +112,14 @@ export function RegistrationForm({
 
     if (submitted) {
         return (
-            <div className="mx-auto max-w-xl rounded-2xl border border-primary/30 bg-card p-8 text-center shadow-xl shadow-primary/10">
-                <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-success/15 text-success">
+            <div className="mx-auto max-w-xl border-2 border-brand-ink bg-card p-8 text-center">
+                <div className="mx-auto flex size-14 items-center justify-center border-2 border-brand-ink bg-brand-yellow text-brand-ink">
                     <CheckCircle2 className="size-7" />
                 </div>
-                <h2 className="mt-6 text-2xl font-bold tracking-tight">{t.submitted}</h2>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                <h2 className="mt-6 font-display text-3xl font-bold tracking-[-0.03em] text-brand-ink">
+                    {t.submitted}
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-brand-muted-foreground">
                     {verificationEmailsSent ? t.verificationSent : t.verificationFailed}
                 </p>
                 <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
@@ -132,7 +134,7 @@ export function RegistrationForm({
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
                 <div className="space-y-6">
                     {/* 1 · Team */}
-                    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                    <section className="border-2 border-brand-ink bg-card p-6">
                         <SectionHeading
                             step={1}
                             title={th ? "ข้อมูลทีม" : "About your team"}
@@ -151,7 +153,7 @@ export function RegistrationForm({
                                                 id={field.name}
                                                 aria-invalid={fieldState.invalid}
                                                 placeholder="e.g. Byte Builders"
-                                                className="h-11 text-base"
+                                                className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                             />
                                             <FieldDescription>{t.uniqueTeamName}</FieldDescription>
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -202,7 +204,7 @@ export function RegistrationForm({
                     </section>
 
                     {/* 2 · Leader */}
-                    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                    <section className="border-2 border-brand-ink bg-card p-6">
                         <SectionHeading
                             step={2}
                             title={th ? "หัวหน้าทีม" : "Team leader"}
@@ -224,7 +226,7 @@ export function RegistrationForm({
                                                     id={field.name}
                                                     aria-invalid={fieldState.invalid}
                                                     placeholder="Jane Doe"
-                                                    className="h-11 text-base"
+                                                    className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                                 />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
@@ -232,7 +234,7 @@ export function RegistrationForm({
                                     />
                                     <Field>
                                         <FieldLabel>{t.role}</FieldLabel>
-                                        <div className="flex h-11 items-center rounded-md border border-input bg-muted/60 px-3 text-base text-muted-foreground">
+                                        <div className="flex h-11 items-center border-2 border-brand-ink/15 bg-brand-paper px-3 text-base text-brand-muted-foreground">
                                             {t.leaderRole}
                                         </div>
                                     </Field>
@@ -251,7 +253,7 @@ export function RegistrationForm({
                                                 type="email"
                                                 aria-invalid={fieldState.invalid}
                                                 placeholder="u...@ms.kbu.ac.th"
-                                                className="h-11 text-base"
+                                                className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                             />
                                             <FieldDescription>{t.validStudentEmail}</FieldDescription>
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -263,7 +265,7 @@ export function RegistrationForm({
                     </section>
 
                     {/* 3 · Members */}
-                    <section className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                    <section className="border-2 border-brand-ink bg-card p-6">
                         <SectionHeading
                             step={3}
                             title={`${th ? "สมาชิกทีมคนอื่น ๆ" : "Other team members"} (${selectedTeamSize - 1})`}
@@ -295,7 +297,7 @@ export function RegistrationForm({
                             type="submit"
                             size="lg"
                             disabled={form.formState.isSubmitting || !acknowledged}
-                            className="h-12 w-full bg-gradient-accent text-base font-semibold text-white hover:opacity-90"
+                            className="h-12 w-full rounded-none border-2 border-brand-ink bg-brand-ink font-display text-base font-semibold text-brand-paper hover:border-brand-ink hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                             {form.formState.isSubmitting ? (
                                 <>
@@ -310,12 +312,12 @@ export function RegistrationForm({
                             type="button"
                             variant="outline"
                             size="lg"
-                            className="w-full"
+                            className="w-full rounded-none border-2 border-brand-ink bg-card font-display text-sm font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
                             onClick={() => setInformationOpen(true)}
                         >
                             {acknowledged ? (
                                 <>
-                                    <CheckCircle2 className="size-4 text-success" />
+                                    <CheckCircle2 className="size-4 text-primary" />
                                     {th ? "อ่านข้อมูลแล้ว" : "Read and acknowledged"}
                                 </>
                             ) : (

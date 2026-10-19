@@ -24,7 +24,7 @@ async function EventSettingsContent() {
 
     if (!result.ok) {
         return (
-            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+            <div className="flex h-64 items-center justify-center text-sm text-brand-muted-foreground">
                 Failed to load event settings.
             </div>
         );

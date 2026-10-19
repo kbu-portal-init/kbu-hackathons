@@ -46,7 +46,7 @@ export function RegistrationActions({
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved \u2014 password setup link sent to leader");
+            toast.success("Registration approved. Password setup link sent to leader");
             router.refresh();
         });
     };
@@ -75,7 +75,11 @@ export function RegistrationActions({
                 <Tooltip>
                     <TooltipTrigger
                         render={
-                            <Button onClick={onApprove} disabled={approveDisabled}>
+                            <Button
+                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                onClick={onApprove}
+                                disabled={approveDisabled}
+                            >
                                 {isPending ? (
                                     <>
                                         <Loader2 className="size-4 animate-spin" />
@@ -98,15 +102,20 @@ export function RegistrationActions({
                         </TooltipContent>
                     )}
                 </Tooltip>
-                <Button variant="destructive" onClick={() => setRejectOpen(true)} disabled={isPending}>
+                <Button
+                    variant="destructive"
+                    className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                    onClick={() => setRejectOpen(true)}
+                    disabled={isPending}
+                >
                     Reject
                 </Button>
             </div>
 
             <Dialog open={rejectOpen} onOpenChange={(open) => !open && setRejectOpen(false)}>
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Reject registration</DialogTitle>
+                        <DialogTitle className="font-display">Reject registration</DialogTitle>
                         <DialogDescription>This action sends a rejection email to the team leader.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={rejectForm.handleSubmit(onReject)}>
@@ -116,19 +125,25 @@ export function RegistrationActions({
                                 control={rejectForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
+                                        <FieldLabel
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            htmlFor={field.name}
+                                        >
+                                            Reason
+                                        </FieldLabel>
                                         <Textarea
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
                                             placeholder="Explain why this registration was rejected..."
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -137,7 +152,12 @@ export function RegistrationActions({
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" variant="destructive" disabled={isPending}>
+                            <Button
+                                type="submit"
+                                variant="destructive"
+                                disabled={isPending}
+                                className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                            >
                                 {isPending ? "Rejecting..." : "Reject registration"}
                             </Button>
                         </DialogFooter>

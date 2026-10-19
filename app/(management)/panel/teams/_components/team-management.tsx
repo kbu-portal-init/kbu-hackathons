@@ -33,52 +33,90 @@ export function TeamManagement({ items, meta, status }: Props) {
                         key={value}
                         size="sm"
                         variant={filter === value ? "default" : "outline"}
+                        className={
+                            filter === value
+                                ? "rounded-none border-2 border-brand-ink bg-brand-ink font-display text-xs font-semibold text-brand-paper hover:bg-brand-ink"
+                                : "rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                        }
                         onClick={() => changeFilter(value)}
                     >
                         {value[0] + value.slice(1).toLowerCase()}
                     </Button>
                 ))}
             </div>
-            <div className="rounded-2xl border border-zinc-200 bg-white">
+            <div className="rounded-none border-2 border-brand-ink bg-card">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Team</TableHead>
-                            <TableHead>Program</TableHead>
-                            <TableHead>Login</TableHead>
-                            <TableHead>Members</TableHead>
-                            <TableHead>Submission</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Team
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Program
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Login
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Members
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Submission
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Status
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Created
+                            </TableHead>
+                            <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Actions
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                                <TableCell colSpan={8} className="h-24 text-center text-brand-muted-foreground">
                                     No approved teams found.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             items.map((item) => (
-                                <TableRow key={item.id}>
+                                <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
                                     <TableCell className="font-medium">{item.displayName}</TableCell>
                                     <TableCell>{formatRole(item.program)}</TableCell>
                                     <TableCell>{item.loginName}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         {item.submissionCount > 0 ? (
-                                            <Badge>Submitted</Badge>
+                                            <Badge className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink">
+                                                Submitted
+                                            </Badge>
                                         ) : (
-                                            <Badge variant="secondary">Not submitted</Badge>
+                                            <Badge
+                                                variant="secondary"
+                                                className="rounded-none border-2 border-brand-ink/15 text-brand-muted-foreground"
+                                            >
+                                                Not submitted
+                                            </Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>
                                         {item.banned ? (
-                                            <Badge variant="destructive">Banned</Badge>
+                                            <Badge
+                                                variant="destructive"
+                                                className="rounded-none border-2 border-destructive/40"
+                                            >
+                                                Banned
+                                            </Badge>
                                         ) : (
-                                            <Badge variant="outline">Active</Badge>
+                                            <Badge
+                                                variant="outline"
+                                                className="rounded-none border-2 border-brand-ink text-brand-ink"
+                                            >
+                                                Active
+                                            </Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>
@@ -86,7 +124,12 @@ export function TeamManagement({ items, meta, status }: Props) {
                                         <div className="flex justify-end gap-2">
                                             <Link
                                                 href={`/panel/teams/${item.id}`}
-                                                className={buttonVariants({ variant: "outline", size: "sm" })}
+                                                className={buttonVariants({
+                                                    variant: "outline",
+                                                    size: "sm",
+                                                    className:
+                                                        "rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink",
+                                                })}
                                             >
                                                 View
                                             </Link>

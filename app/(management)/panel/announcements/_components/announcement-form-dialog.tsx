@@ -78,16 +78,18 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-lg">
-                <div className="border-l-4 border-l-primary">
+            <DialogContent className="max-h-[90vh] overflow-y-auto rounded-none border-2 border-brand-ink p-0 sm:max-w-lg">
+                <div className="border-t-4 border-t-primary">
                     <DialogHeader className="px-6 pb-2 pt-6">
                         <div className="flex items-start gap-3">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-none bg-brand-yellow text-brand-ink">
                                 <Megaphone className="size-5" />
                             </div>
 
                             <div className="min-w-0">
-                                <DialogTitle className="text-xl font-semibold tracking-tight">{title}</DialogTitle>
+                                <DialogTitle className="font-display text-xl font-bold tracking-[-0.02em] text-brand-ink">
+                                    {title}
+                                </DialogTitle>
 
                                 <DialogDescription className="mt-1.5 text-sm leading-6">
                                     {description}
@@ -99,7 +101,10 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                     <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-6 pt-5">
                         <FieldGroup className="gap-5">
                             <Field data-invalid={!!errors.title}>
-                                <FieldLabel htmlFor="announcement-title">
+                                <FieldLabel
+                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    htmlFor="announcement-title"
+                                >
                                     Title <span className="text-destructive">*</span>
                                 </FieldLabel>
 
@@ -115,7 +120,10 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
 
                             <Field data-invalid={!!errors.content}>
-                                <FieldLabel htmlFor="announcement-content">
+                                <FieldLabel
+                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    htmlFor="announcement-content"
+                                >
                                     Content <span className="text-destructive">*</span>
                                 </FieldLabel>
 
@@ -125,21 +133,24 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                                     aria-invalid={!!errors.content}
                                     placeholder="Write the announcement content..."
                                     rows={5}
-                                    className="max-h-48 resize-none overflow-y-auto"
+                                    className="max-h-48 resize-none overflow-y-auto rounded-none border-2 border-brand-ink/25 bg-card"
                                 />
 
                                 {errors.content && <FieldError errors={[errors.content]} />}
                             </Field>
 
                             <Field data-invalid={!!errors.category}>
-                                <FieldLabel htmlFor="announcement-category">
+                                <FieldLabel
+                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    htmlFor="announcement-category"
+                                >
                                     Category <span className="text-destructive">*</span>
                                 </FieldLabel>
 
                                 <Select value={category ?? "NEWS"} onValueChange={handleCategoryChange}>
                                     <SelectTrigger
                                         id="announcement-category"
-                                        className="h-11"
+                                        className="h-11 rounded-none border-2 border-brand-ink/25 bg-card"
                                         aria-invalid={!!errors.category}
                                     >
                                         <SelectValue placeholder="Select a category" />
@@ -156,13 +167,13 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
 
                             <Field data-invalid={!!errors.imageUrl}>
-                                <FieldLabel>
+                                <FieldLabel className="font-display text-sm font-semibold text-brand-ink">
                                     Announcement image{" "}
-                                    <span className="font-normal text-muted-foreground">(optional)</span>
+                                    <span className="font-normal text-brand-muted-foreground">(optional)</span>
                                 </FieldLabel>
 
                                 {imageUrl && (
-                                    <div className="overflow-hidden rounded-lg border bg-muted/20">
+                                    <div className="overflow-hidden rounded-none border-2 border-brand-ink bg-muted/20">
                                         <Image
                                             src={imageUrl as string}
                                             alt="Announcement image preview"
@@ -194,7 +205,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
                         </FieldGroup>
 
-                        <DialogFooter className="mt-6 -mx-6 border-t px-6 pt-4">
+                        <DialogFooter className="mt-6 -mx-6 border-t-2 border-brand-ink/15 px-6 pt-4">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -204,7 +215,11 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                                 Cancel
                             </Button>
 
-                            <Button type="submit" disabled={isPending}>
+                            <Button
+                                type="submit"
+                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                disabled={isPending}
+                            >
                                 {isPending ? pendingLabel : submitLabel}
                             </Button>
                         </DialogFooter>

@@ -21,7 +21,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
                 image: session.user.image ?? null,
             }}
         >
-            <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+            <div className="flex-1 bg-brand-paper p-4 sm:p-6 lg:p-8">{children}</div>
         </DashboardSidebar>
     );
 }

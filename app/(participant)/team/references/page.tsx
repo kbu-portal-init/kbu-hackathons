@@ -53,11 +53,16 @@ function formatDate(value: string) {
 export default async function TeamReferencesPage() {
     const t = getMessages(await getLocale()).references;
     return (
-        <main className="space-y-8 p-6 lg:p-10">
-            <div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-primary">{t.title}</h1>
-                <p className="mt-2 max-w-2xl text-muted-foreground">{t.intro}</p>
-            </div>
+        <main className="space-y-8">
+            <header className="border-b-2 border-brand-ink/15 pb-5">
+                <p className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
+                    Participant references
+                </p>
+                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-[-0.03em] text-brand-ink">
+                    {t.title}
+                </h1>
+                <p className="mt-3 max-w-2xl text-brand-muted-foreground">{t.intro}</p>
+            </header>
 
             <Suspense fallback={<EventFactsSkeleton />}>
                 <EventFacts />
@@ -67,34 +72,38 @@ export default async function TeamReferencesPage() {
                 {references.map(({ icon: Icon, body, id }, index) => {
                     const [title, description] = t.cards[index];
                     return (
-                        <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm" key={id}>
-                            <div className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary/90">
+                        <article className="rounded-none border-2 border-brand-ink bg-card p-6" key={id}>
+                            <div className="flex size-11 items-center justify-center rounded-none bg-brand-yellow text-brand-ink">
                                 <Icon className="size-5" />
                             </div>
-                            <h2 className="mt-5 text-xl font-bold text-zinc-950">{title}</h2>
-                            <p className="mt-2 text-sm font-medium text-primary/90">{description}</p>
-                            <p className="mt-4 text-sm leading-6 text-muted-foreground">{body}</p>
+                            <h2 className="mt-5 font-display text-xl font-bold tracking-[-0.02em] text-brand-ink">
+                                {title}
+                            </h2>
+                            <p className="mt-2 text-sm font-medium text-brand-muted-foreground">{description}</p>
+                            <p className="mt-4 text-sm leading-6 text-brand-muted-foreground">{body}</p>
                         </article>
                     );
                 })}
             </section>
 
             <section className="grid gap-5">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+                <div className="rounded-none border-2 border-brand-ink bg-card p-6">
                     <div className="flex items-center gap-3">
                         <Link2 className="size-5 text-primary" />
-                        <h2 className="text-xl font-bold text-zinc-950">{t.usefulLinks}</h2>
+                        <h2 className="font-display text-xl font-bold tracking-[-0.02em] text-brand-ink">
+                            {t.usefulLinks}
+                        </h2>
                     </div>
                     <div className="mt-4 space-y-3 text-sm">
                         <Link
-                            className="flex items-center justify-between text-primary/90 hover:text-primary/70"
+                            className="flex items-center justify-between font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4 hover:bg-brand-yellow"
                             href="/team/submit"
                         >
                             <span>{t.submissionWorkspace}</span>
                             <ArrowUpRight className="size-4" />
                         </Link>
                         <Link
-                            className="flex items-center justify-between text-primary/90 hover:text-primary/70"
+                            className="flex items-center justify-between font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4 hover:bg-brand-yellow"
                             href="/resources"
                         >
                             <span>{t.studentResources}</span>
@@ -104,11 +113,11 @@ export default async function TeamReferencesPage() {
                 </div>
             </section>
 
-            <section className="flex items-start gap-4 rounded-2xl border border-border/10 bg-secondary/10 p-6">
+            <section className="flex items-start gap-4 rounded-none border-2 border-brand-ink/15 bg-brand-paper p-6">
                 <HelpCircle className="mt-0.5 size-5 shrink-0 text-primary" />
                 <div>
-                    <h2 className="font-bold text-zinc-950">{t.help}</h2>
-                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{t.helpText}</p>
+                    <h2 className="font-display text-lg font-bold text-brand-ink">{t.help}</h2>
+                    <p className="mt-1 text-sm leading-6 text-brand-muted-foreground">{t.helpText}</p>
                 </div>
             </section>
         </main>
@@ -120,26 +129,30 @@ async function EventFacts() {
 
     return (
         <section className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-border/10 bg-secondary/10 p-5">
+            <div className="rounded-none border-2 border-brand-ink/15 bg-brand-paper p-5">
                 <CalendarDays className="size-5 text-primary" />
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-primary/90">Hackathon dates</p>
-                <p className="mt-1 font-semibold text-zinc-950">
+                <p className="mt-4 font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
+                    Hackathon dates
+                </p>
+                <p className="mt-1 font-semibold text-brand-ink">
                     {event ? `${formatDate(event.startsAt)} – ${formatDate(event.endsAt)}` : "Dates to be announced"}
                 </p>
             </div>
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+            <div className="rounded-none border-2 border-brand-ink bg-card p-5">
                 <ClipboardCheck className="size-5 text-primary" />
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team size</p>
-                <p className="mt-1 font-semibold text-zinc-950">
+                <p className="mt-4 font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
+                    Team size
+                </p>
+                <p className="mt-1 font-semibold text-brand-ink">
                     {event ? `${event.minTeamSize}–${event.maxTeamSize} members` : "Check event rules"}
                 </p>
             </div>
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+            <div className="rounded-none border-2 border-brand-ink bg-card p-5">
                 <Trophy className="size-5 text-primary" />
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="mt-4 font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
                     Submission deadline
                 </p>
-                <p className="mt-1 font-semibold text-zinc-950">
+                <p className="mt-1 font-semibold text-brand-ink">
                     {event ? formatDate(event.submissionDeadline) : "To be announced"}
                 </p>
             </div>
@@ -153,10 +166,10 @@ function EventFactsSkeleton() {
             <span className="sr-only">Loading event details</span>
             <div className="grid gap-4 sm:grid-cols-3">
                 {["one", "two", "three"].map((key) => (
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-5" key={key}>
-                        <Skeleton className="size-5 bg-orange-100" />
-                        <Skeleton className="mt-4 h-4 w-28 bg-zinc-100" />
-                        <Skeleton className="mt-2 h-5 w-40 max-w-full bg-zinc-100" />
+                    <div className="rounded-none border-2 border-brand-ink bg-card p-5" key={key}>
+                        <Skeleton className="size-5 bg-brand-yellow" />
+                        <Skeleton className="mt-4 h-4 w-28 bg-brand-paper" />
+                        <Skeleton className="mt-2 h-5 w-40 max-w-full bg-brand-paper" />
                     </div>
                 ))}
             </div>

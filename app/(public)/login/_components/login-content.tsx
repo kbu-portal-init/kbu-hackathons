@@ -30,33 +30,48 @@ export function LoginContent({ locale }: { locale: Locale }) {
     const isParticipant = audience === "participant";
 
     return (
-        <main className="flex flex-1 items-center bg-orange-50/60 px-6 py-16">
-            <section className="mx-auto w-full max-w-md">
-                <h1 className="text-3xl font-bold tracking-tight">{t.title}</h1>
-                <div className="mt-6 flex w-full gap-1 rounded-xl bg-muted p-1">
-                    <Button
-                        type="button"
-                        variant={isParticipant ? "default" : "outline"}
-                        className="h-10 flex-1 gap-2 px-4"
-                        aria-pressed={isParticipant}
-                        onClick={() => setAudience("participant")}
-                    >
-                        <Users data-icon="inline-start" />
-                        {t.participant}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant={!isParticipant ? "default" : "outline"}
-                        className="h-10 flex-1 gap-2 px-4"
-                        aria-pressed={!isParticipant}
-                        onClick={() => setAudience("management")}
-                    >
-                        <ShieldCheck data-icon="inline-start" />
-                        {t.management}
-                    </Button>
+        <main className="flex flex-1 items-center bg-brand-paper px-5 py-16 sm:px-8">
+            <section className="mx-auto w-full max-w-lg border-2 border-brand-ink bg-card">
+                <div className="border-b-2 border-brand-ink bg-brand-yellow px-6 py-5 sm:px-8">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-ink/70">
+                        KBU Hackathon 2026
+                    </p>
+                    <h1 className="mt-2 font-display text-[clamp(2.25rem,6vw,3.5rem)] font-bold leading-[0.9] tracking-[-0.04em] text-brand-ink">
+                        {t.title}
+                    </h1>
                 </div>
-                <div className="mt-8">
-                    {isParticipant ? <TeamLoginForm locale={locale} /> : <StaffLoginForm locale={locale} />}
+                <div className="p-6 sm:p-8">
+                    <div className="flex w-full border-2 border-brand-ink">
+                        <button
+                            type="button"
+                            className={`flex h-11 flex-1 items-center justify-center gap-2 border-r-2 border-brand-ink px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
+                                isParticipant
+                                    ? "bg-brand-ink text-brand-paper"
+                                    : "bg-card text-brand-ink hover:bg-brand-yellow"
+                            }`}
+                            aria-pressed={isParticipant}
+                            onClick={() => setAudience("participant")}
+                        >
+                            <Users data-icon="inline-start" />
+                            {t.participant}
+                        </button>
+                        <button
+                            type="button"
+                            className={`flex h-11 flex-1 items-center justify-center gap-2 px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
+                                !isParticipant
+                                    ? "bg-brand-ink text-brand-paper"
+                                    : "bg-card text-brand-ink hover:bg-brand-yellow"
+                            }`}
+                            aria-pressed={!isParticipant}
+                            onClick={() => setAudience("management")}
+                        >
+                            <ShieldCheck data-icon="inline-start" />
+                            {t.management}
+                        </button>
+                    </div>
+                    <div className="mt-8">
+                        {isParticipant ? <TeamLoginForm locale={locale} /> : <StaffLoginForm locale={locale} />}
+                    </div>
                 </div>
             </section>
         </main>
@@ -88,7 +103,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
     const passwordError = form.formState.errors.password;
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 lg:mt-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2">
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={usernameError ? true : undefined}>
@@ -99,6 +114,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                         autoComplete="username"
                         placeholder="your-team-username"
                         aria-invalid={!!usernameError}
+                        className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...form.register("username")}
                     />
                     <FieldError errors={[usernameError]} />
@@ -112,9 +128,10 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                             focusInput={() => form.setFocus("username")}
                         />
                     </div>
-                    <InputGroup>
+                    <InputGroup className="h-11 rounded-none border-2 border-brand-ink/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                         <InputGroupInput
                             id="team-password"
+                            className="h-full px-3 text-base"
                             type={showPassword ? "text" : "password"}
                             autoComplete="current-password"
                             placeholder="Enter your password"
@@ -131,7 +148,11 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                <Button
+                    type="submit"
+                    className="h-11 w-full rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    disabled={form.formState.isSubmitting}
+                >
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
                 </Button>
             </FieldGroup>
@@ -163,7 +184,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
     const passwordError = form.formState.errors.password;
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 lg:mt-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2">
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={emailError ? true : undefined}>
@@ -174,6 +195,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                         autoComplete="email"
                         placeholder="you@example.com"
                         aria-invalid={!!emailError}
+                        className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...form.register("email")}
                     />
                     <FieldError errors={[emailError]} />
@@ -187,9 +209,10 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                             focusInput={() => form.setFocus("email")}
                         />
                     </div>
-                    <InputGroup>
+                    <InputGroup className="h-11 rounded-none border-2 border-brand-ink/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                         <InputGroupInput
                             id="staff-password"
+                            className="h-full px-3 text-base"
                             type={showPassword ? "text" : "password"}
                             autoComplete="current-password"
                             placeholder="Enter your password"
@@ -206,7 +229,11 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <Button type="submit" className="h-10 w-full" disabled={form.formState.isSubmitting}>
+                <Button
+                    type="submit"
+                    className="h-11 w-full rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    disabled={form.formState.isSubmitting}
+                >
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
                 </Button>
             </FieldGroup>
@@ -276,7 +303,13 @@ function ForgotPasswordButton({
 
     return (
         <>
-            <Button type="button" variant="link" size="sm" className="h-auto px-0 text-xs" onClick={openDialog}>
+            <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="h-auto px-0 font-display text-xs font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4 hover:text-brand-ink"
+                onClick={openDialog}
+            >
                 Forgot password?
             </Button>
             <Dialog
@@ -285,9 +318,9 @@ function ForgotPasswordButton({
                     if (!isRequesting) setOpen(nextOpen);
                 }}
             >
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Reset your password</DialogTitle>
+                        <DialogTitle className="font-display">Reset your password</DialogTitle>
                         <DialogDescription>
                             {isTeam
                                 ? "We will send password-reset instructions to the verified leader email for this team."
@@ -295,7 +328,7 @@ function ForgotPasswordButton({
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-brand-muted-foreground">
                             {isTeam ? "Team username" : "Email address"}: {getValue().trim() || "Not provided"}
                         </p>
                         {message && (
@@ -305,7 +338,7 @@ function ForgotPasswordButton({
                                         ? "text-sm font-medium text-red-600"
                                         : messageType === "success"
                                           ? "text-sm font-medium text-green-600"
-                                          : "text-sm text-muted-foreground"
+                                          : "text-sm text-brand-muted-foreground"
                                 }
                                 role={messageType === "error" ? "alert" : "status"}
                             >

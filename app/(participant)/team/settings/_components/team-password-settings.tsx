@@ -42,18 +42,18 @@ export function TeamPasswordSettings({ username }: { username: string }) {
     }
 
     return (
-        <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
+        <section className="rounded-none border-2 border-brand-ink/15 bg-card p-6">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                    <h2 className="text-xl font-bold text-zinc-950">Password</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h2 className="font-display text-xl font-bold tracking-[-0.02em] text-brand-ink">Password</h2>
+                    <p className="mt-1 text-sm text-brand-muted-foreground">
                         Change the shared team account password or request a reset link.
                     </p>
                 </div>
                 <Button
                     type="button"
                     variant="link"
-                    className="h-auto justify-start px-0 sm:justify-end"
+                    className="h-auto justify-start px-0 font-display text-sm font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
                     onClick={() => {
                         setResetMessage(null);
                         setResetError(false);
@@ -73,23 +73,38 @@ export function TeamPasswordSettings({ username }: { username: string }) {
             />
 
             <Dialog open={resetOpen} onOpenChange={(open) => !resetting && setResetOpen(open)}>
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Forgot password?</DialogTitle>
+                        <DialogTitle className="font-display">Forgot password?</DialogTitle>
                         <DialogDescription>
                             Reset instructions will be sent to the verified team leader email.
                         </DialogDescription>
                     </DialogHeader>
                     <p
-                        className={resetError ? "text-sm text-destructive" : "text-sm text-muted-foreground"}
+                        className={resetError ? "text-sm text-destructive" : "text-sm text-brand-muted-foreground"}
                         role={resetError ? "alert" : undefined}
                     >
                         {resetMessage ?? `Team username: ${username}`}
                     </p>
                     <DialogFooter>
-                        <DialogClose render={<Button variant="outline" disabled={resetting} />}>Close</DialogClose>
+                        <DialogClose
+                            render={
+                                <Button
+                                    variant="outline"
+                                    className="rounded-none border-2 border-brand-ink font-display text-sm font-semibold"
+                                    disabled={resetting}
+                                />
+                            }
+                        >
+                            Close
+                        </DialogClose>
                         {!resetMessage || resetError ? (
-                            <Button type="button" onClick={() => void requestReset()} disabled={resetting}>
+                            <Button
+                                type="button"
+                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                onClick={() => void requestReset()}
+                                disabled={resetting}
+                            >
                                 {resetting ? "Sending..." : "Send reset link"}
                             </Button>
                         ) : null}

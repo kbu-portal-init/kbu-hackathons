@@ -57,7 +57,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 toast.error(result.error.message);
                 return;
             }
-            toast.success("Registration approved — password setup link sent to leader");
+            toast.success("Registration approved. Password setup link sent to leader");
             router.refresh();
         });
     };
@@ -93,6 +93,11 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                         key={s}
                         variant={statusFilter === s ? "default" : "outline"}
                         size="sm"
+                        className={
+                            statusFilter === s
+                                ? "rounded-none border-2 border-brand-ink bg-brand-ink font-display text-xs font-semibold text-brand-paper hover:bg-brand-ink"
+                                : "rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                        }
                         onClick={() => handleFilterChange(s)}
                     >
                         {s.charAt(0) + s.slice(1).toLowerCase()}
@@ -100,44 +105,61 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 ))}
             </div>
 
-            <div className="mt-4 rounded-2xl border border-zinc-200 bg-white">
+            <div className="mt-4 rounded-none border-2 border-brand-ink bg-card">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Team</TableHead>
-                            <TableHead>Program</TableHead>
-                            <TableHead>Leader</TableHead>
-                            <TableHead>Members</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Submitted</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Team
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Program
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Leader
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Members
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Status
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Submitted
+                            </TableHead>
+                            <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                                Actions
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                                <TableCell colSpan={7} className="h-24 text-center text-brand-muted-foreground">
                                     No registrations found.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             items.map((item) => (
-                                <TableRow key={item.id}>
+                                <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
                                     <TableCell className="font-medium">{item.teamName}</TableCell>
                                     <TableCell>{formatRole(item.program)}</TableCell>
-                                    <TableCell>{item.leaderName || "—"}</TableCell>
+                                    <TableCell>{item.leaderName || "Not set"}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         <StatusBadge status={item.status} />
                                     </TableCell>
                                     <TableCell>
-                                        {item.submittedAt ? format(new Date(item.submittedAt), "MMM d, yyyy") : "—"}
+                                        {item.submittedAt
+                                            ? format(new Date(item.submittedAt), "MMM d, yyyy")
+                                            : "Not submitted"}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
                                             <Button
                                                 variant="outline"
                                                 size="sm"
+                                                className="rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
                                                 onClick={() => router.push(`/panel/registrations/${item.id}`)}
                                             >
                                                 <Eye className="size-4" />
@@ -147,6 +169,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                                 <>
                                                     <Button
                                                         size="sm"
+                                                        className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-xs font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
                                                         onClick={() => onApprove(item.id)}
                                                         disabled={isPending}
                                                     >
@@ -191,9 +214,9 @@ export function RegistrationManagement({ items, meta, status }: Props) {
             />
 
             <Dialog open={!!rejectItem} onOpenChange={(open) => !open && setRejectItem(null)}>
-                <DialogContent>
+                <DialogContent className="rounded-none border-2 border-brand-ink">
                     <DialogHeader>
-                        <DialogTitle>Reject registration</DialogTitle>
+                        <DialogTitle className="font-display">Reject registration</DialogTitle>
                         <DialogDescription>
                             Rejecting &quot;{rejectItem?.teamName}&quot;. This action sends a rejection email to the
                             team leader.
@@ -207,19 +230,25 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                 control={rejectForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
+                                        <FieldLabel
+                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            htmlFor={field.name}
+                                        >
+                                            Reason
+                                        </FieldLabel>
                                         <Textarea
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
                                             placeholder="Explain why this registration was rejected..."
+                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -228,7 +257,12 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" variant="destructive" disabled={isPending}>
+                            <Button
+                                type="submit"
+                                variant="destructive"
+                                disabled={isPending}
+                                className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                            >
                                 {isPending ? "Rejecting..." : "Reject registration"}
                             </Button>
                         </DialogFooter>
@@ -243,19 +277,33 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge variant="outline" className="border-amber-300 text-amber-700">
+                <Badge
+                    variant="outline"
+                    className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink"
+                >
                     Pending
                 </Badge>
             );
         case "APPROVED":
             return (
-                <Badge variant="outline" className="border-green-300 text-green-700">
+                <Badge variant="outline" className="rounded-none border-2 border-brand-ink text-brand-ink">
                     Approved
                 </Badge>
             );
         case "REJECTED":
-            return <Badge variant="destructive">Rejected</Badge>;
+            return (
+                <Badge variant="destructive" className="rounded-none border-2 border-destructive/40">
+                    Rejected
+                </Badge>
+            );
         default:
-            return <Badge variant="secondary">{status}</Badge>;
+            return (
+                <Badge
+                    variant="secondary"
+                    className="rounded-none border-2 border-brand-ink/15 text-brand-muted-foreground"
+                >
+                    {status}
+                </Badge>
+            );
     }
 }

@@ -17,7 +17,6 @@ export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch {
-            // Fallback for non-https / secure contexts
             const textarea = document.createElement("textarea");
             textarea.value = studentEmailGuide.formatExample;
             document.body.appendChild(textarea);
@@ -33,28 +32,26 @@ export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
         <section
             id="student-email-guide"
             aria-labelledby="student-email-guide-heading"
-            className="scroll-mt-24 overflow-hidden rounded-3xl border border-zinc-200/80 bg-linear-to-b from-white to-zinc-50/60 shadow-xs"
+            className="scroll-mt-24 border-2 border-brand-ink bg-card"
         >
-            {/* Header banner */}
-            <div className="border-b border-zinc-200/80 bg-zinc-50/80 px-5 py-5 sm:px-8 sm:py-6">
+            <div className="border-b-2 border-brand-ink bg-brand-yellow px-5 py-5 sm:px-8 sm:py-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-accent text-white shadow-xs">
-                            <Mail className="h-5 w-5" />
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center border-2 border-brand-ink bg-brand-ink text-brand-paper">
+                            <Mail className="h-5 w-5" aria-hidden="true" />
                         </div>
                         <div>
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="rounded-md bg-orange-100/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700">
+                                <span className="border-2 border-brand-ink bg-brand-paper px-2 py-0.5 font-display text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-ink">
                                     {t.badge}
                                 </span>
-                                <span className="text-zinc-300">•</span>
-                                <span className="text-xs text-zinc-400">
+                                <span className="font-display text-xs text-brand-ink/70">
                                     {t.updated(formatBenefitDate(studentEmailGuide.postedDate, locale))}
                                 </span>
                             </div>
                             <h2
                                 id="student-email-guide-heading"
-                                className="mt-1 text-lg font-bold tracking-tight text-zinc-900 sm:text-2xl"
+                                className="mt-1 font-display text-xl font-bold tracking-[-0.02em] text-brand-ink sm:text-2xl"
                             >
                                 {t.heading}
                             </h2>
@@ -65,36 +62,34 @@ export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
                         href={studentEmailGuide.portalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-accent px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:shadow-lg hover:shadow-orange-500/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 sm:text-sm"
+                        className="inline-flex min-h-11 items-center justify-center gap-2 border-2 border-brand-ink bg-brand-ink px-5 py-2.5 font-display text-sm font-semibold text-brand-paper transition-colors hover:bg-brand-paper hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink"
                     >
-                        <span>{getMessages(locale).resourcesPage.openWebmail}</span>
-                        <ExternalLink className="h-4 w-4" />
+                        {getMessages(locale).resourcesPage.openWebmail}
+                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
                     </a>
                 </div>
             </div>
 
             <div className="space-y-8 p-5 sm:p-8">
-                {/* Description & Format Card */}
-                <div className="max-w-3xl">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{studentEmailGuide.description}</p>
-                </div>
+                <p className="max-w-3xl text-sm leading-7 text-brand-muted-foreground sm:text-base">
+                    {studentEmailGuide.description}
+                </p>
 
-                {/* Copyable Format Callout */}
-                <div className="flex flex-col gap-4 rounded-2xl border border-orange-200/90 bg-linear-to-r from-orange-50/90 to-amber-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex flex-col gap-4 border-2 border-brand-ink bg-secondary p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-xl bg-orange-500/10 p-2 text-orange-600">
-                            <ShieldCheck className="h-5 w-5" />
+                        <div className="border-2 border-brand-ink bg-brand-paper p-2 text-brand-ink">
+                            <ShieldCheck className="h-5 w-5" aria-hidden="true" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-orange-700 sm:text-xs">
+                            <p className="font-display text-[10px] font-semibold uppercase tracking-[0.12em] text-secondary-foreground sm:text-xs">
                                 {t.formatLabel}
                             </p>
-                            <p className="mt-0.5 font-mono text-sm font-bold text-zinc-900 sm:text-lg">
+                            <p className="mt-1 font-mono text-sm font-bold text-brand-ink sm:text-lg">
                                 {studentEmailGuide.formatExample}
                             </p>
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-1 text-xs text-secondary-foreground">
                                 {t.replaceBefore}
-                                <span className="font-semibold text-zinc-800">xxxxxxxxxxxx</span>
+                                <span className="font-semibold">xxxxxxxxxxxx</span>
                                 {t.replaceAfter}
                             </p>
                         </div>
@@ -103,56 +98,58 @@ export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
                     <button
                         type="button"
                         onClick={handleCopyFormat}
-                        className="inline-flex items-center justify-center gap-1.5 self-start rounded-xl border border-orange-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 shadow-2xs transition hover:bg-orange-50 active:scale-95 sm:self-center"
+                        className="inline-flex min-h-10 items-center justify-center gap-1.5 self-start border-2 border-brand-ink bg-card px-4 py-2 font-display text-xs font-semibold text-brand-ink transition-colors hover:bg-brand-yellow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:self-center"
                     >
                         {copied ? (
                             <>
-                                <Check className="h-3.5 w-3.5 text-emerald-600" />
-                                <span className="font-bold text-emerald-700">{t.copied}</span>
+                                <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" />
+                                <span>{t.copied}</span>
                             </>
                         ) : (
                             <>
-                                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                                 <span>{t.copy}</span>
                             </>
                         )}
                     </button>
                 </div>
 
-                {/* 4-Step Login Walkthrough */}
                 <div>
-                    <h3 className="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-400">{t.walkthrough}</h3>
+                    <h3 className="mb-4 font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        {t.walkthrough}
+                    </h3>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {studentEmailGuide.steps.map((step) => (
                             <div
                                 key={step.stepNumber}
-                                className="flex flex-col justify-between rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-2xs transition hover:border-orange-500/30 hover:shadow-xs"
+                                className="flex flex-col justify-between border-2 border-brand-ink/15 bg-card p-4 transition-colors hover:border-brand-ink"
                             >
                                 <div>
-                                    <span className="font-mono text-xs font-bold text-orange-600">
+                                    <span className="font-display text-2xl font-bold leading-none text-primary">
                                         {step.stepNumber}
                                     </span>
-                                    <h4 className="mt-1.5 text-sm font-semibold text-zinc-900">{step.title}</h4>
-                                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.detail}</p>
+                                    <h4 className="mt-2 font-display text-sm font-semibold text-brand-ink">
+                                        {step.title}
+                                    </h4>
+                                    <p className="mt-1 text-xs leading-6 text-brand-muted-foreground">{step.detail}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Helpful Verification Tips */}
-                <div className="rounded-2xl border border-zinc-200/80 bg-zinc-50/70 p-4 sm:p-5">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700">
-                        <HelpCircle className="h-4 w-4 text-orange-600" />
+                <div className="border-2 border-brand-ink/15 bg-brand-paper p-4 sm:p-5">
+                    <div className="flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-ink">
+                        <HelpCircle className="h-4 w-4 text-primary" aria-hidden="true" />
                         <span>{t.tips}</span>
                     </div>
-                    <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+                    <ul className="mt-4 grid gap-3 sm:grid-cols-3">
                         {studentEmailGuide.tips.map((tip) => (
                             <li
                                 key={tip}
-                                className="flex items-start gap-2.5 text-xs leading-relaxed text-muted-foreground"
+                                className="flex items-start gap-2.5 text-xs leading-6 text-brand-muted-foreground"
                             >
-                                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-500" />
+                                <AlertCircle className="mt-1 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
                                 <span>{tip}</span>
                             </li>
                         ))}

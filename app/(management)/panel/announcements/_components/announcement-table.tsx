@@ -20,31 +20,43 @@ type Props = {
 
 export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchive, onDelete }: Props) {
     return (
-        <div className="rounded-2xl border border-zinc-200 bg-white">
+        <div className="rounded-none border-2 border-brand-ink bg-card">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Image</TableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Published</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Image
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Title
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Status
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Published
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Created
+                        </TableHead>
+                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            Actions
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
 
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                            <TableCell colSpan={6} className="h-24 text-center text-brand-muted-foreground">
                                 No announcements found.
                             </TableCell>
                         </TableRow>
                     ) : (
                         items.map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
                                 <TableCell>
-                                    <div className="relative size-14 overflow-hidden rounded-lg border bg-muted">
+                                    <div className="relative size-14 overflow-hidden rounded-none border-2 border-brand-ink bg-muted">
                                         <Image
                                             src={item.imageUrl ?? "/images/kbu.webp"}
                                             alt=""
@@ -64,7 +76,9 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                 </TableCell>
 
                                 <TableCell>
-                                    {item.publishedAt ? format(new Date(item.publishedAt), "MMM d, yyyy") : "—"}
+                                    {item.publishedAt
+                                        ? format(new Date(item.publishedAt), "MMM d, yyyy")
+                                        : "Not published"}
                                 </TableCell>
 
                                 <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>
@@ -74,7 +88,12 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                         {item.status === "PUBLISHED" && (
                                             <Link
                                                 href={`/announcements/${item.id}`}
-                                                className={buttonVariants({ variant: "outline", size: "sm" })}
+                                                className={buttonVariants({
+                                                    variant: "outline",
+                                                    size: "sm",
+                                                    className:
+                                                        "rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink",
+                                                })}
                                             >
                                                 View
                                             </Link>
@@ -85,6 +104,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
+                                                    className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
@@ -93,6 +113,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 
                                                 <Button
                                                     size="sm"
+                                                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-xs font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
                                                     onClick={() => onPublish(item.id)}
                                                     disabled={isPending}
                                                 >
@@ -101,7 +122,12 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 
                                                 <ConfirmActionAlertDialog
                                                     trigger={
-                                                        <Button variant="destructive" size="sm" disabled={isPending}>
+                                                        <Button
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            className="rounded-none border-2 border-destructive/40 font-display text-xs font-semibold"
+                                                            disabled={isPending}
+                                                        >
                                                             Delete
                                                         </Button>
                                                     }
@@ -119,6 +145,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
+                                                    className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
@@ -127,7 +154,12 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 
                                                 <ConfirmActionAlertDialog
                                                     trigger={
-                                                        <Button variant="outline" size="sm" disabled={isPending}>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                                            disabled={isPending}
+                                                        >
                                                             Archive
                                                         </Button>
                                                     }
@@ -154,20 +186,30 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "DRAFT":
             return (
-                <Badge variant="outline" className="border-amber-300 text-amber-700">
+                <Badge
+                    variant="outline"
+                    className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink"
+                >
                     Draft
                 </Badge>
             );
 
         case "PUBLISHED":
             return (
-                <Badge variant="outline" className="border-green-300 text-green-700">
+                <Badge variant="outline" className="rounded-none border-2 border-brand-ink text-brand-ink">
                     Published
                 </Badge>
             );
 
         case "ARCHIVED":
-            return <Badge variant="secondary">Archived</Badge>;
+            return (
+                <Badge
+                    variant="secondary"
+                    className="rounded-none border-2 border-brand-ink/15 text-brand-muted-foreground"
+                >
+                    Archived
+                </Badge>
+            );
 
         default:
             return <Badge variant="secondary">{status}</Badge>;

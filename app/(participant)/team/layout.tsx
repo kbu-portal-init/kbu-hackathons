@@ -20,7 +20,7 @@ export default async function TeamsLayout({ children }: Readonly<{ children: Rea
                 image: session.user.image ?? null,
             }}
         >
-            <div className="flex-1 space-y-8 p-6 lg:p-8">{children}</div>
+            <div className="flex-1 space-y-8 bg-brand-paper p-6 lg:p-8">{children}</div>
         </DashboardSidebar>
     );
 }

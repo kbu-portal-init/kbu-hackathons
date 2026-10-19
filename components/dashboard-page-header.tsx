@@ -9,15 +9,17 @@ type DashboardPageHeaderProps = {
 
 export function DashboardPageHeader({ eyebrow, title, description, actions }: DashboardPageHeaderProps) {
     return (
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <header className="flex flex-col gap-4 border-b-2 border-brand-ink/15 pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
-                {eyebrow && <p className="text-sm font-semibold uppercase tracking-widest text-primary">{eyebrow}</p>}
-                <h1
-                    className={eyebrow ? "mt-2 text-3xl font-bold tracking-tight" : "text-3xl font-bold tracking-tight"}
-                >
+                {eyebrow && (
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
+                        {eyebrow}
+                    </p>
+                )}
+                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-[-0.03em] text-brand-ink">
                     {title}
                 </h1>
-                {description && <p className="mt-2 text-muted-foreground">{description}</p>}
+                {description && <p className="mt-3 max-w-2xl text-brand-muted-foreground">{description}</p>}
             </div>
             {actions}
         </header>

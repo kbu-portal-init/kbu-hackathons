@@ -1,6 +1,5 @@
-import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { PosterBreadcrumb } from "@/components/poster-breadcrumb";
 import { StudentBenefitsCatalog } from "@/components/resources/student-benefits-catalog";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
@@ -18,25 +17,14 @@ export default async function ResourcesPage() {
     const messages = getMessages(locale);
 
     return (
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
-            {/* Accessible Breadcrumb */}
-            <nav aria-label="Breadcrumb" className="mb-6 sm:mb-8">
-                <ol className="flex items-center gap-1.5 font-medium text-muted-foreground">
-                    <li>
-                        <Link href="/" className="transition hover:text-orange-600">
-                            {messages.common.home}
-                        </Link>
-                    </li>
-                    <li>
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                    </li>
-                    <li className="font-semibold text-orange-600" aria-current="page">
-                        {messages.resourcesPage.title}
-                    </li>
-                </ol>
-            </nav>
-
-            <StudentBenefitsCatalog locale={locale} />
+        <main className="flex-1 bg-brand-paper">
+            <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
+                <PosterBreadcrumb
+                    items={[{ label: messages.common.home, href: "/" }, { label: messages.resourcesPage.title }]}
+                    className="mb-8"
+                />
+                <StudentBenefitsCatalog locale={locale} />
+            </div>
         </main>
     );
 }

@@ -14,10 +14,12 @@ type Props = {
 
 export function GeneralInfoSection({ control }: Props) {
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+        <section className="rounded-none border-2 border-brand-ink bg-card p-6">
             <div className="flex items-center gap-2">
-                <CalendarDays className="size-5 text-primary/70" />
-                <h2 className="text-lg font-semibold">General information</h2>
+                <CalendarDays className="size-5 text-brand-muted-foreground" />
+                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">
+                    General information
+                </h2>
             </div>
             <FieldGroup className="mt-5">
                 <Controller
@@ -25,12 +27,18 @@ export function GeneralInfoSection({ control }: Props) {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+                            <FieldLabel
+                                htmlFor={field.name}
+                                className="font-display text-sm font-semibold text-brand-ink"
+                            >
+                                Title
+                            </FieldLabel>
                             <Input
                                 {...field}
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
                                 placeholder="e.g. KBU Hackathon 2026"
+                                className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -41,13 +49,19 @@ export function GeneralInfoSection({ control }: Props) {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                            <FieldLabel
+                                htmlFor={field.name}
+                                className="font-display text-sm font-semibold text-brand-ink"
+                            >
+                                Description
+                            </FieldLabel>
                             <Textarea
                                 {...field}
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
                                 placeholder="Describe the hackathon..."
                                 rows={4}
+                                className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -59,12 +73,18 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Venue</FieldLabel>
+                                <FieldLabel
+                                    htmlFor={field.name}
+                                    className="font-display text-sm font-semibold text-brand-ink"
+                                >
+                                    Venue
+                                </FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
                                     placeholder="e.g. KBU Main Campus"
+                                    className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -75,14 +95,19 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>
-                                    Promo URL <span className="font-normal text-muted-foreground">(optional)</span>
+                                <FieldLabel
+                                    htmlFor={field.name}
+                                    className="font-display text-sm font-semibold text-brand-ink"
+                                >
+                                    Promo URL{" "}
+                                    <span className="font-normal text-brand-muted-foreground">(optional)</span>
                                 </FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
                                     placeholder="https://..."
+                                    className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>

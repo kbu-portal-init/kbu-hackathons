@@ -37,12 +37,12 @@ export function ProgramPicker({
                     <label
                         key={slot.program}
                         className={[
-                            "block rounded-xl border-2 p-4 text-left transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2",
+                            "block border-2 p-4 text-left transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary",
                             selected
-                                ? "border-primary bg-accent"
-                                : "border-border/60 bg-background hover:border-primary/60",
+                                ? "border-brand-ink bg-brand-yellow"
+                                : "border-brand-ink/20 bg-card hover:border-brand-ink",
                             full ? "cursor-not-allowed opacity-50" : "cursor-pointer",
-                            invalid && !selected ? "border-destructive/60" : "",
+                            invalid && !selected ? "border-destructive" : "",
                         ].join(" ")}
                     >
                         <input
@@ -56,19 +56,21 @@ export function ProgramPicker({
                             className="sr-only"
                         />
                         <span className="flex items-center justify-between gap-2">
-                            <span className="font-semibold text-foreground">{programLabels[slot.program]}</span>
+                            <span className="font-display font-semibold text-brand-ink">
+                                {programLabels[slot.program]}
+                            </span>
                             <span
                                 aria-hidden
                                 className={[
-                                    "flex size-5 items-center justify-center rounded-full border-2",
-                                    selected ? "border-primary bg-primary" : "border-border",
+                                    "flex size-5 items-center justify-center border-2",
+                                    selected ? "border-brand-ink bg-brand-ink" : "border-brand-ink/30",
                                 ].join(" ")}
                             >
-                                {selected ? <span className="size-2 rounded-full bg-primary-foreground" /> : null}
+                                {selected ? <span className="size-2 bg-brand-paper" /> : null}
                             </span>
                         </span>
-                        <span className="mt-3 block h-1.5 overflow-hidden rounded-full bg-border/60">
-                            <span className="block h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                        <span className="mt-3 block h-1.5 overflow-hidden bg-brand-ink/10">
+                            <span className="block h-full bg-primary" style={{ width: `${pct}%` }} />
                         </span>
                         <span className="mt-2 block text-sm text-brand-muted-foreground">
                             {full ? (th ? "เต็มแล้ว" : "Full") : `${slot.remaining} of ${slot.limit} ${t.slotsLeft}`}
