@@ -102,7 +102,7 @@ export async function AboutContent() {
                     {t.faqTitle}
                 </h2>
 
-                <div className="mt-7 max-w-4xl border-t-2 border-border">
+                <div className="mt-7 border-t-2 border-border">
                     {t.faq.map(([question, answer]) => (
                         <details key={question} className="faq-disclosure group border-b-2 border-border/15">
                             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 text-left font-display text-base font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary [&::-webkit-details-marker]:hidden sm:text-lg">
