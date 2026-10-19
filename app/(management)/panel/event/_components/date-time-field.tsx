@@ -51,7 +51,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
             control={control}
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel className="font-display text-sm font-semibold text-brand-ink">{label}</FieldLabel>
+                    <FieldLabel className="font-display text-sm font-semibold text-foreground">{label}</FieldLabel>
                     <Popover>
                         <PopoverTrigger
                             render={
@@ -62,11 +62,11 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                 />
                             }
                         >
-                            <CalendarIcon data-icon="inline-start" className="shrink-0 text-brand-muted-foreground" />
+                            <CalendarIcon data-icon="inline-start" className="shrink-0 text-muted-foreground" />
                             <span className="flex-1 truncate">
                                 {date ? format(date, "MMM d, yyyy") : "Pick a date"}
                             </span>
-                            <span className="shrink-0 text-brand-muted-foreground">{formatTime12(time)}</span>
+                            <span className="shrink-0 text-muted-foreground">{formatTime12(time)}</span>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                             <div className="sm:flex">
@@ -80,8 +80,8 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                         }
                                     }}
                                 />
-                                <div className="flex w-48 flex-col border-l border-brand-ink/15 p-3">
-                                    <div className="flex items-center gap-1.5 text-xs font-medium text-brand-muted-foreground">
+                                <div className="flex w-48 flex-col border-l border-border/15 p-3">
+                                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                         <Clock className="size-3" />
                                         Time
                                     </div>
@@ -93,7 +93,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                             setTime(t);
                                             field.onChange(combineDateTime(date, t));
                                         }}
-                                        className="mt-2 h-8 text-xs rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                        className="mt-2 h-8 text-xs border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     />
                                 </div>
                             </div>

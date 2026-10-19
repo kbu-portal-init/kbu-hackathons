@@ -28,21 +28,13 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
 
     return (
         <div className="grid max-w-4xl gap-6 lg:grid-cols-2">
-            <section className="rounded-none border-2 border-brand-ink bg-card p-6">
-                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">
-                    Profile information
-                </h2>
+            <section className="border-2 border-border bg-card p-6">
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
-                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-none bg-brand-yellow font-display text-2xl font-bold text-brand-ink">
+                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible bg-accent font-display text-2xl font-bold text-accent-foreground">
                             {image ? (
-                                <Image
-                                    src={image}
-                                    alt="Profile"
-                                    fill
-                                    className="rounded-none object-cover"
-                                    unoptimized
-                                />
+                                <Image src={image} alt="Profile" fill className="object-cover" unoptimized />
                             ) : (
                                 profile.name.slice(0, 1).toUpperCase()
                             )}
@@ -65,25 +57,25 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-name" className="font-display text-sm font-semibold text-brand-ink">
+                        <Label htmlFor="organizer-name" className="font-display text-sm font-semibold text-foreground">
                             Name
                         </Label>
                         <Input
                             id="organizer-name"
-                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                             required
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-email" className="font-display text-sm font-semibold text-brand-ink">
+                        <Label htmlFor="organizer-email" className="font-display text-sm font-semibold text-foreground">
                             Email
                         </Label>
                         <Input
                             id="organizer-email"
                             type="email"
-                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             required
@@ -92,14 +84,14 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                     <Button
                         type="submit"
                         disabled={saving}
-                        className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                        className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                     >
                         {saving ? "Saving..." : "Save profile"}
                     </Button>
                 </form>
             </section>
-            <section className="rounded-none border-2 border-brand-ink bg-card p-6">
-                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">Change password</h2>
+            <section className="border-2 border-border bg-card p-6">
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Change password</h2>
                 <PasswordChangeForm
                     idPrefix="organizer"
                     forgotPasswordEmail={email}

@@ -87,8 +87,8 @@ export function AnnouncementsContent({ query, locale }: { query: AnnouncementQue
                                     aria-current={isActive ? "page" : undefined}
                                     className={`inline-flex min-h-10 items-center justify-center border-2 px-4 py-2 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                                         isActive
-                                            ? "border-brand-ink bg-brand-ink text-brand-paper"
-                                            : "border-brand-ink/20 bg-card text-brand-muted-foreground hover:border-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                                            ? "border-border bg-foreground text-background"
+                                            : "border-border/20 bg-card text-muted-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
                                     }`}
                                 >
                                     {t.categories[item.value]}

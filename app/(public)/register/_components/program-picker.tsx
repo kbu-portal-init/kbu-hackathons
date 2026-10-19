@@ -39,8 +39,8 @@ export function ProgramPicker({
                         className={[
                             "block border-2 p-4 text-left transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary",
                             selected
-                                ? "border-brand-ink bg-brand-yellow"
-                                : "border-brand-ink/20 bg-card hover:border-brand-ink",
+                                ? "border-border bg-accent text-accent-foreground"
+                                : "border-border/20 bg-card hover:border-border",
                             full ? "cursor-not-allowed opacity-50" : "cursor-pointer",
                             invalid && !selected ? "border-destructive" : "",
                         ].join(" ")}
@@ -56,23 +56,23 @@ export function ProgramPicker({
                             className="sr-only"
                         />
                         <span className="flex items-center justify-between gap-2">
-                            <span className="font-display font-semibold text-brand-ink">
+                            <span className="font-display font-semibold text-foreground">
                                 {programLabels[slot.program]}
                             </span>
                             <span
                                 aria-hidden
                                 className={[
                                     "flex size-5 items-center justify-center border-2",
-                                    selected ? "border-brand-ink bg-brand-ink" : "border-brand-ink/30",
+                                    selected ? "border-border bg-foreground" : "border-border/30",
                                 ].join(" ")}
                             >
-                                {selected ? <span className="size-2 bg-brand-paper" /> : null}
+                                {selected ? <span className="size-2 bg-background" /> : null}
                             </span>
                         </span>
-                        <span className="mt-3 block h-1.5 overflow-hidden bg-brand-ink/10">
+                        <span className="mt-3 block h-1.5 overflow-hidden bg-foreground/10">
                             <span className="block h-full bg-primary" style={{ width: `${pct}%` }} />
                         </span>
-                        <span className="mt-2 block text-sm text-brand-muted-foreground">
+                        <span className="mt-2 block text-sm text-muted-foreground">
                             {full ? (th ? "เต็มแล้ว" : "Full") : `${slot.remaining} of ${slot.limit} ${t.slotsLeft}`}
                         </span>
                     </label>

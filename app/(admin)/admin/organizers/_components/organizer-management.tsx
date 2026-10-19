@@ -111,7 +111,7 @@ export function OrganizerManagement({ items }: Props) {
         <>
             <div className="flex justify-end">
                 <Button
-                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                     onClick={() => {
                         createForm.reset();
                         setCreateOpen(true);
@@ -133,7 +133,7 @@ export function OrganizerManagement({ items }: Props) {
                 onUnban={onUnban}
             />
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Create organizer</DialogTitle>
                         <DialogDescription>Create an email-verified organizer account.</DialogDescription>
@@ -147,7 +147,7 @@ export function OrganizerManagement({ items }: Props) {
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
                                             htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Name
                                         </FieldLabel>
@@ -155,7 +155,7 @@ export function OrganizerManagement({ items }: Props) {
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
-                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -168,7 +168,7 @@ export function OrganizerManagement({ items }: Props) {
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
                                             htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Email
                                         </FieldLabel>
@@ -177,7 +177,7 @@ export function OrganizerManagement({ items }: Props) {
                                             id={field.name}
                                             type="email"
                                             aria-invalid={fieldState.invalid}
-                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -190,7 +190,7 @@ export function OrganizerManagement({ items }: Props) {
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
                                             htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Password
                                         </FieldLabel>
@@ -218,11 +218,11 @@ export function OrganizerManagement({ items }: Props) {
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
                             <Button
                                 type="submit"
                                 disabled={createForm.formState.isSubmitting}
-                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                             >
                                 {createForm.formState.isSubmitting ? "Creating..." : "Create"}
                             </Button>
@@ -231,7 +231,7 @@ export function OrganizerManagement({ items }: Props) {
                 </DialogContent>
             </Dialog>
             <Dialog open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Edit organizer</DialogTitle>
                         <DialogDescription>Update the organizer’s name and email address.</DialogDescription>
@@ -245,7 +245,7 @@ export function OrganizerManagement({ items }: Props) {
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
                                             htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Name
                                         </FieldLabel>
@@ -253,7 +253,7 @@ export function OrganizerManagement({ items }: Props) {
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
-                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -266,7 +266,7 @@ export function OrganizerManagement({ items }: Props) {
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
                                             htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Email
                                         </FieldLabel>
@@ -275,18 +275,18 @@ export function OrganizerManagement({ items }: Props) {
                                             id={field.name}
                                             type="email"
                                             aria-invalid={fieldState.invalid}
-                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
                             <Button
                                 type="submit"
                                 disabled={editForm.formState.isSubmitting}
-                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                             >
                                 {editForm.formState.isSubmitting ? "Saving..." : "Save changes"}
                             </Button>
@@ -295,7 +295,7 @@ export function OrganizerManagement({ items }: Props) {
                 </DialogContent>
             </Dialog>
             <Dialog open={!!banItem} onOpenChange={(open) => !open && setBanItem(null)}>
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Ban organizer</DialogTitle>
                         <DialogDescription>
@@ -311,7 +311,7 @@ export function OrganizerManagement({ items }: Props) {
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
                                             htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Reason
                                         </FieldLabel>
@@ -319,7 +319,7 @@ export function OrganizerManagement({ items }: Props) {
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
-                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -339,12 +339,12 @@ export function OrganizerManagement({ items }: Props) {
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
                             <Button
                                 type="submit"
                                 variant="destructive"
                                 disabled={banForm.formState.isSubmitting}
-                                className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                                className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {banForm.formState.isSubmitting ? "Banning..." : "Confirm ban"}
                             </Button>
@@ -368,26 +368,26 @@ function OrganizerTable({
     onUnban: (item: OrganizerListItem) => Promise<void>;
 }) {
     return (
-        <div className="rounded-none border-2 border-brand-ink bg-card">
+        <div className="border-2 border-border bg-card">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Name
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Email
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Created
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Status
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Ban details
                         </TableHead>
-                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Actions
                         </TableHead>
                     </TableRow>
@@ -395,13 +395,13 @@ function OrganizerTable({
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-brand-muted-foreground">
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 No organizers found.
                             </TableCell>
                         </TableRow>
                     ) : (
                         items.map((item) => (
-                            <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
+                            <TableRow className="hover:bg-accent/20" key={item.id}>
                                 <TableCell className="font-medium">{item.name}</TableCell>
                                 <TableCell>{item.email}</TableCell>
                                 <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
@@ -410,13 +410,13 @@ function OrganizerTable({
                                         className={
                                             item.banned
                                                 ? "inline-flex border-2 border-destructive/40 px-2 py-0.5 font-display text-xs font-semibold text-destructive"
-                                                : "inline-flex border-2 border-brand-ink px-2 py-0.5 font-display text-xs font-semibold text-brand-ink"
+                                                : "inline-flex border-2 border-border px-2 py-0.5 font-display text-xs font-semibold text-foreground"
                                         }
                                     >
                                         {item.banned ? "Banned" : "Active"}
                                     </span>
                                 </TableCell>
-                                <TableCell className="max-w-56 whitespace-normal text-sm text-brand-muted-foreground">
+                                <TableCell className="max-w-56 whitespace-normal text-sm text-muted-foreground">
                                     {item.banned ? (
                                         <>
                                             {item.banReason ?? "No reason"}
@@ -433,7 +433,7 @@ function OrganizerTable({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                            className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                             onClick={() => onEdit(item)}
                                         >
                                             Edit
@@ -444,7 +444,7 @@ function OrganizerTable({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                                        className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                     >
                                                         Unban
                                                     </Button>
@@ -459,7 +459,7 @@ function OrganizerTable({
                                             <Button
                                                 variant="destructive"
                                                 size="sm"
-                                                className="rounded-none border-2 border-destructive/40 font-display text-xs font-semibold"
+                                                className="border-2 border-destructive/40 font-display text-xs font-semibold"
                                                 onClick={() => onBan(item)}
                                             >
                                                 Ban
@@ -481,7 +481,7 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
     const time = value ? format(value, "HH:mm") : "23:59";
     return (
         <>
-            <FieldLabel className="font-display text-sm font-semibold text-brand-ink">Expires at</FieldLabel>
+            <FieldLabel className="font-display text-sm font-semibold text-foreground">Expires at</FieldLabel>
             <div className="flex gap-2">
                 <Popover>
                     <PopoverTrigger
@@ -489,7 +489,7 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
                             <Button
                                 type="button"
                                 variant="outline"
-                                className="flex-1 justify-start rounded-none border-2 border-brand-ink/25 bg-card font-normal text-brand-ink"
+                                className="flex-1 justify-start border-2 border-border/25 bg-card font-normal text-foreground"
                             />
                         }
                     >
@@ -513,7 +513,7 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
                     onChange={(event) => value && onChange(setExpiryTime(value, event.target.value))}
                     disabled={!date}
                     aria-label="Ban expiry time"
-                    className="w-28 rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                    className="w-28 border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                 />
                 {date && (
                     <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)}>

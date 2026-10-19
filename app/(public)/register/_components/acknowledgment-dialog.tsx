@@ -31,7 +31,7 @@ export function AcknowledgmentDialog({
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="rounded-none border-2 border-brand-ink">
+            <AlertDialogContent className="border-2 border-border">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="font-display">{t.beforeSubmit}</AlertDialogTitle>
                     <AlertDialogDescription render={<div />}>
@@ -44,7 +44,7 @@ export function AcknowledgmentDialog({
                         </ol>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <FieldSet className="border-t-2 border-brand-ink/15 pt-4">
+                <FieldSet className="border-t-2 border-border/15 pt-4">
                     <Field orientation="horizontal" className="items-start">
                         <input
                             id="registration-acknowledgment"

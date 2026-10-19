@@ -45,8 +45,8 @@ function RegistrationButton({
     if (state === "open") {
         const className =
             tone === "dark"
-                ? "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-primary bg-primary px-6 py-3 font-display text-base font-semibold text-foreground transition-colors hover:border-brand-yellow hover:bg-brand-yellow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow"
-                : "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-brand-ink bg-brand-ink px-6 py-3 font-display text-base font-semibold text-brand-paper transition-colors hover:border-brand-yellow hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink";
+                ? "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-primary bg-primary px-6 py-3 font-display text-base font-semibold text-foreground transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                : "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-border bg-foreground px-6 py-3 font-display text-base font-semibold text-background transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
 
         return (
             <Link href="/register" className={className}>
@@ -62,7 +62,7 @@ function RegistrationButton({
             disabled
             className={
                 tone === "dark"
-                    ? "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-brand-paper/25 bg-brand-paper/10 px-6 py-3 font-display text-base font-semibold text-brand-paper/60"
+                    ? "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-background/25 bg-background/10 px-6 py-3 font-display text-base font-semibold text-background/60"
                     : "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-foreground/25 px-6 py-3 font-display text-base font-semibold text-foreground/60"
             }
         >
@@ -98,7 +98,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
                             <p className="font-display text-xs font-semibold sm:text-sm">{t.home.firstEdition}</p>
                         </div>
 
-                        <h1 className="mt-7 font-display text-[clamp(3.25rem,13vw,7rem)] font-bold leading-[0.84] tracking-[-0.045em]">
+                        <h1 className="mt-7 font-display text-[clamp(3.25rem,13vw,7rem)] font-bold leading-[0.84] tracking-tighter">
                             {event?.title ?? "KBU Hackathon 2026"}
                         </h1>
 
@@ -120,10 +120,10 @@ export async function HomeHero({ locale }: { locale: Locale }) {
 
                     <figure className="relative mx-auto w-full max-w-sm lg:mt-4 lg:max-w-none">
                         <div
-                            className="absolute inset-0 translate-x-2 translate-y-2 border-2 border-brand-ink bg-brand-ink"
+                            className="absolute inset-0 translate-x-2 translate-y-2 border-2 border-border bg-foreground"
                             aria-hidden="true"
                         />
-                        <div className="relative border-2 border-brand-ink bg-brand-paper p-2.5">
+                        <div className="relative border-2 border-border bg-background p-2.5">
                             <div className="relative aspect-16/10 overflow-hidden bg-secondary">
                                 <Image
                                     src={posterSrc}
@@ -166,18 +166,18 @@ export async function HomeFinalCta({ locale }: { locale: Locale }) {
     const registrationState = registrationStateFrom(event);
 
     return (
-        <section className="bg-brand-ink text-brand-paper">
+        <section className="bg-foreground text-background">
             <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
                 <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-                    <h2 className="max-w-2xl font-display text-[clamp(2.75rem,9vw,6rem)] font-bold leading-[0.88] tracking-[-0.04em]">
+                    <h2 className="max-w-2xl font-display text-[clamp(2.75rem,9vw,6rem)] font-bold leading-[0.88] tracking-tight">
                         {t.home.calloutTitle}
                     </h2>
                     <div>
-                        <p className="max-w-md text-base leading-7 text-brand-paper/80 sm:text-lg">
+                        <p className="max-w-md text-base leading-7 text-background/80 sm:text-lg">
                             {t.home.finalTitle}
                         </p>
                         {event && (
-                            <p className="mt-4 font-display text-sm font-semibold text-brand-yellow">
+                            <p className="mt-4 font-display text-sm font-semibold text-accent">
                                 {t.home.registrationCloses} {formatDate(event.registrationClosesAt, locale)}
                             </p>
                         )}

@@ -13,7 +13,7 @@ export async function SiteFooter() {
     } as Record<string, string>;
 
     return (
-        <footer className="border-t-2 border-brand-ink/10 bg-brand-paper text-brand-muted-foreground">
+        <footer className="border-t-2 border-border/10 bg-background text-muted-foreground">
             <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.5fr_1fr_1fr]">
                 <div>
                     <div className="flex items-center gap-2.5">
@@ -56,7 +56,7 @@ export async function SiteFooter() {
                     </div>
                 </div>
             </div>
-            <div className="border-t-2 border-brand-ink/10 px-5 py-5 text-center text-xs text-brand-muted-foreground sm:px-8">
+            <div className="border-t-2 border-border/10 px-5 py-5 text-center text-xs text-muted-foreground sm:px-8">
                 Copyright {new Date().getFullYear()} KBU Hackathon 2026. Kasem Bundit University (Romklao Campus).
             </div>
         </footer>

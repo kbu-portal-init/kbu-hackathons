@@ -24,10 +24,7 @@ export function PaginationFooter({
     getPageHref,
 }: PaginationFooterProps) {
     return (
-        <div
-            className="flex items-center justify-between text-sm text-brand-muted-foreground"
-            data-page-size={pageSize}
-        >
+        <div className="flex items-center justify-between text-sm text-muted-foreground" data-page-size={pageSize}>
             <span>
                 Showing {itemsShown} of {total}
             </span>
@@ -37,7 +34,7 @@ export function PaginationFooter({
                         <PaginationItem>
                             <PaginationPrevious
                                 href={getPageHref(page - 1)}
-                                className="rounded-none border-2 border-brand-ink bg-card font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                className="border-2 border-border bg-card font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                             />
                         </PaginationItem>
                     )}
@@ -45,7 +42,7 @@ export function PaginationFooter({
                         <PaginationItem>
                             <PaginationNext
                                 href={getPageHref(page + 1)}
-                                className="rounded-none border-2 border-brand-ink bg-card font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                className="border-2 border-border bg-card font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                             />
                         </PaginationItem>
                     )}

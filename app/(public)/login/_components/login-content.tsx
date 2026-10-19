@@ -30,24 +30,24 @@ export function LoginContent({ locale }: { locale: Locale }) {
     const isParticipant = audience === "participant";
 
     return (
-        <main className="flex flex-1 items-center bg-brand-paper px-5 py-16 sm:px-8">
-            <section className="mx-auto w-full max-w-lg border-2 border-brand-ink bg-card">
-                <div className="border-b-2 border-brand-ink bg-brand-yellow px-6 py-5 sm:px-8">
-                    <p className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-ink/70">
+        <main className="flex flex-1 items-center bg-background px-5 py-16 sm:px-8">
+            <section className="mx-auto w-full max-w-lg border-2 border-border bg-card">
+                <div className="border-b-2 border-border bg-accent text-accent-foreground px-6 py-5 sm:px-8">
+                    <p className="font-display text-xs font-semibold uppercase tracking-widest text-foreground/70">
                         KBU Hackathon 2026
                     </p>
-                    <h1 className="mt-2 font-display text-[clamp(2.25rem,6vw,3.5rem)] font-bold leading-[0.9] tracking-[-0.04em] text-brand-ink">
+                    <h1 className="mt-2 font-display text-[clamp(2.25rem,6vw,3.5rem)] font-bold leading-[0.9] tracking-tight text-foreground">
                         {t.title}
                     </h1>
                 </div>
                 <div className="p-6 sm:p-8">
-                    <div className="flex w-full border-2 border-brand-ink">
+                    <div className="flex w-full border-2 border-border">
                         <button
                             type="button"
-                            className={`flex h-11 flex-1 items-center justify-center gap-2 border-r-2 border-brand-ink px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
+                            className={`flex h-11 flex-1 items-center justify-center gap-2 border-r-2 border-border px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
                                 isParticipant
-                                    ? "bg-brand-ink text-brand-paper"
-                                    : "bg-card text-brand-ink hover:bg-brand-yellow"
+                                    ? "bg-foreground text-background"
+                                    : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
                             }`}
                             aria-pressed={isParticipant}
                             onClick={() => setAudience("participant")}
@@ -59,8 +59,8 @@ export function LoginContent({ locale }: { locale: Locale }) {
                             type="button"
                             className={`flex h-11 flex-1 items-center justify-center gap-2 px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
                                 !isParticipant
-                                    ? "bg-brand-ink text-brand-paper"
-                                    : "bg-card text-brand-ink hover:bg-brand-yellow"
+                                    ? "bg-foreground text-background"
+                                    : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
                             }`}
                             aria-pressed={!isParticipant}
                             onClick={() => setAudience("management")}
@@ -114,7 +114,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                         autoComplete="username"
                         placeholder="your-team-username"
                         aria-invalid={!!usernameError}
-                        className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...form.register("username")}
                     />
                     <FieldError errors={[usernameError]} />
@@ -128,7 +128,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                             focusInput={() => form.setFocus("username")}
                         />
                     </div>
-                    <InputGroup className="h-11 rounded-none border-2 border-brand-ink/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
+                    <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                         <InputGroupInput
                             id="team-password"
                             className="h-full px-3 text-base"
@@ -150,7 +150,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                 </Field>
                 <Button
                     type="submit"
-                    className="h-11 w-full rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     disabled={form.formState.isSubmitting}
                 >
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
@@ -195,7 +195,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                         autoComplete="email"
                         placeholder="you@example.com"
                         aria-invalid={!!emailError}
-                        className="h-11 rounded-none border-2 border-brand-ink/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         {...form.register("email")}
                     />
                     <FieldError errors={[emailError]} />
@@ -209,7 +209,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                             focusInput={() => form.setFocus("email")}
                         />
                     </div>
-                    <InputGroup className="h-11 rounded-none border-2 border-brand-ink/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
+                    <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                         <InputGroupInput
                             id="staff-password"
                             className="h-full px-3 text-base"
@@ -231,7 +231,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                 </Field>
                 <Button
                     type="submit"
-                    className="h-11 w-full rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     disabled={form.formState.isSubmitting}
                 >
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
@@ -307,7 +307,7 @@ function ForgotPasswordButton({
                 type="button"
                 variant="link"
                 size="sm"
-                className="h-auto px-0 font-display text-xs font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4 hover:text-brand-ink"
+                className="h-auto px-0 font-display text-xs font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:text-foreground"
                 onClick={openDialog}
             >
                 Forgot password?
@@ -318,7 +318,7 @@ function ForgotPasswordButton({
                     if (!isRequesting) setOpen(nextOpen);
                 }}
             >
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Reset your password</DialogTitle>
                         <DialogDescription>
@@ -328,7 +328,7 @@ function ForgotPasswordButton({
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-3">
-                        <p className="text-sm text-brand-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                             {isTeam ? "Team username" : "Email address"}: {getValue().trim() || "Not provided"}
                         </p>
                         {message && (
@@ -338,7 +338,7 @@ function ForgotPasswordButton({
                                         ? "text-sm font-medium text-red-600"
                                         : messageType === "success"
                                           ? "text-sm font-medium text-green-600"
-                                          : "text-sm text-brand-muted-foreground"
+                                          : "text-sm text-muted-foreground"
                                 }
                                 role={messageType === "error" ? "alert" : "status"}
                             >

@@ -129,7 +129,7 @@ export function EventSettingsForm({ settings }: Props) {
                 <Button
                     type="submit"
                     disabled={isPending}
-                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     {isPending ? (
                         <>
@@ -143,9 +143,7 @@ export function EventSettingsForm({ settings }: Props) {
                         </>
                     )}
                 </Button>
-                {form.formState.isDirty && (
-                    <p className="text-sm text-brand-muted-foreground">You have unsaved changes.</p>
-                )}
+                {form.formState.isDirty && <p className="text-sm text-muted-foreground">You have unsaved changes.</p>}
             </div>
         </form>
     );

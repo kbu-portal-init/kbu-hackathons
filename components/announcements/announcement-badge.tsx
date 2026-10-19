@@ -11,17 +11,17 @@ type Props = {
 const categoryStyles = {
     important: {
         label: "Important",
-        className: "border-brand-ink bg-brand-yellow text-brand-ink",
+        className: "border-border bg-accent text-accent-foreground",
         Icon: CircleAlert,
     },
     update: {
         label: "Update",
-        className: "border-brand-ink bg-secondary text-secondary-foreground",
+        className: "border-border bg-secondary text-secondary-foreground",
         Icon: FileText,
     },
     news: {
         label: "News",
-        className: "border-brand-ink bg-card text-brand-ink",
+        className: "border-border bg-card text-foreground",
         Icon: Megaphone,
     },
 } satisfies Record<

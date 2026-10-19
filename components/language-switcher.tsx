@@ -24,9 +24,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
     }
 
     return (
-        <fieldset
-            className={`m-0 inline-flex min-w-0 border-2 border-brand-ink bg-transparent p-0.5 ${className ?? ""}`}
-        >
+        <fieldset className={`m-0 inline-flex min-w-0 border-2 border-border bg-transparent p-0.5 ${className ?? ""}`}>
             <legend className="sr-only">{t.common.language}</legend>
             {options.map((option) => {
                 const active = option.locale === locale;
@@ -41,8 +39,8 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
                         onClick={() => changeLocale(option.locale)}
                         className={`min-h-9 flex-1 cursor-pointer px-2.5 font-display text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60 ${
                             active
-                                ? "bg-brand-ink text-brand-paper"
-                                : "text-brand-muted-foreground hover:bg-brand-yellow hover:text-brand-ink"
+                                ? "bg-foreground text-background"
+                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                         }`}
                     >
                         {option.shortLabel}

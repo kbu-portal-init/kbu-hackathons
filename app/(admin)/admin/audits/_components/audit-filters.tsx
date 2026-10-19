@@ -79,17 +79,17 @@ export function AuditFilters({ userId, userKind, action }: Props) {
     return (
         <form
             onSubmit={applyFilters}
-            className="grid gap-4 rounded-none border-2 border-brand-ink bg-card p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+            className="grid gap-4 border-2 border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
             <div className="space-y-2">
-                <Label className="font-display text-sm font-semibold text-brand-ink">User</Label>
+                <Label className="font-display text-sm font-semibold text-foreground">User</Label>
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger
                         render={
                             <Button
                                 type="button"
                                 variant="outline"
-                                className="h-9 w-full justify-start rounded-none border-2 border-brand-ink/25 bg-card font-normal text-brand-ink"
+                                className="h-9 w-full justify-start border-2 border-border/25 bg-card font-normal text-foreground"
                             />
                         }
                     >
@@ -104,13 +104,13 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="user-search"
-                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Search users
                                 </Label>
                                 <Input
                                     id="user-search"
-                                    className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={search}
                                     onChange={(event) => setSearch(event.target.value)}
                                     placeholder="ID, name, or email"
@@ -119,7 +119,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="user-limit"
-                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Limit
                                 </Label>
@@ -128,7 +128,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                     type="number"
                                     min={1}
                                     max={500}
-                                    className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={limit}
                                     onChange={(event) =>
                                         setLimit(Math.min(500, Math.max(1, Number(event.target.value) || 1)))
@@ -140,7 +140,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                     <button
                                         type="button"
                                         key={`${item.kind}:${item.id}`}
-                                        className="block w-full rounded-none p-2 text-left hover:bg-brand-yellow"
+                                        className="block w-full p-2 text-left hover:bg-accent hover:text-accent-foreground"
                                         onClick={() => {
                                             setSelected(item);
                                             setOpen(false);
@@ -148,19 +148,19 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                     >
                                         <div className="font-medium">
                                             {item.name}{" "}
-                                            <span className="text-xs text-brand-muted-foreground">
+                                            <span className="text-xs text-muted-foreground">
                                                 {item.kind === "teamMember" ? "Team member" : "User"}
                                             </span>
                                         </div>
-                                        <div className="text-xs text-brand-muted-foreground">
+                                        <div className="text-xs text-muted-foreground">
                                             {item.email} · {item.id}
                                         </div>
                                     </button>
                                 ))}
                                 {!loading && users.length === 0 && (
-                                    <p className="p-2 text-sm text-brand-muted-foreground">No users found.</p>
+                                    <p className="p-2 text-sm text-muted-foreground">No users found.</p>
                                 )}
-                                {loading && <p className="p-2 text-sm text-brand-muted-foreground">Loading...</p>}
+                                {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
                             </div>
                             {hasNext && (
                                 <Button
@@ -178,14 +178,14 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 </Popover>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="action" className="font-display text-sm font-semibold text-brand-ink">
+                <Label htmlFor="action" className="font-display text-sm font-semibold text-foreground">
                     Audit log type
                 </Label>
                 <select
                     id="action"
                     name="action"
                     defaultValue={action ?? ""}
-                    className="flex h-9 w-full rounded-none border-2 border-brand-ink/25 bg-card px-3 text-sm outline-none focus:border-primary"
+                    className="flex h-9 w-full border-2 border-border/25 bg-card px-3 text-sm outline-none focus:border-primary"
                 >
                     <option value="">All audit types</option>
                     {auditActions.map((auditAction) => (
@@ -198,14 +198,14 @@ export function AuditFilters({ userId, userKind, action }: Props) {
             <div className="flex gap-2">
                 <Button
                     type="submit"
-                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     Filter
                 </Button>
                 <Button
                     type="button"
                     variant="outline"
-                    className="rounded-none border-2 border-brand-ink font-display text-sm font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                    className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                     onClick={clear}
                 >
                     Clear

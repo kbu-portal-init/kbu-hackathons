@@ -62,7 +62,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                    className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                     Unban
                 </Button>
@@ -78,7 +78,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
             <Button
                 variant="destructive"
                 size="sm"
-                className="rounded-none border-2 border-destructive/40 font-display text-xs font-semibold"
+                className="border-2 border-destructive/40 font-display text-xs font-semibold"
                 onClick={() => {
                     form.reset({ userId: team.userId ?? "", reason: "", expiresAt: null });
                     setBanOpen(true);
@@ -87,7 +87,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                 Ban
             </Button>
             <Dialog open={banOpen} onOpenChange={setBanOpen}>
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Ban {team.displayName}</DialogTitle>
                         <DialogDescription>
@@ -99,14 +99,14 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                             <input type="hidden" {...form.register("userId")} />
                             <Field data-invalid={!!form.formState.errors.reason}>
                                 <FieldLabel
-                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    className="font-display text-sm font-semibold text-foreground"
                                     htmlFor={`ban-reason-${team.id}`}
                                 >
                                     Reason
                                 </FieldLabel>
                                 <Input
                                     id={`ban-reason-${team.id}`}
-                                    className="h-11 rounded-none border-2 border-brand-ink/25 bg-card"
+                                    className="h-11 border-2 border-border/25 bg-card"
                                     {...form.register("reason")}
                                     aria-invalid={!!form.formState.errors.reason}
                                 />
@@ -114,7 +114,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                             </Field>
                             <Field data-invalid={!!form.formState.errors.expiresAt}>
                                 <FieldLabel
-                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    className="font-display text-sm font-semibold text-foreground"
                                     htmlFor={`ban-expires-${team.id}`}
                                 >
                                     Expires at (optional)
@@ -122,7 +122,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                                 <Input
                                     id={`ban-expires-${team.id}`}
                                     type="datetime-local"
-                                    className="h-11 rounded-none border-2 border-brand-ink/25 bg-card"
+                                    className="h-11 border-2 border-border/25 bg-card"
                                     {...form.register("expiresAt", {
                                         setValueAs: (value) => (value ? new Date(value) : null),
                                     })}
@@ -132,7 +132,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                                 )}
                             </Field>
                         </FieldGroup>
-                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
                             <Button type="button" variant="outline" onClick={() => setBanOpen(false)}>
                                 Cancel
                             </Button>
@@ -140,7 +140,7 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                                 type="submit"
                                 variant="destructive"
                                 disabled={form.formState.isSubmitting}
-                                className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                                className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {form.formState.isSubmitting ? "Banning..." : "Confirm ban"}
                             </Button>

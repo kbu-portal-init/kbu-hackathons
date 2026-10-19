@@ -24,15 +24,15 @@ export default async function AnnouncementsPage({
     const t = getMessages(locale).announcementsPage;
 
     return (
-        <main className="flex-1 bg-brand-paper">
+        <main className="flex-1 bg-background">
             <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
                 <PosterBreadcrumb items={[{ label: t.home, href: "/" }, { label: t.title }]} className="mb-8" />
 
-                <section className="mb-10 max-w-3xl border-b-2 border-brand-ink pb-8 sm:mb-12">
-                    <h1 className="font-display text-[clamp(2.75rem,8vw,5.5rem)] font-bold leading-[0.88] tracking-[-0.045em] text-brand-ink">
+                <section className="mb-10 max-w-3xl border-b-2 border-border pb-8 sm:mb-12">
+                    <h1 className="font-display text-[clamp(2.75rem,8vw,5.5rem)] font-bold leading-[0.88] tracking-tighter text-foreground">
                         {t.title}
                     </h1>
-                    <p className="mt-5 max-w-2xl text-lg leading-8 text-brand-muted-foreground">{t.subtitle}</p>
+                    <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t.subtitle}</p>
                 </section>
 
                 <Suspense fallback={<AnnouncementResultsFallback />}>

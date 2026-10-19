@@ -10,7 +10,7 @@ export async function HomeAuthAction({ locale }: { locale: Locale }) {
     return (
         <Link
             href={destination ?? "/login"}
-            className="inline-flex min-h-12 items-center justify-center border-2 border-brand-ink px-6 py-3 font-display text-base font-semibold text-brand-ink transition-colors hover:bg-brand-ink hover:text-brand-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink"
+            className="inline-flex min-h-12 items-center justify-center border-2 border-border px-6 py-3 font-display text-base font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
         >
             {destination ? t.openWorkspace : t.signIn}
         </Link>

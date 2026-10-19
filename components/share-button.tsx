@@ -75,7 +75,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
             type="button"
             variant="outline"
             className={cn(
-                "rounded-none border-2 border-brand-ink bg-transparent font-display text-sm font-semibold text-brand-ink hover:!border-brand-ink hover:!bg-brand-yellow hover:!text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                "border-2 border-border bg-transparent font-display text-sm font-semibold text-accent-foreground hover:!border-border hover:!bg-accent hover:!text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 className,
             )}
         >
@@ -92,7 +92,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                 variant="outline"
                 onClick={handleShare}
                 className={cn(
-                    "rounded-none border-2 border-brand-ink bg-transparent font-display text-sm font-semibold text-brand-ink hover:!border-brand-ink hover:!bg-brand-yellow hover:!text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    "border-2 border-border bg-transparent font-display text-sm font-semibold text-accent-foreground hover:!border-border hover:!bg-accent hover:!text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     className,
                 )}
             >
@@ -105,7 +105,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
     return (
         <Popover>
             <PopoverTrigger render={trigger} />
-            <PopoverContent className="rounded-none border-2 border-brand-ink">
+            <PopoverContent className="border-2 border-border">
                 <PopoverHeader>
                     <PopoverTitle className="font-display">Share this link</PopoverTitle>
                     <PopoverDescription>Copy the link or share it through LINE.</PopoverDescription>
@@ -115,7 +115,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                         type="button"
                         variant="outline"
                         onClick={handleCopy}
-                        className="rounded-none border-2 border-brand-ink font-display text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                        className="border-2 border-border font-display text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                         {copied ? <Check data-icon="inline-start" /> : <Copy data-icon="inline-start" />}
                         {copied ? "Copied" : "Copy link"}
@@ -129,7 +129,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                             />
                         }
                         variant="outline"
-                        className="rounded-none border-2 border-brand-ink font-display text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                        className="border-2 border-border font-display text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                         <ExternalLink data-icon="inline-start" />
                         Share to LINE

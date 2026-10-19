@@ -35,8 +35,8 @@ export function TeamManagement({ items, meta, status }: Props) {
                         variant={filter === value ? "default" : "outline"}
                         className={
                             filter === value
-                                ? "rounded-none border-2 border-brand-ink bg-brand-ink font-display text-xs font-semibold text-brand-paper hover:bg-brand-ink"
-                                : "rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                ? "border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-foreground"
+                                : "border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                         }
                         onClick={() => changeFilter(value)}
                     >
@@ -44,32 +44,32 @@ export function TeamManagement({ items, meta, status }: Props) {
                     </Button>
                 ))}
             </div>
-            <div className="rounded-none border-2 border-brand-ink bg-card">
+            <div className="border-2 border-border bg-card">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Team
                             </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Program
                             </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Login
                             </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Members
                             </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Submission
                             </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Status
                             </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Created
                             </TableHead>
-                            <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                            <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Actions
                             </TableHead>
                         </TableRow>
@@ -77,26 +77,26 @@ export function TeamManagement({ items, meta, status }: Props) {
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8} className="h-24 text-center text-brand-muted-foreground">
+                                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                     No approved teams found.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             items.map((item) => (
-                                <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
+                                <TableRow className="hover:bg-accent/20" key={item.id}>
                                     <TableCell className="font-medium">{item.displayName}</TableCell>
                                     <TableCell>{formatRole(item.program)}</TableCell>
                                     <TableCell>{item.loginName}</TableCell>
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         {item.submissionCount > 0 ? (
-                                            <Badge className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink">
+                                            <Badge className="border-2 border-border bg-accent text-accent-foreground">
                                                 Submitted
                                             </Badge>
                                         ) : (
                                             <Badge
                                                 variant="secondary"
-                                                className="rounded-none border-2 border-brand-ink/15 text-brand-muted-foreground"
+                                                className="border-2 border-border/15 text-muted-foreground"
                                             >
                                                 Not submitted
                                             </Badge>
@@ -104,17 +104,11 @@ export function TeamManagement({ items, meta, status }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         {item.banned ? (
-                                            <Badge
-                                                variant="destructive"
-                                                className="rounded-none border-2 border-destructive/40"
-                                            >
+                                            <Badge variant="destructive" className="border-2 border-destructive/40">
                                                 Banned
                                             </Badge>
                                         ) : (
-                                            <Badge
-                                                variant="outline"
-                                                className="rounded-none border-2 border-brand-ink text-brand-ink"
-                                            >
+                                            <Badge variant="outline" className="border-2 border-border text-foreground">
                                                 Active
                                             </Badge>
                                         )}
@@ -128,7 +122,7 @@ export function TeamManagement({ items, meta, status }: Props) {
                                                     variant: "outline",
                                                     size: "sm",
                                                     className:
-                                                        "rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink",
+                                                        "border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground",
                                                 })}
                                             >
                                                 View

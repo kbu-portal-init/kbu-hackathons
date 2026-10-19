@@ -26,7 +26,7 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
                             className={
                                 active
                                     ? "font-display text-sm font-semibold text-primary"
-                                    : "font-display text-sm font-medium text-brand-muted-foreground hover:text-primary"
+                                    : "font-display text-sm font-medium text-muted-foreground hover:text-primary"
                             }
                         >
                             {labels[href as keyof typeof labels] ?? label}
@@ -40,8 +40,8 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
                     aria-current={signInActive ? "page" : undefined}
                     className={
                         signInActive
-                            ? "inline-flex min-h-10 items-center border-2 border-brand-ink bg-brand-yellow px-4 py-2 font-display text-sm font-semibold text-brand-ink"
-                            : "inline-flex min-h-10 items-center border-2 border-primary bg-primary px-4 py-2 font-display text-sm font-semibold text-foreground transition-colors hover:border-brand-ink hover:bg-brand-ink hover:text-brand-paper"
+                            ? "inline-flex min-h-10 items-center border-2 border-border bg-accent px-4 py-2 font-display text-sm font-semibold text-accent-foreground"
+                            : "inline-flex min-h-10 items-center border-2 border-primary bg-primary px-4 py-2 font-display text-sm font-semibold text-foreground transition-colors hover:border-border hover:bg-foreground hover:text-background"
                     }
                 >
                     {t.signIn}

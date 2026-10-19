@@ -20,26 +20,26 @@ type Props = {
 
 export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchive, onDelete }: Props) {
     return (
-        <div className="rounded-none border-2 border-brand-ink bg-card">
+        <div className="border-2 border-border bg-card">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Image
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Title
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Status
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Published
                         </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Created
                         </TableHead>
-                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Actions
                         </TableHead>
                     </TableRow>
@@ -48,15 +48,15 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                 <TableBody>
                     {items.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-brand-muted-foreground">
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 No announcements found.
                             </TableCell>
                         </TableRow>
                     ) : (
                         items.map((item) => (
-                            <TableRow className="hover:bg-brand-yellow/20" key={item.id}>
+                            <TableRow className="hover:bg-accent/20" key={item.id}>
                                 <TableCell>
-                                    <div className="relative size-14 overflow-hidden rounded-none border-2 border-brand-ink bg-muted">
+                                    <div className="relative size-14 overflow-hidden border-2 border-border bg-muted">
                                         <Image
                                             src={item.imageUrl ?? "/images/kbu.webp"}
                                             alt=""
@@ -92,7 +92,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                     variant: "outline",
                                                     size: "sm",
                                                     className:
-                                                        "rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink",
+                                                        "border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground",
                                                 })}
                                             >
                                                 View
@@ -104,7 +104,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                                                    className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
@@ -113,7 +113,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 
                                                 <Button
                                                     size="sm"
-                                                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-xs font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                                    className="border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                                     onClick={() => onPublish(item.id)}
                                                     disabled={isPending}
                                                 >
@@ -125,7 +125,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                         <Button
                                                             variant="destructive"
                                                             size="sm"
-                                                            className="rounded-none border-2 border-destructive/40 font-display text-xs font-semibold"
+                                                            className="border-2 border-destructive/40 font-display text-xs font-semibold"
                                                             disabled={isPending}
                                                         >
                                                             Delete
@@ -145,7 +145,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                                                    className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
@@ -157,7 +157,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="rounded-none border-2 border-brand-ink/20 font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                                            className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                             disabled={isPending}
                                                         >
                                                             Archive
@@ -186,27 +186,21 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "DRAFT":
             return (
-                <Badge
-                    variant="outline"
-                    className="rounded-none border-2 border-brand-ink bg-brand-yellow text-brand-ink"
-                >
+                <Badge variant="outline" className="border-2 border-border bg-accent text-accent-foreground">
                     Draft
                 </Badge>
             );
 
         case "PUBLISHED":
             return (
-                <Badge variant="outline" className="rounded-none border-2 border-brand-ink text-brand-ink">
+                <Badge variant="outline" className="border-2 border-border text-foreground">
                     Published
                 </Badge>
             );
 
         case "ARCHIVED":
             return (
-                <Badge
-                    variant="secondary"
-                    className="rounded-none border-2 border-brand-ink/15 text-brand-muted-foreground"
-                >
+                <Badge variant="secondary" className="border-2 border-border/15 text-muted-foreground">
                     Archived
                 </Badge>
             );

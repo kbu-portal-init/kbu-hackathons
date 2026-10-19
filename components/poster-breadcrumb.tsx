@@ -17,12 +17,12 @@ export function PosterBreadcrumb({ items, className }: { items: BreadcrumbItem[]
                     return (
                         <li key={item.href ?? item.label} className="flex min-w-0 items-center gap-1.5">
                             {index > 0 ? (
-                                <ChevronRight aria-hidden="true" className="size-3.5 shrink-0 text-brand-ink/35" />
+                                <ChevronRight aria-hidden="true" className="size-3.5 shrink-0 text-foreground/35" />
                             ) : null}
                             {item.href && !isCurrent ? (
                                 <Link
                                     href={item.href}
-                                    className="inline-flex items-center gap-1.5 font-display text-xs font-semibold text-brand-muted-foreground transition-colors hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                    className="inline-flex items-center gap-1.5 font-display text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                                 >
                                     {index === 0 ? <House aria-hidden="true" className="size-3.5 shrink-0" /> : null}
                                     {item.label}
@@ -30,7 +30,7 @@ export function PosterBreadcrumb({ items, className }: { items: BreadcrumbItem[]
                             ) : (
                                 <span
                                     aria-current={isCurrent ? "page" : undefined}
-                                    className="truncate font-display text-xs font-semibold text-brand-ink"
+                                    className="truncate font-display text-xs font-semibold text-foreground"
                                 >
                                     {item.label}
                                 </span>

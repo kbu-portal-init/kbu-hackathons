@@ -28,15 +28,15 @@ export function NotificationInbox({ initial, unreadCount }: { initial: Notificat
     return (
         <div className="flex flex-col gap-6">
             <div>
-                <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-[-0.03em] text-brand-ink">
+                <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
                     Notifications
                 </h1>
-                <p className="mt-2 text-sm text-brand-muted-foreground">
+                <p className="mt-2 text-sm text-muted-foreground">
                     {unread} unread notification{unread === 1 ? "" : "s"}.
                 </p>
             </div>
             {items.length === 0 ? (
-                <p className="rounded-none border-2 border-brand-ink bg-card p-6 text-sm text-brand-muted-foreground">
+                <p className="border-2 border-border bg-card p-6 text-sm text-muted-foreground">
                     No notifications yet.
                 </p>
             ) : (
@@ -45,15 +45,17 @@ export function NotificationInbox({ initial, unreadCount }: { initial: Notificat
                         <article
                             key={item.id}
                             className={`border-2 p-5 ${
-                                item.readAt ? "border-brand-ink/15 bg-card" : "border-brand-ink bg-brand-yellow"
+                                item.readAt
+                                    ? "border-border/15 bg-card"
+                                    : "border-border bg-accent text-accent-foreground"
                             }`}
                         >
                             <div className="flex flex-wrap items-start justify-between gap-3">
                                 <div>
-                                    <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">
+                                    <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
                                         {item.subject}
                                     </h2>
-                                    <p className="mt-1 text-xs text-brand-muted-foreground">
+                                    <p className="mt-1 text-xs text-muted-foreground">
                                         {formatNotificationDate(item.createdAt)}
                                     </p>
                                 </div>
@@ -61,14 +63,14 @@ export function NotificationInbox({ initial, unreadCount }: { initial: Notificat
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        className="rounded-none border-2 border-brand-ink font-display text-xs font-semibold text-brand-ink hover:bg-brand-yellow"
+                                        className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                         onClick={() => markRead(item.id)}
                                     >
                                         Mark as read
                                     </Button>
                                 )}
                             </div>
-                            <p className="mt-4 whitespace-pre-wrap text-sm text-brand-muted-foreground">{item.body}</p>
+                            <p className="mt-4 whitespace-pre-wrap text-sm text-muted-foreground">{item.body}</p>
                         </article>
                     ))}
                 </div>

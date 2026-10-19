@@ -43,7 +43,7 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
             <button
                 ref={toggleRef}
                 type="button"
-                className="flex size-11 items-center justify-center text-foreground hover:bg-brand-yellow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-ink"
+                className="flex size-11 items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? t.closeMenu : t.openMenu}
@@ -54,15 +54,15 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
             {open ? (
                 <nav
                     id="mobile-navigation"
-                    className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto border-t-2 border-brand-ink/10 bg-brand-paper px-5 py-5"
+                    className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto border-t-2 border-border/10 bg-background px-5 py-5"
                     aria-label={t.mobileNavigation}
                 >
                     <div className="flex flex-col">
                         {publicLinks.map(({ label, href }) => {
                             const active = isActivePath(pathname, href);
                             const linkClassName = active
-                                ? "border-b-2 border-brand-ink/15 bg-brand-yellow px-4 py-3.5 font-display text-base font-semibold text-brand-ink"
-                                : "border-b-2 border-brand-ink/15 px-4 py-3.5 font-display text-base font-medium text-brand-muted-foreground hover:bg-brand-yellow/40 hover:text-foreground";
+                                ? "border-b-2 border-border/15 bg-accent px-4 py-3.5 font-display text-base font-semibold text-accent-foreground"
+                                : "border-b-2 border-border/15 px-4 py-3.5 font-display text-base font-medium text-muted-foreground hover:bg-accent/40 hover:text-foreground";
                             return (
                                 <Link
                                     key={href}
@@ -75,14 +75,14 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                                 </Link>
                             );
                         })}
-                        <div className="mt-5 border-t-2 border-brand-ink/10 pt-4">
-                            <p className="px-4 pb-2.5 font-display text-xs font-semibold text-brand-muted-foreground">
+                        <div className="mt-5 border-t-2 border-border/10 pt-4">
+                            <p className="px-4 pb-2.5 font-display text-xs font-semibold text-muted-foreground">
                                 {t.language}
                             </p>
                             <LanguageSwitcher locale={locale} className="w-full" />
                         </div>
                     </div>
-                    <div className="mt-auto border-t-2 border-brand-ink/10 pt-6">
+                    <div className="mt-auto border-t-2 border-border/10 pt-6">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}

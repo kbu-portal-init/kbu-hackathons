@@ -42,18 +42,18 @@ export function TeamPasswordSettings({ username }: { username: string }) {
     }
 
     return (
-        <section className="rounded-none border-2 border-brand-ink/15 bg-card p-6">
+        <section className="border-2 border-border/15 bg-card p-6">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                    <h2 className="font-display text-xl font-bold tracking-[-0.02em] text-brand-ink">Password</h2>
-                    <p className="mt-1 text-sm text-brand-muted-foreground">
+                    <h2 className="font-display text-xl font-bold tracking-tight text-foreground">Password</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Change the shared team account password or request a reset link.
                     </p>
                 </div>
                 <Button
                     type="button"
                     variant="link"
-                    className="h-auto justify-start px-0 font-display text-sm font-semibold text-brand-ink underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
+                    className="h-auto justify-start px-0 font-display text-sm font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
                     onClick={() => {
                         setResetMessage(null);
                         setResetError(false);
@@ -73,7 +73,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
             />
 
             <Dialog open={resetOpen} onOpenChange={(open) => !resetting && setResetOpen(open)}>
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Forgot password?</DialogTitle>
                         <DialogDescription>
@@ -81,7 +81,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                         </DialogDescription>
                     </DialogHeader>
                     <p
-                        className={resetError ? "text-sm text-destructive" : "text-sm text-brand-muted-foreground"}
+                        className={resetError ? "text-sm text-destructive" : "text-sm text-muted-foreground"}
                         role={resetError ? "alert" : undefined}
                     >
                         {resetMessage ?? `Team username: ${username}`}
@@ -91,7 +91,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                             render={
                                 <Button
                                     variant="outline"
-                                    className="rounded-none border-2 border-brand-ink font-display text-sm font-semibold"
+                                    className="border-2 border-border font-display text-sm font-semibold"
                                     disabled={resetting}
                                 />
                             }
@@ -101,7 +101,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                         {!resetMessage || resetError ? (
                             <Button
                                 type="button"
-                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                 onClick={() => void requestReset()}
                                 disabled={resetting}
                             >

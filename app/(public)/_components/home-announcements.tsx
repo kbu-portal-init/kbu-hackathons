@@ -28,8 +28,8 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
 
         if (result.items.length === 0) {
             return (
-                <div className="border-2 border-brand-ink bg-brand-paper p-5 sm:p-6">
-                    <p className="text-base text-brand-muted-foreground">{t.noAnnouncements}</p>
+                <div className="border-2 border-border bg-background p-5 sm:p-6">
+                    <p className="text-base text-muted-foreground">{t.noAnnouncements}</p>
                     <Link
                         href="/announcements"
                         className="mt-3 inline-flex font-display text-sm font-semibold text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -41,7 +41,7 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
         }
 
         return (
-            <div className="border-t-2 border-brand-ink">
+            <div className="border-t-2 border-border">
                 {result.items.map((announcement) => {
                     const publishedDate = announcement.publishedAt ?? announcement.createdAt;
 
@@ -49,7 +49,7 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
                         <Link
                             key={announcement.id}
                             href={`/announcements/${announcement.id}`}
-                            className="group grid gap-2 border-b-2 border-brand-ink/15 py-5 transition-colors hover:bg-brand-yellow/20 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
+                            className="group grid gap-2 border-b-2 border-border/15 py-5 transition-colors hover:bg-accent/20 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
                         >
                             <time
                                 dateTime={new Date(publishedDate).toISOString()}
@@ -61,11 +61,11 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
                                 <h3 className="font-display text-lg font-semibold leading-6 text-foreground group-hover:text-primary sm:text-xl">
                                     {announcement.title}
                                 </h3>
-                                <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-brand-muted-foreground sm:text-base">
+                                <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted-foreground sm:text-base">
                                     {announcement.content}
                                 </p>
                             </div>
-                            <span className="font-display text-xs font-semibold text-brand-muted-foreground sm:pt-1">
+                            <span className="font-display text-xs font-semibold text-muted-foreground sm:pt-1">
                                 {categoryLabel(announcement.category, locale)}
                             </span>
                         </Link>
@@ -75,8 +75,8 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
         );
     } catch {
         return (
-            <div className="border-2 border-brand-ink bg-brand-paper p-5 sm:p-6">
-                <p className="text-base text-brand-muted-foreground">{t.announcementsUnavailable}</p>
+            <div className="border-2 border-border bg-background p-5 sm:p-6">
+                <p className="text-base text-muted-foreground">{t.announcementsUnavailable}</p>
                 <Link
                     href="/announcements"
                     className="mt-3 inline-flex font-display text-sm font-semibold text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -90,19 +90,19 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
 
 export function HomeAnnouncementsSkeleton({ locale }: { locale: Locale }) {
     return (
-        <div className="border-t-2 border-brand-ink" role="status" aria-label="Loading announcements">
+        <div className="border-t-2 border-border" role="status" aria-label="Loading announcements">
             <span className="sr-only">{getMessages(locale).home.loadingAnnouncements}</span>
             {["one", "two", "three"].map((item) => (
                 <div
                     key={item}
-                    className="grid animate-pulse gap-2 border-b-2 border-brand-ink/15 py-5 motion-reduce:animate-none sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
+                    className="grid animate-pulse gap-2 border-b-2 border-border/15 py-5 motion-reduce:animate-none sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
                 >
-                    <div className="h-3 w-24 bg-brand-ink/10" />
+                    <div className="h-3 w-24 bg-foreground/10" />
                     <div>
-                        <div className="h-5 w-3/4 bg-brand-ink/10" />
-                        <div className="mt-2 h-4 w-full bg-brand-ink/10" />
+                        <div className="h-5 w-3/4 bg-foreground/10" />
+                        <div className="mt-2 h-4 w-full bg-foreground/10" />
                     </div>
-                    <div className="h-3 w-16 bg-brand-ink/10" />
+                    <div className="h-3 w-16 bg-foreground/10" />
                 </div>
             ))}
         </div>

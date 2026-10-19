@@ -83,7 +83,14 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         >
             <body className="min-h-full bg-background text-foreground">
                 <TooltipProvider>
-                    <NextTopLoader color="#f97316" height={3} showSpinner={false} crawl crawlSpeed={200} speed={200} />
+                    <NextTopLoader
+                        color="var(--primary)"
+                        height={3}
+                        showSpinner={false}
+                        crawl
+                        crawlSpeed={200}
+                        speed={200}
+                    />
                     {children}
                     <Toaster richColors />
                     <SmoothScroll />

@@ -76,7 +76,7 @@ export function RegistrationActions({
                     <TooltipTrigger
                         render={
                             <Button
-                                className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                 onClick={onApprove}
                                 disabled={approveDisabled}
                             >
@@ -104,7 +104,7 @@ export function RegistrationActions({
                 </Tooltip>
                 <Button
                     variant="destructive"
-                    className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                    className="border-2 border-destructive/40 font-display text-sm font-semibold"
                     onClick={() => setRejectOpen(true)}
                     disabled={isPending}
                 >
@@ -113,7 +113,7 @@ export function RegistrationActions({
             </div>
 
             <Dialog open={rejectOpen} onOpenChange={(open) => !open && setRejectOpen(false)}>
-                <DialogContent className="rounded-none border-2 border-brand-ink">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Reject registration</DialogTitle>
                         <DialogDescription>This action sends a rejection email to the team leader.</DialogDescription>
@@ -126,7 +126,7 @@ export function RegistrationActions({
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel
-                                            className="font-display text-sm font-semibold text-brand-ink"
+                                            className="font-display text-sm font-semibold text-foreground"
                                             htmlFor={field.name}
                                         >
                                             Reason
@@ -136,14 +136,14 @@ export function RegistrationActions({
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
                                             placeholder="Explain why this registration was rejected..."
-                                            className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <DialogFooter className="mt-4 border-t-2 border-brand-ink/15 pt-4">
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
                             <Button
                                 type="button"
                                 variant="outline"
@@ -156,7 +156,7 @@ export function RegistrationActions({
                                 type="submit"
                                 variant="destructive"
                                 disabled={isPending}
-                                className="rounded-none border-2 border-destructive/40 font-display text-sm font-semibold"
+                                className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {isPending ? "Rejecting..." : "Reject registration"}
                             </Button>

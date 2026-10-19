@@ -20,8 +20,8 @@ export function MemberRow({
     const t = getMessages(locale).register;
     const th = locale === "th";
     return (
-        <div className="flex gap-4 border-2 border-brand-ink/15 bg-brand-paper p-4">
-            <span className="mt-7 hidden size-8 shrink-0 items-center justify-center border-2 border-dashed border-brand-ink/30 font-display text-xs font-bold text-brand-muted-foreground sm:flex">
+        <div className="flex gap-4 border-2 border-border/15 bg-background p-4">
+            <span className="mt-7 hidden size-8 shrink-0 items-center justify-center border-2 border-dashed border-border/30 font-display text-xs font-bold text-muted-foreground sm:flex">
                 {index + 1}
             </span>
             <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1.4fr]">
@@ -31,7 +31,7 @@ export function MemberRow({
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor={field.name}>{th ? "ชื่อ" : "Name"}</FieldLabel>
-                            <InputGroup className="h-11 rounded-none border-2 border-brand-ink/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
+                            <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                                 <InputGroupInput
                                     className="h-full px-3 text-base"
                                     {...field}
@@ -54,7 +54,7 @@ export function MemberRow({
                                 <SelectTrigger
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
-                                    className="h-11 w-full rounded-none border-2 border-brand-ink/25 bg-card"
+                                    className="h-11 w-full border-2 border-border/25 bg-card"
                                 >
                                     <SelectValue>
                                         {t.roles[field.value as keyof typeof t.roles] ??
@@ -79,7 +79,7 @@ export function MemberRow({
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid} className="sm:col-span-2 xl:col-span-1">
                             <FieldLabel htmlFor={field.name}>{t.email}</FieldLabel>
-                            <InputGroup className="h-11 rounded-none border-2 border-brand-ink/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
+                            <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                                 <InputGroupInput
                                     className="h-full px-3 text-base"
                                     {...field}

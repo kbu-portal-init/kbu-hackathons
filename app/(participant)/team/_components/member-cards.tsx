@@ -69,8 +69,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
         }
     }
 
-    if (items.length === 0)
-        return <p className="text-sm text-brand-muted-foreground">No team members are available yet.</p>;
+    if (items.length === 0) return <p className="text-sm text-muted-foreground">No team members are available yet.</p>;
 
     return (
         <div className="space-y-4">
@@ -78,7 +77,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {items.map((member) => (
                     <article
-                        className="flex h-full flex-col overflow-hidden rounded-none border-2 border-brand-ink bg-card"
+                        className="flex h-full flex-col overflow-hidden border-2 border-border bg-card"
                         key={member.id}
                     >
                         {busyId === member.id ? (
@@ -98,20 +97,18 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                         )}
                         <div className="flex flex-1 flex-col space-y-4 p-4">
                             <div className="min-w-0">
-                                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">
+                                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
                                     {member.name}
                                 </h2>
-                                <p className="text-sm text-brand-muted-foreground">{formatRole(member.role)}</p>
-                                <p className="mt-1 break-all text-sm text-brand-muted-foreground">
-                                    {member.studentEmail}
-                                </p>
+                                <p className="text-sm text-muted-foreground">{formatRole(member.role)}</p>
+                                <p className="mt-1 break-all text-sm text-muted-foreground">{member.studentEmail}</p>
                             </div>
                             <div className="mt-auto flex flex-wrap gap-2">
                                 {member.cardUrl ? (
                                     <Button
                                         size="lg"
                                         variant="outline"
-                                        className="rounded-none border-2 border-brand-ink font-display text-sm font-semibold text-brand-ink hover:bg-brand-yellow hover:text-brand-ink"
+                                        className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                         disabled={downloadingId === member.id}
                                         onClick={() => handleDownload(member)}
                                     >
@@ -127,12 +124,12 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                     <ShareButton
                                         title="KBU Hackathon 2026 participant card"
                                         url={getShareUrl(member)}
-                                        className="rounded-none border-2 border-brand-ink/20 text-sm font-semibold text-brand-ink hover:border-brand-ink hover:bg-brand-yellow"
+                                        className="border-2 border-border/20 text-sm font-semibold text-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
                                     />
                                 ) : null}
                                 <Button
                                     size="lg"
-                                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     disabled={busyId === member.id}
                                     onClick={() => handleGenerate(member.id)}
                                 >

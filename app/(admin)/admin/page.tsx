@@ -24,12 +24,10 @@ export default function AdminPage() {
                     <Link
                         key={href}
                         href={href}
-                        className="group border-2 border-brand-ink bg-card p-5 transition-colors hover:bg-brand-yellow"
+                        className="group border-2 border-border bg-card p-5 transition-colors hover:bg-accent hover:text-accent-foreground"
                     >
-                        <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">{title}</h2>
-                        <p className="mt-2 text-sm text-brand-muted-foreground group-hover:text-brand-ink">
-                            {description}
-                        </p>
+                        <h2 className="font-display text-lg font-bold tracking-tight text-foreground">{title}</h2>
+                        <p className="mt-2 text-sm text-muted-foreground group-hover:text-foreground">{description}</p>
                     </Link>
                 ))}
             </div>
@@ -60,12 +58,12 @@ async function AdminOverview() {
                 <Link
                     key={label}
                     href={href}
-                    className="border-2 border-brand-ink bg-card p-5 transition-colors hover:bg-brand-yellow"
+                    className="border-2 border-border bg-card p-5 transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
-                    <p className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                    <p className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                         {label}
                     </p>
-                    <p className="mt-3 font-display text-4xl font-bold tracking-[-0.03em] text-brand-ink">{value}</p>
+                    <p className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground">{value}</p>
                 </Link>
             ))}
         </div>

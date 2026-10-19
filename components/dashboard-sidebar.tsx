@@ -86,12 +86,12 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
     return (
         <SidebarProvider className="min-h-screen flex-1">
             <DashboardSidebarRouteReset />
-            <Sidebar collapsible="icon" className="border-r-2 border-brand-ink bg-brand-paper">
+            <Sidebar collapsible="icon" className="border-r-2 border-border bg-background">
                 <SidebarHeader>
                     <Link
                         href="/"
                         aria-label="KBU Hackathon 2026 home"
-                        className="flex items-center gap-2 rounded-none px-2 py-2 font-display font-semibold text-brand-ink group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+                        className="flex items-center gap-2 px-2 py-2 font-display font-semibold text-foreground group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
                     >
                         <Image src="/images/logo-trans.svg" alt="" width={28} height={28} className="size-7 shrink-0" />
                         <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
@@ -99,7 +99,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                 </SidebarHeader>
                 <SidebarContent>
                     <SidebarGroup>
-                        <SidebarGroupLabel className="font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-muted-foreground">
+                        <SidebarGroupLabel className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             {sidebarLabel}
                         </SidebarGroupLabel>
                         <SidebarGroupContent>
@@ -113,7 +113,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                                                 render={<Link href={href} aria-current={active ? "page" : undefined} />}
                                                 tooltip={localizedLabel}
                                                 isActive={active}
-                                                className="rounded-none font-display text-sm font-medium text-brand-muted-foreground hover:bg-brand-yellow/40 hover:text-brand-ink data-active:bg-brand-yellow data-active:text-brand-ink"
+                                                className="font-display text-sm font-medium text-muted-foreground hover:bg-accent/40 hover:text-accent-foreground data-active:bg-accent data-active:text-accent-foreground"
                                             >
                                                 <Icon />
                                                 <span>{localizedLabel}</span>
@@ -130,7 +130,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                                             }
                                             tooltip={t.adminPanel}
                                             isActive={adminActive}
-                                            className="rounded-none font-display text-sm font-medium text-brand-muted-foreground hover:bg-brand-yellow/40 hover:text-brand-ink data-active:bg-brand-yellow data-active:text-brand-ink"
+                                            className="font-display text-sm font-medium text-muted-foreground hover:bg-accent/40 hover:text-accent-foreground data-active:bg-accent data-active:text-accent-foreground"
                                         >
                                             <ShieldCheck />
                                             <span>{t.adminPanel}</span>
@@ -154,20 +154,20 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                 </SidebarFooter>
             </Sidebar>
             <div className="flex min-w-0 flex-1 flex-col">
-                <header className="flex h-14 items-center gap-3 border-b-2 border-brand-ink/15 bg-brand-paper px-4">
-                    <SidebarTrigger className="size-11 rounded-none border-2 border-brand-ink/15 hover:bg-brand-yellow md:size-8" />
-                    <p className="font-display text-sm font-semibold text-brand-ink">{headerTitle}</p>
+                <header className="flex h-14 items-center gap-3 border-b-2 border-border/15 bg-background px-4">
+                    <SidebarTrigger className="size-11 border-2 border-border/15 hover:bg-accent hover:text-accent-foreground md:size-8" />
+                    <p className="font-display text-sm font-semibold text-foreground">{headerTitle}</p>
                     <div className="ml-auto">
                         <LanguageSwitcher locale={locale} />
                     </div>
                 </header>
                 {children}
-                <footer className="border-t-2 border-brand-ink/15 bg-brand-paper px-4 py-4 text-sm text-brand-muted-foreground sm:px-6 lg:px-8">
+                <footer className="border-t-2 border-border/15 bg-background px-4 py-4 text-sm text-muted-foreground sm:px-6 lg:px-8">
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                        <span className="font-display font-semibold text-brand-ink">{t.needHelp}</span>
+                        <span className="font-display font-semibold text-foreground">{t.needHelp}</span>
                         {lineContact.url ? (
                             <a
-                                className="text-brand-ink underline decoration-primary decoration-2 underline-offset-4 hover:text-brand-ink"
+                                className="text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:text-foreground"
                                 href={lineContact.url}
                                 target="_blank"
                                 rel="noreferrer"
@@ -176,7 +176,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                             </a>
                         ) : null}
                         <Link
-                            className="text-brand-ink underline decoration-primary decoration-2 underline-offset-4 hover:text-brand-ink"
+                            className="text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:text-foreground"
                             href="/announcements"
                         >
                             {t.announcements}
@@ -212,10 +212,10 @@ function AccountFooter({
             alt=""
             width={32}
             height={32}
-            className="size-8 rounded-none border-2 border-brand-ink object-cover"
+            className="size-8 border-2 border-border object-cover"
         />
     ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-none border-2 border-brand-ink bg-brand-yellow font-display text-xs font-bold text-brand-ink">
+        <span className="flex size-8 shrink-0 items-center justify-center border-2 border-border bg-accent font-display text-xs font-bold text-accent-foreground">
             {initials || "?"}
         </span>
     );
@@ -226,21 +226,21 @@ function AccountFooter({
                 render={
                     <button
                         type="button"
-                        className="flex w-full items-center gap-2 rounded-none p-1.5 text-left outline-none transition-colors hover:bg-brand-yellow/40 focus-visible:ring-2 focus-visible:ring-brand-ink group-data-[collapsible=icon]:justify-center"
+                        className="flex w-full items-center gap-2 p-1.5 text-left outline-none transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-foreground group-data-[collapsible=icon]:justify-center"
                         aria-label={`${t.openAccount} ${account.name}`}
                     />
                 }
             >
                 {avatar}
                 <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
-                    <span className="block truncate font-display text-sm font-semibold text-brand-ink">
+                    <span className="block truncate font-display text-sm font-semibold text-foreground">
                         {account.name}
                     </span>
-                    <span className="block truncate text-xs text-brand-muted-foreground">{account.identifier}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{account.identifier}</span>
                 </span>
-                <ChevronsUpDown className="size-4 shrink-0 text-brand-ink/60 group-data-[collapsible=icon]:hidden" />
+                <ChevronsUpDown className="size-4 shrink-0 text-foreground/60 group-data-[collapsible=icon]:hidden" />
             </PopoverTrigger>
-            <PopoverContent side="top" align="start" className="w-64 rounded-none border-2 border-brand-ink">
+            <PopoverContent side="top" align="start" className="w-64 border-2 border-border">
                 <PopoverHeader>
                     <div className="flex items-center gap-3">
                         {avatar}
@@ -254,7 +254,7 @@ function AccountFooter({
                     trigger={
                         <button
                             type="button"
-                            className="flex w-full cursor-pointer items-center gap-2 rounded-none border-2 border-brand-ink bg-brand-ink px-2 py-2 font-display text-sm font-semibold text-brand-paper outline-none transition-colors hover:bg-brand-yellow hover:text-brand-ink focus-visible:ring-2 focus-visible:ring-brand-ink"
+                            className="flex w-full cursor-pointer items-center gap-2 border-2 border-border bg-foreground px-2 py-2 font-display text-sm font-semibold text-background outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-foreground"
                         >
                             <LogOut className="size-4" />
                             <span>{t.signOut}</span>

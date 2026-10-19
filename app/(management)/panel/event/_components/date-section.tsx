@@ -26,8 +26,8 @@ type Props = {
 
 export function DateSection({ title, control, fields }: Props) {
     return (
-        <section className="rounded-none border-2 border-brand-ink bg-card p-6">
-            <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">{title}</h2>
+        <section className="border-2 border-border bg-card p-6">
+            <h2 className="font-display text-lg font-bold tracking-tight text-foreground">{title}</h2>
             <FieldGroup className="mt-5">
                 {fields.map((f) => (
                     <DateTimeField

@@ -11,10 +11,10 @@ export default async function Home() {
     const t = getMessages(locale);
 
     return (
-        <main className="bg-brand-paper">
+        <main className="bg-background">
             <HomeHero locale={locale} />
 
-            <section className="border-b-2 border-brand-ink/10">
+            <section className="border-b-2 border-border/10">
                 <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-20 lg:py-24">
                     <AboutContent />
                 </div>
@@ -24,10 +24,10 @@ export default async function Home() {
                 <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
                     <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
                         <div>
-                            <h2 className="font-display text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-foreground">
+                            <h2 className="font-display text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-tight text-foreground">
                                 {t.home.communityTitle}
                             </h2>
-                            <p className="mt-4 max-w-sm text-base leading-7 text-brand-muted-foreground">
+                            <p className="mt-4 max-w-sm text-base leading-7 text-muted-foreground">
                                 {t.home.announcementsIntro}
                             </p>
                             <Link

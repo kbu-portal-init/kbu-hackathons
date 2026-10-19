@@ -55,7 +55,7 @@ export function PasswordChangeForm({
                 ).map(([suffix, label, key]) => (
                     <div className="space-y-2" key={suffix}>
                         <Label
-                            className="font-display text-sm font-semibold text-brand-ink"
+                            className="font-display text-sm font-semibold text-foreground"
                             htmlFor={`${idPrefix}-${suffix}`}
                         >
                             {label}
@@ -63,7 +63,7 @@ export function PasswordChangeForm({
                         <Input
                             id={`${idPrefix}-${suffix}`}
                             type={visible[key] ? "text" : "password"}
-                            className="h-11 rounded-none border-2 border-brand-ink/25 bg-card pr-10 text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                            className="h-11 border-2 border-border/25 bg-card pr-10 text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={values[key]}
                             onChange={(event) => setValues({ ...values, [key]: event.target.value })}
                             minLength={key === "currentPassword" ? undefined : 8}
@@ -84,7 +84,7 @@ export function PasswordChangeForm({
                 <Button
                     type="submit"
                     disabled={saving}
-                    className="rounded-none border-2 border-brand-ink bg-brand-ink font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     {saving ? "Saving..." : "Change password"}
                 </Button>

@@ -14,12 +14,10 @@ type Props = {
 
 export function GeneralInfoSection({ control }: Props) {
     return (
-        <section className="rounded-none border-2 border-brand-ink bg-card p-6">
+        <section className="border-2 border-border bg-card p-6">
             <div className="flex items-center gap-2">
-                <CalendarDays className="size-5 text-brand-muted-foreground" />
-                <h2 className="font-display text-lg font-bold tracking-[-0.02em] text-brand-ink">
-                    General information
-                </h2>
+                <CalendarDays className="size-5 text-muted-foreground" />
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">General information</h2>
             </div>
             <FieldGroup className="mt-5">
                 <Controller
@@ -29,7 +27,7 @@ export function GeneralInfoSection({ control }: Props) {
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel
                                 htmlFor={field.name}
-                                className="font-display text-sm font-semibold text-brand-ink"
+                                className="font-display text-sm font-semibold text-foreground"
                             >
                                 Title
                             </FieldLabel>
@@ -38,7 +36,7 @@ export function GeneralInfoSection({ control }: Props) {
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
                                 placeholder="e.g. KBU Hackathon 2026"
-                                className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -51,7 +49,7 @@ export function GeneralInfoSection({ control }: Props) {
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel
                                 htmlFor={field.name}
-                                className="font-display text-sm font-semibold text-brand-ink"
+                                className="font-display text-sm font-semibold text-foreground"
                             >
                                 Description
                             </FieldLabel>
@@ -61,7 +59,7 @@ export function GeneralInfoSection({ control }: Props) {
                                 aria-invalid={fieldState.invalid}
                                 placeholder="Describe the hackathon..."
                                 rows={4}
-                                className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -75,7 +73,7 @@ export function GeneralInfoSection({ control }: Props) {
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel
                                     htmlFor={field.name}
-                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Venue
                                 </FieldLabel>
@@ -84,7 +82,7 @@ export function GeneralInfoSection({ control }: Props) {
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
                                     placeholder="e.g. KBU Main Campus"
-                                    className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -97,17 +95,16 @@ export function GeneralInfoSection({ control }: Props) {
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel
                                     htmlFor={field.name}
-                                    className="font-display text-sm font-semibold text-brand-ink"
+                                    className="font-display text-sm font-semibold text-foreground"
                                 >
-                                    Promo URL{" "}
-                                    <span className="font-normal text-brand-muted-foreground">(optional)</span>
+                                    Promo URL <span className="font-normal text-muted-foreground">(optional)</span>
                                 </FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
                                     placeholder="https://..."
-                                    className="rounded-none border-2 border-brand-ink/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>

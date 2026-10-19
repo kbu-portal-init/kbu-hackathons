@@ -67,7 +67,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
     return (
         <div className="mt-8 space-y-5">
             {locked && (
-                <div className="border-2 border-brand-ink bg-brand-yellow p-4 font-medium text-brand-ink">
+                <div className="border-2 border-border bg-accent p-4 font-medium text-accent-foreground">
                     This submission is finalized and is currently read-only.
                 </div>
             )}
@@ -80,7 +80,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                 </div>
             )}
             {message && (
-                <div role="status" className="border-2 border-brand-ink bg-brand-yellow p-4 font-medium text-brand-ink">
+                <div role="status" className="border-2 border-border bg-accent p-4 font-medium text-accent-foreground">
                     {message}
                 </div>
             )}
@@ -93,7 +93,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
             >
                 {fields.map(([name, label, type, maxLength]) => (
                     <label className="block space-y-2" htmlFor={`submission-${name}`} key={name}>
-                        <span className="font-display text-sm font-semibold text-brand-ink">
+                        <span className="font-display text-sm font-semibold text-foreground">
                             {label}
                             {[
                                 "title",
@@ -110,7 +110,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         {type === "textarea" ? (
                             <textarea
                                 id={`submission-${name}`}
-                                className="min-h-28 w-full rounded-none border-2 border-brand-ink/25 bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
+                                className="min-h-28 w-full border-2 border-border/25 bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 value={values[name]}
@@ -121,7 +121,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         ) : (
                             <input
                                 id={`submission-${name}`}
-                                className="h-11 w-full rounded-none border-2 border-brand-ink/25 bg-card px-3 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
+                                className="h-11 w-full border-2 border-border/25 bg-card px-3 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 type={type}
@@ -133,15 +133,15 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         )}
                         {fieldErrors[name]?.[0] && <p className="text-sm text-destructive">{fieldErrors[name][0]}</p>}
                         {maxLength && (
-                            <p className="text-right text-xs text-brand-muted-foreground">
+                            <p className="text-right text-xs text-muted-foreground">
                                 {values[name].length}/{maxLength}
                             </p>
                         )}
                     </label>
                 ))}
-                <div className="flex flex-col gap-3 border-t-2 border-brand-ink/15 pt-5 sm:flex-row">
+                <div className="flex flex-col gap-3 border-t-2 border-border/15 pt-5 sm:flex-row">
                     <button
-                        className="rounded-none border-2 border-brand-ink px-5 py-3 font-display text-sm font-semibold text-brand-ink hover:bg-brand-yellow disabled:opacity-50"
+                        className="border-2 border-border px-5 py-3 font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
                         disabled={locked || isPending}
                         type="submit"
                     >
@@ -150,7 +150,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                     <ConfirmActionAlertDialog
                         trigger={
                             <Button
-                                className="rounded-none border-2 border-brand-ink bg-brand-ink px-5 py-3 font-display text-sm font-semibold text-brand-paper hover:bg-brand-yellow hover:text-brand-ink"
+                                className="border-2 border-border bg-foreground px-5 py-3 font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                 disabled={locked || isPending}
                             >
                                 Finalize submission

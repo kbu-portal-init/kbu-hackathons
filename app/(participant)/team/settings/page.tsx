@@ -10,14 +10,14 @@ export default async function TeamSettingsPage() {
 
     return (
         <main className="space-y-8">
-            <header className="border-b-2 border-brand-ink/15 pb-5">
-                <p className="font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted-foreground">
+            <header className="border-b-2 border-border/15 pb-5">
+                <p className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     Participant workspace
                 </p>
-                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-[-0.03em] text-brand-ink">
+                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
                     Team settings
                 </h1>
-                <p className="mt-3 max-w-2xl text-brand-muted-foreground">
+                <p className="mt-3 max-w-2xl text-muted-foreground">
                     Manage your team identity, member presentation, and shared account access.
                 </p>
             </header>
