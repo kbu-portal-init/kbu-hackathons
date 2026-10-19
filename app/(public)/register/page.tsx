@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { PosterPanel } from "@/components/poster";
+import { PosterBreadcrumb } from "@/components/poster-breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { countApprovedTeams } from "@/lib/data/registrations";
@@ -111,10 +112,15 @@ async function RegistrationContent({ locale }: { locale: "en" | "th" }) {
 
 export default async function TeamRegistrationPage() {
     const locale = await getLocale();
-    const t = getMessages(locale).register;
+    const messages = getMessages(locale);
+    const t = messages.register;
     return (
         <main className="flex-1 bg-background">
             <section className="mx-auto max-w-6xl px-5 py-12 text-left sm:px-8 lg:py-16">
+                <PosterBreadcrumb
+                    items={[{ label: messages.common.home, href: "/" }, { label: t.title }]}
+                    className="mb-8"
+                />
                 <div className="border-b-2 border-border/15 pb-8">
                     <h1 className="font-display text-[clamp(2.75rem,7vw,5rem)] font-bold leading-[0.9] tracking-tight text-foreground">
                         {t.title}

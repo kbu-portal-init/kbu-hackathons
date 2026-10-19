@@ -139,19 +139,20 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         )}
                     </label>
                 ))}
-                <div className="flex flex-col gap-3 border-t-2 border-border/15 pt-5 sm:flex-row">
-                    <button
-                        className="border-2 border-border px-5 py-3 font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+                <div className="flex flex-col gap-3 border-t-2 border-border/15 pt-5 sm:flex-row sm:justify-end">
+                    <PosterButton
+                        tone="outline"
+                        className="h-11 px-5 font-display text-sm font-semibold"
                         disabled={locked || isPending}
                         type="submit"
                     >
                         {isPending ? "Saving..." : "Save draft"}
-                    </button>
+                    </PosterButton>
                     <ConfirmActionAlertDialog
                         trigger={
                             <PosterButton
                                 tone="solid"
-                                className="border-2 border-border bg-foreground px-5 py-3 font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                                className="h-11 px-5 font-display text-sm font-semibold"
                                 disabled={locked || isPending}
                             >
                                 Finalize submission

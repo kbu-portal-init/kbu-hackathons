@@ -32,7 +32,7 @@ export function DashboardListSkeleton({ header = false }: SkeletonProps) {
                         <Skeleton className="h-9 w-24 bg-foreground/10" key={key} />
                     ))}
                 </div>
-                <PosterPanel className="p-6">
+                <PosterPanel className="border-border/15 p-6">
                     <Skeleton className="h-6 w-44 bg-foreground/10" />
                     <div className="mt-6 space-y-4">
                         {["one", "two", "three", "four", "five"].map((key) => (
@@ -53,7 +53,7 @@ export function DashboardFormSkeleton({ header = false }: SkeletonProps) {
         <StatusRegion label="Loading form">
             <div className="space-y-6">
                 {header ? <HeadingBars /> : null}
-                <PosterPanel className="space-y-8 p-6">
+                <PosterPanel className="space-y-8 border-border/15 p-6">
                     <div className="space-y-3">
                         <Skeleton className="h-5 w-40 bg-primary/20" />
                         <Skeleton className="h-4 w-72 max-w-full bg-foreground/10" />
@@ -98,7 +98,7 @@ export function DashboardDetailSkeleton() {
                         </div>
                     ))}
                 </div>
-                <PosterPanel className="p-6">
+                <PosterPanel className="border-border/15 p-6">
                     <Skeleton className="h-5 w-40 bg-foreground/10" />
                     <div className="mt-4 space-y-3">
                         {["one", "two", "three", "four", "five"].map((key) => (
@@ -106,7 +106,7 @@ export function DashboardDetailSkeleton() {
                         ))}
                     </div>
                 </PosterPanel>
-                <PosterPanel className="p-6">
+                <PosterPanel className="border-border/15 p-6">
                     <Skeleton className="h-5 w-36 bg-foreground/10" />
                     <div className="mt-4 space-y-3">
                         {["one", "two"].map((key) => (
@@ -124,14 +124,14 @@ export function DashboardCardGridSkeleton() {
         <StatusRegion label="Loading member cards">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {["one", "two", "three", "four"].map((key) => (
-                    <article className="overflow-hidden border-2 border-border bg-card" key={key}>
-                        <Skeleton className="aspect-1200/630 w-full bg-primary/15" />
+                    <article className="overflow-hidden border-2 border-border/15 bg-card" key={key}>
+                        <Skeleton className="aspect-1600/960 w-full bg-primary/15" />
                         <div className="space-y-4 p-4">
                             <div className="space-y-2">
                                 <Skeleton className="h-5 w-32 bg-foreground/10" />
                                 <Skeleton className="h-4 w-24 bg-foreground/10" />
+                                <Skeleton className="h-4 w-40 max-w-full bg-foreground/10" />
                             </div>
-                            <Skeleton className="h-4 w-full bg-foreground/10" />
                             <div className="flex gap-2">
                                 <Skeleton className="h-9 w-20 bg-foreground/10" />
                                 <Skeleton className="h-9 w-20 bg-primary/20" />
