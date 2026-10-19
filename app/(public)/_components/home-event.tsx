@@ -86,7 +86,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
     const event = await getEventSettings();
     const eventImage = event?.imageUrls.find((url) => isOwnedR2PublicUrl(url, "uploads/events"));
     const registrationState = registrationStateFrom(event);
-    const posterSrc = eventImage ?? "/images/kbu.webp";
+    const posterSrc = eventImage ?? "/images/kbu1.webp";
 
     return (
         <section className="relative bg-primary text-foreground">

@@ -17,7 +17,7 @@ export async function SiteFooter() {
             <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.5fr_1fr_1fr]">
                 <div>
                     <div className="flex items-center gap-2.5">
-                        <Image src="/images/logo.svg" alt="" width={36} height={36} className="size-9" />
+                        <Image src="/images/logo-trans.svg" alt="" width={36} height={36} className="size-9" />
                         <p className="font-display text-lg font-semibold text-foreground">KBU Hackathon 2026</p>
                     </div>
                     <p className="mt-3 max-w-sm text-sm leading-6">{t.footer.description}</p>

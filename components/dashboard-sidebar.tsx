@@ -93,7 +93,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                         aria-label="KBU Hackathon 2026 home"
                         className="flex items-center gap-2 rounded-md px-2 py-2 font-bold text-sidebar-foreground group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
                     >
-                        <Image src="/images/logo.svg" alt="" width={28} height={28} className="size-7 shrink-0" />
+                        <Image src="/images/logo-trans.svg" alt="" width={28} height={28} className="size-7 shrink-0" />
                         <span className="group-data-[collapsible=icon]:hidden">KBU Hackathon 2026</span>
                     </Link>
                 </SidebarHeader>
