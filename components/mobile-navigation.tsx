@@ -75,7 +75,7 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                                 </Link>
                             );
                         })}
-                        <div className="mt-5 border-t-2 border-border/10 pt-4">
+                        <div className="mt-5">
                             <p className="px-4 pb-2.5 font-display text-xs font-semibold text-muted-foreground">
                                 {t.language}
                             </p>
