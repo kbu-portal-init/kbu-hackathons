@@ -4,7 +4,7 @@ import { GripVertical, ImageIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
 import { FileUpload } from "@/components/file-upload";
-import { Badge } from "@/components/ui/badge";
+import { PosterBadge, PosterPanel } from "@/components/poster";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -23,14 +23,14 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
     const sortableImages: SortableImage[] = imageUrls.map((url) => ({ id: url, url }));
 
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+        <PosterPanel className="p-6">
             <div className="flex items-center gap-2">
-                <ImageIcon className="size-5 text-primary/70" />
-                <h2 className="text-lg font-semibold">Event images</h2>
+                <ImageIcon className="size-5 text-muted-foreground" />
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Event images</h2>
                 {imageUrls.length > 0 && (
-                    <Badge variant="secondary" className="ml-auto">
+                    <PosterBadge tone="muted" className="ml-auto border-2 border-border/15">
                         {imageUrls.length}
-                    </Badge>
+                    </PosterBadge>
                 )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -47,7 +47,7 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                     className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
                 >
                     {sortableImages.map(({ id, url }, index) => (
-                        <div key={id} className="group relative overflow-hidden rounded-lg border border-zinc-200">
+                        <div key={id} className="group relative overflow-hidden border-2 border-border">
                             <Image
                                 src={url}
                                 alt={`Event banner ${index + 1}`}
@@ -59,15 +59,15 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                             <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/40">
                                 <button
                                     type="button"
-                                    className="event-image-drag-handle absolute right-12 top-2 z-10 flex size-8 touch-none cursor-grab items-center justify-center rounded-md bg-black/60 text-white opacity-100 transition-opacity active:cursor-grabbing sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                                    className="event-image-drag-handle absolute right-12 top-2 z-10 flex size-8 touch-none cursor-grab items-center justify-center bg-black/60 text-white opacity-100 transition-opacity active:cursor-grabbing sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                                     aria-label={`Reorder event image ${index + 1}`}
                                     title="Drag to reorder"
                                 >
                                     <GripVertical className="size-4" aria-hidden="true" />
                                 </button>
                                 <Button
-                                    type="button"
                                     variant="destructive"
+                                    type="button"
                                     size="icon"
                                     className="absolute right-2 top-2 size-8 bg-destructive text-destructive-foreground opacity-100 transition-opacity hover:bg-destructive/90 sm:opacity-0 sm:group-hover:opacity-100"
                                     onClick={() => onRemove(index)}
@@ -76,9 +76,12 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                                 </Button>
                             </div>
                             {index === 0 && (
-                                <Badge className="absolute left-2 top-2" variant="default">
+                                <PosterBadge
+                                    tone="primary"
+                                    className="absolute left-2 top-2 border-2 border-border bg-accent text-accent-foreground"
+                                >
                                     Primary
-                                </Badge>
+                                </PosterBadge>
                             )}
                         </div>
                     ))}
@@ -95,6 +98,6 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                     uploadHint="JPG, PNG, WEBP, or GIF"
                 />
             </div>
-        </section>
+        </PosterPanel>
     );
 }

@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { Badge } from "@/components/ui/badge";
+import { PosterBadge, PosterPanel } from "@/components/poster";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
 import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
@@ -39,19 +39,21 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                 alt={`${team.displayName} avatar`}
                                 width={40}
                                 height={40}
-                                className="size-10 rounded-full object-cover"
+                                className="size-10 object-cover"
                                 unoptimized
                             />
                         ) : (
                             <div
-                                className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary/90"
+                                className="flex size-10 shrink-0 items-center justify-center bg-accent font-display text-sm font-bold text-accent-foreground"
                                 aria-hidden="true"
                             >
                                 {getInitials(team.displayName)}
                             </div>
                         )}
                         <div className="min-w-0">
-                            <h1 className="truncate text-3xl font-bold tracking-tight">{team.displayName}</h1>
+                            <h1 className="truncate font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
+                                {team.displayName}
+                            </h1>
                             <p className="truncate text-sm text-muted-foreground">@{team.loginName}</p>
                         </div>
                     </div>
@@ -88,12 +90,12 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                         alt={`${member.name} avatar`}
                                         width={40}
                                         height={40}
-                                        className="size-10 rounded-full object-cover"
+                                        className="size-10 object-cover"
                                         unoptimized
                                     />
                                 ) : (
                                     <div
-                                        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary/90"
+                                        className="flex size-10 shrink-0 items-center justify-center bg-accent font-display font-bold text-accent-foreground"
                                         aria-hidden="true"
                                     >
                                         {getInitials(member.name)}
@@ -105,10 +107,15 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline">{member.role}</Badge>
-                                <Badge variant={member.verifiedAt ? "default" : "secondary"}>
+                                <PosterBadge tone="neutral" className="border-2 border-border/20 text-foreground">
+                                    {member.role}
+                                </PosterBadge>
+                                <PosterBadge
+                                    tone={member.verifiedAt ? "primary" : "muted"}
+                                    className="border-border/20"
+                                >
                                     {member.verifiedAt ? "Verified" : "Unverified"}
-                                </Badge>
+                                </PosterBadge>
                             </div>
                         </div>
                     ))}
@@ -118,12 +125,12 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                 {team.submission ? (
                     <div className="space-y-4 text-sm">
                         <div>
-                            <h3 className="font-semibold">{team.submission.title}</h3>
+                            <h3 className="font-display text-lg font-bold text-foreground">{team.submission.title}</h3>
                             <p className="mt-1 whitespace-pre-wrap text-muted-foreground">
                                 {team.submission.summary || "No summary."}
                             </p>
                         </div>
-                        <div className="grid gap-4 border-t pt-4 text-sm sm:grid-cols-2">
+                        <div className="grid gap-4 border-t-2 border-border/15 pt-4 text-sm sm:grid-cols-2">
                             <Info label="Problem" value={team.submission.problem} />
                             <Info label="Target users" value={team.submission.targetUsers} />
                             <Info label="Solution" value={team.submission.solution} />
@@ -133,7 +140,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         <div className="flex flex-wrap gap-3">
                             {team.submission.repositoryUrl && (
                                 <a
-                                    className="text-primary underline"
+                                    className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4"
                                     href={team.submission.repositoryUrl}
                                     target="_blank"
                                     rel="noreferrer"
@@ -143,7 +150,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                             )}
                             {team.submission.demoUrl && (
                                 <a
-                                    className="text-primary underline"
+                                    className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4"
                                     href={team.submission.demoUrl}
                                     target="_blank"
                                     rel="noreferrer"
@@ -153,7 +160,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                             )}
                             {team.submission.presentationUrl && (
                                 <a
-                                    className="text-primary underline"
+                                    className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4"
                                     href={team.submission.presentationUrl}
                                     target="_blank"
                                     rel="noreferrer"
@@ -163,7 +170,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                             )}
                             {team.submission.demoVideoUrl && (
                                 <a
-                                    className="text-primary underline"
+                                    className="font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4"
                                     href={team.submission.demoVideoUrl}
                                     target="_blank"
                                     rel="noreferrer"
@@ -174,13 +181,13 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         </div>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex flex-wrap items-center gap-3">
-                                <Badge
-                                    variant={
+                                <PosterBadge
+                                    tone={
                                         team.submission.status === "SUBMITTED"
-                                            ? "default"
+                                            ? "primary"
                                             : team.submission.status === "REOPENED"
-                                              ? "outline"
-                                              : "secondary"
+                                              ? "neutral"
+                                              : "muted"
                                     }
                                 >
                                     {team.submission.status === "SUBMITTED"
@@ -188,7 +195,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                         : team.submission.status === "REOPENED"
                                           ? "Reopened for editing"
                                           : "Draft"}
-                                </Badge>
+                                </PosterBadge>
                                 <p className="text-sm text-muted-foreground">
                                     {team.submission.status === "SUBMITTED" && team.submission.submittedAt
                                         ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
@@ -210,7 +217,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         {team.reviews.map((review) => (
                             <div key={review.id} className="py-3 text-sm">
                                 <div className="flex justify-between gap-2">
-                                    <Badge variant="outline">{review.decision}</Badge>
+                                    <PosterBadge tone="neutral">{review.decision}</PosterBadge>
                                     <span className="text-muted-foreground">
                                         {format(new Date(review.createdAt), "PPP p")}
                                     </span>
@@ -230,18 +237,20 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
 function Info({ label, value }: { label: string; value: string }) {
     return (
         <div>
-            <dt className="text-muted-foreground">{label}</dt>
-            <dd className="font-medium">{value}</dd>
+            <dt className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                {label}
+            </dt>
+            <dd className="mt-1 font-medium text-foreground">{value}</dd>
         </div>
     );
 }
 
 function Panel({ title, children }: { title: string; children: ReactNode }) {
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-            <h2 className="text-lg font-semibold">{title}</h2>
+        <PosterPanel className="p-6">
+            <h2 className="font-display text-lg font-bold tracking-tight text-foreground">{title}</h2>
             <div className="mt-4">{children}</div>
-        </section>
+        </PosterPanel>
     );
 }
 

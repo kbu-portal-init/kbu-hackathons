@@ -1,48 +1,73 @@
-import { Megaphone } from "lucide-react";
 import Link from "next/link";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { listPublicAnnouncements } from "@/lib/data/announcements";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 
-const announcementDateFormatter = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeZone: "Asia/Bangkok",
-});
+function categoryLabel(category: PublicAnnouncementDTO["category"], locale: Locale): string {
+    const labels = getMessages(locale).announcementsPage.categories;
+    if (category === "IMPORTANT") return labels.important;
+    if (category === "UPDATES") return labels.update;
+    return labels.news;
+}
+
+function formatPublished(value: string, locale: Locale): string {
+    return new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "Asia/Bangkok",
+    }).format(new Date(value));
+}
 
 export async function HomeAnnouncements({ locale }: { locale: Locale }) {
     const t = getMessages(locale).home;
+
     try {
-        const result = await listPublicAnnouncements({ page: 1, pageSize: 2 });
+        const result = await listPublicAnnouncements({ page: 1, pageSize: 3 });
 
         if (result.items.length === 0) {
-            return <p className="p-5 text-sm text-brand-muted-foreground">{t.noAnnouncements}</p>;
+            return (
+                <div className="border-2 border-border bg-background p-5 sm:p-6">
+                    <p className="text-base text-muted-foreground">{t.noAnnouncements}</p>
+                    <Link
+                        href="/announcements"
+                        className="mt-3 inline-flex font-display text-sm font-semibold text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                        {t.readAnnouncements}
+                    </Link>
+                </div>
+            );
         }
 
         return (
-            <div className="overflow-hidden rounded-2xl glass">
-                {result.items.map((announcement: PublicAnnouncementDTO) => {
+            <div className="border-t-2 border-border">
+                {result.items.map((announcement) => {
                     const publishedDate = announcement.publishedAt ?? announcement.createdAt;
 
                     return (
                         <Link
                             key={announcement.id}
                             href={`/announcements/${announcement.id}`}
-                            className="flex items-start gap-4 border-b border-primary/20 p-5 transition last:border-b-0 hover:bg-secondary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary/30"
+                            className="group grid gap-2 border-b-2 border-border/15 py-5 transition-colors hover:bg-accent/20 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
                         >
-                            <Megaphone className="mt-0.5 size-5 shrink-0 text-primary" />
-                            <div>
-                                <time
-                                    dateTime={new Date(publishedDate).toISOString()}
-                                    className="font-mono text-xs font-medium text-primary"
-                                >
-                                    {announcementDateFormatter.format(new Date(publishedDate))}
-                                </time>
-                                <h3 className="mt-1.5 font-semibold text-foreground">{announcement.title}</h3>
-                                <p className="mt-1 line-clamp-2 text-sm text-brand-muted-foreground">
+                            <time
+                                dateTime={new Date(publishedDate).toISOString()}
+                                className="font-display text-xs font-semibold text-primary sm:pt-1"
+                            >
+                                {formatPublished(publishedDate, locale)}
+                            </time>
+                            <div className="min-w-0">
+                                <h3 className="font-display text-lg font-semibold leading-6 text-foreground group-hover:text-primary sm:text-xl">
+                                    {announcement.title}
+                                </h3>
+                                <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted-foreground sm:text-base">
                                     {announcement.content}
                                 </p>
                             </div>
+                            <span className="font-display text-xs font-semibold text-muted-foreground sm:pt-1">
+                                {categoryLabel(announcement.category, locale)}
+                            </span>
                         </Link>
                     );
                 })}
@@ -50,10 +75,13 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
         );
     } catch {
         return (
-            <div className="rounded-2xl border border-secondary bg-secondary p-5 text-sm text-brand-muted-foreground">
-                <p>{t.announcementsUnavailable}</p>
-                <Link href="/announcements" className="mt-2 inline-flex font-semibold text-primary/90 underline">
-                    {locale === "th" ? "อ่านประกาศทั้งหมด" : "View all announcements"}
+            <div className="border-2 border-border bg-background p-5 sm:p-6">
+                <p className="text-base text-muted-foreground">{t.announcementsUnavailable}</p>
+                <Link
+                    href="/announcements"
+                    className="mt-3 inline-flex font-display text-sm font-semibold text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                    {t.readAnnouncements}
                 </Link>
             </div>
         );
@@ -62,13 +90,19 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
 
 export function HomeAnnouncementsSkeleton({ locale }: { locale: Locale }) {
     return (
-        <div className="overflow-hidden rounded-2xl glass" role="status" aria-label="Loading announcements">
+        <div className="border-t-2 border-border" role="status" aria-label="Loading announcements">
             <span className="sr-only">{getMessages(locale).home.loadingAnnouncements}</span>
-            {["one", "two"].map((item) => (
-                <div className="animate-pulse border-b border-border/20 p-5 last:border-b-0" key={item}>
-                    <div className="h-3 w-24 rounded bg-secondary" />
-                    <div className="mt-3 h-5 w-3/4 rounded bg-zinc-100" />
-                    <div className="mt-2 h-4 w-full rounded bg-zinc-100" />
+            {["one", "two", "three"].map((item) => (
+                <div
+                    key={item}
+                    className="grid animate-pulse gap-2 border-b-2 border-border/15 py-5 motion-reduce:animate-none sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
+                >
+                    <div className="h-3 w-24 bg-foreground/10" />
+                    <div>
+                        <div className="h-5 w-3/4 bg-foreground/10" />
+                        <div className="mt-2 h-4 w-full bg-foreground/10" />
+                    </div>
+                    <div className="h-3 w-16 bg-foreground/10" />
                 </div>
             ))}
         </div>

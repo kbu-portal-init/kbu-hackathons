@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { updateMemberImage } from "@/actions/participant/team-members";
 import { updateTeamLogo } from "@/actions/participant/team-settings";
 import { FileUpload } from "@/components/file-upload";
-import { Badge } from "@/components/ui/badge";
+import { PosterBadge, PosterPanel } from "@/components/poster";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
 
@@ -44,10 +44,10 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
 
     return (
         <div className="space-y-8">
-            <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
+            <PosterPanel className="p-6">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-center gap-4">
-                        <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-orange-100 text-2xl font-bold text-orange-700">
+                        <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden bg-accent font-display text-2xl font-bold text-accent-foreground">
                             {teamImageUrl ? (
                                 <Image
                                     alt={`${team.displayName} logo`}
@@ -72,13 +72,18 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                             />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-medium text-brand-muted-foreground">Team profile</p>
-                            <h2 className="truncate text-2xl font-bold text-zinc-950">{team.displayName}</h2>
+                            <p className="text-sm font-medium text-muted-foreground">Team profile</p>
+                            <h2 className="truncate font-display text-2xl font-bold tracking-tight text-foreground">
+                                {team.displayName}
+                            </h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                                <PosterBadge
+                                    tone="accent"
+                                    className="border-2 border-border bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground"
+                                >
                                     <CheckCircle2 /> Approved
-                                </Badge>
-                                <span className="inline-flex items-center gap-1.5 text-sm text-brand-muted-foreground">
+                                </PosterBadge>
+                                <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                                     <Users className="size-4" />
                                     {members.length} {members.length === 1 ? "member" : "members"}
                                 </span>
@@ -87,17 +92,17 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                     </div>
                     <div className="grid gap-3 text-sm sm:min-w-56">
                         <div className="flex items-start gap-2">
-                            <KeyRound className="mt-0.5 size-4 shrink-0 text-orange-600" />
+                            <KeyRound className="mt-0.5 size-4 shrink-0 text-primary" />
                             <div className="min-w-0">
-                                <p className="font-medium text-zinc-950">Team username</p>
-                                <p className="break-all text-brand-muted-foreground">{team.loginName}</p>
+                                <p className="font-medium text-foreground">Team username</p>
+                                <p className="break-all text-muted-foreground">{team.loginName}</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-2">
-                            <CalendarDays className="mt-0.5 size-4 shrink-0 text-orange-600" />
+                            <CalendarDays className="mt-0.5 size-4 shrink-0 text-primary" />
                             <div>
-                                <p className="font-medium text-zinc-950">Approved</p>
-                                <p className="text-brand-muted-foreground">
+                                <p className="font-medium text-foreground">Approved</p>
+                                <p className="text-muted-foreground">
                                     {team.approvalDate
                                         ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
                                               new Date(team.approvalDate),
@@ -108,24 +113,24 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                         </div>
                     </div>
                 </div>
-                <p className="mt-5 border-t border-orange-100 pt-4 text-sm text-brand-muted-foreground">
+                <p className="mt-5 border-t-2 border-border/15 pt-4 text-sm text-muted-foreground">
                     This shared username is used by your team to sign in to the workspace. Keep it and the team password
                     available to approved members only.
                 </p>
-            </section>
+            </PosterPanel>
 
-            <section className="rounded-2xl border border-orange-100 bg-white p-6 shadow-sm">
+            <PosterPanel className="p-6">
                 <div className="mb-5">
-                    <h2 className="text-xl font-bold text-zinc-950">Member profiles</h2>
-                    <p className="mt-1 text-sm text-brand-muted-foreground">
+                    <h2 className="font-display text-xl font-bold tracking-tight text-foreground">Member profiles</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Keep your roster recognizable by adding a profile image for each member. Names, roles, and
                         student emails are managed from registration.
                     </p>
                 </div>
                 <div className="grid gap-5 md:grid-cols-2">
                     {members.map((member, index) => (
-                        <article className="flex min-w-0 gap-4 rounded-xl border border-zinc-200 p-4" key={member.id}>
-                            <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-orange-100 text-xl font-bold text-orange-700">
+                        <article className="flex min-w-0 gap-4 border-2 border-border p-4" key={member.id}>
+                            <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden bg-accent font-display text-xl font-bold text-accent-foreground">
                                 {memberImages[member.id] ? (
                                     <Image
                                         alt={`${member.name} profile`}
@@ -152,19 +157,23 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                             <div className="min-w-0 flex-1 space-y-2">
                                 <div className="flex flex-wrap items-start justify-between gap-2">
                                     <div className="min-w-0">
-                                        <p className="text-xs font-medium uppercase tracking-wide text-brand-muted-foreground">
+                                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                                             Member {index + 1}
                                         </p>
-                                        <h3 className="truncate font-semibold text-zinc-950">{member.name}</h3>
+                                        <h3 className="truncate font-display font-bold text-foreground">
+                                            {member.name}
+                                        </h3>
                                     </div>
-                                    <Badge variant="outline">{formatRole(member.role)}</Badge>
+                                    <PosterBadge tone="neutral" className="border-2 border-border/20 text-foreground">
+                                        {formatRole(member.role)}
+                                    </PosterBadge>
                                 </div>
-                                <p className="break-all text-sm text-brand-muted-foreground">{member.studentEmail}</p>
+                                <p className="break-all text-sm text-muted-foreground">{member.studentEmail}</p>
                             </div>
                         </article>
                     ))}
                 </div>
-            </section>
+            </PosterPanel>
         </div>
     );
 }

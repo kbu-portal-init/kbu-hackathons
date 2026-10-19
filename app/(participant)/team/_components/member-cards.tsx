@@ -5,8 +5,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { generateMemberCard } from "@/actions/participant/member-cards";
 import { CardImageViewer } from "@/components/card-image-viewer";
+import { PosterButton } from "@/components/poster";
 import { ShareButton } from "@/components/share-button";
-import { Button } from "@/components/ui/button";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
 
@@ -77,7 +77,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {items.map((member) => (
                     <article
-                        className="flex h-full flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
+                        className="flex h-full flex-col overflow-hidden border-2 border-border bg-card"
                         key={member.id}
                     >
                         {busyId === member.id ? (
@@ -97,16 +97,18 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                         )}
                         <div className="flex flex-1 flex-col space-y-4 p-4">
                             <div className="min-w-0">
-                                <h2 className="font-semibold">{member.name}</h2>
+                                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
+                                    {member.name}
+                                </h2>
                                 <p className="text-sm text-muted-foreground">{formatRole(member.role)}</p>
                                 <p className="mt-1 break-all text-sm text-muted-foreground">{member.studentEmail}</p>
                             </div>
                             <div className="mt-auto flex flex-wrap gap-2">
                                 {member.cardUrl ? (
-                                    <Button
+                                    <PosterButton
+                                        tone="outline"
                                         size="lg"
-                                        variant="outline"
-                                        className="cursor-pointer transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground"
+                                        className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                         disabled={downloadingId === member.id}
                                         onClick={() => handleDownload(member)}
                                     >
@@ -116,18 +118,19 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                             <Download />
                                         )}
                                         {downloadingId === member.id ? "Preparing…" : "Download"}
-                                    </Button>
+                                    </PosterButton>
                                 ) : null}
                                 {member.cardUrl && member.cardShareToken ? (
                                     <ShareButton
                                         title="KBU Hackathon 2026 participant card"
                                         url={getShareUrl(member)}
-                                        className="rounded-md border-zinc-300 text-sm font-normal text-zinc-900"
+                                        className="border-2 border-border/20 text-sm font-semibold text-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
                                     />
                                 ) : null}
-                                <Button
+                                <PosterButton
+                                    tone="solid"
                                     size="lg"
-                                    className="cursor-pointer transition-colors duration-200 hover:!border-primary hover:!bg-primary hover:!text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     disabled={busyId === member.id}
                                     onClick={() => handleGenerate(member.id)}
                                 >
@@ -137,7 +140,7 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
                                         : member.cardUrl
                                           ? "Regenerate"
                                           : "Generate"}
-                                </Button>
+                                </PosterButton>
                             </div>
                         </div>
                     </article>

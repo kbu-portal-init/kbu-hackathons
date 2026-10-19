@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PosterBadge, PosterTableHead } from "@/components/poster";
+import { Table, TableBody, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
 import { formatRole } from "@/lib/util";
@@ -15,20 +15,28 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
             return (
-                <Badge variant="outline" className="border-primary/15 text-primary/90">
+                <PosterBadge tone="accent" className="border-2 border-border bg-accent text-accent-foreground">
                     Pending
-                </Badge>
+                </PosterBadge>
             );
         case "APPROVED":
             return (
-                <Badge variant="outline" className="border-success/15 text-success">
+                <PosterBadge tone="neutral" className="border-2 border-border text-foreground">
                     Approved
-                </Badge>
+                </PosterBadge>
             );
         case "REJECTED":
-            return <Badge variant="destructive">Rejected</Badge>;
+            return (
+                <PosterBadge tone="danger" className="border-2 border-destructive/40">
+                    Rejected
+                </PosterBadge>
+            );
         default:
-            return <Badge variant="secondary">{status}</Badge>;
+            return (
+                <PosterBadge tone="muted" className="border-2 border-border/15 text-muted-foreground">
+                    {status}
+                </PosterBadge>
+            );
     }
 }
 
@@ -56,15 +64,17 @@ async function RegistrationDetailContent({ id }: { id: string }) {
             <div className="flex items-center gap-4">
                 <BackButton fallbackHref="/panel/registrations" />
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{item.teamName}</h1>
+                    <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
+                        {item.teamName}
+                    </h1>
                     <p className="text-sm text-muted-foreground">{item.loginName}</p>
                 </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-                <DetailField label="Leader" value={item.leaderName || "\u2014"} />
+                <DetailField label="Leader" value={item.leaderName || "Not set"} />
                 <DetailField label="Leader email">
-                    <p className="text-sm break-all">{item.leaderEmail || "\u2014"}</p>
+                    <p className="text-sm break-all">{item.leaderEmail || "Not set"}</p>
                 </DetailField>
                 <DetailField label="Status">
                     <StatusBadge status={item.status} />
@@ -73,7 +83,7 @@ async function RegistrationDetailContent({ id }: { id: string }) {
             </div>
 
             {item.applicationNotes && (
-                <div className="space-y-1">
+                <div className="space-y-1 border-2 border-border/15 bg-card p-4">
                     <p className="text-xs font-medium text-muted-foreground">Application notes</p>
                     <p className="text-sm">{item.applicationNotes}</p>
                 </div>
@@ -81,14 +91,22 @@ async function RegistrationDetailContent({ id }: { id: string }) {
 
             <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground">Team members ({item.members.length})</p>
-                <div className="rounded-lg border border-zinc-200">
+                <div className="border-2 border-border">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Verification</TableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                    Name
+                                </PosterTableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                    Role
+                                </PosterTableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                    Email
+                                </PosterTableHead>
+                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                    Verification
+                                </PosterTableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -109,7 +127,7 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                                 <StatusBadge status={r.decision} />
                                 <div>
                                     {r.reason && <p>{r.reason}</p>}
-                                    <p className="text-xs text-zinc-400">
+                                    <p className="text-xs text-muted-foreground">
                                         {format(new Date(r.createdAt), "MMM d, yyyy 'at' h:mm a")}
                                     </p>
                                 </div>
@@ -119,8 +137,8 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                 </div>
             )}
 
-            <div className="flex items-center justify-between text-xs text-zinc-400">
-                <span>Submitted {item.submittedAt ? format(new Date(item.submittedAt), "PPP") : "\u2014"}</span>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Submitted {item.submittedAt ? format(new Date(item.submittedAt), "PPP") : "Not submitted"}</span>
                 <span>Created {format(new Date(item.createdAt), "PPP")}</span>
             </div>
 

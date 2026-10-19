@@ -3,9 +3,9 @@
 import { AlertCircle, CheckCircle, ImageIcon, LoaderCircle, Pencil, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
+import { PosterButton, PosterDialogContent, PosterDialogFooter, PosterInput } from "@/components/poster";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
     Popover,
     PopoverContent,
@@ -172,7 +172,7 @@ export function FileUpload({
 
     return (
         <div className={iconOverlay ? "absolute right-0 bottom-0" : "space-y-3"}>
-            <Input
+            <PosterInput
                 ref={inputRef}
                 id={inputId ?? `file-upload-${category}`}
                 type="file"
@@ -232,26 +232,26 @@ export function FileUpload({
                             {editDescription && <PopoverDescription>{editDescription}</PopoverDescription>}
                         </PopoverHeader>
                         <div className="flex flex-col gap-2">
-                            <Button
+                            <PosterButton
+                                tone="outline"
                                 type="button"
-                                variant="outline"
                                 className="justify-start"
                                 onClick={handleChoosePhoto}
                             >
                                 <Upload data-icon="inline-start" />
                                 Upload a photo
-                            </Button>
+                            </PosterButton>
                             {hasCurrentFile && onRemove && (
                                 <ConfirmActionAlertDialog
                                     trigger={
-                                        <Button
+                                        <PosterButton
+                                            tone="outline"
                                             type="button"
-                                            variant="outline"
                                             className="justify-start text-destructive"
                                         >
                                             <Trash2 data-icon="inline-start" />
                                             Remove photo
-                                        </Button>
+                                        </PosterButton>
                                     }
                                     title="Remove photo?"
                                     description="This will remove the photo from this profile or team logo."
@@ -286,7 +286,7 @@ export function FileUpload({
                     if (!open) void handleCancelDialog();
                 }}
             >
-                <DialogContent>
+                <PosterDialogContent>
                     <DialogHeader>
                         <DialogTitle>Use this photo?</DialogTitle>
                     </DialogHeader>
@@ -317,40 +317,50 @@ export function FileUpload({
                     {error && <p className="text-sm text-destructive">{error}</p>}
                     {cleanupError && <p className="text-sm text-destructive">{cleanupError}</p>}
 
-                    <DialogFooter>
+                    <PosterDialogFooter>
                         {uploadedFile ? (
                             <>
-                                <Button
+                                <PosterButton
+                                    tone="outline"
                                     type="button"
-                                    variant="outline"
                                     onClick={() => void handleCancelDialog()}
                                     disabled={isSaving}
                                 >
                                     Cancel
-                                </Button>
-                                <Button type="button" onClick={() => void handleUseUploadedFile()} disabled={isSaving}>
+                                </PosterButton>
+                                <PosterButton
+                                    tone="brand"
+                                    type="button"
+                                    onClick={() => void handleUseUploadedFile()}
+                                    disabled={isSaving}
+                                >
                                     {isSaving && <LoaderCircle className="animate-spin" data-icon="inline-start" />}
                                     {isSaving ? "Saving…" : "Use this photo"}
-                                </Button>
+                                </PosterButton>
                             </>
                         ) : (
                             <>
-                                <Button
+                                <PosterButton
+                                    tone="outline"
                                     type="button"
-                                    variant="outline"
                                     onClick={() => void handleCancelDialog()}
                                     disabled={isUploading || isSaving}
                                 >
                                     Cancel
-                                </Button>
-                                <Button type="button" onClick={handleUpload} disabled={isUploading || !selectedFile}>
+                                </PosterButton>
+                                <PosterButton
+                                    tone="brand"
+                                    type="button"
+                                    onClick={handleUpload}
+                                    disabled={isUploading || !selectedFile}
+                                >
                                     {isUploading && <LoaderCircle className="animate-spin" data-icon="inline-start" />}
                                     {isUploading ? "Uploading…" : "Use this photo"}
-                                </Button>
+                                </PosterButton>
                             </>
                         )}
-                    </DialogFooter>
-                </DialogContent>
+                    </PosterDialogFooter>
+                </PosterDialogContent>
             </Dialog>
         </div>
     );

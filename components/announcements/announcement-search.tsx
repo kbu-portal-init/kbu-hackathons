@@ -3,8 +3,7 @@
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput } from "@/components/poster";
 
 type AnnouncementSearchProps = {
     defaultValue?: string;
@@ -31,7 +30,7 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                             className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                         />
 
-                        <Input
+                        <PosterInput
                             type="search"
                             name="search"
                             value={search}
@@ -39,29 +38,30 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                             placeholder={labels.search}
                             aria-label={labels.search}
                             maxLength={100}
-                            className="h-11 w-full min-w-0 rounded-xl border-orange-200 bg-white pl-9 pr-11 text-sm appearance-none [&::-webkit-search-cancel-button]:appearance-none"
+                            className="h-11 w-full min-w-0 border-2 border-border/25 bg-card pl-9 pr-11 text-sm appearance-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 [&::-webkit-search-cancel-button]:appearance-none"
                         />
 
                         {search && (
-                            <Button
+                            <PosterButton
+                                tone="destructive"
                                 type="button"
-                                variant="destructive"
                                 size="icon"
                                 aria-label={labels.closeSearch}
                                 onClick={() => setSearch("")}
-                                className="absolute right-1.5 top-1/2 size-8 -translate-y-1/2 rounded-full"
+                                className="absolute right-1.5 top-1/2 size-8 -translate-y-1/2 border-2 border-border bg-foreground text-background hover:bg-accent hover:text-accent-foreground"
                             >
                                 <X className="size-4" strokeWidth={2.25} aria-hidden="true" />
-                            </Button>
+                            </PosterButton>
                         )}
                     </div>
 
-                    <Button
+                    <PosterButton
+                        tone="solid"
                         type="submit"
-                        className="h-11 shrink-0 rounded-xl bg-orange-600 px-3 text-white hover:bg-orange-700 sm:px-6"
+                        className="h-11 shrink-0 border-2 border-border bg-foreground px-4 font-display text-sm font-semibold text-background hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground sm:px-6"
                     >
                         {labels.searchButton}
-                    </Button>
+                    </PosterButton>
                 </form>
             </search>
         </div>

@@ -19,22 +19,22 @@ export default function ResetPasswordPage({ searchParams }: ResetPasswordPagePro
 function ResetPasswordFallback() {
     return (
         <main
-            className="flex flex-1 items-center justify-center bg-secondary/60 px-6 py-16"
+            className="flex flex-1 items-center justify-center bg-background px-5 py-16 sm:px-8"
             role="status"
             aria-label="Loading password reset"
         >
             <span className="sr-only">Loading password reset</span>
             <div className="w-full max-w-md">
-                <Skeleton className="mb-8 h-4 w-44 bg-zinc-100" />
-                <div className="rounded-2xl border border-border/10 bg-white p-7 shadow-xl shadow-secondary/40">
-                    <Skeleton className="size-11 rounded-xl bg-secondary" />
-                    <Skeleton className="mt-6 h-3 w-40 bg-secondary" />
-                    <Skeleton className="mt-3 h-8 w-3/4 bg-zinc-100" />
+                <Skeleton className="mb-8 h-4 w-44 bg-foreground/10" />
+                <div className="border-2 border-border bg-card p-7 sm:p-8">
+                    <Skeleton className="size-11 bg-primary/20" />
+                    <Skeleton className="mt-6 h-3 w-40 bg-foreground/10" />
+                    <Skeleton className="mt-3 h-8 w-3/4 bg-foreground/10" />
                     <div className="mt-6 space-y-4">
-                        <Skeleton className="h-11 w-full bg-zinc-100" />
-                        <Skeleton className="h-11 w-full bg-zinc-100" />
+                        <Skeleton className="h-11 w-full bg-foreground/10" />
+                        <Skeleton className="h-11 w-full bg-foreground/10" />
                     </div>
-                    <Skeleton className="mt-6 h-11 w-full rounded-lg bg-secondary" />
+                    <Skeleton className="mt-6 h-11 w-full bg-primary/20" />
                 </div>
             </div>
         </main>

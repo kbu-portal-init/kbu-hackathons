@@ -85,10 +85,10 @@ export function AnnouncementsContent({ query, locale }: { query: AnnouncementQue
                                     key={item.value}
                                     href={getCategoryHref(item.value, search)}
                                     aria-current={isActive ? "page" : undefined}
-                                    className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                                    className={`inline-flex min-h-11 items-center justify-center border-2 px-4 py-2 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                                         isActive
-                                            ? "border-orange-600 bg-orange-600 text-white"
-                                            : "border-border bg-white text-muted-foreground hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+                                            ? "border-border bg-foreground text-background"
+                                            : "border-border/20 bg-card text-muted-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
                                     }`}
                                 >
                                     {t.categories[item.value]}

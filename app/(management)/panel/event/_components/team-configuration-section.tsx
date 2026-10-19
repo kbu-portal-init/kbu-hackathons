@@ -3,8 +3,8 @@
 import { Users } from "lucide-react";
 import type { Control } from "react-hook-form";
 import { Controller, useWatch } from "react-hook-form";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { PosterFieldLabel, PosterInput, PosterPanel } from "@/components/poster";
+import { Field, FieldDescription, FieldError, FieldGroup } from "@/components/ui/field";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 
 type Props = {
@@ -19,10 +19,10 @@ export function TeamConfigurationSection({ control }: Props) {
     const totalTeams = Number(thaiTeams ?? 0) + Number(internationalTeams ?? 0);
 
     return (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+        <PosterPanel className="p-6">
             <div className="flex items-center gap-2">
-                <Users className="size-5 text-primary/70" />
-                <h2 className="text-lg font-semibold">Team configuration</h2>
+                <Users className="size-5 text-muted-foreground" />
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Team configuration</h2>
             </div>
             <FieldGroup className="mt-5">
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -31,13 +31,19 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Max Thai program teams</FieldLabel>
-                                <Input
+                                <PosterFieldLabel
+                                    htmlFor={field.name}
+                                    className="font-display text-sm font-semibold text-foreground"
+                                >
+                                    Max Thai program teams
+                                </PosterFieldLabel>
+                                <PosterInput
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={0}
                                     aria-invalid={fieldState.invalid}
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 <FieldDescription>Set to 0 to close the Thai program track.</FieldDescription>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -49,13 +55,19 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Max International program teams</FieldLabel>
-                                <Input
+                                <PosterFieldLabel
+                                    htmlFor={field.name}
+                                    className="font-display text-sm font-semibold text-foreground"
+                                >
+                                    Max International program teams
+                                </PosterFieldLabel>
+                                <PosterInput
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={0}
                                     aria-invalid={fieldState.invalid}
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 <FieldDescription>Set to 0 to close the International program track.</FieldDescription>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -64,8 +76,10 @@ export function TeamConfigurationSection({ control }: Props) {
                     />
                 </div>
                 <Field>
-                    <FieldLabel>Max teams (total)</FieldLabel>
-                    <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
+                    <PosterFieldLabel className="font-display text-sm font-semibold text-foreground">
+                        Max teams (total)
+                    </PosterFieldLabel>
+                    <div className="flex h-9 items-center border-2 border-border/15 bg-background px-3 text-sm text-muted-foreground">
                         {totalTeams}
                     </div>
                     <FieldDescription>Sum of the two program limits above.</FieldDescription>
@@ -76,13 +90,19 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Min team size</FieldLabel>
-                                <Input
+                                <PosterFieldLabel
+                                    htmlFor={field.name}
+                                    className="font-display text-sm font-semibold text-foreground"
+                                >
+                                    Min team size
+                                </PosterFieldLabel>
+                                <PosterInput
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={1}
                                     aria-invalid={fieldState.invalid}
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -93,13 +113,19 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor={field.name}>Max team size</FieldLabel>
-                                <Input
+                                <PosterFieldLabel
+                                    htmlFor={field.name}
+                                    className="font-display text-sm font-semibold text-foreground"
+                                >
+                                    Max team size
+                                </PosterFieldLabel>
+                                <PosterInput
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={1}
                                     aria-invalid={fieldState.invalid}
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -107,6 +133,6 @@ export function TeamConfigurationSection({ control }: Props) {
                     />
                 </div>
             </FieldGroup>
-        </section>
+        </PosterPanel>
     );
 }

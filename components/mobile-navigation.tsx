@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
@@ -12,6 +12,7 @@ import { isActivePath, publicLinks } from "@/lib/navigation";
 export function MobileNavigation({ locale }: { locale: Locale }) {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
+    const toggleRef = useRef<HTMLButtonElement>(null);
     const t = getMessages(locale).common;
     const labels = { "/register": t.register, "/announcements": t.announcements, "/resources": t.resources };
 
@@ -23,16 +24,26 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
         const previousOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
 
+        function closeOnEscape(event: KeyboardEvent) {
+            if (event.key !== "Escape") return;
+            setOpen(false);
+            toggleRef.current?.focus();
+        }
+
+        document.addEventListener("keydown", closeOnEscape);
+
         return () => {
             document.body.style.overflow = previousOverflow;
+            document.removeEventListener("keydown", closeOnEscape);
         };
     }, [open]);
 
     return (
         <>
             <button
+                ref={toggleRef}
                 type="button"
-                className="flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary"
+                className="flex size-11 items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
                 aria-controls="mobile-navigation"
                 aria-expanded={open}
                 aria-label={open ? t.closeMenu : t.openMenu}
@@ -43,15 +54,15 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
             {open ? (
                 <nav
                     id="mobile-navigation"
-                    className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto bg-white px-6 py-6"
+                    className="fixed inset-x-0 top-16 z-40 flex h-[calc(100dvh-4rem)] flex-col overflow-y-auto border-t-2 border-border/10 bg-background px-5 py-5"
                     aria-label={t.mobileNavigation}
                 >
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col">
                         {publicLinks.map(({ label, href }) => {
                             const active = isActivePath(pathname, href);
                             const linkClassName = active
-                                ? "rounded-xl bg-secondary px-4 py-3 text-base font-semibold text-primary/90"
-                                : "rounded-xl px-4 py-3 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-primary/90";
+                                ? "border-b-2 border-border/15 bg-accent px-4 py-3.5 font-display text-base font-semibold text-accent-foreground"
+                                : "border-b-2 border-border/15 px-4 py-3.5 font-display text-base font-medium text-muted-foreground hover:bg-accent/40 hover:text-foreground";
                             return (
                                 <Link
                                     key={href}
@@ -64,17 +75,19 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                                 </Link>
                             );
                         })}
-                        <div className="mt-2 border-t border-zinc-200 pt-4">
-                            <p className="px-4 pb-2 text-xs font-semibold text-zinc-500">{t.language}</p>
+                        <div className="mt-5">
+                            <p className="px-4 pb-2.5 font-display text-xs font-semibold text-muted-foreground">
+                                {t.language}
+                            </p>
                             <LanguageSwitcher locale={locale} className="w-full" />
                         </div>
                     </div>
-                    <div className="mt-auto border-t border-border/10 pt-6">
+                    <div className="mt-auto border-t-2 border-border/10 pt-6">
                         <Link
                             href="/login"
                             onClick={() => setOpen(false)}
                             aria-current={isActivePath(pathname, "/login") ? "page" : undefined}
-                            className="block rounded-full bg-gradient-accent px-4 py-3 text-center text-sm font-semibold text-white"
+                            className="flex min-h-12 items-center justify-center border-2 border-primary bg-primary px-4 py-3 text-center font-display text-sm font-semibold text-foreground"
                         >
                             {t.signIn}
                         </Link>

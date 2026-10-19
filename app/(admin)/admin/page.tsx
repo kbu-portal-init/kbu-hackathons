@@ -24,10 +24,10 @@ export default function AdminPage() {
                     <Link
                         key={href}
                         href={href}
-                        className="rounded-2xl border border-zinc-200 p-5 hover:border-orange-300"
+                        className="group border-2 border-border bg-card p-5 transition-colors hover:bg-accent hover:text-accent-foreground"
                     >
-                        <h2 className="font-semibold">{title}</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+                        <h2 className="font-display text-lg font-bold tracking-tight text-foreground">{title}</h2>
+                        <p className="mt-2 text-sm text-muted-foreground group-hover:text-foreground">{description}</p>
                     </Link>
                 ))}
             </div>
@@ -58,10 +58,12 @@ async function AdminOverview() {
                 <Link
                     key={label}
                     href={href}
-                    className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-orange-300"
+                    className="border-2 border-border bg-card p-5 transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
-                    <p className="text-sm text-muted-foreground">{label}</p>
-                    <p className="mt-3 text-3xl font-bold">{value}</p>
+                    <p className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        {label}
+                    </p>
+                    <p className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground">{value}</p>
                 </Link>
             ))}
         </div>

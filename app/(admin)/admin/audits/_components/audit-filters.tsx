@@ -1,8 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput } from "@/components/poster";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type AuditAction, auditActions } from "@/lib/contracts/audits";
@@ -79,13 +78,19 @@ export function AuditFilters({ userId, userKind, action }: Props) {
     return (
         <form
             onSubmit={applyFilters}
-            className="grid gap-4 rounded-2xl border border-zinc-200 bg-white p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+            className="grid gap-4 border-2 border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
             <div className="space-y-2">
-                <Label>User</Label>
+                <Label className="font-display text-sm font-semibold text-foreground">User</Label>
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger
-                        render={<Button type="button" variant="outline" className="w-full justify-start font-normal" />}
+                        render={
+                            <PosterButton
+                                tone="outline"
+                                type="button"
+                                className="h-9 w-full justify-start border-2 border-border/25 bg-card font-normal text-foreground"
+                            />
+                        }
                     >
                         {selected
                             ? `${selected.name} · ${selected.email}`
@@ -96,21 +101,33 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                     <PopoverContent className="w-[min(28rem,calc(100vw-2rem))]" align="start">
                         <div className="space-y-3">
                             <div className="space-y-2">
-                                <Label htmlFor="user-search">Search users</Label>
-                                <Input
+                                <Label
+                                    htmlFor="user-search"
+                                    className="font-display text-sm font-semibold text-foreground"
+                                >
+                                    Search users
+                                </Label>
+                                <PosterInput
                                     id="user-search"
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={search}
                                     onChange={(event) => setSearch(event.target.value)}
                                     placeholder="ID, name, or email"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="user-limit">Limit</Label>
-                                <Input
+                                <Label
+                                    htmlFor="user-limit"
+                                    className="font-display text-sm font-semibold text-foreground"
+                                >
+                                    Limit
+                                </Label>
+                                <PosterInput
                                     id="user-limit"
                                     type="number"
                                     min={1}
                                     max={500}
+                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={limit}
                                     onChange={(event) =>
                                         setLimit(Math.min(500, Math.max(1, Number(event.target.value) || 1)))
@@ -122,7 +139,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                     <button
                                         type="button"
                                         key={`${item.kind}:${item.id}`}
-                                        className="block w-full rounded-md p-2 text-left hover:bg-orange-50"
+                                        className="block w-full p-2 text-left hover:bg-accent hover:text-accent-foreground"
                                         onClick={() => {
                                             setSelected(item);
                                             setOpen(false);
@@ -145,27 +162,29 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
                             </div>
                             {hasNext && (
-                                <Button
+                                <PosterButton
+                                    tone="outline"
                                     type="button"
-                                    variant="outline"
                                     className="w-full"
                                     disabled={loading}
                                     onClick={() => void loadMore()}
                                 >
                                     Load more
-                                </Button>
+                                </PosterButton>
                             )}
                         </div>
                     </PopoverContent>
                 </Popover>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="action">Audit log type</Label>
+                <Label htmlFor="action" className="font-display text-sm font-semibold text-foreground">
+                    Audit log type
+                </Label>
                 <select
                     id="action"
                     name="action"
                     defaultValue={action ?? ""}
-                    className="flex h-9 w-full rounded-md border border-zinc-200 bg-transparent px-3 text-sm shadow-sm outline-none focus:border-orange-500"
+                    className="flex h-9 w-full border-2 border-border/25 bg-card px-3 text-sm outline-none focus:border-primary"
                 >
                     <option value="">All audit types</option>
                     {auditActions.map((auditAction) => (
@@ -176,10 +195,21 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 </select>
             </div>
             <div className="flex gap-2">
-                <Button type="submit">Filter</Button>
-                <Button type="button" variant="outline" onClick={clear}>
+                <PosterButton
+                    tone="solid"
+                    type="submit"
+                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                >
+                    Filter
+                </PosterButton>
+                <PosterButton
+                    tone="outline"
+                    type="button"
+                    className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                    onClick={clear}
+                >
                     Clear
-                </Button>
+                </PosterButton>
             </div>
         </form>
     );

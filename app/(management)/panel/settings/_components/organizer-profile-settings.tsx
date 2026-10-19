@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { changeOrganizerPassword, updateOrganizerProfile } from "@/actions/management/organizer-profile";
 import { FileUpload } from "@/components/file-upload";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput, PosterPanel } from "@/components/poster";
 import { Label } from "@/components/ui/label";
 import type { OrganizerProfileDTO } from "@/lib/contracts/organizer-profile";
 
@@ -28,19 +27,13 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
 
     return (
         <div className="grid max-w-4xl gap-6 lg:grid-cols-2">
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-                <h2 className="text-lg font-semibold">Profile information</h2>
+            <PosterPanel className="p-6">
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Profile information</h2>
                 <form onSubmit={saveProfile} className="mt-5 space-y-5">
                     <div className="flex min-w-0 flex-col items-center gap-4 sm:flex-row">
-                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible rounded-full bg-secondary text-2xl font-bold text-primary/90">
+                        <div className="relative flex size-20 shrink-0 items-center justify-center overflow-visible bg-accent font-display text-2xl font-bold text-accent-foreground">
                             {image ? (
-                                <Image
-                                    src={image}
-                                    alt="Profile"
-                                    fill
-                                    className="rounded-full object-cover"
-                                    unoptimized
-                                />
+                                <Image src={image} alt="Profile" fill className="object-cover" unoptimized />
                             ) : (
                                 profile.name.slice(0, 1).toUpperCase()
                             )}
@@ -63,31 +56,42 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-name">Name</Label>
-                        <Input
+                        <Label htmlFor="organizer-name" className="font-display text-sm font-semibold text-foreground">
+                            Name
+                        </Label>
+                        <PosterInput
                             id="organizer-name"
+                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                             required
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-email">Email</Label>
-                        <Input
+                        <Label htmlFor="organizer-email" className="font-display text-sm font-semibold text-foreground">
+                            Email
+                        </Label>
+                        <PosterInput
                             id="organizer-email"
                             type="email"
+                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             required
                         />
                     </div>
-                    <Button type="submit" disabled={saving}>
+                    <PosterButton
+                        tone="solid"
+                        type="submit"
+                        disabled={saving}
+                        className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                    >
                         {saving ? "Saving..." : "Save profile"}
-                    </Button>
+                    </PosterButton>
                 </form>
-            </section>
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-                <h2 className="text-lg font-semibold">Change password</h2>
+            </PosterPanel>
+            <PosterPanel className="p-6">
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Change password</h2>
                 <PasswordChangeForm
                     idPrefix="organizer"
                     forgotPasswordEmail={email}
@@ -96,7 +100,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         return result.ok ? { ok: true } : { ok: false, error: result.error };
                     }}
                 />
-            </section>
+            </PosterPanel>
         </div>
     );
 }

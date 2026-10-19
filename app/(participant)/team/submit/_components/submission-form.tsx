@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveSubmission } from "@/actions/participant/submissions";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import { Button } from "@/components/ui/button";
+import { PosterButton } from "@/components/poster";
 import type { SubmissionDTO } from "@/lib/contracts/submissions";
 
 const fields = [
@@ -67,20 +67,20 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
     return (
         <div className="mt-8 space-y-5">
             {locked && (
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                <div className="border-2 border-border bg-accent p-4 font-medium text-accent-foreground">
                     This submission is finalized and is currently read-only.
                 </div>
             )}
             {error && (
-                <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+                <div
+                    role="alert"
+                    className="border-2 border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive"
+                >
                     {error}
                 </div>
             )}
             {message && (
-                <div
-                    role="status"
-                    className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
-                >
+                <div role="status" className="border-2 border-border bg-accent p-4 font-medium text-accent-foreground">
                     {message}
                 </div>
             )}
@@ -93,7 +93,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
             >
                 {fields.map(([name, label, type, maxLength]) => (
                     <label className="block space-y-2" htmlFor={`submission-${name}`} key={name}>
-                        <span className="text-sm font-semibold text-foreground">
+                        <span className="font-display text-sm font-semibold text-foreground">
                             {label}
                             {[
                                 "title",
@@ -110,7 +110,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         {type === "textarea" ? (
                             <textarea
                                 id={`submission-${name}`}
-                                className="min-h-28 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:opacity-60"
+                                className="min-h-28 w-full border-2 border-border/25 bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 value={values[name]}
@@ -121,7 +121,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         ) : (
                             <input
                                 id={`submission-${name}`}
-                                className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:opacity-60"
+                                className="h-11 w-full border-2 border-border/25 bg-card px-3 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 type={type}
@@ -139,22 +139,24 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         )}
                     </label>
                 ))}
-                <div className="flex flex-col gap-3 border-t pt-5 sm:flex-row">
-                    <button
-                        className="rounded-lg border border-orange-600 px-5 py-3 font-semibold text-orange-700 disabled:opacity-50"
+                <div className="flex flex-col gap-3 border-t-2 border-border/15 pt-5 sm:flex-row sm:justify-end">
+                    <PosterButton
+                        tone="outline"
+                        className="h-11 px-5 font-display text-sm font-semibold"
                         disabled={locked || isPending}
                         type="submit"
                     >
                         {isPending ? "Saving..." : "Save draft"}
-                    </button>
+                    </PosterButton>
                     <ConfirmActionAlertDialog
                         trigger={
-                            <Button
-                                className="rounded-lg bg-orange-600 px-5 py-3 font-semibold text-white"
+                            <PosterButton
+                                tone="solid"
+                                className="h-11 px-5 font-display text-sm font-semibold"
                                 disabled={locked || isPending}
                             >
                                 Finalize submission
-                            </Button>
+                            </PosterButton>
                         }
                         title="Finalize submission?"
                         description="After finalizing, your team cannot edit this submission unless an organizer reopens it."

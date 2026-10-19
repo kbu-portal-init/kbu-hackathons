@@ -2,15 +2,15 @@
 
 import { reopenTeamSubmission } from "@/actions/management/submissions";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import { Button } from "@/components/ui/button";
+import { PosterButton } from "@/components/poster";
 
 export function ReopenSubmissionButton({ submissionId }: { submissionId: string }) {
     return (
         <ConfirmActionAlertDialog
             trigger={
-                <Button variant="outline" size="sm">
+                <PosterButton tone="outline" size="sm">
                     Reopen for editing
-                </Button>
+                </PosterButton>
             }
             title="Reopen submission?"
             description="The team will be able to edit and resubmit this project."

@@ -40,22 +40,22 @@ function HighlightPanel({
     const Icon = isImportant ? Star : Megaphone;
 
     return (
-        <section className="rounded-xl border border-stone-200 bg-white p-3 shadow-sm sm:p-4">
+        <section className="border-2 border-border bg-card p-4">
             <div className="mb-2 flex items-center gap-2">
                 <Icon
                     aria-hidden="true"
-                    className={`size-4 shrink-0 ${isImportant ? "text-orange-600" : "text-emerald-600"}`}
+                    className={`size-4 shrink-0 ${isImportant ? "text-primary" : "text-success"}`}
                 />
-                <h2 className="text-sm font-semibold text-stone-900">{title}</h2>
+                <h2 className="font-display text-sm font-semibold text-foreground">{title}</h2>
             </div>
 
             {announcements.length > 0 ? (
-                <ul className="divide-y divide-stone-100">
+                <ul className="divide-y divide-border/15">
                     {announcements.map((announcement) => (
                         <li key={announcement.id} className="py-2 first:pt-1 last:pb-1">
                             <Link
                                 href={`/announcements/${announcement.id}`}
-                                className="group flex items-start justify-between gap-2 text-sm leading-5 text-stone-700 transition-colors hover:text-orange-700"
+                                className="group flex items-start justify-between gap-2 text-sm leading-5 text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 <span className="line-clamp-2 min-w-0">{announcement.title}</span>
                                 <ArrowRight
@@ -67,12 +67,12 @@ function HighlightPanel({
                     ))}
                 </ul>
             ) : (
-                <p className="py-2 text-xs leading-5 text-stone-500">{labels.empty}</p>
+                <p className="py-2 text-xs leading-5 text-muted-foreground">{labels.empty}</p>
             )}
 
             <Link
                 href={`/announcements?category=${category}`}
-                className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-orange-700 hover:underline"
+                className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
             >
                 {labels.viewAll}
             </Link>

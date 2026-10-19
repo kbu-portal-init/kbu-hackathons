@@ -9,12 +9,17 @@ export default async function TeamsPage() {
 
     return (
         <main className="space-y-8">
-            <div>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-primary">{team.displayName}</h1>
-                <p className="mt-2 text-muted-foreground">
+            <header className="border-b-2 border-border/15 pb-5">
+                <p className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Participant workspace
+                </p>
+                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
+                    {team.displayName}
+                </h1>
+                <p className="mt-3 max-w-2xl text-muted-foreground">
                     Generate and share a branded digital card for each team member.
                 </p>
-            </div>
+            </header>
             <Suspense fallback={<DashboardCardGridSkeleton />}>
                 <MemberCardsContent teamId={team.id} />
             </Suspense>

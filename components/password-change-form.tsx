@@ -4,8 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ForgotPasswordButton } from "@/components/forgot-password-button";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PosterButton, PosterInput } from "@/components/poster";
 import { Label } from "@/components/ui/label";
 
 type PasswordValues = { currentPassword: string; newPassword: string; confirmPassword: string };
@@ -54,31 +53,41 @@ export function PasswordChangeForm({
                     ] as const
                 ).map(([suffix, label, key]) => (
                     <div className="space-y-2" key={suffix}>
-                        <Label htmlFor={`${idPrefix}-${suffix}`}>{label}</Label>
-                        <Input
+                        <Label
+                            className="font-display text-sm font-semibold text-foreground"
+                            htmlFor={`${idPrefix}-${suffix}`}
+                        >
+                            {label}
+                        </Label>
+                        <PosterInput
                             id={`${idPrefix}-${suffix}`}
                             type={visible[key] ? "text" : "password"}
-                            className="pr-10"
+                            className="h-11 border-2 border-border/25 bg-card pr-10 text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={values[key]}
                             onChange={(event) => setValues({ ...values, [key]: event.target.value })}
                             minLength={key === "currentPassword" ? undefined : 8}
                             required
                         />
-                        <Button
+                        <PosterButton
+                            tone="ghost"
                             type="button"
-                            variant="ghost"
                             size="icon-sm"
                             className="relative float-right -mt-9 mr-1"
                             aria-label={visible[key] ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
                             onClick={() => setVisible((current) => ({ ...current, [key]: !current[key] }))}
                         >
                             {visible[key] ? <EyeOff /> : <Eye />}
-                        </Button>
+                        </PosterButton>
                     </div>
                 ))}
-                <Button type="submit" disabled={saving}>
+                <PosterButton
+                    tone="solid"
+                    type="submit"
+                    disabled={saving}
+                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                >
                     {saving ? "Saving..." : "Change password"}
-                </Button>
+                </PosterButton>
             </form>
         </>
     );
