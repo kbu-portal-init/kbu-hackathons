@@ -43,7 +43,7 @@ export const messages = {
             calloutTitle: "Your team is one commit away",
             heroIntro:
                 "Two days to turn a real problem into a working prototype. Build with your team, present to judges, and see what your campus can make.",
-            firstEdition: "First edition",
+            eventEyebrow: "First-ever hackathon",
             eventDates: "Event",
             registrationDates: "Registration",
             venue: "Venue",
@@ -411,7 +411,7 @@ export const messages = {
             calloutTitle: "ทีมของคุณห่างจากความสำเร็จเพียงหนึ่ง commit",
             heroIntro:
                 "สองวันกับการเปลี่ยนปัญหาในโลกจริงให้เป็นต้นแบบที่ใช้งานได้ สร้างผลงานกับทีม นำเสนอต่อกรรมการ และดูว่าพวกคุณสร้างอะไรได้บ้าง",
-            firstEdition: "ครั้งแรก",
+            eventEyebrow: "แฮกกาธอนครั้งแรก",
             eventDates: "วันจัดงาน",
             registrationDates: "รับสมัคร",
             venue: "สถานที่",

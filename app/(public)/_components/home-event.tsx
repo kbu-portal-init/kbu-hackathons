@@ -95,7 +95,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
                     <div>
                         <div className="flex items-center justify-between gap-4 border-b-2 border-foreground/25 pb-3">
                             <p className="font-display text-xs font-semibold sm:text-sm">Kasem Bundit University</p>
-                            <p className="font-display text-xs font-semibold sm:text-sm">{t.home.firstEdition}</p>
+                            <p className="font-display text-xs font-semibold sm:text-sm">{t.home.eventEyebrow}</p>
                         </div>
 
                         <h1 className="mt-7 font-display text-[clamp(3.25rem,13vw,7rem)] font-bold leading-[0.84] tracking-tighter">
