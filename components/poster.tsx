@@ -72,7 +72,7 @@ export function PosterTextarea({ className, ...props }: ComponentProps<typeof Te
 }
 
 export function PosterSelectTrigger({ className, ...props }: ComponentProps<typeof SelectTrigger>) {
-    return <SelectTrigger className={cn("h-11 w-full", fieldClasses, className)} {...props} />;
+    return <SelectTrigger className={cn("!h-11 w-full", fieldClasses, className)} {...props} />;
 }
 
 export function PosterFieldLabel({ className, ...props }: ComponentProps<typeof FieldLabel>) {
