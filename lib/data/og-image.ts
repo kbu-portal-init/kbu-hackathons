@@ -1,20 +1,23 @@
 import "server-only";
 
-import { getEventSettings } from "@/lib/data/event-settings";
+/**
+ * Social preview fallback. Must stay a raster format Facebook's crawler accepts
+ * (jpeg/png/gif) — WebP is not supported for `og:image`.
+ */
+export const STATIC_OG_IMAGE = "/images/og.jpg";
 
-const STATIC_OG_IMAGE = "/images/kbu.webp";
+const SOCIAL_SAFE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif"];
+
+function isSocialSafeImage(url: string): boolean {
+    const path = url.split(/[?#]/)[0].toLowerCase();
+    return SOCIAL_SAFE_EXTENSIONS.some((extension) => path.endsWith(extension));
+}
 
 /**
- * Resolve the social-preview image chain: preferred (announcement) image,
- * then the first organizer event image, then the static fallback.
+ * Resolve the social-preview image. A preferred image is only used when it is a
+ * format `og:image` consumers accept; otherwise (e.g. an uploaded WebP) the
+ * static JPEG fallback is returned.
  */
-export async function resolveOgImageUrl(preferred: string | null = null): Promise<string> {
-    if (preferred) return preferred;
-
-    try {
-        const event = await getEventSettings();
-        return event?.imageUrls[0] ?? STATIC_OG_IMAGE;
-    } catch {
-        return STATIC_OG_IMAGE;
-    }
+export function resolveOgImageUrl(preferred: string | null = null): string {
+    return preferred && isSocialSafeImage(preferred) ? preferred : STATIC_OG_IMAGE;
 }

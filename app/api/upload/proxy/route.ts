@@ -28,8 +28,13 @@ const IMAGE_CATEGORIES = [
     "member-profile-image",
 ] as const;
 
+// Announcement images are used as social previews (`og:image`), which Facebook
+// only accepts as jpeg/png/gif — never WebP.
+const JPEG_CATEGORIES = ["announcement-image"] as const;
+
 const MAX_IMAGE_DIMENSION = 1600;
 const WEBP_QUALITY = 82;
+const JPEG_QUALITY = 82;
 
 async function getUploadOwner(category: string) {
     try {
@@ -130,17 +135,22 @@ export async function POST(request: NextRequest) {
                     return NextResponse.json({ error: "Animated GIF images are not supported" }, { status: 400 });
                 }
 
-                buffer = await sharp(inputBuffer)
-                    .resize({
-                        width: MAX_IMAGE_DIMENSION,
-                        height: MAX_IMAGE_DIMENSION,
-                        fit: "inside",
-                        withoutEnlargement: true,
-                    })
-                    .webp({ quality: WEBP_QUALITY })
-                    .toBuffer();
-                extension = "webp";
-                contentType = "image/webp";
+                const resized = sharp(inputBuffer).resize({
+                    width: MAX_IMAGE_DIMENSION,
+                    height: MAX_IMAGE_DIMENSION,
+                    fit: "inside",
+                    withoutEnlargement: true,
+                });
+
+                if (JPEG_CATEGORIES.includes(category as (typeof JPEG_CATEGORIES)[number])) {
+                    buffer = await resized.jpeg({ quality: JPEG_QUALITY }).toBuffer();
+                    extension = "jpg";
+                    contentType = "image/jpeg";
+                } else {
+                    buffer = await resized.webp({ quality: WEBP_QUALITY }).toBuffer();
+                    extension = "webp";
+                    contentType = "image/webp";
+                }
             } catch {
                 return NextResponse.json({ error: "Invalid image file" }, { status: 400 });
             }

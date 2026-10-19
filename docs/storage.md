@@ -6,7 +6,12 @@ Uploads use `app/api/upload/proxy` and `app/api/upload/delete`. The browser send
 
 - Team categories (`image`, `submission`, `member-profile-image`) require an approved team session and use `uploads/<team-id>/`.
 - `event-image` requires an organizer/admin session and uses `uploads/events/`.
+- `announcement-image` requires an organizer/admin session and uses `uploads/announcements/`.
 - `admin-profile-image` requires an admin session and uses `uploads/admins/<admin-id>/`.
+
+## Image encoding
+
+Image uploads are resized to at most 1600px and re-encoded server-side. Announcement images are encoded as JPEG because they are used as social previews (`og:image`), which Facebook only accepts as JPEG/PNG/GIF; all other image categories are encoded as WebP. Animated GIFs are rejected.
 
 ## Security rules
 

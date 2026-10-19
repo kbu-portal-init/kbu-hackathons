@@ -150,6 +150,12 @@ describe("upload API routes", () => {
         assert.equal(response.status, 200);
         assert.match(String(uploadedKey), /^uploads\/events\/[0-9a-f-]+\.webp$/);
 
+        // Announcement images become social previews, so they stay JPEG (never WebP).
+        uploadedKey = undefined;
+        response = await uploadPost(uploadRequest(png(), "announcement-image") as never);
+        assert.equal(response.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/announcements\/[0-9a-f-]+\.jpg$/);
+
         uploadedKey = undefined;
         access = "admin";
         response = await uploadPost(uploadRequest(png(), "admin-profile-image") as never);
