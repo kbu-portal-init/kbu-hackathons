@@ -5,7 +5,6 @@ import type { EventSettingsDTO } from "@/lib/contracts/event-settings";
 import { getEventSettings } from "@/lib/data/event-settings";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
-import { isOwnedR2PublicUrl } from "@/lib/r2";
 import { HomeAuthAction } from "./home-auth-action";
 
 type RegistrationState = "open" | "not-started" | "closed" | "unavailable";
@@ -84,9 +83,7 @@ function EventFact({ label, value }: { label: string; value: string }) {
 export async function HomeHero({ locale }: { locale: Locale }) {
     const t = getMessages(locale);
     const event = await getEventSettings();
-    const eventImage = event?.imageUrls.find((url) => isOwnedR2PublicUrl(url, "uploads/events"));
     const registrationState = registrationStateFrom(event);
-    const posterSrc = eventImage ?? "/images/kbu1.webp";
 
     return (
         <section className="relative text-foreground">
@@ -126,7 +123,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
                         <div className="relative border-2 border-border bg-background p-2.5">
                             <div className="relative aspect-16/10 overflow-hidden bg-secondary">
                                 <Image
-                                    src={posterSrc}
+                                    src="/images/kbu.webp"
                                     alt={event?.title ?? "KBU Hackathon 2026 event poster"}
                                     fill
                                     className="object-cover"
