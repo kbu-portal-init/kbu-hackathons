@@ -12,14 +12,17 @@ export default async function Home() {
 
     return (
         <main className="bg-background">
+            {/* Hero section */}
             <HomeHero locale={locale} />
 
-            <section className="border-b-2 border-border/10">
+            {/* About section & Need help section & FAQ section */}
+            <section className="border-b-2 border-border bg-secondary">
                 <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-20 lg:py-24">
                     <AboutContent />
                 </div>
             </section>
 
+            {/* Latest from the community section */}
             <section className="bg-background">
                 <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
                     <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
@@ -44,6 +47,7 @@ export default async function Home() {
                 </div>
             </section>
 
+            {/* Final call to action section */}
             <HomeFinalCta locale={locale} />
         </main>
     );

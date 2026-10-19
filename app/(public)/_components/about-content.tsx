@@ -77,13 +77,13 @@ export async function AboutContent() {
 
             <div
                 id="need-help"
-                className="mt-10 flex scroll-mt-24 flex-col gap-5 border-2 border-border bg-accent p-5 text-accent-foreground sm:flex-row sm:items-center sm:justify-between sm:p-6"
+                className="mt-10 flex scroll-mt-24 flex-col gap-5 border-2 border-border bg-primary p-5 text-foreground sm:flex-row sm:items-center sm:justify-between sm:p-6"
             >
                 <div className="flex items-start gap-3">
                     <MessageCircle className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
                     <div>
                         <h3 className="font-display text-lg font-semibold">{t.help}</h3>
-                        <p className="mt-1 max-w-xl text-sm leading-6 text-foreground/75">{t.helpText}</p>
+                        <p className="mt-1 max-w-xl text-sm leading-6 text-foreground">{t.helpText}</p>
                     </div>
                 </div>
                 <a
