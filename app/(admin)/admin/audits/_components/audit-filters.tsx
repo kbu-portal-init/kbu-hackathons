@@ -90,83 +90,89 @@ export function AuditFilters({ userId, userKind, action }: Props) {
         >
             <div className="space-y-2">
                 <Label>User</Label>
-                <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger
-                        render={
-                            <Button variant="outline" type="button" className="h-11 w-full justify-start font-normal" />
-                        }
-                    >
-                        {selected
-                            ? `${selected.name} · ${selected.email}`
-                            : userId
-                              ? `${userKind === "teamMember" ? "Team member" : "User"} · ${userId}`
-                              : "Select a user or team member"}
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[min(28rem,calc(100vw-2rem))]" align="start">
-                        <div className="space-y-3">
-                            <div className="space-y-2">
-                                <Label htmlFor="user-search">Search users</Label>
-                                <Input
-                                    id="user-search"
-                                    value={search}
-                                    onChange={(event) => setSearch(event.target.value)}
-                                    placeholder="ID, name, or email"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="user-limit">Limit</Label>
-                                <Input
-                                    id="user-limit"
-                                    type="number"
-                                    min={1}
-                                    max={500}
-                                    value={limit}
-                                    onChange={(event) =>
-                                        setLimit(Math.min(500, Math.max(1, Number(event.target.value) || 1)))
-                                    }
-                                />
-                            </div>
-                            <div className="max-h-64 space-y-1 overflow-y-auto">
-                                {users.map((item) => (
-                                    <button
-                                        type="button"
-                                        key={`${item.kind}:${item.id}`}
-                                        className="block w-full p-2 text-left hover:bg-accent hover:text-accent-foreground"
-                                        onClick={() => {
-                                            setSelected(item);
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        <div className="font-medium">
-                                            {item.name}{" "}
-                                            <span className="text-xs text-muted-foreground">
-                                                {item.kind === "teamMember" ? "Team member" : "User"}
-                                            </span>
-                                        </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            {item.email} · {item.id}
-                                        </div>
-                                    </button>
-                                ))}
-                                {!loading && users.length === 0 && (
-                                    <p className="p-2 text-sm text-muted-foreground">No users found.</p>
-                                )}
-                                {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
-                            </div>
-                            {hasNext && (
+                <div>
+                    <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger
+                            render={
                                 <Button
                                     variant="outline"
                                     type="button"
-                                    className="w-full"
-                                    disabled={loading}
-                                    onClick={() => void loadMore()}
-                                >
-                                    Load more
-                                </Button>
-                            )}
-                        </div>
-                    </PopoverContent>
-                </Popover>
+                                    className="h-11 w-full justify-start font-normal"
+                                />
+                            }
+                        >
+                            {selected
+                                ? `${selected.name} · ${selected.email}`
+                                : userId
+                                  ? `${userKind === "teamMember" ? "Team member" : "User"} · ${userId}`
+                                  : "Select a user or team member"}
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[min(28rem,calc(100vw-2rem))]" align="start">
+                            <div className="space-y-3">
+                                <div className="space-y-2">
+                                    <Label htmlFor="user-search">Search users</Label>
+                                    <Input
+                                        id="user-search"
+                                        value={search}
+                                        onChange={(event) => setSearch(event.target.value)}
+                                        placeholder="ID, name, or email"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="user-limit">Limit</Label>
+                                    <Input
+                                        id="user-limit"
+                                        type="number"
+                                        min={1}
+                                        max={500}
+                                        value={limit}
+                                        onChange={(event) =>
+                                            setLimit(Math.min(500, Math.max(1, Number(event.target.value) || 1)))
+                                        }
+                                    />
+                                </div>
+                                <div className="max-h-64 space-y-1 overflow-y-auto">
+                                    {users.map((item) => (
+                                        <button
+                                            type="button"
+                                            key={`${item.kind}:${item.id}`}
+                                            className="block w-full p-2 text-left hover:bg-accent hover:text-accent-foreground"
+                                            onClick={() => {
+                                                setSelected(item);
+                                                setOpen(false);
+                                            }}
+                                        >
+                                            <div className="font-medium">
+                                                {item.name}{" "}
+                                                <span className="text-xs text-muted-foreground">
+                                                    {item.kind === "teamMember" ? "Team member" : "User"}
+                                                </span>
+                                            </div>
+                                            <div className="text-xs text-muted-foreground">
+                                                {item.email} · {item.id}
+                                            </div>
+                                        </button>
+                                    ))}
+                                    {!loading && users.length === 0 && (
+                                        <p className="p-2 text-sm text-muted-foreground">No users found.</p>
+                                    )}
+                                    {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
+                                </div>
+                                {hasNext && (
+                                    <Button
+                                        variant="outline"
+                                        type="button"
+                                        className="w-full"
+                                        disabled={loading}
+                                        onClick={() => void loadMore()}
+                                    >
+                                        Load more
+                                    </Button>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="action">Audit log type</Label>
