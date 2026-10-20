@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { type AuditAction, auditActions } from "@/lib/contracts/audits";
 import type { UserDirectoryItem, UserDirectoryResult } from "@/lib/contracts/users";
 
 type Props = { userId?: string; userKind?: "user" | "teamMember"; action?: AuditAction };
+
+const ALL_ACTIONS = "all";
 
 async function fetchUsers(page: number, pageSize: number, search: string): Promise<UserDirectoryResult> {
     const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
@@ -29,6 +32,10 @@ export function AuditFilters({ userId, userKind, action }: Props) {
     const [hasNext, setHasNext] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState<UserDirectoryItem>();
+    const [actionFilter, setActionFilter] = useState(action ?? ALL_ACTIONS);
+    useEffect(() => {
+        setActionFilter(action ?? ALL_ACTIONS);
+    }, [action]);
     useEffect(() => {
         if (!open) return;
         const timeoutId = window.setTimeout(() => {
@@ -82,7 +89,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
             className="grid gap-4 border-2 border-border bg-card p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
             <div className="space-y-2">
-                <Label className="font-display text-sm font-semibold text-foreground">User</Label>
+                <Label>User</Label>
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger
                         render={
@@ -98,12 +105,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                     <PopoverContent className="w-[min(28rem,calc(100vw-2rem))]" align="start">
                         <div className="space-y-3">
                             <div className="space-y-2">
-                                <Label
-                                    htmlFor="user-search"
-                                    className="font-display text-sm font-semibold text-foreground"
-                                >
-                                    Search users
-                                </Label>
+                                <Label htmlFor="user-search">Search users</Label>
                                 <Input
                                     id="user-search"
                                     value={search}
@@ -112,12 +114,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label
-                                    htmlFor="user-limit"
-                                    className="font-display text-sm font-semibold text-foreground"
-                                >
-                                    Limit
-                                </Label>
+                                <Label htmlFor="user-limit">Limit</Label>
                                 <Input
                                     id="user-limit"
                                     type="number"
@@ -172,22 +169,23 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 </Popover>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="action" className="font-display text-sm font-semibold text-foreground">
-                    Audit log type
-                </Label>
-                <select
-                    id="action"
-                    name="action"
-                    defaultValue={action ?? ""}
-                    className="flex h-9 w-full border-2 border-border/25 bg-card px-3 text-sm outline-none focus:border-primary"
-                >
-                    <option value="">All audit types</option>
-                    {auditActions.map((auditAction) => (
-                        <option key={auditAction} value={auditAction}>
-                            {auditAction.replaceAll("_", " ")}
-                        </option>
-                    ))}
-                </select>
+                <Label htmlFor="action">Audit log type</Label>
+                <input type="hidden" name="action" value={actionFilter === ALL_ACTIONS ? "" : actionFilter} />
+                <Select value={actionFilter} onValueChange={(value) => setActionFilter(value ?? ALL_ACTIONS)}>
+                    <SelectTrigger id="action" className="w-full">
+                        <SelectValue>
+                            {actionFilter === ALL_ACTIONS ? "All audit types" : actionFilter.replaceAll("_", " ")}
+                        </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent align="start" alignItemWithTrigger={false}>
+                        <SelectItem value={ALL_ACTIONS}>All audit types</SelectItem>
+                        {auditActions.map((auditAction) => (
+                            <SelectItem key={auditAction} value={auditAction}>
+                                {auditAction.replaceAll("_", " ")}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
             <div className="flex gap-2">
                 <Button type="submit">Filter</Button>

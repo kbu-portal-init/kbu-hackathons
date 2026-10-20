@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { saveSubmission } from "@/actions/participant/submissions";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import type { SubmissionDTO } from "@/lib/contracts/submissions";
 
 const fields = [
@@ -108,9 +110,9 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                                 : ""}
                         </span>
                         {type === "textarea" ? (
-                            <textarea
+                            <Textarea
                                 id={`submission-${name}`}
-                                className="min-h-28 w-full border-2 border-border/25 bg-card px-3 py-2 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
+                                className="min-h-28"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 value={values[name]}
@@ -119,9 +121,8 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                                 }
                             />
                         ) : (
-                            <input
+                            <Input
                                 id={`submission-${name}`}
-                                className="h-11 w-full border-2 border-border/25 bg-card px-3 text-sm outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
                                 disabled={locked || isPending}
                                 maxLength={maxLength}
                                 type={type}

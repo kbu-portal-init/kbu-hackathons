@@ -14,7 +14,8 @@ import {
     NotionIcon,
 } from "@/components/resources/brand-icons";
 import { StudentEmailGuideSection } from "@/components/resources/student-email-guide";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import {
@@ -130,24 +131,29 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                         </p>
                     </div>
 
-                    <div className="flex w-full items-center gap-2 border-2 border-border/25 bg-card px-3 py-2 transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 sm:max-w-xs">
-                        <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                        <input
-                            type="text"
+                    <div className="relative w-full sm:max-w-xs">
+                        <Search
+                            className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <Input
+                            type="search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder={t.searchPlaceholder}
-                            className="w-full min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                            aria-label={t.searchPlaceholder}
+                            className="h-11 w-full pl-9 pr-10 text-sm appearance-none [&::-webkit-search-cancel-button]:appearance-none"
                         />
                         {searchQuery && (
-                            <button
+                            <Button
                                 type="button"
+                                size="icon-xs"
+                                className="absolute right-1 top-1/2 -translate-y-1/2"
                                 onClick={() => setSearchQuery("")}
-                                className={buttonVariants({ size: "icon-xs" })}
                                 aria-label={t.clearSearch}
                             >
                                 <X className="h-3.5 w-3.5" aria-hidden="true" />
-                            </button>
+                            </Button>
                         )}
                     </div>
                 </div>
