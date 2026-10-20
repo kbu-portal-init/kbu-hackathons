@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import { ArrowRight, CheckCircle2, ExternalLink, Gift, Mail, Search, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -13,6 +14,8 @@ import {
     NotionIcon,
 } from "@/components/resources/brand-icons";
 import { StudentEmailGuideSection } from "@/components/resources/student-email-guide";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import {
@@ -99,7 +102,7 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                         <button
                             type="button"
                             onClick={scrollToEmailGuide}
-                            className="inline-flex min-h-11 items-center justify-center gap-2 border-2 border-border bg-accent px-4 py-2.5 font-display text-sm font-semibold text-accent-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className={buttonVariants({ variant: "accent" })}
                         >
                             <Mail className="h-4 w-4" aria-hidden="true" />
                             {t.emailGuideButton}
@@ -108,7 +111,7 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                             href="https://outlook.cloud.microsoft/mail/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex min-h-11 items-center justify-center gap-2 border-2 border-border bg-card px-4 py-2.5 font-display text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className={buttonVariants({ variant: "outline" })}
                         >
                             {t.openWebmail}
                             <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -128,24 +131,29 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                         </p>
                     </div>
 
-                    <div className="flex w-full items-center gap-2 border-2 border-border/25 bg-card px-3 py-2 transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 sm:max-w-xs">
-                        <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                        <input
-                            type="text"
+                    <div className="relative w-full sm:max-w-xs">
+                        <Search
+                            className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <Input
+                            type="search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder={t.searchPlaceholder}
-                            className="w-full min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                            aria-label={t.searchPlaceholder}
+                            className="h-11 w-full pl-9 pr-10 text-sm appearance-none [&::-webkit-search-cancel-button]:appearance-none"
                         />
                         {searchQuery && (
-                            <button
+                            <Button
                                 type="button"
+                                size="icon-xs"
+                                className="absolute right-1 top-1/2 -translate-y-1/2"
                                 onClick={() => setSearchQuery("")}
-                                className="shrink-0 border-2 border-border bg-foreground p-1 text-background hover:bg-accent hover:text-accent-foreground"
                                 aria-label={t.clearSearch}
                             >
                                 <X className="h-3.5 w-3.5" aria-hidden="true" />
-                            </button>
+                            </Button>
                         )}
                     </div>
                 </div>
@@ -159,11 +167,10 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                                 type="button"
                                 aria-pressed={isActive}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`shrink-0 border-2 px-3.5 py-1.5 font-display text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4 ${
-                                    isActive
-                                        ? "border-border bg-foreground text-background"
-                                        : "border-border/20 bg-card text-muted-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
-                                }`}
+                                className={cn(
+                                    buttonVariants({ variant: isActive ? "default" : "outline", size: "sm" }),
+                                    !isActive && "border-border/20 bg-card text-muted-foreground hover:border-border",
+                                )}
                             >
                                 {t.categories[cat]}
                             </button>
@@ -245,7 +252,7 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                                 <div className="flex items-center gap-2">
                                     <Link
                                         href={`/resources/${benefit.id}`}
-                                        className="flex min-h-10 flex-1 items-center justify-center gap-1.5 border-2 border-border bg-foreground px-3.5 py-2 font-display text-xs font-semibold text-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                        className={cn(buttonVariants({ size: "sm" }), "h-10 flex-1")}
                                     >
                                         {t.viewClaimGuide}
                                         <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -254,7 +261,7 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                                         href={benefit.officialUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex min-h-10 items-center justify-center border-2 border-border bg-card p-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                        className={buttonVariants({ variant: "outline", size: "icon-sm" })}
                                         title={t.directClaimLink(benefit.provider)}
                                     >
                                         <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -276,7 +283,7 @@ export function StudentBenefitsCatalog({ locale }: { locale: Locale }) {
                             setSearchQuery("");
                             setSelectedCategory("All");
                         }}
-                        className="mt-5 inline-flex min-h-11 items-center justify-center border-2 border-border bg-foreground px-5 py-2 font-display text-sm font-semibold text-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        className={cn(buttonVariants(), "mt-5")}
                     >
                         {t.resetFilters}
                     </button>

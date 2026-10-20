@@ -1,4 +1,6 @@
+import { cn } from "cn";
 import { ExternalLink, MessageCircle } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
 import { getLineContact } from "@/lib/public-data/line-contact";
@@ -48,7 +50,7 @@ export async function AboutContent() {
                     {t.directions.map((direction) => (
                         <li
                             key={direction}
-                            className="flex items-start gap-3 border-b border-border/15 px-5 py-3.5 text-base font-medium text-foreground last:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-last-child(-n+3)]:border-b-0"
+                            className="flex items-start gap-3 border-b border-border/15 px-5 py-3.5 text-base font-medium text-foreground last:border-b-0 sm:nth-last-[-n+2]:border-b-0 lg:nth-last-[-n+3]:border-b-0"
                         >
                             <span className="mt-2 size-1.5 shrink-0 bg-primary" aria-hidden="true" />
                             {direction}
@@ -90,7 +92,7 @@ export async function AboutContent() {
                     href={lineContact.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 border-2 border-border bg-foreground px-5 py-3 font-display text-sm font-semibold text-background transition-colors hover:bg-background hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                    className={cn(buttonVariants({ size: "lg" }), "text-sm")}
                 >
                     {lineContact.name}
                     <ExternalLink className="size-4" aria-hidden="true" />

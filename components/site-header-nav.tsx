@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { buttonVariants } from "@/components/ui/button";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import { isActivePath, publicLinks } from "@/lib/navigation";
@@ -38,11 +39,7 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
                 <Link
                     href="/login"
                     aria-current={signInActive ? "page" : undefined}
-                    className={
-                        signInActive
-                            ? "inline-flex min-h-10 items-center border-2 border-border bg-accent px-4 py-2 font-display text-sm font-semibold text-accent-foreground"
-                            : "inline-flex min-h-10 items-center border-2 border-primary bg-primary px-4 py-2 font-display text-sm font-semibold text-foreground transition-colors hover:border-border hover:bg-foreground hover:text-background"
-                    }
+                    className={buttonVariants({ variant: signInActive ? "accent" : "brand" })}
                 >
                     {t.signIn}
                 </Link>

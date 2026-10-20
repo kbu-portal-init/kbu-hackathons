@@ -42,32 +42,26 @@ export function LoginContent({ locale }: { locale: Locale }) {
                 </div>
                 <div className="p-6 sm:p-8">
                     <div className="flex w-full border-2 border-border">
-                        <button
+                        <Button
                             type="button"
-                            className={`flex h-11 flex-1 items-center justify-center gap-2 border-r-2 border-border px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
-                                isParticipant
-                                    ? "bg-foreground text-background"
-                                    : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
-                            }`}
+                            variant={isParticipant ? "default" : "outline"}
+                            className="h-11 flex-1 border-0 border-r-2"
                             aria-pressed={isParticipant}
                             onClick={() => setAudience("participant")}
                         >
                             <Users data-icon="inline-start" />
                             {t.participant}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className={`flex h-11 flex-1 items-center justify-center gap-2 px-4 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary ${
-                                !isParticipant
-                                    ? "bg-foreground text-background"
-                                    : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
-                            }`}
+                            variant={isParticipant ? "outline" : "default"}
+                            className="h-11 flex-1 border-0"
                             aria-pressed={!isParticipant}
                             onClick={() => setAudience("management")}
                         >
                             <ShieldCheck data-icon="inline-start" />
                             {t.management}
-                        </button>
+                        </Button>
                     </div>
                     <div className="mt-8">
                         {isParticipant ? <TeamLoginForm locale={locale} /> : <StaffLoginForm locale={locale} />}
@@ -142,6 +136,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             onClick={() => setShowPassword((visible) => !visible)}
                             size="icon-sm"
+                            className="h-full"
                         >
                             {showPassword ? <EyeOff data-icon="inline-start" /> : <Eye data-icon="inline-start" />}
                         </InputGroupButton>
@@ -219,6 +214,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             onClick={() => setShowPassword((visible) => !visible)}
                             size="icon-sm"
+                            className="h-full"
                         >
                             {showPassword ? <EyeOff data-icon="inline-start" /> : <Eye data-icon="inline-start" />}
                         </InputGroupButton>

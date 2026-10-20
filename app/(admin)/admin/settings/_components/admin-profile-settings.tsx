@@ -69,15 +69,11 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="font-display text-sm font-semibold text-foreground">
-                            Name
-                        </Label>
+                        <Label htmlFor="name">Name</Label>
                         <Input id="name" value={name} onChange={(event) => setName(event.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="font-display text-sm font-semibold text-foreground">
-                            Email
-                        </Label>
+                        <Label htmlFor="email">Email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -87,7 +83,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label className="font-display text-sm font-semibold text-foreground">Role</Label>
+                        <Label>Role</Label>
                         <Input value={profile.role} readOnly />
                     </div>
                     <Button variant="default" type="submit" disabled={saving}>

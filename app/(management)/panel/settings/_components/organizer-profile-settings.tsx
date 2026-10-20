@@ -58,9 +58,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-name" className="font-display text-sm font-semibold text-foreground">
-                            Name
-                        </Label>
+                        <Label htmlFor="organizer-name">Name</Label>
                         <Input
                             id="organizer-name"
                             value={name}
@@ -69,9 +67,7 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="organizer-email" className="font-display text-sm font-semibold text-foreground">
-                            Email
-                        </Label>
+                        <Label htmlFor="organizer-email">Email</Label>
                         <Input
                             id="organizer-email"
                             type="email"
