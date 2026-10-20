@@ -142,6 +142,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             onClick={() => setShowPassword((visible) => !visible)}
                             size="icon-sm"
+                            className="h-full"
                         >
                             {showPassword ? <EyeOff data-icon="inline-start" /> : <Eye data-icon="inline-start" />}
                         </InputGroupButton>
@@ -219,6 +220,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             onClick={() => setShowPassword((visible) => !visible)}
                             size="icon-sm"
+                            className="h-full"
                         >
                             {showPassword ? <EyeOff data-icon="inline-start" /> : <Eye data-icon="inline-start" />}
                         </InputGroupButton>
