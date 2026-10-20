@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { Button } from "@/components/ui/button";
 import {
     Popover,
     PopoverContent,
@@ -252,13 +253,10 @@ function AccountFooter({
                 </PopoverHeader>
                 <ConfirmActionAlertDialog
                     trigger={
-                        <button
-                            type="button"
-                            className="flex w-full cursor-pointer items-center gap-2 border-2 border-border bg-foreground px-2 py-2 font-display text-sm font-semibold text-background outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-foreground"
-                        >
+                        <Button variant="default" className="h-auto w-full justify-start px-2 py-2 text-sm">
                             <LogOut className="size-4" />
                             <span>{t.signOut}</span>
-                        </button>
+                        </Button>
                     }
                     title={t.signOutQuestion}
                     description={t.signOutDescription}

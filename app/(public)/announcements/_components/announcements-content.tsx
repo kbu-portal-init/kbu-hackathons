@@ -1,6 +1,8 @@
+import { cn } from "cn";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AnnouncementSearch } from "@/components/announcements/announcement-search";
+import { buttonVariants } from "@/components/ui/button";
 import { ListPublicAnnouncementSchema } from "@/lib/contracts/announcements";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
@@ -85,11 +87,11 @@ export function AnnouncementsContent({ query, locale }: { query: AnnouncementQue
                                     key={item.value}
                                     href={getCategoryHref(item.value, search)}
                                     aria-current={isActive ? "page" : undefined}
-                                    className={`inline-flex min-h-11 items-center justify-center border-2 px-4 py-2 font-display text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                                        isActive
-                                            ? "border-border bg-foreground text-background"
-                                            : "border-border/20 bg-card text-muted-foreground hover:border-border hover:bg-accent hover:text-accent-foreground"
-                                    }`}
+                                    className={cn(
+                                        buttonVariants({ variant: isActive ? "default" : "outline" }),
+                                        !isActive &&
+                                            "border-border/20 bg-card text-muted-foreground hover:border-border",
+                                    )}
                                 >
                                     {t.categories[item.value]}
                                 </Link>

@@ -13,6 +13,7 @@ import {
     JetBrainsIcon,
     NotionIcon,
 } from "@/components/resources/brand-icons";
+import { buttonVariants } from "@/components/ui/button";
 import { getMessages } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
 import { formatBenefitDate, getStudentBenefits, type StudentBenefit } from "@/lib/public-data/student-benefits";
@@ -116,7 +117,7 @@ export async function StudentBenefitDetail({ id }: { id: string }) {
                                     href={benefit.officialUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex min-h-11 items-center justify-center gap-2 border-2 border-border bg-foreground px-5 py-3 font-display text-sm font-semibold text-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                    className={buttonVariants()}
                                 >
                                     {messages.resourcesPage.claimOn(benefit.provider)}
                                     <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -285,7 +286,7 @@ export async function StudentBenefitDetail({ id }: { id: string }) {
                         href={benefit.officialUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex shrink-0 items-center justify-center gap-1.5 border-2 border-border bg-foreground px-4 py-2.5 font-display text-xs font-semibold text-background"
+                        className={buttonVariants({ size: "sm" })}
                     >
                         {t.claimNow}
                         <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
