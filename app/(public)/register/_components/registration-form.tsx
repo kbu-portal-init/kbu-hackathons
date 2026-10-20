@@ -7,7 +7,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { submitTeamRegistration } from "@/actions/management/registrations";
 import { BackButton } from "@/components/back-button";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -152,7 +152,7 @@ export function RegistrationForm({
                                                 id={field.name}
                                                 aria-invalid={fieldState.invalid}
                                                 placeholder="e.g. Byte Builders"
-                                                className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                                className="h-11 text-base"
                                             />
                                             <FieldDescription>{t.uniqueTeamName}</FieldDescription>
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -225,7 +225,7 @@ export function RegistrationForm({
                                                     id={field.name}
                                                     aria-invalid={fieldState.invalid}
                                                     placeholder="Jane Doe"
-                                                    className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                                    className="h-11 text-base"
                                                 />
                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                             </Field>
@@ -252,7 +252,7 @@ export function RegistrationForm({
                                                 type="email"
                                                 aria-invalid={fieldState.invalid}
                                                 placeholder="u...@ms.kbu.ac.th"
-                                                className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                                className="h-11 text-base"
                                             />
                                             <FieldDescription>{t.validStudentEmail}</FieldDescription>
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -297,7 +297,7 @@ export function RegistrationForm({
                             type="submit"
                             size="lg"
                             disabled={form.formState.isSubmitting || !acknowledged}
-                            className="h-12 w-full border-2 border-border bg-foreground font-display text-base font-semibold text-background hover:border-border hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className="h-12 w-full"
                         >
                             {form.formState.isSubmitting ? (
                                 <>
@@ -312,7 +312,7 @@ export function RegistrationForm({
                             variant="outline"
                             type="button"
                             size="lg"
-                            className="w-full border-2 border-border bg-card font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                            className="w-full bg-card text-sm"
                             onClick={() => setInformationOpen(true)}
                         >
                             {acknowledged ? (

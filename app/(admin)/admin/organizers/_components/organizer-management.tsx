@@ -134,7 +134,7 @@ export function OrganizerManagement({ items }: Props) {
                 onUnban={onUnban}
             />
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Create organizer</DialogTitle>
                         <DialogDescription>Create an email-verified organizer account.</DialogDescription>
@@ -146,18 +146,8 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-foreground"
-                                        >
-                                            Name
-                                        </FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            aria-invalid={fieldState.invalid}
-                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
-                                        />
+                                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -167,18 +157,12 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-foreground"
-                                        >
-                                            Email
-                                        </FieldLabel>
+                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                                         <Input
                                             {...field}
                                             id={field.name}
                                             type="email"
                                             aria-invalid={fieldState.invalid}
-                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -189,12 +173,7 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-foreground"
-                                        >
-                                            Password
-                                        </FieldLabel>
+                                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                                         <div className="relative">
                                             <Input
                                                 {...field}
@@ -233,7 +212,7 @@ export function OrganizerManagement({ items }: Props) {
                 </DialogContent>
             </Dialog>
             <Dialog open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                <DialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Edit organizer</DialogTitle>
                         <DialogDescription>Update the organizer’s name and email address.</DialogDescription>
@@ -245,18 +224,8 @@ export function OrganizerManagement({ items }: Props) {
                                 control={editForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-foreground"
-                                        >
-                                            Name
-                                        </FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            aria-invalid={fieldState.invalid}
-                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
-                                        />
+                                        <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -266,18 +235,12 @@ export function OrganizerManagement({ items }: Props) {
                                 control={editForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-foreground"
-                                        >
-                                            Email
-                                        </FieldLabel>
+                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                                         <Input
                                             {...field}
                                             id={field.name}
                                             type="email"
                                             aria-invalid={fieldState.invalid}
-                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -298,7 +261,7 @@ export function OrganizerManagement({ items }: Props) {
                 </DialogContent>
             </Dialog>
             <Dialog open={!!banItem} onOpenChange={(open) => !open && setBanItem(null)}>
-                <DialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Ban organizer</DialogTitle>
                         <DialogDescription>
@@ -312,18 +275,8 @@ export function OrganizerManagement({ items }: Props) {
                                 control={banForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                            className="font-display text-sm font-semibold text-foreground"
-                                        >
-                                            Reason
-                                        </FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            aria-invalid={fieldState.invalid}
-                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
-                                        />
+                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
+                                        <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
@@ -375,24 +328,12 @@ function OrganizerTable({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Name
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Email
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Created
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Status
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Ban details
-                        </TableHead>
-                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Actions
-                        </TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Ban details</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -436,7 +377,7 @@ function OrganizerTable({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                                            className="border-border/20 text-xs"
                                             onClick={() => onEdit(item)}
                                         >
                                             Edit
@@ -462,7 +403,7 @@ function OrganizerTable({
                                             <Button
                                                 variant="destructive"
                                                 size="sm"
-                                                className="border-2 border-destructive/40 font-display text-xs font-semibold"
+                                                className="text-xs"
                                                 onClick={() => onBan(item)}
                                             >
                                                 Ban
@@ -484,7 +425,7 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
     const time = value ? format(value, "HH:mm") : "23:59";
     return (
         <>
-            <FieldLabel className="font-display text-sm font-semibold text-foreground">Expires at</FieldLabel>
+            <FieldLabel>Expires at</FieldLabel>
             <div className="flex gap-2">
                 <Popover>
                     <PopoverTrigger

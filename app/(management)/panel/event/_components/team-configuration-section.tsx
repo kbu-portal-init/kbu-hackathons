@@ -3,7 +3,7 @@
 import { Users } from "lucide-react";
 import type { Control } from "react-hook-form";
 import { Controller, useWatch } from "react-hook-form";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
@@ -32,19 +32,13 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel
-                                    htmlFor={field.name}
-                                    className="font-display text-sm font-semibold text-foreground"
-                                >
-                                    Max Thai program teams
-                                </FieldLabel>
+                                <FieldLabel htmlFor={field.name}>Max Thai program teams</FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={0}
                                     aria-invalid={fieldState.invalid}
-                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 <FieldDescription>Set to 0 to close the Thai program track.</FieldDescription>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -56,19 +50,13 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel
-                                    htmlFor={field.name}
-                                    className="font-display text-sm font-semibold text-foreground"
-                                >
-                                    Max International program teams
-                                </FieldLabel>
+                                <FieldLabel htmlFor={field.name}>Max International program teams</FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={0}
                                     aria-invalid={fieldState.invalid}
-                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 <FieldDescription>Set to 0 to close the International program track.</FieldDescription>
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -77,9 +65,7 @@ export function TeamConfigurationSection({ control }: Props) {
                     />
                 </div>
                 <Field>
-                    <FieldLabel className="font-display text-sm font-semibold text-foreground">
-                        Max teams (total)
-                    </FieldLabel>
+                    <FieldLabel>Max teams (total)</FieldLabel>
                     <div className="flex h-9 items-center border-2 border-border/15 bg-background px-3 text-sm text-muted-foreground">
                         {totalTeams}
                     </div>
@@ -91,19 +77,13 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel
-                                    htmlFor={field.name}
-                                    className="font-display text-sm font-semibold text-foreground"
-                                >
-                                    Min team size
-                                </FieldLabel>
+                                <FieldLabel htmlFor={field.name}>Min team size</FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={1}
                                     aria-invalid={fieldState.invalid}
-                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>
@@ -114,19 +94,13 @@ export function TeamConfigurationSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel
-                                    htmlFor={field.name}
-                                    className="font-display text-sm font-semibold text-foreground"
-                                >
-                                    Max team size
-                                </FieldLabel>
+                                <FieldLabel htmlFor={field.name}>Max team size</FieldLabel>
                                 <Input
                                     {...field}
                                     id={field.name}
                                     type="number"
                                     min={1}
                                     aria-invalid={fieldState.invalid}
-                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                 />
                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </Field>

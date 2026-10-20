@@ -63,7 +63,7 @@ export function NotificationInbox({ initial, unreadCount }: { initial: Notificat
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                                        className="text-xs"
                                         onClick={() => markRead(item.id)}
                                     >
                                         Mark as read

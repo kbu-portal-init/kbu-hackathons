@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { getMessages } from "@/lib/i18n/messages";

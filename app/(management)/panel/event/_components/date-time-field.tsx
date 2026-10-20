@@ -51,7 +51,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
             control={control}
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel className="font-display text-sm font-semibold text-foreground">{label}</FieldLabel>
+                    <FieldLabel>{label}</FieldLabel>
                     <Popover>
                         <PopoverTrigger
                             render={
@@ -93,7 +93,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                             setTime(t);
                                             field.onChange(combineDateTime(date, t));
                                         }}
-                                        className="mt-2 h-8 text-xs border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                        className="mt-2 h-8 text-xs"
                                     />
                                 </div>
                             </div>

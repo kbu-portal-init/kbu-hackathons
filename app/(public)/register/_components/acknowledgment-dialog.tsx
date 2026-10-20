@@ -31,7 +31,7 @@ export function AcknowledgmentDialog({
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="border-2 border-border">
+            <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle className="font-display">{t.beforeSubmit}</AlertDialogTitle>
                     <AlertDialogDescription render={<div />}>

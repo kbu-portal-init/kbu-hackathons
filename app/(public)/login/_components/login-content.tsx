@@ -114,7 +114,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                         autoComplete="username"
                         placeholder="your-team-username"
                         aria-invalid={!!usernameError}
-                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-11 text-base"
                         {...form.register("username")}
                     />
                     <FieldError errors={[usernameError]} />
@@ -148,12 +148,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <Button
-                    variant="default"
-                    type="submit"
-                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    disabled={form.formState.isSubmitting}
-                >
+                <Button variant="default" type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
                 </Button>
             </FieldGroup>
@@ -196,7 +191,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                         autoComplete="email"
                         placeholder="you@example.com"
                         aria-invalid={!!emailError}
-                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-11 text-base"
                         {...form.register("email")}
                     />
                     <FieldError errors={[emailError]} />
@@ -230,12 +225,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <Button
-                    variant="default"
-                    type="submit"
-                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    disabled={form.formState.isSubmitting}
-                >
+                <Button variant="default" type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
                 </Button>
             </FieldGroup>
@@ -309,7 +299,7 @@ function ForgotPasswordButton({
                 variant="link"
                 type="button"
                 size="sm"
-                className="h-auto px-0 font-display text-xs font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:text-foreground"
+                className="h-auto px-0 text-xs underline decoration-primary decoration-2 underline-offset-4"
                 onClick={openDialog}
             >
                 Forgot password?
@@ -320,7 +310,7 @@ function ForgotPasswordButton({
                     if (!isRequesting) setOpen(nextOpen);
                 }}
             >
-                <DialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Reset your password</DialogTitle>
                         <DialogDescription>

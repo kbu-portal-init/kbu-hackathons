@@ -1,4 +1,4 @@
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type SkeletonProps = { header?: boolean };

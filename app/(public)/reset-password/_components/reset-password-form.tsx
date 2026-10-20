@@ -54,11 +54,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                         Your password has been saved. You can now sign in with the account credentials associated with
                         this reset link.
                     </p>
-                    <Button
-                        variant="default"
-                        className="mt-6 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
-                        onClick={() => router.push("/login")}
-                    >
+                    <Button variant="default" className="mt-6 w-full" onClick={() => router.push("/login")}>
                         Go to login
                     </Button>
                 </div>
@@ -145,7 +141,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                         <Button
                             variant="default"
                             type="submit"
-                            className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            className="w-full"
                             disabled={form.formState.isSubmitting}
                         >
                             {form.formState.isSubmitting ? "Saving password..." : "Set password"}

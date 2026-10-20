@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { LoginContent } from "@/app/(public)/login/_components/login-content";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirectAuthenticatedUser } from "@/lib/auth/guards";
 import { getLocale } from "@/lib/i18n/server";

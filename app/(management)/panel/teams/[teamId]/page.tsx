@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Badge } from "@/components/ui/badge";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
@@ -108,7 +108,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="border-2 border-border/20 text-foreground">
+                                <Badge variant="outline" className="border-border/20">
                                     {member.role}
                                 </Badge>
                                 <Badge

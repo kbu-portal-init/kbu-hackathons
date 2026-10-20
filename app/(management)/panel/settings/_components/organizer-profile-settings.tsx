@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { changeOrganizerPassword, updateOrganizerProfile } from "@/actions/management/organizer-profile";
 import { FileUpload } from "@/components/file-upload";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,7 +63,6 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         </Label>
                         <Input
                             id="organizer-name"
-                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                             required
@@ -76,7 +75,6 @@ export function OrganizerProfileSettings({ profile }: { profile: OrganizerProfil
                         <Input
                             id="organizer-email"
                             type="email"
-                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
                             required

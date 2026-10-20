@@ -51,11 +51,7 @@ export function MemberRow({
                         <Field data-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor={field.name}>{th ? "บทบาท" : "Role"}</FieldLabel>
                             <Select value={field.value} onValueChange={field.onChange}>
-                                <SelectTrigger
-                                    id={field.name}
-                                    aria-invalid={fieldState.invalid}
-                                    className="h-11 w-full border-2 border-border/25 bg-card"
-                                >
+                                <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
                                     <SelectValue>
                                         {t.roles[field.value as keyof typeof t.roles] ??
                                             roleOptions.find((option) => option.value === field.value)?.label}

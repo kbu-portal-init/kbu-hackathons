@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 
 export default function NotFound() {
     return (

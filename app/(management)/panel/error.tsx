@@ -1,6 +1,6 @@
 "use client";
 
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Button } from "@/components/ui/button";
 
 export default function PanelError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {

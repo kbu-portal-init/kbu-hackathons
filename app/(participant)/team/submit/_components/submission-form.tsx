@@ -140,12 +140,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                     </label>
                 ))}
                 <div className="flex flex-col gap-3 border-t-2 border-border/15 pt-5 sm:flex-row sm:justify-end">
-                    <Button
-                        variant="outline"
-                        className="h-11 px-5 font-display text-sm font-semibold"
-                        disabled={locked || isPending}
-                        type="submit"
-                    >
+                    <Button variant="outline" className="px-5" disabled={locked || isPending} type="submit">
                         {isPending ? "Saving..." : "Save draft"}
                     </Button>
                     <ConfirmActionAlertDialog

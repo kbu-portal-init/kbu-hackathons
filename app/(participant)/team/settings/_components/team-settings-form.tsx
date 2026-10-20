@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { updateMemberImage } from "@/actions/participant/team-members";
 import { updateTeamLogo } from "@/actions/participant/team-settings";
 import { FileUpload } from "@/components/file-upload";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Badge } from "@/components/ui/badge";
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
 import { formatRole } from "@/lib/util";
@@ -78,10 +78,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                 {team.displayName}
                             </h2>
                             <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <Badge
-                                    variant="accent"
-                                    className="border-2 border-border bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground"
-                                >
+                                <Badge variant="accent" className="hover:bg-accent hover:text-accent-foreground">
                                     <CheckCircle2 /> Approved
                                 </Badge>
                                 <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -165,7 +162,7 @@ export function TeamSettingsForm({ team, members }: TeamSettingsFormProps) {
                                             {member.name}
                                         </h3>
                                     </div>
-                                    <Badge variant="outline" className="border-2 border-border/20 text-foreground">
+                                    <Badge variant="outline" className="border-border/20">
                                         {formatRole(member.role)}
                                     </Badge>
                                 </div>

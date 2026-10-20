@@ -24,24 +24,12 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Image
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Title
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Status
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Published
-                        </TableHead>
-                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Created
-                        </TableHead>
-                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            Actions
-                        </TableHead>
+                        <TableHead>Image</TableHead>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Published</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
 
@@ -104,7 +92,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                                                    className="border-border/20 text-xs"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
@@ -114,7 +102,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="default"
                                                     size="sm"
-                                                    className="border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                                                    className="text-xs"
                                                     onClick={() => onPublish(item.id)}
                                                     disabled={isPending}
                                                 >
@@ -147,7 +135,7 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                                                    className="border-border/20 text-xs"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
@@ -187,22 +175,14 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "DRAFT":
-            return (
-                <Badge variant="accent" className="border-2 border-border bg-accent text-accent-foreground">
-                    Draft
-                </Badge>
-            );
+            return <Badge variant="accent">Draft</Badge>;
 
         case "PUBLISHED":
-            return (
-                <Badge variant="outline" className="border-2 border-border text-foreground">
-                    Published
-                </Badge>
-            );
+            return <Badge variant="outline">Published</Badge>;
 
         case "ARCHIVED":
             return (
-                <Badge variant="secondary" className="border-2 border-border/15 text-muted-foreground">
+                <Badge variant="secondary" className="border-border/15">
                     Archived
                 </Badge>
             );

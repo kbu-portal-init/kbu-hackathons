@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { PosterPanel } from "@/components/poster";
 import { PosterBreadcrumb } from "@/components/poster-breadcrumb";
+import { PosterPanel } from "@/components/poster-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { countApprovedTeams } from "@/lib/data/registrations";

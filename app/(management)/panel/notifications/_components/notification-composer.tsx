@@ -42,7 +42,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                 <div className="flex flex-col gap-2 font-display text-sm font-semibold text-foreground">
                     <span>Recipient</span>
                     <Select value={mode} onValueChange={(value) => setMode(value as typeof mode)}>
-                        <SelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
+                        <SelectTrigger className="w-full">
                             <SelectValue>
                                 {mode === "TEAM"
                                     ? "Specific team"
@@ -63,7 +63,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                 <div className="flex flex-col gap-2 font-display text-sm font-semibold text-foreground">
                     <span>Delivery channel</span>
                     <Select value={channel} onValueChange={(value) => value && setChannel(value as typeof channel)}>
-                        <SelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
+                        <SelectTrigger className="w-full">
                             <SelectValue>
                                 {channel === "EMAIL"
                                     ? "Email only"
@@ -89,7 +89,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                             if (value !== null) setTeamId(value);
                         }}
                     >
-                        <SelectTrigger className="h-11 w-full border-2 border-border/25 bg-card">
+                        <SelectTrigger className="w-full">
                             <SelectValue placeholder="Choose a team">
                                 {teams.find((team) => team.id === teamId)?.displayName ?? "Choose a team"}
                             </SelectValue>
@@ -113,7 +113,6 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                         required
                         type="email"
                         placeholder="recipient@example.com"
-                        className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                     />
@@ -127,7 +126,6 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                         id="notification-subject"
                         required
                         maxLength={200}
-                        className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         value={subject}
                         onChange={(event) => setSubject(event.target.value)}
                     />
@@ -142,7 +140,6 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                         required
                         maxLength={10000}
                         rows={8}
-                        className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         value={body}
                         onChange={(event) => setBody(event.target.value)}
                     />

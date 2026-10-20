@@ -63,7 +63,7 @@ export function PasswordChangeForm({
                         <Input
                             id={`${idPrefix}-${suffix}`}
                             type={visible[key] ? "text" : "password"}
-                            className="h-11 border-2 border-border/25 bg-card pr-10 text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                            className="h-11 pr-10 text-base"
                             value={values[key]}
                             onChange={(event) => setValues({ ...values, [key]: event.target.value })}
                             minLength={key === "currentPassword" ? undefined : 8}

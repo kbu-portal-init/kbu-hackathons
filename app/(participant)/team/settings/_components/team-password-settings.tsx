@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { changeTeamPassword } from "@/actions/participant/team-password";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -54,7 +54,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                 <Button
                     variant="link"
                     type="button"
-                    className="h-auto justify-start px-0 font-display text-sm font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
+                    className="h-auto justify-start px-0 underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
                     onClick={() => {
                         setResetMessage(null);
                         setResetError(false);
@@ -74,7 +74,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
             />
 
             <Dialog open={resetOpen} onOpenChange={(open) => !resetting && setResetOpen(open)}>
-                <DialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Forgot password?</DialogTitle>
                         <DialogDescription>

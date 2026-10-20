@@ -48,30 +48,14 @@ export function TeamManagement({ items, meta, status }: Props) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Team
-                            </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Program
-                            </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Login
-                            </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Members
-                            </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Submission
-                            </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Status
-                            </TableHead>
-                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Created
-                            </TableHead>
-                            <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Actions
-                            </TableHead>
+                            <TableHead>Team</TableHead>
+                            <TableHead>Program</TableHead>
+                            <TableHead>Login</TableHead>
+                            <TableHead>Members</TableHead>
+                            <TableHead>Submission</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Created</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -90,30 +74,18 @@ export function TeamManagement({ items, meta, status }: Props) {
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         {item.submissionCount > 0 ? (
-                                            <Badge
-                                                variant="accent"
-                                                className="border-2 border-border bg-accent text-accent-foreground"
-                                            >
-                                                Submitted
-                                            </Badge>
+                                            <Badge variant="accent">Submitted</Badge>
                                         ) : (
-                                            <Badge
-                                                variant="secondary"
-                                                className="border-2 border-border/15 text-muted-foreground"
-                                            >
+                                            <Badge variant="secondary" className="border-border/15">
                                                 Not submitted
                                             </Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>
                                         {item.banned ? (
-                                            <Badge variant="destructive" className="border-2 border-destructive/40">
-                                                Banned
-                                            </Badge>
+                                            <Badge variant="destructive">Banned</Badge>
                                         ) : (
-                                            <Badge variant="outline" className="border-2 border-border text-foreground">
-                                                Active
-                                            </Badge>
+                                            <Badge variant="outline">Active</Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>

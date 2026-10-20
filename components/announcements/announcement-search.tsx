@@ -54,11 +54,7 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                         )}
                     </div>
 
-                    <Button
-                        variant="default"
-                        type="submit"
-                        className="h-11 shrink-0 border-2 border-border bg-foreground px-4 font-display text-sm font-semibold text-background hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground sm:px-6"
-                    >
+                    <Button variant="default" type="submit" className="shrink-0 sm:px-6">
                         {labels.searchButton}
                     </Button>
                 </form>

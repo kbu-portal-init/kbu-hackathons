@@ -76,7 +76,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogContent className="max-h-[90vh] overflow-y-auto border-2 border-border p-0 sm:max-w-lg">
+            <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-lg">
                 <div className="border-t-4 border-t-primary">
                     <DialogHeader className="px-6 pb-2 pt-6">
                         <div className="flex items-start gap-3">
@@ -99,10 +99,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                     <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-6 pt-5">
                         <FieldGroup className="gap-5">
                             <Field data-invalid={!!errors.title}>
-                                <FieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor="announcement-title"
-                                >
+                                <FieldLabel htmlFor="announcement-title">
                                     Title <span className="text-destructive">*</span>
                                 </FieldLabel>
 
@@ -118,10 +115,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
 
                             <Field data-invalid={!!errors.content}>
-                                <FieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor="announcement-content"
-                                >
+                                <FieldLabel htmlFor="announcement-content">
                                     Content <span className="text-destructive">*</span>
                                 </FieldLabel>
 
@@ -131,26 +125,19 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                                     aria-invalid={!!errors.content}
                                     placeholder="Write the announcement content..."
                                     rows={5}
-                                    className="max-h-48 resize-none overflow-y-auto border-2 border-border/25 bg-card"
+                                    className="max-h-48 resize-none overflow-y-auto"
                                 />
 
                                 {errors.content && <FieldError errors={[errors.content]} />}
                             </Field>
 
                             <Field data-invalid={!!errors.category}>
-                                <FieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor="announcement-category"
-                                >
+                                <FieldLabel htmlFor="announcement-category">
                                     Category <span className="text-destructive">*</span>
                                 </FieldLabel>
 
                                 <Select value={category ?? "NEWS"} onValueChange={handleCategoryChange}>
-                                    <SelectTrigger
-                                        id="announcement-category"
-                                        className="h-11 border-2 border-border/25 bg-card"
-                                        aria-invalid={!!errors.category}
-                                    >
+                                    <SelectTrigger id="announcement-category" aria-invalid={!!errors.category}>
                                         <SelectValue placeholder="Select a category" />
                                     </SelectTrigger>
 
@@ -165,7 +152,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
 
                             <Field data-invalid={!!errors.imageUrl}>
-                                <FieldLabel className="font-display text-sm font-semibold text-foreground">
+                                <FieldLabel>
                                     Announcement image{" "}
                                     <span className="font-normal text-muted-foreground">(optional)</span>
                                 </FieldLabel>
