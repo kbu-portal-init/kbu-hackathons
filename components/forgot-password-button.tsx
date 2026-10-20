@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { PosterButton, PosterDialogContent, PosterDialogFooter } from "@/components/poster";
-import { Dialog, DialogClose, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export function ForgotPasswordButton({ email }: { email: string }) {
     const [open, setOpen] = useState(false);
@@ -33,8 +41,8 @@ export function ForgotPasswordButton({ email }: { email: string }) {
 
     return (
         <>
-            <PosterButton
-                tone="link"
+            <Button
+                variant="link"
                 type="button"
                 size="sm"
                 className="h-auto px-0 text-xs"
@@ -45,9 +53,9 @@ export function ForgotPasswordButton({ email }: { email: string }) {
                 }}
             >
                 Forgot password?
-            </PosterButton>
+            </Button>
             <Dialog open={open} onOpenChange={(nextOpen) => !isRequesting && setOpen(nextOpen)}>
-                <PosterDialogContent>
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Forgot password?</DialogTitle>
                         <DialogDescription>
@@ -60,22 +68,20 @@ export function ForgotPasswordButton({ email }: { email: string }) {
                     >
                         {message ?? `Email: ${email}`}
                     </p>
-                    <PosterDialogFooter>
-                        <DialogClose render={<PosterButton tone="outline" disabled={isRequesting} />}>
-                            Close
-                        </DialogClose>
+                    <DialogFooter>
+                        <DialogClose render={<Button variant="outline" disabled={isRequesting} />}>Close</DialogClose>
                         {!message || error ? (
-                            <PosterButton
-                                tone="brand"
+                            <Button
+                                variant="brand"
                                 type="button"
                                 onClick={() => void requestReset()}
                                 disabled={isRequesting}
                             >
                                 {isRequesting ? "Sending..." : "Send reset link"}
-                            </PosterButton>
+                            </Button>
                         ) : null}
-                    </PosterDialogFooter>
-                </PosterDialogContent>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </>
     );

@@ -4,7 +4,7 @@ import { cn } from "cn";
 import { Check, Copy, ExternalLink, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PosterButton } from "@/components/poster";
+import { Button } from "@/components/ui/button";
 import {
     Popover,
     PopoverContent,
@@ -70,8 +70,8 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
     }
 
     const trigger = (
-        <PosterButton
-            tone="outline"
+        <Button
+            variant="outline"
             size="lg"
             type="button"
             className={cn(
@@ -81,13 +81,13 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
         >
             <Share2 data-icon="inline-start" />
             Share
-        </PosterButton>
+        </Button>
     );
 
     if (canUseNativeShare) {
         return (
-            <PosterButton
-                tone="outline"
+            <Button
+                variant="outline"
                 size="lg"
                 type="button"
                 onClick={handleShare}
@@ -98,7 +98,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
             >
                 <Share2 data-icon="inline-start" />
                 Share
-            </PosterButton>
+            </Button>
         );
     }
 
@@ -111,17 +111,17 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                     <PopoverDescription>Copy the link or share it through LINE.</PopoverDescription>
                 </PopoverHeader>
                 <div className="flex flex-col gap-1">
-                    <PosterButton
-                        tone="outline"
+                    <Button
+                        variant="outline"
                         type="button"
                         onClick={handleCopy}
                         className="border-2 border-border font-display text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                         {copied ? <Check data-icon="inline-start" /> : <Copy data-icon="inline-start" />}
                         {copied ? "Copied" : "Copy link"}
-                    </PosterButton>
-                    <PosterButton
-                        tone="outline"
+                    </Button>
+                    <Button
+                        variant="outline"
                         render={
                             <a
                                 href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url ?? (typeof window !== "undefined" ? window.location.href : ""))}`}
@@ -133,7 +133,7 @@ export function ShareButton({ title, text = title, url, className }: ShareButton
                     >
                         <ExternalLink data-icon="inline-start" />
                         Share to LINE
-                    </PosterButton>
+                    </Button>
                 </div>
             </PopoverContent>
         </Popover>

@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { PosterBadge, PosterTableHead } from "@/components/poster";
-import { Table, TableBody, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { getRegistrationDetail } from "@/lib/data/registrations";
 import { formatRole } from "@/lib/util";
@@ -14,29 +14,13 @@ import { RegistrationActions } from "./_components/registration-actions";
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
-            return (
-                <PosterBadge tone="accent" className="border-2 border-border bg-accent text-accent-foreground">
-                    Pending
-                </PosterBadge>
-            );
+            return <Badge variant="accent">Pending</Badge>;
         case "APPROVED":
-            return (
-                <PosterBadge tone="neutral" className="border-2 border-border text-foreground">
-                    Approved
-                </PosterBadge>
-            );
+            return <Badge variant="outline">Approved</Badge>;
         case "REJECTED":
-            return (
-                <PosterBadge tone="danger" className="border-2 border-destructive/40">
-                    Rejected
-                </PosterBadge>
-            );
+            return <Badge variant="destructive">Rejected</Badge>;
         default:
-            return (
-                <PosterBadge tone="muted" className="border-2 border-border/15 text-muted-foreground">
-                    {status}
-                </PosterBadge>
-            );
+            return <Badge variant="secondary">{status}</Badge>;
     }
 }
 
@@ -95,18 +79,10 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                    Name
-                                </PosterTableHead>
-                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                    Role
-                                </PosterTableHead>
-                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                    Email
-                                </PosterTableHead>
-                                <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                    Verification
-                                </PosterTableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Role</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Verification</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

@@ -1,21 +1,20 @@
-"use client";
-
 import { Megaphone } from "lucide-react";
 import Image from "next/image";
 import type { FieldValues, UseFormReturn } from "react-hook-form";
 import { FileUpload } from "@/components/file-upload";
+import { Button } from "@/components/ui/button";
 import {
-    PosterButton,
-    PosterDialogContent,
-    PosterDialogFooter,
-    PosterFieldLabel,
-    PosterInput,
-    PosterSelectTrigger,
-    PosterTextarea,
-} from "@/components/poster";
-import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 type AnnouncementCategory = "IMPORTANT" | "UPDATES" | "NEWS";
 
@@ -77,7 +76,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <PosterDialogContent className="max-h-[90vh] overflow-y-auto border-2 border-border p-0 sm:max-w-lg">
+            <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-lg">
                 <div className="border-t-4 border-t-primary">
                     <DialogHeader className="px-6 pb-2 pt-6">
                         <div className="flex items-start gap-3">
@@ -100,14 +99,11 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                     <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-6 pt-5">
                         <FieldGroup className="gap-5">
                             <Field data-invalid={!!errors.title}>
-                                <PosterFieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor="announcement-title"
-                                >
+                                <FieldLabel htmlFor="announcement-title">
                                     Title <span className="text-destructive">*</span>
-                                </PosterFieldLabel>
+                                </FieldLabel>
 
-                                <PosterInput
+                                <Input
                                     id="announcement-title"
                                     {...register("title")}
                                     aria-invalid={!!errors.title}
@@ -119,41 +115,31 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
 
                             <Field data-invalid={!!errors.content}>
-                                <PosterFieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor="announcement-content"
-                                >
+                                <FieldLabel htmlFor="announcement-content">
                                     Content <span className="text-destructive">*</span>
-                                </PosterFieldLabel>
+                                </FieldLabel>
 
-                                <PosterTextarea
+                                <Textarea
                                     id="announcement-content"
                                     {...register("content")}
                                     aria-invalid={!!errors.content}
                                     placeholder="Write the announcement content..."
                                     rows={5}
-                                    className="max-h-48 resize-none overflow-y-auto border-2 border-border/25 bg-card"
+                                    className="max-h-48 resize-none overflow-y-auto"
                                 />
 
                                 {errors.content && <FieldError errors={[errors.content]} />}
                             </Field>
 
                             <Field data-invalid={!!errors.category}>
-                                <PosterFieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor="announcement-category"
-                                >
+                                <FieldLabel htmlFor="announcement-category">
                                     Category <span className="text-destructive">*</span>
-                                </PosterFieldLabel>
+                                </FieldLabel>
 
                                 <Select value={category ?? "NEWS"} onValueChange={handleCategoryChange}>
-                                    <PosterSelectTrigger
-                                        id="announcement-category"
-                                        className="h-11 border-2 border-border/25 bg-card"
-                                        aria-invalid={!!errors.category}
-                                    >
+                                    <SelectTrigger id="announcement-category" aria-invalid={!!errors.category}>
                                         <SelectValue placeholder="Select a category" />
-                                    </PosterSelectTrigger>
+                                    </SelectTrigger>
 
                                     <SelectContent>
                                         <SelectItem value="IMPORTANT">Important</SelectItem>
@@ -166,10 +152,10 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
 
                             <Field data-invalid={!!errors.imageUrl}>
-                                <PosterFieldLabel className="font-display text-sm font-semibold text-foreground">
+                                <FieldLabel>
                                     Announcement image{" "}
                                     <span className="font-normal text-muted-foreground">(optional)</span>
-                                </PosterFieldLabel>
+                                </FieldLabel>
 
                                 {imageUrl && (
                                     <div className="overflow-hidden border-2 border-border bg-muted/20">
@@ -204,28 +190,23 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                             </Field>
                         </FieldGroup>
 
-                        <PosterDialogFooter className="mt-6 -mx-6 border-t-2 border-border/15 px-6 pt-4">
-                            <PosterButton
-                                tone="outline"
+                        <DialogFooter className="mt-6 -mx-6 border-t-2 border-border/15 px-6 pt-4">
+                            <Button
+                                variant="outline"
                                 type="button"
                                 onClick={() => handleOpenChange(false)}
                                 disabled={isPending}
                             >
                                 Cancel
-                            </PosterButton>
+                            </Button>
 
-                            <PosterButton
-                                tone="solid"
-                                type="submit"
-                                className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
-                                disabled={isPending}
-                            >
+                            <Button variant="default" type="submit" disabled={isPending}>
                                 {isPending ? pendingLabel : submitLabel}
-                            </PosterButton>
-                        </PosterDialogFooter>
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </div>
-            </PosterDialogContent>
+            </DialogContent>
         </Dialog>
     );
 }

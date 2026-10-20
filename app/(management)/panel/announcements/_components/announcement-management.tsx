@@ -13,7 +13,7 @@ import {
     updateAnnouncement,
 } from "@/actions/management/announcements";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { PosterButton } from "@/components/poster";
+import { Button } from "@/components/ui/button";
 import {
     type AnnouncementDTO,
     type CreateAnnouncementFormInput,
@@ -206,20 +206,20 @@ export function AnnouncementManagement({ items, meta }: Props) {
             <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                     {statusFilters.map((status) => (
-                        <PosterButton
+                        <Button
                             key={status}
-                            tone={statusFilter === status ? "solid" : "outline"}
+                            variant={statusFilter === status ? "default" : "outline"}
                             size="sm"
                             onClick={() => handleFilterChange(status)}
                         >
                             {status.charAt(0) + status.slice(1).toLowerCase()}
-                        </PosterButton>
+                        </Button>
                     ))}
                 </div>
 
-                <PosterButton tone="brand" onClick={() => setCreateOpen(true)} disabled={isPending}>
+                <Button variant="brand" onClick={() => setCreateOpen(true)} disabled={isPending}>
                     Create announcement
-                </PosterButton>
+                </Button>
             </div>
 
             <AnnouncementTable

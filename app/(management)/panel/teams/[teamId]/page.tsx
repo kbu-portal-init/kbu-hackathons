@@ -6,7 +6,8 @@ import { Suspense } from "react";
 import { getTeam } from "@/actions/management/teams";
 import { BackButton } from "@/components/back-button";
 import { DashboardDetailSkeleton } from "@/components/dashboard-skeletons";
-import { PosterBadge, PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
+import { Badge } from "@/components/ui/badge";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
 import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
@@ -107,15 +108,15 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <PosterBadge tone="neutral" className="border-2 border-border/20 text-foreground">
+                                <Badge variant="outline" className="border-border/20">
                                     {member.role}
-                                </PosterBadge>
-                                <PosterBadge
-                                    tone={member.verifiedAt ? "primary" : "muted"}
+                                </Badge>
+                                <Badge
+                                    variant={member.verifiedAt ? "default" : "secondary"}
                                     className="border-border/20"
                                 >
                                     {member.verifiedAt ? "Verified" : "Unverified"}
-                                </PosterBadge>
+                                </Badge>
                             </div>
                         </div>
                     ))}
@@ -181,13 +182,13 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         </div>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex flex-wrap items-center gap-3">
-                                <PosterBadge
-                                    tone={
+                                <Badge
+                                    variant={
                                         team.submission.status === "SUBMITTED"
-                                            ? "primary"
+                                            ? "default"
                                             : team.submission.status === "REOPENED"
-                                              ? "neutral"
-                                              : "muted"
+                                              ? "outline"
+                                              : "secondary"
                                     }
                                 >
                                     {team.submission.status === "SUBMITTED"
@@ -195,7 +196,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                                         : team.submission.status === "REOPENED"
                                           ? "Reopened for editing"
                                           : "Draft"}
-                                </PosterBadge>
+                                </Badge>
                                 <p className="text-sm text-muted-foreground">
                                     {team.submission.status === "SUBMITTED" && team.submission.submittedAt
                                         ? `Submitted ${format(new Date(team.submission.submittedAt), "PPP p")}`
@@ -217,7 +218,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                         {team.reviews.map((review) => (
                             <div key={review.id} className="py-3 text-sm">
                                 <div className="flex justify-between gap-2">
-                                    <PosterBadge tone="neutral">{review.decision}</PosterBadge>
+                                    <Badge variant="outline">{review.decision}</Badge>
                                     <span className="text-muted-foreground">
                                         {format(new Date(review.createdAt), "PPP p")}
                                     </span>

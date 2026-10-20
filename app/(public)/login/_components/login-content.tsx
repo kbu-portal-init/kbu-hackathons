@@ -6,15 +6,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
-    PosterButton,
-    PosterDialogContent,
-    PosterDialogFooter,
-    PosterFieldLabel,
-    PosterInput,
-} from "@/components/poster";
-import { Dialog, DialogClose, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { loginAsStaff, loginAsTeam } from "@/lib/auth/login-client";
 import { type StaffLoginInput, staffLoginSchema, type TeamLoginInput, teamLoginSchema } from "@/lib/contracts/auth";
@@ -104,21 +107,21 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={usernameError ? true : undefined}>
-                    <PosterFieldLabel htmlFor="username">{t.teamUsername}</PosterFieldLabel>
-                    <PosterInput
+                    <FieldLabel htmlFor="username">{t.teamUsername}</FieldLabel>
+                    <Input
                         id="username"
                         type="text"
                         autoComplete="username"
                         placeholder="your-team-username"
                         aria-invalid={!!usernameError}
-                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-11 text-base"
                         {...form.register("username")}
                     />
                     <FieldError errors={[usernameError]} />
                 </Field>
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
-                        <PosterFieldLabel htmlFor="team-password">{t.password}</PosterFieldLabel>
+                        <FieldLabel htmlFor="team-password">{t.password}</FieldLabel>
                         <ForgotPasswordButton
                             identifier="username"
                             getValue={() => form.getValues("username")}
@@ -145,14 +148,9 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <PosterButton
-                    tone="solid"
-                    type="submit"
-                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    disabled={form.formState.isSubmitting}
-                >
+                <Button variant="default" type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
-                </PosterButton>
+                </Button>
             </FieldGroup>
         </form>
     );
@@ -186,21 +184,21 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
             <FieldGroup>
                 {loginError && <FieldError>{loginError}</FieldError>}
                 <Field data-invalid={emailError ? true : undefined}>
-                    <PosterFieldLabel htmlFor="email">{t.email}</PosterFieldLabel>
-                    <PosterInput
+                    <FieldLabel htmlFor="email">{t.email}</FieldLabel>
+                    <Input
                         id="email"
                         type="email"
                         autoComplete="email"
                         placeholder="you@example.com"
                         aria-invalid={!!emailError}
-                        className="h-11 border-2 border-border/25 bg-card text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-11 text-base"
                         {...form.register("email")}
                     />
                     <FieldError errors={[emailError]} />
                 </Field>
                 <Field data-invalid={passwordError ? true : undefined}>
                     <div className="flex items-center justify-between">
-                        <PosterFieldLabel htmlFor="staff-password">{t.password}</PosterFieldLabel>
+                        <FieldLabel htmlFor="staff-password">{t.password}</FieldLabel>
                         <ForgotPasswordButton
                             identifier="email"
                             getValue={() => form.getValues("email")}
@@ -227,14 +225,9 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
                     </InputGroup>
                     <FieldError errors={[passwordError]} />
                 </Field>
-                <PosterButton
-                    tone="solid"
-                    type="submit"
-                    className="h-11 w-full border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    disabled={form.formState.isSubmitting}
-                >
+                <Button variant="default" type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                     {form.formState.isSubmitting ? t.signingIn : t.signIn}
-                </PosterButton>
+                </Button>
             </FieldGroup>
         </form>
     );
@@ -302,22 +295,22 @@ function ForgotPasswordButton({
 
     return (
         <>
-            <PosterButton
-                tone="link"
+            <Button
+                variant="link"
                 type="button"
                 size="sm"
-                className="h-auto px-0 font-display text-xs font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:text-foreground"
+                className="h-auto px-0 text-xs underline decoration-primary decoration-2 underline-offset-4"
                 onClick={openDialog}
             >
                 Forgot password?
-            </PosterButton>
+            </Button>
             <Dialog
                 open={open}
                 onOpenChange={(nextOpen) => {
                     if (!isRequesting) setOpen(nextOpen);
                 }}
             >
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Reset your password</DialogTitle>
                         <DialogDescription>
@@ -345,17 +338,15 @@ function ForgotPasswordButton({
                             </p>
                         )}
                     </div>
-                    <PosterDialogFooter>
-                        <DialogClose render={<PosterButton tone="outline" disabled={isRequesting} />}>
-                            Close
-                        </DialogClose>
+                    <DialogFooter>
+                        <DialogClose render={<Button variant="outline" disabled={isRequesting} />}>Close</DialogClose>
                         {messageType !== "success" && (
-                            <PosterButton tone="brand" type="button" onClick={requestReset} disabled={isRequesting}>
+                            <Button variant="brand" type="button" onClick={requestReset} disabled={isRequesting}>
                                 {isRequesting ? "Sending..." : "Send reset link"}
-                            </PosterButton>
+                            </Button>
                         )}
-                    </PosterDialogFooter>
-                </PosterDialogContent>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </>
     );

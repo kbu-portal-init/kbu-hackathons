@@ -1,7 +1,7 @@
 "use client";
 
 import type { Control } from "react-hook-form";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { FieldGroup } from "@/components/ui/field";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 import { DateTimeField } from "./date-time-field";

@@ -66,10 +66,10 @@ function MemberCardFallback() {
         >
             <span className="sr-only">Loading participant card</span>
             <section className="w-full max-w-3xl">
-                <div className="border-2 border-border bg-background p-2">
+                <div className="border-2 border-border/15 bg-background p-2">
                     <Skeleton className="aspect-video w-full bg-foreground/10" />
                 </div>
-                <div className="mt-6 border-2 border-border bg-accent text-accent-foreground p-4">
+                <div className="mt-6 border-2 border-border/15 bg-accent text-accent-foreground p-4">
                     <Skeleton className="mx-auto h-9 w-28 bg-foreground/20" />
                 </div>
             </section>
