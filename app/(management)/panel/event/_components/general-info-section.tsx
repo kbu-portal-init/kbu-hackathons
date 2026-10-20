@@ -3,8 +3,10 @@
 import { CalendarDays } from "lucide-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { PosterFieldLabel, PosterInput, PosterPanel, PosterTextarea } from "@/components/poster";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+import { PosterPanel } from "@/components/poster";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 
 type Props = {
@@ -24,13 +26,13 @@ export function GeneralInfoSection({ control }: Props) {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <PosterFieldLabel
+                            <FieldLabel
                                 htmlFor={field.name}
                                 className="font-display text-sm font-semibold text-foreground"
                             >
                                 Title
-                            </PosterFieldLabel>
-                            <PosterInput
+                            </FieldLabel>
+                            <Input
                                 {...field}
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
@@ -46,13 +48,13 @@ export function GeneralInfoSection({ control }: Props) {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <PosterFieldLabel
+                            <FieldLabel
                                 htmlFor={field.name}
                                 className="font-display text-sm font-semibold text-foreground"
                             >
                                 Description
-                            </PosterFieldLabel>
-                            <PosterTextarea
+                            </FieldLabel>
+                            <Textarea
                                 {...field}
                                 id={field.name}
                                 aria-invalid={fieldState.invalid}
@@ -70,13 +72,13 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <PosterFieldLabel
+                                <FieldLabel
                                     htmlFor={field.name}
                                     className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Venue
-                                </PosterFieldLabel>
-                                <PosterInput
+                                </FieldLabel>
+                                <Input
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}
@@ -92,13 +94,13 @@ export function GeneralInfoSection({ control }: Props) {
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <PosterFieldLabel
+                                <FieldLabel
                                     htmlFor={field.name}
                                     className="font-display text-sm font-semibold text-foreground"
                                 >
                                     Promo URL <span className="font-normal text-muted-foreground">(optional)</span>
-                                </PosterFieldLabel>
-                                <PosterInput
+                                </FieldLabel>
+                                <Input
                                     {...field}
                                     id={field.name}
                                     aria-invalid={fieldState.invalid}

@@ -34,7 +34,7 @@ function RegistrationFallback() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
             <div className="space-y-6">
                 {(["team", "leader", "members"] as const).map((section) => (
-                    <PosterPanel className="p-6" key={section}>
+                    <PosterPanel className="border-border/15 p-6" key={section}>
                         <Skeleton className="h-6 w-56 max-w-full bg-foreground/10" />
                         <Skeleton className="mt-6 h-11 w-full bg-foreground/10" />
                         <Skeleton className="mt-4 h-11 w-full bg-foreground/10" />
@@ -125,7 +125,7 @@ export default async function TeamRegistrationPage() {
     const t = messages.register;
     return (
         <main className="flex-1 bg-background">
-            <section className="mx-auto max-w-6xl px-5 py-12 text-left sm:px-8 lg:py-16">
+            <section className="mx-auto w-full max-w-6xl px-5 py-8 text-left sm:px-8 sm:py-12">
                 <PosterBreadcrumb
                     items={[{ label: messages.common.home, href: "/" }, { label: t.title }]}
                     className="mb-8"

@@ -6,7 +6,9 @@ import { toast } from "sonner";
 import { changeAdminPassword, updateAdminProfile } from "@/actions/admin/profile";
 import { FileUpload } from "@/components/file-upload";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { PosterButton, PosterInput, PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { AdminProfileDTO } from "@/lib/contracts/admin-profile";
 
@@ -70,7 +72,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         <Label htmlFor="name" className="font-display text-sm font-semibold text-foreground">
                             Name
                         </Label>
-                        <PosterInput
+                        <Input
                             id="name"
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                             value={name}
@@ -82,7 +84,7 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                         <Label htmlFor="email" className="font-display text-sm font-semibold text-foreground">
                             Email
                         </Label>
-                        <PosterInput
+                        <Input
                             id="email"
                             type="email"
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -93,20 +95,15 @@ export function AdminProfileSettings({ profile }: { profile: AdminProfileDTO }) 
                     </div>
                     <div className="space-y-2">
                         <Label className="font-display text-sm font-semibold text-foreground">Role</Label>
-                        <PosterInput
+                        <Input
                             value={profile.role}
                             readOnly
                             className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                         />
                     </div>
-                    <PosterButton
-                        tone="solid"
-                        type="submit"
-                        disabled={saving}
-                        className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
-                    >
+                    <Button variant="default" type="submit" disabled={saving}>
                         {saving ? "Saving..." : "Save profile"}
-                    </PosterButton>
+                    </Button>
                 </form>
             </PosterPanel>
             <PosterPanel className="p-6">

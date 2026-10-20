@@ -1,6 +1,5 @@
 "use client";
 
-import { PosterFieldLabel } from "@/components/poster";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,7 +10,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Field, FieldSet } from "@/components/ui/field";
+import { Field, FieldLabel, FieldSet } from "@/components/ui/field";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 
@@ -54,9 +53,9 @@ export function AcknowledgmentDialog({
                             onChange={(event) => onAcknowledgedChange(event.target.checked)}
                             className="mt-1 size-4 accent-primary"
                         />
-                        <PosterFieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
+                        <FieldLabel htmlFor="registration-acknowledgment" className="text-sm leading-5">
                             {t.acknowledgment}
-                        </PosterFieldLabel>
+                        </FieldLabel>
                     </Field>
                 </FieldSet>
                 <AlertDialogFooter>

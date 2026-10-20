@@ -38,7 +38,7 @@ Keep dependencies flowing inward: `lib/contracts` → `lib/data` → `lib/servic
 - Use Tailwind CSS v4 utilities and the semantic CSS variables defined in `app/globals.css`.
 - `app/globals.css` is the single theme source, structured like tweakcn: base values in `:root` and `.dark`, mapped to Tailwind through `@theme inline`, with shared radius, shadow, and tracking scales. Change design values there, not in components.
 - Use the semantic tokens exposed as utilities (`bg-background`, `text-foreground`, `border-border`, `bg-primary`, `bg-accent`, `text-accent-foreground`, `text-muted-foreground`, and related variants) throughout the codebase. Keep structural utilities (`border-2`, `font-display`, spacing, grid, responsive variants) in markup.
-- Shared poster controls live in `components/poster.tsx` (`PosterButton`, `PosterInput`, `PosterTextarea`, `PosterSelectTrigger`, `PosterFieldLabel`, `PosterTableHead`, `PosterBadge`, `PosterDialogContent`, `PosterDialogFooter`) and `components/poster-panel.tsx`. Use them instead of duplicating border, typography, and focus classes across pages.
+- The neobrutalist look lives in the shadcn primitives themselves (`components/ui/button.tsx`, `input.tsx`, `textarea.tsx`, `select.tsx`, `field.tsx`, `label.tsx`, `table.tsx`, `badge.tsx`, `dialog.tsx`, `alert-dialog.tsx`). Use them directly instead of duplicating border, typography, and focus classes across pages. `components/poster.tsx` only re-exports `PosterPanel`; card surfaces live in `components/poster-panel.tsx`.
 - Preserve the full default Tailwind color palette and the existing shadcn CSS-variable theme.
 - Use Lucide icons through `lucide-react`.
 

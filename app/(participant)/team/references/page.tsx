@@ -167,7 +167,7 @@ function EventFactsSkeleton() {
             <span className="sr-only">Loading event details</span>
             <div className="grid gap-4 sm:grid-cols-3">
                 {["one", "two", "three"].map((key) => (
-                    <PosterPanel className="p-5" key={key}>
+                    <PosterPanel className="border-border/15 p-5" key={key}>
                         <Skeleton className="size-5 bg-accent text-accent-foreground" />
                         <Skeleton className="mt-4 h-4 w-28 bg-background" />
                         <Skeleton className="mt-2 h-5 w-40 max-w-full bg-background" />

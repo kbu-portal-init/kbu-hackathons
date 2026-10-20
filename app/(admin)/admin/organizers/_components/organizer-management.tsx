@@ -10,19 +10,20 @@ import { toast } from "sonner";
 import { banAccount, unbanAccount } from "@/actions/admin/accounts";
 import { createOrganizer, updateOrganizer } from "@/actions/admin/organizers";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import {
-    PosterButton,
-    PosterDialogContent,
-    PosterDialogFooter,
-    PosterFieldLabel,
-    PosterInput,
-    PosterTableHead,
-} from "@/components/poster";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldDescription, FieldError, FieldGroup } from "@/components/ui/field";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { type BanAccountFormInput, type BanAccountInput, banAccountSchema } from "@/lib/contracts/accounts";
 import {
     type CreateOrganizerInput,
@@ -109,8 +110,8 @@ export function OrganizerManagement({ items }: Props) {
     return (
         <>
             <div className="flex justify-end">
-                <PosterButton
-                    tone="solid"
+                <Button
+                    variant="default"
                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                     onClick={() => {
                         createForm.reset();
@@ -118,7 +119,7 @@ export function OrganizerManagement({ items }: Props) {
                     }}
                 >
                     Create organizer
-                </PosterButton>
+                </Button>
             </div>
             <OrganizerTable
                 items={items}
@@ -133,7 +134,7 @@ export function OrganizerManagement({ items }: Props) {
                 onUnban={onUnban}
             />
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Create organizer</DialogTitle>
                         <DialogDescription>Create an email-verified organizer account.</DialogDescription>
@@ -145,13 +146,13 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
+                                        <FieldLabel
                                             htmlFor={field.name}
                                             className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Name
-                                        </PosterFieldLabel>
-                                        <PosterInput
+                                        </FieldLabel>
+                                        <Input
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
@@ -166,13 +167,13 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
+                                        <FieldLabel
                                             htmlFor={field.name}
                                             className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Email
-                                        </PosterFieldLabel>
-                                        <PosterInput
+                                        </FieldLabel>
+                                        <Input
                                             {...field}
                                             id={field.name}
                                             type="email"
@@ -188,22 +189,22 @@ export function OrganizerManagement({ items }: Props) {
                                 control={createForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
+                                        <FieldLabel
                                             htmlFor={field.name}
                                             className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Password
-                                        </PosterFieldLabel>
+                                        </FieldLabel>
                                         <div className="relative">
-                                            <PosterInput
+                                            <Input
                                                 {...field}
                                                 id={field.name}
                                                 type={showCreatePassword ? "text" : "password"}
                                                 className="pr-10"
                                                 aria-invalid={fieldState.invalid}
                                             />
-                                            <PosterButton
-                                                tone="ghost"
+                                            <Button
+                                                variant="ghost"
                                                 type="button"
                                                 size="icon-sm"
                                                 className="absolute inset-y-1 right-1"
@@ -211,28 +212,28 @@ export function OrganizerManagement({ items }: Props) {
                                                 onClick={() => setShowCreatePassword((current) => !current)}
                                             >
                                                 {showCreatePassword ? <EyeOff /> : <Eye />}
-                                            </PosterButton>
+                                            </Button>
                                         </div>
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
-                            <PosterButton
-                                tone="solid"
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <Button
+                                variant="default"
                                 type="submit"
                                 disabled={createForm.formState.isSubmitting}
                                 className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                             >
                                 {createForm.formState.isSubmitting ? "Creating..." : "Create"}
-                            </PosterButton>
-                        </PosterDialogFooter>
+                            </Button>
+                        </DialogFooter>
                     </form>
-                </PosterDialogContent>
+                </DialogContent>
             </Dialog>
             <Dialog open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Edit organizer</DialogTitle>
                         <DialogDescription>Update the organizer’s name and email address.</DialogDescription>
@@ -244,13 +245,13 @@ export function OrganizerManagement({ items }: Props) {
                                 control={editForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
+                                        <FieldLabel
                                             htmlFor={field.name}
                                             className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Name
-                                        </PosterFieldLabel>
-                                        <PosterInput
+                                        </FieldLabel>
+                                        <Input
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
@@ -265,13 +266,13 @@ export function OrganizerManagement({ items }: Props) {
                                 control={editForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
+                                        <FieldLabel
                                             htmlFor={field.name}
                                             className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Email
-                                        </PosterFieldLabel>
-                                        <PosterInput
+                                        </FieldLabel>
+                                        <Input
                                             {...field}
                                             id={field.name}
                                             type="email"
@@ -283,21 +284,21 @@ export function OrganizerManagement({ items }: Props) {
                                 )}
                             />
                         </FieldGroup>
-                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
-                            <PosterButton
-                                tone="solid"
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <Button
+                                variant="default"
                                 type="submit"
                                 disabled={editForm.formState.isSubmitting}
                                 className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                             >
                                 {editForm.formState.isSubmitting ? "Saving..." : "Save changes"}
-                            </PosterButton>
-                        </PosterDialogFooter>
+                            </Button>
+                        </DialogFooter>
                     </form>
-                </PosterDialogContent>
+                </DialogContent>
             </Dialog>
             <Dialog open={!!banItem} onOpenChange={(open) => !open && setBanItem(null)}>
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent className="border-2 border-border">
                     <DialogHeader>
                         <DialogTitle className="font-display">Ban organizer</DialogTitle>
                         <DialogDescription>
@@ -311,13 +312,13 @@ export function OrganizerManagement({ items }: Props) {
                                 control={banForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
+                                        <FieldLabel
                                             htmlFor={field.name}
                                             className="font-display text-sm font-semibold text-foreground"
                                         >
                                             Reason
-                                        </PosterFieldLabel>
-                                        <PosterInput
+                                        </FieldLabel>
+                                        <Input
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
@@ -341,18 +342,18 @@ export function OrganizerManagement({ items }: Props) {
                                 )}
                             />
                         </FieldGroup>
-                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
-                            <PosterButton
-                                tone="destructive"
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <Button
+                                variant="destructive"
                                 type="submit"
                                 disabled={banForm.formState.isSubmitting}
                                 className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {banForm.formState.isSubmitting ? "Banning..." : "Confirm ban"}
-                            </PosterButton>
-                        </PosterDialogFooter>
+                            </Button>
+                        </DialogFooter>
                     </form>
-                </PosterDialogContent>
+                </DialogContent>
             </Dialog>
         </>
     );
@@ -374,24 +375,24 @@ function OrganizerTable({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Name
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Email
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Created
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Status
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Ban details
-                        </PosterTableHead>
-                        <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Actions
-                        </PosterTableHead>
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -432,24 +433,24 @@ function OrganizerTable({
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex justify-end gap-2">
-                                        <PosterButton
-                                            tone="outline"
+                                        <Button
+                                            variant="outline"
                                             size="sm"
                                             className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                             onClick={() => onEdit(item)}
                                         >
                                             Edit
-                                        </PosterButton>
+                                        </Button>
                                         {item.banned ? (
                                             <ConfirmActionAlertDialog
                                                 trigger={
-                                                    <PosterButton
-                                                        tone="outline"
+                                                    <Button
+                                                        variant="outline"
                                                         size="sm"
                                                         className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                     >
                                                         Unban
-                                                    </PosterButton>
+                                                    </Button>
                                                 }
                                                 title="Unban organizer"
                                                 description="Restore this organizer account access?"
@@ -458,14 +459,14 @@ function OrganizerTable({
                                                 onConfirm={() => onUnban(item)}
                                             />
                                         ) : (
-                                            <PosterButton
-                                                tone="destructive"
+                                            <Button
+                                                variant="destructive"
                                                 size="sm"
                                                 className="border-2 border-destructive/40 font-display text-xs font-semibold"
                                                 onClick={() => onBan(item)}
                                             >
                                                 Ban
-                                            </PosterButton>
+                                            </Button>
                                         )}
                                     </div>
                                 </TableCell>
@@ -483,15 +484,13 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
     const time = value ? format(value, "HH:mm") : "23:59";
     return (
         <>
-            <PosterFieldLabel className="font-display text-sm font-semibold text-foreground">
-                Expires at
-            </PosterFieldLabel>
+            <FieldLabel className="font-display text-sm font-semibold text-foreground">Expires at</FieldLabel>
             <div className="flex gap-2">
                 <Popover>
                     <PopoverTrigger
                         render={
-                            <PosterButton
-                                tone="outline"
+                            <Button
+                                variant="outline"
                                 type="button"
                                 className="flex-1 justify-start border-2 border-border/25 bg-card font-normal text-foreground"
                             />
@@ -511,7 +510,7 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
                         />
                     </PopoverContent>
                 </Popover>
-                <PosterInput
+                <Input
                     type="time"
                     value={time}
                     onChange={(event) => value && onChange(setExpiryTime(value, event.target.value))}
@@ -520,9 +519,9 @@ function BanExpiryField({ value, onChange }: { value: Date | null; onChange: (va
                     className="w-28 border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                 />
                 {date && (
-                    <PosterButton tone="ghost" type="button" size="sm" onClick={() => onChange(null)}>
+                    <Button variant="ghost" type="button" size="sm" onClick={() => onChange(null)}>
                         Clear
-                    </PosterButton>
+                    </Button>
                 )}
             </div>
             <FieldDescription>Leave the date empty for a permanent ban. The default time is 23:59.</FieldDescription>

@@ -4,9 +4,9 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
-import { PosterBadge, PosterButton, PosterTableHead } from "@/components/poster";
-import { buttonVariants } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AnnouncementDTO } from "@/lib/contracts/announcements";
 
 type Props = {
@@ -24,24 +24,24 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Image
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Title
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Status
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Published
-                        </PosterTableHead>
-                        <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Created
-                        </PosterTableHead>
-                        <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        </TableHead>
+                        <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                             Actions
-                        </PosterTableHead>
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
 
@@ -101,36 +101,36 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 
                                         {item.status === "DRAFT" && (
                                             <>
-                                                <PosterButton
-                                                    tone="outline"
+                                                <Button
+                                                    variant="outline"
                                                     size="sm"
                                                     className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
                                                     Edit
-                                                </PosterButton>
+                                                </Button>
 
-                                                <PosterButton
-                                                    tone="solid"
+                                                <Button
+                                                    variant="default"
                                                     size="sm"
                                                     className="border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                                     onClick={() => onPublish(item.id)}
                                                     disabled={isPending}
                                                 >
                                                     Publish
-                                                </PosterButton>
+                                                </Button>
 
                                                 <ConfirmActionAlertDialog
                                                     trigger={
-                                                        <PosterButton
-                                                            tone="destructive"
+                                                        <Button
+                                                            variant="destructive"
                                                             size="sm"
                                                             className="border-2 border-destructive/40 font-display text-xs font-semibold"
                                                             disabled={isPending}
                                                         >
                                                             Delete
-                                                        </PosterButton>
+                                                        </Button>
                                                     }
                                                     title="Delete announcement?"
                                                     description="This action cannot be undone. The draft announcement will be permanently deleted."
@@ -144,26 +144,26 @@ export function AnnouncementTable({ items, isPending, onEdit, onPublish, onArchi
 
                                         {item.status === "PUBLISHED" && (
                                             <>
-                                                <PosterButton
-                                                    tone="outline"
+                                                <Button
+                                                    variant="outline"
                                                     size="sm"
                                                     className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                     onClick={() => onEdit(item)}
                                                     disabled={isPending}
                                                 >
                                                     Edit
-                                                </PosterButton>
+                                                </Button>
 
                                                 <ConfirmActionAlertDialog
                                                     trigger={
-                                                        <PosterButton
-                                                            tone="outline"
+                                                        <Button
+                                                            variant="outline"
                                                             size="sm"
                                                             className="border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                                                             disabled={isPending}
                                                         >
                                                             Archive
-                                                        </PosterButton>
+                                                        </Button>
                                                     }
                                                     title="Archive announcement?"
                                                     description="The announcement will no longer be publicly visible after it is archived."
@@ -188,26 +188,26 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "DRAFT":
             return (
-                <PosterBadge tone="accent" className="border-2 border-border bg-accent text-accent-foreground">
+                <Badge variant="accent" className="border-2 border-border bg-accent text-accent-foreground">
                     Draft
-                </PosterBadge>
+                </Badge>
             );
 
         case "PUBLISHED":
             return (
-                <PosterBadge tone="neutral" className="border-2 border-border text-foreground">
+                <Badge variant="outline" className="border-2 border-border text-foreground">
                     Published
-                </PosterBadge>
+                </Badge>
             );
 
         case "ARCHIVED":
             return (
-                <PosterBadge tone="muted" className="border-2 border-border/15 text-muted-foreground">
+                <Badge variant="secondary" className="border-2 border-border/15 text-muted-foreground">
                     Archived
-                </PosterBadge>
+                </Badge>
             );
 
         default:
-            return <PosterBadge tone="muted">{status}</PosterBadge>;
+            return <Badge variant="secondary">{status}</Badge>;
     }
 }

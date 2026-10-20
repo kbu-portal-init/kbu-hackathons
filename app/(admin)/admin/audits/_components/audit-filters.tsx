@@ -1,7 +1,8 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PosterButton, PosterInput } from "@/components/poster";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { type AuditAction, auditActions } from "@/lib/contracts/audits";
@@ -85,11 +86,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger
                         render={
-                            <PosterButton
-                                tone="outline"
-                                type="button"
-                                className="h-9 w-full justify-start border-2 border-border/25 bg-card font-normal text-foreground"
-                            />
+                            <Button variant="outline" type="button" className="h-11 w-full justify-start font-normal" />
                         }
                     >
                         {selected
@@ -107,9 +104,8 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 >
                                     Search users
                                 </Label>
-                                <PosterInput
+                                <Input
                                     id="user-search"
-                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={search}
                                     onChange={(event) => setSearch(event.target.value)}
                                     placeholder="ID, name, or email"
@@ -122,12 +118,11 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 >
                                     Limit
                                 </Label>
-                                <PosterInput
+                                <Input
                                     id="user-limit"
                                     type="number"
                                     min={1}
                                     max={500}
-                                    className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                     value={limit}
                                     onChange={(event) =>
                                         setLimit(Math.min(500, Math.max(1, Number(event.target.value) || 1)))
@@ -162,15 +157,15 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                                 {loading && <p className="p-2 text-sm text-muted-foreground">Loading...</p>}
                             </div>
                             {hasNext && (
-                                <PosterButton
-                                    tone="outline"
+                                <Button
+                                    variant="outline"
                                     type="button"
                                     className="w-full"
                                     disabled={loading}
                                     onClick={() => void loadMore()}
                                 >
                                     Load more
-                                </PosterButton>
+                                </Button>
                             )}
                         </div>
                     </PopoverContent>
@@ -195,21 +190,15 @@ export function AuditFilters({ userId, userKind, action }: Props) {
                 </select>
             </div>
             <div className="flex gap-2">
-                <PosterButton
-                    tone="solid"
-                    type="submit"
-                    className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
-                >
-                    Filter
-                </PosterButton>
-                <PosterButton
-                    tone="outline"
+                <Button type="submit">Filter</Button>
+                <Button
+                    variant="outline"
                     type="button"
-                    className="border-2 border-border font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                    className="font-display text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                     onClick={clear}
                 >
                     Clear
-                </PosterButton>
+                </Button>
             </div>
         </form>
     );

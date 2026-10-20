@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PaginationFooter } from "@/components/pagination-footer";
-import { PosterBadge, PosterButton, PosterTableHead } from "@/components/poster";
-import { buttonVariants } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { PaginationMeta } from "@/lib/contracts/common";
 import type { TeamListItem } from "@/lib/contracts/teams";
 import { formatRole } from "@/lib/util";
@@ -29,10 +29,10 @@ export function TeamManagement({ items, meta, status }: Props) {
         <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
                 {filters.map((value) => (
-                    <PosterButton
+                    <Button
                         key={value}
                         size="sm"
-                        tone={filter === value ? "solid" : "outline"}
+                        variant={filter === value ? "default" : "outline"}
                         className={
                             filter === value
                                 ? "border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-foreground"
@@ -41,37 +41,37 @@ export function TeamManagement({ items, meta, status }: Props) {
                         onClick={() => changeFilter(value)}
                     >
                         {value[0] + value.slice(1).toLowerCase()}
-                    </PosterButton>
+                    </Button>
                 ))}
             </div>
             <div className="border-2 border-border bg-card">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Team
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Program
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Login
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Members
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Submission
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Status
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Created
-                            </PosterTableHead>
-                            <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                            </TableHead>
+                            <TableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                                 Actions
-                            </PosterTableHead>
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -90,33 +90,30 @@ export function TeamManagement({ items, meta, status }: Props) {
                                     <TableCell>{item.memberCount}</TableCell>
                                     <TableCell>
                                         {item.submissionCount > 0 ? (
-                                            <PosterBadge
-                                                tone="accent"
+                                            <Badge
+                                                variant="accent"
                                                 className="border-2 border-border bg-accent text-accent-foreground"
                                             >
                                                 Submitted
-                                            </PosterBadge>
+                                            </Badge>
                                         ) : (
-                                            <PosterBadge
-                                                tone="muted"
+                                            <Badge
+                                                variant="secondary"
                                                 className="border-2 border-border/15 text-muted-foreground"
                                             >
                                                 Not submitted
-                                            </PosterBadge>
+                                            </Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>
                                         {item.banned ? (
-                                            <PosterBadge tone="danger" className="border-2 border-destructive/40">
+                                            <Badge variant="destructive" className="border-2 border-destructive/40">
                                                 Banned
-                                            </PosterBadge>
+                                            </Badge>
                                         ) : (
-                                            <PosterBadge
-                                                tone="neutral"
-                                                className="border-2 border-border text-foreground"
-                                            >
+                                            <Badge variant="outline" className="border-2 border-border text-foreground">
                                                 Active
-                                            </PosterBadge>
+                                            </Badge>
                                         )}
                                     </TableCell>
                                     <TableCell>{format(new Date(item.createdAt), "MMM d, yyyy")}</TableCell>

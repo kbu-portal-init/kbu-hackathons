@@ -156,7 +156,7 @@ export function DashboardStatGridSkeleton({
             <div className={`grid gap-4 ${className}`}>
                 {Array.from({ length: count }, (_, index) => (
                     // biome-ignore lint/suspicious/noArrayIndexKey: static placeholder grid
-                    <PosterPanel className="space-y-3 p-5" key={index}>
+                    <PosterPanel className="space-y-3 border-border/15 p-5" key={index}>
                         <Skeleton className="h-4 w-24 bg-foreground/10" />
                         <Skeleton className="h-8 w-20 bg-primary/20" />
                     </PosterPanel>
