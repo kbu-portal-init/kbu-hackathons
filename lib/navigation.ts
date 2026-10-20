@@ -47,5 +47,9 @@ export const adminDashboardLinks = [
 ] as const;
 
 export function isActivePath(pathname: string, href: string): boolean {
-    return pathname === href;
+    return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function resolveActiveHref(pathname: string, hrefs: readonly string[]): string | undefined {
+    return hrefs.filter((href) => isActivePath(pathname, href)).sort((a, b) => b.length - a.length)[0];
 }

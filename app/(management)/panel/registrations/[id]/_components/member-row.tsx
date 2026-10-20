@@ -55,8 +55,8 @@ export function MemberRow({ member }: MemberRowProps) {
             <TableCell className="font-medium">{member.name}</TableCell>
             <TableCell>{member.role}</TableCell>
             <TableCell className="break-all">{member.email}</TableCell>
-            <TableCell>
-                <div className="flex items-center gap-2">
+            <TableCell className="text-right">
+                <div className="flex items-center justify-end gap-2">
                     {isVerified ? (
                         <Badge variant="outline" className="gap-1">
                             <CheckCircle2 className="size-3" />

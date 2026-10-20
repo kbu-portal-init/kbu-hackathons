@@ -19,6 +19,7 @@ Prefer Server Components. Use client components only for browser state, events, 
 - Prefer Server Components. Add `"use client"` only when a component needs browser state, events, effects, or a client-only library.
 - Keep page files server-rendered where possible; place interactive behavior in focused client components.
 - Maintain public, participant, and management link definitions in `lib/navigation.ts`. Update that file whenever a navigation destination changes.
+- Sidebar and header active states come from `lib/navigation.ts`: `isActivePath` matches a path segment prefix, and `resolveActiveHref` picks the longest matching link so a parent entry (for example the panel overview) is not active on its child routes.
 - Administrator and management layouts own dashboard page padding (`p-4 sm:p-6 lg:p-8`). Their pages must not add another outer padding container; use `DashboardPageHeader` and `space-y-8` for consistent page chrome.
 - Update `README.md` and `AGENTS.md` (plus the relevant `docs/` document) whenever a feature, route, workflow, command, dependency, or external documentation link is added, removed, or materially changed. Keep the README route map aligned with the application and `lib/navigation.ts` aligned with navigable routes.
 - Reuse application components from `components`. Do not place app-specific UI in `components/ui`.

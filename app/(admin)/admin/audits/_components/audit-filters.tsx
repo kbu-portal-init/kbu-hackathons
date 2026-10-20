@@ -74,7 +74,7 @@ export function AuditFilters({ userId, userKind, action }: Props) {
             query.set("userId", selected?.id ?? userId ?? "");
             query.set("userKind", selected?.kind ?? userKind ?? "user");
         }
-        if (actionValue) query.set("action", actionValue);
+        if (actionValue && actionValue !== ALL_ACTIONS) query.set("action", actionValue);
         router.push(`${pathname}?${query}`);
     }
     function clear() {
@@ -170,22 +170,27 @@ export function AuditFilters({ userId, userKind, action }: Props) {
             </div>
             <div className="space-y-2">
                 <Label htmlFor="action">Audit log type</Label>
-                <input type="hidden" name="action" value={actionFilter === ALL_ACTIONS ? "" : actionFilter} />
-                <Select value={actionFilter} onValueChange={(value) => setActionFilter(value ?? ALL_ACTIONS)}>
-                    <SelectTrigger id="action" className="w-full">
-                        <SelectValue>
-                            {actionFilter === ALL_ACTIONS ? "All audit types" : actionFilter.replaceAll("_", " ")}
-                        </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent align="start" alignItemWithTrigger={false}>
-                        <SelectItem value={ALL_ACTIONS}>All audit types</SelectItem>
-                        {auditActions.map((auditAction) => (
-                            <SelectItem key={auditAction} value={auditAction}>
-                                {auditAction.replaceAll("_", " ")}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <div>
+                    <Select
+                        name="action"
+                        value={actionFilter}
+                        onValueChange={(value) => setActionFilter(value ?? ALL_ACTIONS)}
+                    >
+                        <SelectTrigger id="action" className="w-full">
+                            <SelectValue>
+                                {actionFilter === ALL_ACTIONS ? "All audit types" : actionFilter.replaceAll("_", " ")}
+                            </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent align="start" alignItemWithTrigger={false}>
+                            <SelectItem value={ALL_ACTIONS}>All audit types</SelectItem>
+                            {auditActions.map((auditAction) => (
+                                <SelectItem key={auditAction} value={auditAction}>
+                                    {auditAction.replaceAll("_", " ")}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
             <div className="flex gap-2">
                 <Button type="submit">Filter</Button>

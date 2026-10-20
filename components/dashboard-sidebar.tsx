@@ -40,6 +40,7 @@ import {
     isActivePath,
     managementDashboardLinks,
     participantDashboardLinks,
+    resolveActiveHref,
 } from "@/lib/navigation";
 import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
 
@@ -83,6 +84,10 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
     const { label: sidebarLabel, title: headerTitle, links } = config[area];
     const localizedLinks = t.links[area === "participant" ? "team" : area];
     const adminActive = isActivePath(pathname, "/admin");
+    const activeHref = resolveActiveHref(
+        pathname,
+        links.map((link) => link.href),
+    );
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
@@ -107,7 +112,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                             <SidebarMenu className="gap-1">
                                 {links.map(({ href, label, icon: Icon }) => {
                                     const localizedLabel = localizedLinks[href as keyof typeof localizedLinks] ?? label;
-                                    const active = isActivePath(pathname, href);
+                                    const active = activeHref === href;
                                     return (
                                         <SidebarMenuItem key={href}>
                                             <SidebarMenuButton

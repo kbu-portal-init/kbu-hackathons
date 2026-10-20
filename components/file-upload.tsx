@@ -215,14 +215,7 @@ export function FileUpload({
             {!hasSelectedFile && !isUploading && iconOverlay && (
                 <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                     <PopoverTrigger
-                        render={
-                            <Button
-                                type="button"
-                                size="icon"
-                                className="cursor-pointer rounded-full"
-                                aria-label={`Edit ${label.toLowerCase()}`}
-                            />
-                        }
+                        render={<Button type="button" size="icon-sm" aria-label={`Edit ${label.toLowerCase()}`} />}
                     >
                         <Pencil data-icon="inline-start" />
                     </PopoverTrigger>
