@@ -7,15 +7,17 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { banTeam, unbanTeam } from "@/actions/management/teams";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
-    PosterButton,
-    PosterDialogContent,
-    PosterDialogFooter,
-    PosterFieldLabel,
-    PosterInput,
-} from "@/components/poster";
-import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import type { BanAccountFormInput, BanAccountInput } from "@/lib/contracts/accounts";
 import { banAccountSchema } from "@/lib/contracts/accounts";
 import type { TeamListItem } from "@/lib/contracts/teams";
@@ -57,13 +59,13 @@ export function TeamActions({ team }: { team: TeamListItem }) {
     return team.banned ? (
         <ConfirmActionAlertDialog
             trigger={
-                <PosterButton
-                    tone="outline"
+                <Button
+                    variant="outline"
                     size="sm"
                     className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                     Unban
-                </PosterButton>
+                </Button>
             }
             title={`Unban ${team.displayName}?`}
             description="Restore this team account's access?"
@@ -73,19 +75,19 @@ export function TeamActions({ team }: { team: TeamListItem }) {
         />
     ) : (
         <>
-            <PosterButton
-                tone="destructive"
+            <Button
+                variant="destructive"
                 size="sm"
-                className="border-2 border-destructive/40 font-display text-xs font-semibold"
+                className="text-xs"
                 onClick={() => {
                     form.reset({ userId: team.userId ?? "", reason: "", expiresAt: null });
                     setBanOpen(true);
                 }}
             >
                 Ban
-            </PosterButton>
+            </Button>
             <Dialog open={banOpen} onOpenChange={setBanOpen}>
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Ban {team.displayName}</DialogTitle>
                         <DialogDescription>
@@ -96,31 +98,21 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                         <FieldGroup>
                             <input type="hidden" {...form.register("userId")} />
                             <Field data-invalid={!!form.formState.errors.reason}>
-                                <PosterFieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor={`ban-reason-${team.id}`}
-                                >
-                                    Reason
-                                </PosterFieldLabel>
-                                <PosterInput
+                                <FieldLabel htmlFor={`ban-reason-${team.id}`}>Reason</FieldLabel>
+                                <Input
                                     id={`ban-reason-${team.id}`}
-                                    className="h-11 border-2 border-border/25 bg-card"
+                                    className="h-11"
                                     {...form.register("reason")}
                                     aria-invalid={!!form.formState.errors.reason}
                                 />
                                 {form.formState.errors.reason && <FieldError errors={[form.formState.errors.reason]} />}
                             </Field>
                             <Field data-invalid={!!form.formState.errors.expiresAt}>
-                                <PosterFieldLabel
-                                    className="font-display text-sm font-semibold text-foreground"
-                                    htmlFor={`ban-expires-${team.id}`}
-                                >
-                                    Expires at (optional)
-                                </PosterFieldLabel>
-                                <PosterInput
+                                <FieldLabel htmlFor={`ban-expires-${team.id}`}>Expires at (optional)</FieldLabel>
+                                <Input
                                     id={`ban-expires-${team.id}`}
                                     type="datetime-local"
-                                    className="h-11 border-2 border-border/25 bg-card"
+                                    className="h-11"
                                     {...form.register("expiresAt", {
                                         setValueAs: (value) => (value ? new Date(value) : null),
                                     })}
@@ -130,21 +122,21 @@ export function TeamActions({ team }: { team: TeamListItem }) {
                                 )}
                             </Field>
                         </FieldGroup>
-                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
-                            <PosterButton tone="outline" type="button" onClick={() => setBanOpen(false)}>
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <Button variant="outline" type="button" onClick={() => setBanOpen(false)}>
                                 Cancel
-                            </PosterButton>
-                            <PosterButton
-                                tone="destructive"
+                            </Button>
+                            <Button
+                                variant="destructive"
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
                                 className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {form.formState.isSubmitting ? "Banning..." : "Confirm ban"}
-                            </PosterButton>
-                        </PosterDialogFooter>
+                            </Button>
+                        </DialogFooter>
                     </form>
-                </PosterDialogContent>
+                </DialogContent>
             </Dialog>
         </>
     );

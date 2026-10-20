@@ -5,9 +5,10 @@ import { CalendarIcon, Clock } from "lucide-react";
 import { useState } from "react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { PosterButton, PosterFieldLabel, PosterInput } from "@/components/poster";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { UpsertEventSettingsInput } from "@/lib/contracts/event-settings";
 
@@ -50,14 +51,12 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
             control={control}
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                    <PosterFieldLabel className="font-display text-sm font-semibold text-foreground">
-                        {label}
-                    </PosterFieldLabel>
+                    <FieldLabel>{label}</FieldLabel>
                     <Popover>
                         <PopoverTrigger
                             render={
-                                <PosterButton
-                                    tone="outline"
+                                <Button
+                                    variant="outline"
                                     type="button"
                                     className="w-full justify-start gap-2 text-left font-normal"
                                 />
@@ -86,7 +85,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                         <Clock className="size-3" />
                                         Time
                                     </div>
-                                    <PosterInput
+                                    <Input
                                         type="time"
                                         value={time}
                                         onChange={(e) => {
@@ -94,7 +93,7 @@ export function DateTimeField({ name, label, control, defaultDate, defaultTime }
                                             setTime(t);
                                             field.onChange(combineDateTime(date, t));
                                         }}
-                                        className="mt-2 h-8 text-xs border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                                        className="mt-2 h-8 text-xs"
                                     />
                                 </div>
                             </div>

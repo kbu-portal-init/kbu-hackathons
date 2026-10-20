@@ -7,7 +7,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { upsertEventSettings } from "@/actions/management/event-settings";
-import { PosterButton } from "@/components/poster";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
     type EventSettingsDTO,
@@ -126,8 +126,8 @@ export function EventSettingsForm({ settings }: Props) {
 
             <Separator />
             <div className="flex items-center gap-3">
-                <PosterButton
-                    tone="solid"
+                <Button
+                    variant="default"
                     type="submit"
                     disabled={isPending}
                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
@@ -143,7 +143,7 @@ export function EventSettingsForm({ settings }: Props) {
                             {settings ? "Save changes" : "Create event settings"}
                         </>
                     )}
-                </PosterButton>
+                </Button>
                 {form.formState.isDirty && <p className="text-sm text-muted-foreground">You have unsaved changes.</p>}
             </div>
         </form>

@@ -9,18 +9,19 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { approveRegistrationRequest, rejectRegistrationRequest } from "@/actions/management/registrations";
 import { PaginationFooter } from "@/components/pagination-footer";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-    PosterBadge,
-    PosterButton,
-    PosterDialogContent,
-    PosterDialogFooter,
-    PosterFieldLabel,
-    PosterTableHead,
-    PosterTextarea,
-} from "@/components/poster";
-import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import type { PaginationMeta } from "@/lib/contracts/common";
 import {
     type RegistrationListItem,
@@ -88,9 +89,9 @@ export function RegistrationManagement({ items, meta, status }: Props) {
         <>
             <div className="flex flex-wrap items-center gap-2">
                 {statusFilters.map((s) => (
-                    <PosterButton
+                    <Button
                         key={s}
-                        tone={statusFilter === s ? "solid" : "outline"}
+                        variant={statusFilter === s ? "default" : "outline"}
                         size="sm"
                         className={
                             statusFilter === s
@@ -100,7 +101,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                         onClick={() => handleFilterChange(s)}
                     >
                         {s.charAt(0) + s.slice(1).toLowerCase()}
-                    </PosterButton>
+                    </Button>
                 ))}
             </div>
 
@@ -108,27 +109,13 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Team
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Program
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Leader
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Members
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Status
-                            </PosterTableHead>
-                            <PosterTableHead className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Submitted
-                            </PosterTableHead>
-                            <PosterTableHead className="text-right font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                                Actions
-                            </PosterTableHead>
+                            <TableHead>Team</TableHead>
+                            <TableHead>Program</TableHead>
+                            <TableHead>Leader</TableHead>
+                            <TableHead>Members</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Submitted</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -155,28 +142,28 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-2">
-                                            <PosterButton
-                                                tone="outline"
+                                            <Button
+                                                variant="outline"
                                                 size="sm"
-                                                className="border-2 border-border font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                                                className="text-xs"
                                                 onClick={() => router.push(`/panel/registrations/${item.id}`)}
                                             >
                                                 <Eye className="size-4" />
                                                 View
-                                            </PosterButton>
+                                            </Button>
                                             {item.status === "PENDING" && (
                                                 <>
-                                                    <PosterButton
-                                                        tone="solid"
+                                                    <Button
+                                                        variant="default"
                                                         size="sm"
-                                                        className="border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-accent hover:text-accent-foreground"
+                                                        className="text-xs"
                                                         onClick={() => onApprove(item.id)}
                                                         disabled={isPending}
                                                     >
                                                         Approve
-                                                    </PosterButton>
-                                                    <PosterButton
-                                                        tone="destructive"
+                                                    </Button>
+                                                    <Button
+                                                        variant="destructive"
                                                         size="sm"
                                                         onClick={() => {
                                                             rejectForm.reset({
@@ -188,7 +175,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                                         disabled={isPending}
                                                     >
                                                         Reject
-                                                    </PosterButton>
+                                                    </Button>
                                                 </>
                                             )}
                                         </div>
@@ -214,7 +201,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
             />
 
             <Dialog open={!!rejectItem} onOpenChange={(open) => !open && setRejectItem(null)}>
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Reject registration</DialogTitle>
                         <DialogDescription>
@@ -230,44 +217,38 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                 control={rejectForm.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <PosterFieldLabel
-                                            className="font-display text-sm font-semibold text-foreground"
-                                            htmlFor={field.name}
-                                        >
-                                            Reason
-                                        </PosterFieldLabel>
-                                        <PosterTextarea
+                                        <FieldLabel htmlFor={field.name}>Reason</FieldLabel>
+                                        <Textarea
                                             {...field}
                                             id={field.name}
                                             aria-invalid={fieldState.invalid}
                                             placeholder="Explain why this registration was rejected..."
-                                            className="border-2 border-border/25 bg-card focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
                         </FieldGroup>
-                        <PosterDialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
-                            <PosterButton
-                                tone="outline"
+                        <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                            <Button
+                                variant="outline"
                                 type="button"
                                 onClick={() => setRejectItem(null)}
                                 disabled={isPending}
                             >
                                 Cancel
-                            </PosterButton>
-                            <PosterButton
-                                tone="destructive"
+                            </Button>
+                            <Button
+                                variant="destructive"
                                 type="submit"
                                 disabled={isPending}
                                 className="border-2 border-destructive/40 font-display text-sm font-semibold"
                             >
                                 {isPending ? "Rejecting..." : "Reject registration"}
-                            </PosterButton>
-                        </PosterDialogFooter>
+                            </Button>
+                        </DialogFooter>
                     </form>
-                </PosterDialogContent>
+                </DialogContent>
             </Dialog>
         </>
     );
@@ -276,28 +257,16 @@ export function RegistrationManagement({ items, meta, status }: Props) {
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case "PENDING":
-            return (
-                <PosterBadge tone="accent" className="border-2 border-border bg-accent text-accent-foreground">
-                    Pending
-                </PosterBadge>
-            );
+            return <Badge variant="accent">Pending</Badge>;
         case "APPROVED":
-            return (
-                <PosterBadge tone="neutral" className="border-2 border-border text-foreground">
-                    Approved
-                </PosterBadge>
-            );
+            return <Badge variant="outline">Approved</Badge>;
         case "REJECTED":
-            return (
-                <PosterBadge tone="danger" className="border-2 border-destructive/40">
-                    Rejected
-                </PosterBadge>
-            );
+            return <Badge variant="destructive">Rejected</Badge>;
         default:
             return (
-                <PosterBadge tone="muted" className="border-2 border-border/15 text-muted-foreground">
+                <Badge variant="secondary" className="border-border/15">
                     {status}
-                </PosterBadge>
+                </Badge>
             );
     }
 }

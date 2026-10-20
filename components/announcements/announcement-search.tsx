@@ -2,8 +2,8 @@
 
 import { Search, X } from "lucide-react";
 import { useState } from "react";
-
-import { PosterButton, PosterInput } from "@/components/poster";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type AnnouncementSearchProps = {
     defaultValue?: string;
@@ -30,7 +30,7 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                             className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                         />
 
-                        <PosterInput
+                        <Input
                             type="search"
                             name="search"
                             value={search}
@@ -42,26 +42,21 @@ export function AnnouncementSearch({ defaultValue = "", category = "all", labels
                         />
 
                         {search && (
-                            <PosterButton
-                                tone="destructive"
+                            <Button
+                                variant="destructive"
                                 type="button"
                                 size="icon"
                                 aria-label={labels.closeSearch}
                                 onClick={() => setSearch("")}
-                                className="absolute right-1.5 top-1/2 size-8 -translate-y-1/2 border-2 border-border bg-foreground text-background hover:bg-accent hover:text-accent-foreground"
                             >
                                 <X className="size-4" strokeWidth={2.25} aria-hidden="true" />
-                            </PosterButton>
+                            </Button>
                         )}
                     </div>
 
-                    <PosterButton
-                        tone="solid"
-                        type="submit"
-                        className="h-11 shrink-0 border-2 border-border bg-foreground px-4 font-display text-sm font-semibold text-background hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground sm:px-6"
-                    >
+                    <Button variant="default" type="submit" className="shrink-0 sm:px-6">
                         {labels.searchButton}
-                    </PosterButton>
+                    </Button>
                 </form>
             </search>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { PosterButton } from "@/components/poster";
+import { Button } from "@/components/ui/button";
 
 export default function TeamError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
     return (
@@ -11,13 +11,13 @@ export default function TeamError({ reset }: { error: Error & { digest?: string 
                 </p>
                 <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">Something went wrong</h1>
                 <p className="text-muted-foreground">We could not load this workspace. Please try again.</p>
-                <PosterButton
-                    tone="solid"
+                <Button
+                    variant="default"
                     onClick={reset}
                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     Try again
-                </PosterButton>
+                </Button>
             </section>
         </main>
     );

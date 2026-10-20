@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { LoginContent } from "@/app/(public)/login/_components/login-content";
-import { PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirectAuthenticatedUser } from "@/lib/auth/guards";
 import { getLocale } from "@/lib/i18n/server";
@@ -26,7 +26,7 @@ function LoginFallback() {
             aria-label="Loading sign in"
         >
             <span className="sr-only">Loading sign in</span>
-            <PosterPanel className="mx-auto w-full max-w-lg">
+            <PosterPanel className="mx-auto w-full max-w-lg border-border/15">
                 <div className="border-b-2 border-border bg-accent text-accent-foreground px-6 py-5 sm:px-8">
                     <Skeleton className="h-3 w-32 bg-foreground/20" />
                     <Skeleton className="mt-3 h-10 w-64 max-w-full bg-foreground/20" />

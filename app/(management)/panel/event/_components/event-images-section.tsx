@@ -4,7 +4,8 @@ import { GripVertical, ImageIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { ReactSortable } from "react-sortablejs";
 import { FileUpload } from "@/components/file-upload";
-import { PosterBadge, PosterPanel } from "@/components/poster";
+import { PosterPanel } from "@/components/poster-panel";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -28,9 +29,9 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                 <ImageIcon className="size-5 text-muted-foreground" />
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Event images</h2>
                 {imageUrls.length > 0 && (
-                    <PosterBadge tone="muted" className="ml-auto border-2 border-border/15">
+                    <Badge variant="secondary" className="ml-auto border-border/15">
                         {imageUrls.length}
-                    </PosterBadge>
+                    </Badge>
                 )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -76,12 +77,9 @@ export function EventImagesSection({ imageUrls, onAdd, onRemove, onReorder }: Pr
                                 </Button>
                             </div>
                             {index === 0 && (
-                                <PosterBadge
-                                    tone="primary"
-                                    className="absolute left-2 top-2 border-2 border-border bg-accent text-accent-foreground"
-                                >
+                                <Badge variant="accent" className="absolute left-2 top-2">
                                     Primary
-                                </PosterBadge>
+                                </Badge>
                             )}
                         </div>
                     ))}

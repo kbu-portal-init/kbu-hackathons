@@ -3,8 +3,17 @@
 import { useState } from "react";
 import { changeTeamPassword } from "@/actions/participant/team-password";
 import { PasswordChangeForm } from "@/components/password-change-form";
-import { PosterButton, PosterDialogContent, PosterDialogFooter, PosterPanel } from "@/components/poster";
-import { Dialog, DialogClose, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PosterPanel } from "@/components/poster-panel";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export function TeamPasswordSettings({ username }: { username: string }) {
     const [resetOpen, setResetOpen] = useState(false);
@@ -42,10 +51,10 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                         Change the shared team account password or request a reset link.
                     </p>
                 </div>
-                <PosterButton
-                    tone="link"
+                <Button
+                    variant="link"
                     type="button"
-                    className="h-auto justify-start px-0 font-display text-sm font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
+                    className="h-auto justify-start px-0 underline decoration-primary decoration-2 underline-offset-4 sm:justify-end"
                     onClick={() => {
                         setResetMessage(null);
                         setResetError(false);
@@ -53,7 +62,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                     }}
                 >
                     Forgot password?
-                </PosterButton>
+                </Button>
             </div>
 
             <PasswordChangeForm
@@ -65,7 +74,7 @@ export function TeamPasswordSettings({ username }: { username: string }) {
             />
 
             <Dialog open={resetOpen} onOpenChange={(open) => !resetting && setResetOpen(open)}>
-                <PosterDialogContent className="border-2 border-border">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Forgot password?</DialogTitle>
                         <DialogDescription>
@@ -78,11 +87,11 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                     >
                         {resetMessage ?? `Team username: ${username}`}
                     </p>
-                    <PosterDialogFooter>
+                    <DialogFooter>
                         <DialogClose
                             render={
-                                <PosterButton
-                                    tone="outline"
+                                <Button
+                                    variant="outline"
                                     className="border-2 border-border font-display text-sm font-semibold"
                                     disabled={resetting}
                                 />
@@ -91,18 +100,18 @@ export function TeamPasswordSettings({ username }: { username: string }) {
                             Close
                         </DialogClose>
                         {!resetMessage || resetError ? (
-                            <PosterButton
-                                tone="solid"
+                            <Button
+                                variant="default"
                                 type="button"
                                 className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                                 onClick={() => void requestReset()}
                                 disabled={resetting}
                             >
                                 {resetting ? "Sending..." : "Send reset link"}
-                            </PosterButton>
+                            </Button>
                         ) : null}
-                    </PosterDialogFooter>
-                </PosterDialogContent>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </PosterPanel>
     );

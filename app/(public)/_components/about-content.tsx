@@ -77,13 +77,13 @@ export async function AboutContent() {
 
             <div
                 id="need-help"
-                className="mt-10 flex scroll-mt-24 flex-col gap-5 border-2 border-border bg-accent p-5 text-accent-foreground sm:flex-row sm:items-center sm:justify-between sm:p-6"
+                className="mt-10 flex scroll-mt-24 flex-col gap-5 border-2 border-border bg-primary p-5 text-foreground sm:flex-row sm:items-center sm:justify-between sm:p-6"
             >
                 <div className="flex items-start gap-3">
                     <MessageCircle className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
                     <div>
                         <h3 className="font-display text-lg font-semibold">{t.help}</h3>
-                        <p className="mt-1 max-w-xl text-sm leading-6 text-foreground/75">{t.helpText}</p>
+                        <p className="mt-1 max-w-xl text-sm leading-6 text-foreground">{t.helpText}</p>
                     </div>
                 </div>
                 <a
@@ -102,7 +102,7 @@ export async function AboutContent() {
                     {t.faqTitle}
                 </h2>
 
-                <div className="mt-7 max-w-4xl border-t-2 border-border">
+                <div className="mt-7 border-t-2 border-border">
                     {t.faq.map(([question, answer]) => (
                         <details key={question} className="faq-disclosure group border-b-2 border-border/15">
                             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 text-left font-display text-base font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary [&::-webkit-details-marker]:hidden sm:text-lg">

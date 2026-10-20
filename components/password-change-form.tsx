@@ -4,7 +4,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ForgotPasswordButton } from "@/components/forgot-password-button";
-import { PosterButton, PosterInput } from "@/components/poster";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type PasswordValues = { currentPassword: string; newPassword: string; confirmPassword: string };
@@ -59,17 +60,17 @@ export function PasswordChangeForm({
                         >
                             {label}
                         </Label>
-                        <PosterInput
+                        <Input
                             id={`${idPrefix}-${suffix}`}
                             type={visible[key] ? "text" : "password"}
-                            className="h-11 border-2 border-border/25 bg-card pr-10 text-base focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                            className="h-11 pr-10 text-base"
                             value={values[key]}
                             onChange={(event) => setValues({ ...values, [key]: event.target.value })}
                             minLength={key === "currentPassword" ? undefined : 8}
                             required
                         />
-                        <PosterButton
-                            tone="ghost"
+                        <Button
+                            variant="ghost"
                             type="button"
                             size="icon-sm"
                             className="relative float-right -mt-9 mr-1"
@@ -77,17 +78,17 @@ export function PasswordChangeForm({
                             onClick={() => setVisible((current) => ({ ...current, [key]: !current[key] }))}
                         >
                             {visible[key] ? <EyeOff /> : <Eye />}
-                        </PosterButton>
+                        </Button>
                     </div>
                 ))}
-                <PosterButton
-                    tone="solid"
+                <Button
+                    variant="default"
                     type="submit"
                     disabled={saving}
                     className="border-2 border-border bg-foreground font-display text-sm font-semibold text-background hover:bg-accent hover:text-accent-foreground"
                 >
                     {saving ? "Saving..." : "Change password"}
-                </PosterButton>
+                </Button>
             </form>
         </>
     );

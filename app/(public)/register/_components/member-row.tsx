@@ -1,10 +1,9 @@
 "use client";
 
 import { type Control, Controller } from "react-hook-form";
-import { PosterFieldLabel, PosterSelectTrigger } from "@/components/poster";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getMessages } from "@/lib/i18n/messages";
 import { roleOptions } from "./constants";
 import type { FormValues, Locale, SubmittedFormValues } from "./types";
@@ -31,7 +30,7 @@ export function MemberRow({
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <PosterFieldLabel htmlFor={field.name}>{th ? "ชื่อ" : "Name"}</PosterFieldLabel>
+                            <FieldLabel htmlFor={field.name}>{th ? "ชื่อ" : "Name"}</FieldLabel>
                             <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                                 <InputGroupInput
                                     className="h-full px-3 text-base"
@@ -50,18 +49,14 @@ export function MemberRow({
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                            <PosterFieldLabel htmlFor={field.name}>{th ? "บทบาท" : "Role"}</PosterFieldLabel>
+                            <FieldLabel htmlFor={field.name}>{th ? "บทบาท" : "Role"}</FieldLabel>
                             <Select value={field.value} onValueChange={field.onChange}>
-                                <PosterSelectTrigger
-                                    id={field.name}
-                                    aria-invalid={fieldState.invalid}
-                                    className="h-11 w-full border-2 border-border/25 bg-card"
-                                >
+                                <SelectTrigger id={field.name} aria-invalid={fieldState.invalid} className="w-full">
                                     <SelectValue>
                                         {t.roles[field.value as keyof typeof t.roles] ??
                                             roleOptions.find((option) => option.value === field.value)?.label}
                                     </SelectValue>
-                                </PosterSelectTrigger>
+                                </SelectTrigger>
                                 <SelectContent alignItemWithTrigger={false}>
                                     {roleOptions.map((opt) => (
                                         <SelectItem key={opt.value} value={opt.value}>
@@ -79,7 +74,7 @@ export function MemberRow({
                     control={control}
                     render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid} className="sm:col-span-2 xl:col-span-1">
-                            <PosterFieldLabel htmlFor={field.name}>{t.email}</PosterFieldLabel>
+                            <FieldLabel htmlFor={field.name}>{t.email}</FieldLabel>
                             <InputGroup className="h-11 border-2 border-border/25 bg-card has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-2 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/20">
                                 <InputGroupInput
                                     className="h-full px-3 text-base"

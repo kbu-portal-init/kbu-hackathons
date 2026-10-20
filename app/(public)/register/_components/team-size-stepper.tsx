@@ -1,7 +1,7 @@
 "use client";
 
 import { Minus, Plus, User } from "lucide-react";
-import { PosterButton } from "@/components/poster";
+import { Button } from "@/components/ui/button";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 
@@ -26,8 +26,8 @@ export function TeamSizeStepper({
 
     return (
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 border-2 border-border/15 bg-background p-3 sm:justify-start">
-            <PosterButton
-                tone="outline"
+            <Button
+                variant="outline"
                 type="button"
                 size="icon"
                 aria-label={th ? "ลดสมาชิก" : "Remove a member"}
@@ -36,15 +36,15 @@ export function TeamSizeStepper({
                 className="border-2 border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
             >
                 <Minus className="size-4" />
-            </PosterButton>
+            </Button>
             <output aria-labelledby={labelledBy} className="min-w-24 text-center">
                 <span className="block font-display text-3xl font-bold leading-none tabular-nums text-foreground">
                     {value}
                 </span>
                 <span className="mt-1 block text-sm text-muted-foreground">{t.membersLabel}</span>
             </output>
-            <PosterButton
-                tone="outline"
+            <Button
+                variant="outline"
                 type="button"
                 size="icon"
                 aria-label={th ? "เพิ่มสมาชิก" : "Add a member"}
@@ -53,7 +53,7 @@ export function TeamSizeStepper({
                 className="border-2 border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
             >
                 <Plus className="size-4" />
-            </PosterButton>
+            </Button>
             <div
                 aria-hidden
                 className="flex basis-full items-center justify-center gap-1.5 border-t-2 border-border/15 pt-3 sm:ml-auto sm:basis-auto sm:border-t-0 sm:pt-0"

@@ -73,8 +73,8 @@ function RegistrationButton({
 
 function EventFact({ label, value }: { label: string; value: string }) {
     return (
-        <div className="border-b-2 border-foreground/20 px-1 py-4 last:border-b-0 sm:border-b-0 sm:border-r-2 sm:px-5 sm:last:border-r-0">
-            <p className="font-display text-xs font-semibold text-foreground/75">{label}</p>
+        <div className="border-b-2 border-foreground/30 px-1 py-4 last:border-b-0 sm:border-b-0 sm:border-r-2 sm:px-5 sm:last:border-r-0">
+            <p className="font-display text-xs font-semibold text-foreground">{label}</p>
             <p className="mt-1 text-sm font-semibold leading-6 text-foreground">{value}</p>
         </div>
     );
@@ -86,7 +86,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
     const registrationState = registrationStateFrom(event);
 
     return (
-        <section className="relative text-foreground">
+        <section className="relative border-b-2 border-border bg-background text-foreground">
             <div className="mx-auto max-w-6xl px-5 pb-10 pt-8 sm:px-8 sm:pb-14 sm:pt-12 lg:pt-10">
                 <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-12">
                     <div>
@@ -98,13 +98,14 @@ export async function HomeHero({ locale }: { locale: Locale }) {
                         <h1 className="mt-7 font-display text-[clamp(3.25rem,13vw,7rem)] font-bold leading-[0.84] tracking-tighter">
                             {event?.title ?? "KBU Hackathon 2026"}
                         </h1>
+                        <div className="w-12 h-1 bg-foreground mb-4"></div>
 
                         <p className="mt-6 max-w-lg text-lg leading-7 font-medium sm:text-xl sm:leading-8">
                             {t.home.heroIntro}
                         </p>
 
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                            <RegistrationButton state={registrationState} locale={locale} />
+                            <RegistrationButton state={registrationState} locale={locale} tone="dark" />
                             <HomeAuthAction locale={locale} />
                         </div>
 

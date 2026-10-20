@@ -60,7 +60,7 @@ function AnnouncementContentFallback() {
     return (
         <article className="mt-8" role="status" aria-label="Loading announcement">
             <span className="sr-only">Loading announcement</span>
-            <div className="border-2 border-border bg-background p-2">
+            <div className="border-2 border-border/15 bg-background p-2">
                 <Skeleton className="aspect-2/1 w-full bg-foreground/10" />
             </div>
             <Skeleton className="mt-6 h-4 w-48 bg-primary/20" />
