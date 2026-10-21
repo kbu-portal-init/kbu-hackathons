@@ -32,6 +32,7 @@ const firaCode = Fira_Code({
 });
 
 const DESCRIPTION = "Discover hackathons, join a team, and keep up with the KBU community.";
+const OG_ALT = "KBU Hackathon 2026 — Build. Connect. Compete.";
 const DEFAULT_APP_URL = "http://localhost:3000";
 
 function resolveAppUrl(): string {
@@ -50,7 +51,7 @@ function resolveAppUrl(): string {
 export async function generateMetadata(): Promise<Metadata> {
     const appUrl = resolveAppUrl();
 
-    const ogImageUrl = await resolveOgImageUrl();
+    const ogImageUrl = resolveOgImageUrl();
 
     return {
         metadataBase: new URL(appUrl),
@@ -62,13 +63,13 @@ export async function generateMetadata(): Promise<Metadata> {
             url: appUrl,
             title: "KBU Hackathon 2026",
             description: DESCRIPTION,
-            images: [{ url: ogImageUrl }],
+            images: [{ url: ogImageUrl, width: 1200, height: 630, type: "image/jpeg", alt: OG_ALT }],
         },
         twitter: {
             card: "summary_large_image",
             title: "KBU Hackathon 2026",
             description: DESCRIPTION,
-            images: [ogImageUrl],
+            images: [{ url: ogImageUrl, alt: OG_ALT }],
         },
     };
 }

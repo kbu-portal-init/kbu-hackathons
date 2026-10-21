@@ -10,6 +10,7 @@ The branch currently provides:
 - Admin and organizer account-ban permissions: admins may target organizers and teams; organizers may target teams only. Bans revoke sessions and write audit records.
 - Organizer/admin-triggered student email verification.
 - Public announcement and participant-card sharing with mobile native share and desktop copy-link/LINE actions.
+- Social preview metadata (`og:image` and Twitter card) is emitted from the root layout and per announcement, using a 1200×630 JPEG fallback (`public/images/og.jpg`). Facebook's crawler rejects WebP for `og:image`, so preview images must stay JPEG/PNG/GIF; announcement uploads are encoded as JPEG for this reason.
 - Organizer/admin event settings reads and upserts with Zod validation, ISO-string DTO mapping, atomic persistence, and audit logging, including Thai program and International program team caps whose sum is the total team capacity.
 - Public registration at `/register` collects the team roster plus the required education program (`THAI_PROGRAM` or `INTERNATIONAL_PROGRAM`), shows the remaining slots per program, and rejects submissions when the program cap is full. Approval re-checks both caps under the `event_settings` row lock. Organizer panel lists (`/panel/registrations`, `/panel/teams`) and their detail pages show each team's program.
 - Cloudflare R2 storage with server-side proxy uploads, team-owned `uploads/<team-id>/` keys, organizer/admin-owned `uploads/events/` keys, and admin-owned `uploads/admins/<admin-id>/` keys.

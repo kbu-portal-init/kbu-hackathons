@@ -35,7 +35,8 @@ export async function generateMetadata({ params }: AnnouncementPageProps): Promi
     }
 
     const description = getDescription(announcement.content);
-    const ogImageUrl = await resolveOgImageUrl(announcement.imageUrl);
+    const ogImageUrl = resolveOgImageUrl(announcement.imageUrl);
+    const ogImage = { url: ogImageUrl, type: "image/jpeg", alt: announcement.title };
 
     return {
         title: `${announcement.title} | KBU Hackathon 2026`,
@@ -45,13 +46,13 @@ export async function generateMetadata({ params }: AnnouncementPageProps): Promi
             siteName: "KBU Hackathon 2026",
             title: announcement.title,
             description,
-            images: [{ url: ogImageUrl }],
+            images: [ogImage],
         },
         twitter: {
             card: "summary_large_image",
             title: announcement.title,
             description,
-            images: [ogImageUrl],
+            images: [ogImage],
         },
     };
 }
