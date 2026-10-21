@@ -27,7 +27,7 @@ export default function globalSetup(): void {
 
     const env = loadEnvFile(envPath);
     for (const [key, value] of Object.entries(env)) {
-        if (!(key in process.env)) process.env[key] = value;
+        (process.env as Record<string, string | undefined>)[key] = value;
     }
     (process.env as Record<string, string | undefined>).NODE_ENV = "test";
 
