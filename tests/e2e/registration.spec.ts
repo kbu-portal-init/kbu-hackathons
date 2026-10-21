@@ -6,10 +6,6 @@ async function acknowledge(page: import("@playwright/test").Page) {
     await page.getByRole("button", { name: "I understand" }).click();
 }
 
-function uniqueEmail() {
-    return `u${Date.now()}${Math.floor(Math.random() * 1000)}@ms.kbu.ac.th`;
-}
-
 test.describe("registration form", () => {
     test("renders all sections", async ({ page }) => {
         await page.goto("/register");

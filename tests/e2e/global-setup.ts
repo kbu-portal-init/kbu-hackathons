@@ -29,7 +29,7 @@ export default function globalSetup(): void {
     for (const [key, value] of Object.entries(env)) {
         if (!(key in process.env)) process.env[key] = value;
     }
-    process.env.NODE_ENV = "test";
+    (process.env as Record<string, string | undefined>).NODE_ENV = "test";
 
     if (!process.env.DATABASE_URL) {
         throw new Error(".env.e2e must set DATABASE_URL to a dedicated test database.");

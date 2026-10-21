@@ -34,6 +34,54 @@ pnpm test:announcements
 
 Biome intentionally excludes `components/ui`. Do not use a whole-project formatter command to modify those generated files. Husky runs lint-staged before commits.
 
+## End-to-end tests (Playwright)
+
+E2E tests drive a real browser against a real database via server actions. They are not run in CI.
+
+### Prerequisites
+
+1. A dedicated test database (e.g. a separate Neon database) — the seed is destructive.
+2. `.env.e2e` — copy `.env.e2e.example` and fill in your test `DATABASE_URL`. Other vars (SMTP, R2) can be dummy values; Upstash is left blank so rate limits fall back to in-memory.
+3. Chromium installed: `npx playwright install chromium`
+
+### Running
+
+```bash
+# Full suite: seeds the test DB, starts next dev, runs all specs, kills server
+pnpm test:e2e
+
+# Watch mode (server stays up between runs)
+pnpm test:e2e:watch
+
+# Visible browser
+pnpm test:e2e:headed
+
+# Skip re-seeding (if DB is already seeded)
+E2E_SKIP_SEED=1 pnpm test:e2e
+```
+
+`tests/e2e/global-setup.ts` loads `.env.e2e` into `process.env` (which the Playwright `webServer` inherits) and runs `pnpm db:seed` before the suite.
+
+### Spec files
+
+| File | Coverage |
+|---|---|
+| `auth.spec.ts` | Session API, login form basics |
+| `protected.spec.ts` | Unauthenticated redirects for `/team`, `/panel`, `/admin` |
+| `announcements.spec.ts` | `GET /api/announcements` JSON envelope |
+| `authenticated.spec.ts` | Team/organizer/admin login flows, sign out |
+| `registration.spec.ts` | `submitTeamRegistration` — render, validation, success, duplicate email |
+| `participant.spec.ts` | `saveSubmission`, `changeTeamPassword`, notification actions |
+| `panel-announcements.spec.ts` | Announcement CRUD lifecycle (create/publish/archive/delete/update) |
+| `panel-manage.spec.ts` | 14 organizer actions: event settings, registrations, teams, notifications, profile |
+| `admin.spec.ts` | Admin actions: organizer CRUD, ban/unban, profile, password, audit delete |
+
+### Not covered
+
+- **7 actions with no UI** (no page calls them) — unit-test territory
+- **R2-dependent actions** (`updateTeamLogo`, `updateMemberImage`, `generateMemberCard`) — need Cloudflare storage
+- **`verifyTeamMemberEmail`** — single-use token consumed on page load
+
 ## Commands that mutate database state
 
 `db:migrate`, `db:migrate:deploy`, `db:push`, and `db:seed` mutate database state. Confirm the target database before running them. The development seed resets data and recreates fixture accounts, so it must never run against production.
