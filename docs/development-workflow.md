@@ -58,9 +58,12 @@ pnpm test:e2e:headed
 
 # Skip re-seeding (if DB is already seeded)
 E2E_SKIP_SEED=1 pnpm test:e2e
+
+# Skip migrations (if schema is already current)
+E2E_SKIP_MIGRATE=1 pnpm test:e2e
 ```
 
-`tests/e2e/global-setup.ts` loads `.env.e2e` into `process.env` (which the Playwright `webServer` inherits) and runs `pnpm db:seed` before the suite.
+`tests/e2e/global-setup.ts` loads `.env.e2e` into `process.env` (which the Playwright `webServer` inherits), runs `pnpm db:migrate:deploy` to apply pending migrations, then runs `pnpm db:seed` — both before the suite starts.
 
 ### Spec files
 

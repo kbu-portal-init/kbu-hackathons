@@ -35,6 +35,18 @@ export default function globalSetup(): void {
         throw new Error(".env.e2e must set DATABASE_URL to a dedicated test database.");
     }
 
+    if (process.env.E2E_SKIP_MIGRATE !== "1") {
+        console.log("[global-setup] Applying database migrations...");
+        execSync("pnpm db:migrate:deploy", {
+            env: process.env,
+            stdio: "inherit",
+            cwd: resolve(__dirname, "../.."),
+        });
+        console.log("[global-setup] Migrations applied.");
+    } else {
+        console.log("[global-setup] E2E_SKIP_MIGRATE=1 — skipping migrations.");
+    }
+
     if (process.env.E2E_SKIP_SEED === "1") {
         console.log("[global-setup] E2E_SKIP_SEED=1 — skipping database seed.");
         return;
