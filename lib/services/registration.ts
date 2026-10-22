@@ -230,7 +230,7 @@ async function provisionTeamAccount(
             type: "TEAM_REGISTRATION_APPROVED",
             teamId,
             registrationId,
-            data: { teamName: teamDisplayName, resetUrl: setupUrl },
+            data: { teamName: teamDisplayName, username: teamLoginName, resetUrl: setupUrl },
             actorId: actorId ?? undefined,
         });
     } catch {

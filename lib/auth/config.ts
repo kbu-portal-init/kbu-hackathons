@@ -92,11 +92,9 @@ export const auth = betterAuth({
         enabled: true,
         resetPasswordTokenExpiresIn: PASSWORD_RESET_TOKEN_TTL_SECONDS,
         sendResetPassword: async ({ user, token }) => {
-            const appUrl = (
-                process.env.NEXT_PUBLIC_APP_URL ??
-                process.env.BETTER_AUTH_URL ??
-                "http://localhost:3000"
-            ).replace(/\/$/, "");
+            const appUrl =
+                // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
+                process.env.NEXT_PUBLIC_APP_URL!.replace(/\/$/, "");
             const resetUrl = `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
             const team = await prisma.team.findUnique({
                 where: { userId: user.id },
