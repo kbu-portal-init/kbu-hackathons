@@ -37,6 +37,7 @@ function paragraph(text: string) {
 function renderNotificationTemplateContent(type: NotificationType, data: NotificationData): RenderedTemplate {
     const rawTeamName = data.teamName ?? "";
     const teamName = escapeHtml(rawTeamName) || "Your team";
+    const memberName = escapeHtml(data.memberName) || "Not provided";
     const reason = data.reason ? paragraph(`<strong>Reason:</strong> ${escapeHtml(data.reason)}`) : "";
     const expires = data.expiresAt ? paragraph(`<strong>Until:</strong> ${escapeHtml(data.expiresAt)}`) : "";
 
@@ -58,10 +59,13 @@ function renderNotificationTemplateContent(type: NotificationType, data: Notific
             return {
                 type,
                 subject: "Verify your KBU Hackathon 2026 student email",
-                text: `Please verify your student email for ${rawTeamName || "your team"} using this link: ${data.verificationUrl}`,
+                text:
+                    `Please verify your student email for ${rawTeamName || "your team"}.` +
+                    `\n\nMember: ${data.memberName || "Not provided"}\n\nVerify using this link: ${data.verificationUrl}`,
                 html: appLayout(
                     title,
                     paragraph(`<strong>Team:</strong> ${teamName}`) +
+                        paragraph(`<strong>Member:</strong> ${memberName}`) +
                         paragraph("Please verify your student email address using the button below."),
                     { label: "Verify email", url: data.verificationUrl ?? "" },
                 ),

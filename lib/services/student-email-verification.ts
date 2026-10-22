@@ -13,7 +13,7 @@ const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 export async function sendStudentEmailVerification(teamMemberId: string, options: { rateLimit?: boolean } = {}) {
     const member = await prisma.teamMember.findUnique({
         where: { id: teamMemberId },
-        select: { id: true, studentEmail: true, team: { select: { displayName: true } } },
+        select: { id: true, name: true, studentEmail: true, team: { select: { displayName: true } } },
     });
     if (!member) throw new Error("Team member not found");
     if (!studentEmailSchema.safeParse(member.studentEmail).success) throw new Error("Invalid student email domain");
@@ -38,7 +38,7 @@ export async function sendStudentEmailVerification(teamMemberId: string, options
     await sendNotification({
         type: "STUDENT_EMAIL_VERIFICATION",
         recipients: [member.studentEmail],
-        data: { verificationUrl: url, teamName: member.team.displayName },
+        data: { verificationUrl: url, teamName: member.team.displayName, memberName: member.name },
         targetType: "TeamMember",
         targetId: member.id,
     });
