@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { Button } from "@/components/ui/button";
 import {
     Popover,
     PopoverContent,
@@ -39,6 +40,7 @@ import {
     isActivePath,
     managementDashboardLinks,
     participantDashboardLinks,
+    resolveActiveHref,
 } from "@/lib/navigation";
 import { ConfirmActionAlertDialog } from "./confirm-action-alert-dialog";
 
@@ -82,6 +84,10 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
     const { label: sidebarLabel, title: headerTitle, links } = config[area];
     const localizedLinks = t.links[area === "participant" ? "team" : area];
     const adminActive = isActivePath(pathname, "/admin");
+    const activeHref = resolveActiveHref(
+        pathname,
+        links.map((link) => link.href),
+    );
 
     return (
         <SidebarProvider className="min-h-screen flex-1">
@@ -106,7 +112,7 @@ export function DashboardSidebar({ area, locale, lineContact, children, role, ac
                             <SidebarMenu className="gap-1">
                                 {links.map(({ href, label, icon: Icon }) => {
                                     const localizedLabel = localizedLinks[href as keyof typeof localizedLinks] ?? label;
-                                    const active = isActivePath(pathname, href);
+                                    const active = activeHref === href;
                                     return (
                                         <SidebarMenuItem key={href}>
                                             <SidebarMenuButton
@@ -252,13 +258,10 @@ function AccountFooter({
                 </PopoverHeader>
                 <ConfirmActionAlertDialog
                     trigger={
-                        <button
-                            type="button"
-                            className="flex w-full cursor-pointer items-center gap-2 border-2 border-border bg-foreground px-2 py-2 font-display text-sm font-semibold text-background outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-foreground"
-                        >
+                        <Button variant="default" className="h-auto w-full justify-start px-2 py-2 text-sm">
                             <LogOut className="size-4" />
                             <span>{t.signOut}</span>
-                        </button>
+                        </Button>
                     }
                     title={t.signOutQuestion}
                     description={t.signOutDescription}

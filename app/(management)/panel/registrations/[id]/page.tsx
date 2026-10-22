@@ -82,7 +82,7 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Email</TableHead>
-                                <TableHead>Verification</TableHead>
+                                <TableHead className="text-right">Verification</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

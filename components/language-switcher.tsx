@@ -1,7 +1,9 @@
 "use client";
 
+import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 
@@ -30,21 +32,22 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
                 const active = option.locale === locale;
 
                 return (
-                    <button
+                    <Button
                         key={option.locale}
                         type="button"
+                        variant={active ? "default" : "ghost"}
+                        size="sm"
                         aria-pressed={active}
                         aria-label={option.label}
                         disabled={isPending}
                         onClick={() => changeLocale(option.locale)}
-                        className={`min-h-9 flex-1 cursor-pointer px-2.5 font-display text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60 ${
-                            active
-                                ? "bg-foreground text-background"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                        }`}
+                        className={cn(
+                            "min-h-9 flex-1 border-0 px-2.5",
+                            !active && "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                        )}
                     >
                         {option.shortLabel}
-                    </button>
+                    </Button>
                 );
             })}
         </fieldset>

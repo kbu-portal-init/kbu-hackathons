@@ -1,6 +1,7 @@
 import { NotebookPen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { EventSettingsDTO } from "@/lib/contracts/event-settings";
 import { getEventSettings } from "@/lib/data/event-settings";
 import type { Locale } from "@/lib/i18n/config";
@@ -33,22 +34,17 @@ function formatRange(start: string, end: string, locale: Locale): string {
 function RegistrationButton({
     state,
     locale,
-    tone = "light",
+    inverted = false,
 }: {
     state: RegistrationState;
     locale: Locale;
-    tone?: "light" | "dark";
+    inverted?: boolean;
 }) {
     const t = getMessages(locale).register;
 
     if (state === "open") {
-        const className =
-            tone === "dark"
-                ? "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-primary bg-primary px-6 py-3 font-display text-base font-semibold text-foreground transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                : "inline-flex min-h-12 items-center justify-center gap-2 border-2 border-border bg-foreground px-6 py-3 font-display text-base font-semibold text-background transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
-
         return (
-            <Link href="/register" className={className}>
+            <Link href="/register" className={buttonVariants({ variant: "brand", size: "lg" })}>
                 <NotebookPen className="size-5" aria-hidden="true" />
                 {t.title}
             </Link>
@@ -56,18 +52,15 @@ function RegistrationButton({
     }
 
     return (
-        <button
-            type="button"
+        <Button
+            variant="outline"
+            size="lg"
             disabled
-            className={
-                tone === "dark"
-                    ? "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-background/25 bg-background/10 px-6 py-3 font-display text-base font-semibold text-background/60"
-                    : "inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 border-2 border-foreground/25 px-6 py-3 font-display text-base font-semibold text-foreground/60"
-            }
+            className={inverted ? "border-background/40 bg-transparent text-background" : undefined}
         >
             <NotebookPen className="size-5" aria-hidden="true" />
             {state === "not-started" ? t.notOpened : state === "closed" ? t.closed : t.unavailable}
-        </button>
+        </Button>
     );
 }
 
@@ -105,7 +98,7 @@ export async function HomeHero({ locale }: { locale: Locale }) {
                         </p>
 
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                            <RegistrationButton state={registrationState} locale={locale} tone="dark" />
+                            <RegistrationButton state={registrationState} locale={locale} />
                             <HomeAuthAction locale={locale} />
                         </div>
 
@@ -180,7 +173,7 @@ export async function HomeFinalCta({ locale }: { locale: Locale }) {
                             </p>
                         )}
                         <div className="mt-6">
-                            <RegistrationButton state={registrationState} locale={locale} tone="dark" />
+                            <RegistrationButton state={registrationState} locale={locale} inverted />
                         </div>
                     </div>
                 </div>

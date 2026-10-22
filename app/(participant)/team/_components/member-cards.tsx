@@ -39,7 +39,8 @@ export function MemberCards({ members }: { members: TeamMemberCard[] }) {
     }
 
     function getShareUrl(member: TeamMemberCard) {
-        const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+        // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL!.trim().replace(/\/$/, "");
         return `${appUrl}/cards/${member.cardShareToken}`;
     }
 

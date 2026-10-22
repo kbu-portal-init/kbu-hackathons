@@ -98,6 +98,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                                     aria-label={showNewPassword ? "Hide password" : "Show password"}
                                     onClick={() => setShowNewPassword((visible) => !visible)}
                                     size="icon-sm"
+                                    className="h-full"
                                 >
                                     {showNewPassword ? (
                                         <EyeOff data-icon="inline-start" />
@@ -128,6 +129,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                                     onClick={() => setShowConfirmPassword((visible) => !visible)}
                                     size="icon-sm"
+                                    className="h-full"
                                 >
                                     {showConfirmPassword ? (
                                         <EyeOff data-icon="inline-start" />

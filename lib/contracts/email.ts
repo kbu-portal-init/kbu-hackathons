@@ -24,6 +24,7 @@ export type NotificationType = (typeof notificationTypes)[number];
 export type NotificationData = {
     verificationUrl?: string;
     teamName?: string;
+    memberName?: string;
     username?: string;
     resetUrl?: string;
     reason?: string | null;

@@ -141,7 +141,7 @@ export function AnnouncementFormDialog<TInput extends FormFields, TOutput extend
                                         <SelectValue placeholder="Select a category" />
                                     </SelectTrigger>
 
-                                    <SelectContent>
+                                    <SelectContent alignItemWithTrigger={false}>
                                         <SelectItem value="IMPORTANT">Important</SelectItem>
                                         <SelectItem value="UPDATES">Updates</SelectItem>
                                         <SelectItem value="NEWS">News</SelectItem>

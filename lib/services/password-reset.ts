@@ -1,6 +1,7 @@
 import "server-only";
 
 import { randomBytes, randomUUID } from "node:crypto";
+import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 
 export const PASSWORD_RESET_TOKEN_TTL_SECONDS = 60 * 60;
@@ -23,7 +24,7 @@ async function createPasswordTokenUrl(userId: string, ttlSeconds: number) {
     // the token itself: the emailed token is passed directly to resetPassword.
     const identifier = `${RESET_TOKEN_IDENTIFIER_PREFIX}${token}`;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await tx.verification.deleteMany({
             where: {
                 value: userId,
@@ -40,9 +41,7 @@ async function createPasswordTokenUrl(userId: string, ttlSeconds: number) {
         });
     });
 
-    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? process.env.BETTER_AUTH_URL ?? "http://localhost:3000").replace(
-        /\/$/,
-        "",
-    );
+    // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL!.trim().replace(/\/$/, "");
     return `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
 }

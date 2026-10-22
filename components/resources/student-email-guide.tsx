@@ -1,7 +1,9 @@
 "use client";
 
+import { cn } from "cn";
 import { AlertCircle, Check, Copy, ExternalLink, HelpCircle, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import { formatBenefitDate, getStudentEmailGuide } from "@/lib/public-data/student-benefits";
@@ -62,7 +64,7 @@ export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
                         href={studentEmailGuide.portalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center justify-center gap-2 border-2 border-border bg-foreground px-5 py-2.5 font-display text-sm font-semibold text-background transition-colors hover:bg-background hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                        className={buttonVariants()}
                     >
                         {getMessages(locale).resourcesPage.openWebmail}
                         <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -98,7 +100,7 @@ export function StudentEmailGuideSection({ locale }: { locale: Locale }) {
                     <button
                         type="button"
                         onClick={handleCopyFormat}
-                        className="inline-flex min-h-10 items-center justify-center gap-1.5 self-start border-2 border-border bg-card px-4 py-2 font-display text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:self-center"
+                        className={cn(buttonVariants({ size: "sm" }), "h-10 self-start sm:self-center")}
                     >
                         {copied ? (
                             <>

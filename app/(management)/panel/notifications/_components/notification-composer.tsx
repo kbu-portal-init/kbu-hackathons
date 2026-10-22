@@ -51,7 +51,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                                       : "Specific email"}
                             </SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent alignItemWithTrigger={false}>
                             <SelectGroup>
                                 <SelectItem value="TEAM">Specific team</SelectItem>
                                 <SelectItem value="ALL_TEAMS">All approved teams</SelectItem>
@@ -72,7 +72,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                                       : "Email and in-app"}
                             </SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent alignItemWithTrigger={false}>
                             <SelectGroup>
                                 <SelectItem value="EMAIL">Email only</SelectItem>
                                 <SelectItem value="IN_APP">In-app only</SelectItem>
@@ -94,7 +94,7 @@ export function NotificationComposer({ teams }: { teams: TeamListItem[] }) {
                                 {teams.find((team) => team.id === teamId)?.displayName ?? "Choose a team"}
                             </SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent alignItemWithTrigger={false}>
                             <SelectGroup>
                                 {teams.map((team) => (
                                     <SelectItem key={team.id} value={team.id}>
