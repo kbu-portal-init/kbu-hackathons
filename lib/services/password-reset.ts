@@ -1,6 +1,7 @@
 import "server-only";
 
 import { randomBytes, randomUUID } from "node:crypto";
+import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 
 export const PASSWORD_RESET_TOKEN_TTL_SECONDS = 60 * 60;
@@ -23,7 +24,7 @@ async function createPasswordTokenUrl(userId: string, ttlSeconds: number) {
     // the token itself: the emailed token is passed directly to resetPassword.
     const identifier = `${RESET_TOKEN_IDENTIFIER_PREFIX}${token}`;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         await tx.verification.deleteMany({
             where: {
                 value: userId,
