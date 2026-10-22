@@ -11,7 +11,10 @@ import { checkVerificationRateLimit } from "@/lib/services/rate-limit";
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 export async function sendStudentEmailVerification(teamMemberId: string, options: { rateLimit?: boolean } = {}) {
-    const member = await prisma.teamMember.findUnique({ where: { id: teamMemberId } });
+    const member = await prisma.teamMember.findUnique({
+        where: { id: teamMemberId },
+        select: { id: true, name: true, studentEmail: true, team: { select: { displayName: true } } },
+    });
     if (!member) throw new Error("Team member not found");
     if (!studentEmailSchema.safeParse(member.studentEmail).success) throw new Error("Invalid student email domain");
     if (options.rateLimit !== false) {
@@ -29,12 +32,13 @@ export async function sendStudentEmailVerification(teamMemberId: string, options
         await tx.studentEmailVerification.create({ data: { teamMemberId, tokenHash, expiresAt } });
     });
 
-    const baseUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+    // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
+    const baseUrl = process.env.BETTER_AUTH_URL!;
     const url = `${baseUrl}/student-email/verify?token=${encodeURIComponent(token)}`;
     await sendNotification({
         type: "STUDENT_EMAIL_VERIFICATION",
         recipients: [member.studentEmail],
-        data: { verificationUrl: url },
+        data: { verificationUrl: url, teamName: member.team.displayName, memberName: member.name },
         targetType: "TeamMember",
         targetId: member.id,
     });

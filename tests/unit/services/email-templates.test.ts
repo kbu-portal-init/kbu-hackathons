@@ -38,6 +38,29 @@ describe("email templates", () => {
         assert.doesNotMatch(rendered.html ?? "", /<script>/);
     });
 
+    it("includes the team username in approval emails", () => {
+        const rendered = renderNotificationTemplate("TEAM_REGISTRATION_APPROVED", {
+            teamName: "Team One",
+            username: "team-one",
+            resetUrl: "https://example.test/reset",
+        });
+
+        assert.match(rendered.text, /Username: team-one/);
+        assert.match(rendered.html ?? "", /<strong>Username:<\/strong> team-one/);
+    });
+
+    it("includes the team name in student email verification emails", () => {
+        const rendered = renderNotificationTemplate("STUDENT_EMAIL_VERIFICATION", {
+            teamName: "Team One",
+            memberName: "John Doe",
+            verificationUrl: "https://example.test/verify",
+        });
+
+        assert.match(rendered.text, /student email for Team One/);
+        assert.match(rendered.html ?? "", /<strong>Team:<\/strong> Team One/);
+        assert.match(rendered.html ?? "", /<strong>Member:<\/strong> John Doe/);
+    });
+
     it("renders manual notification line breaks safely", () => {
         const rendered = renderCustomEmailTemplate("Announcement", "Hello <world>\nSecond line");
 

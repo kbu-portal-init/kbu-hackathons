@@ -37,6 +37,7 @@ function paragraph(text: string) {
 function renderNotificationTemplateContent(type: NotificationType, data: NotificationData): RenderedTemplate {
     const rawTeamName = data.teamName ?? "";
     const teamName = escapeHtml(rawTeamName) || "Your team";
+    const memberName = escapeHtml(data.memberName) || "Not provided";
     const reason = data.reason ? paragraph(`<strong>Reason:</strong> ${escapeHtml(data.reason)}`) : "";
     const expires = data.expiresAt ? paragraph(`<strong>Until:</strong> ${escapeHtml(data.expiresAt)}`) : "";
 
@@ -58,16 +59,21 @@ function renderNotificationTemplateContent(type: NotificationType, data: Notific
             return {
                 type,
                 subject: "Verify your KBU Hackathon 2026 student email",
-                text: `Verify your student email using this link: ${data.verificationUrl}`,
-                html: appLayout(title, paragraph("Please verify your student email address using the button below."), {
-                    label: "Verify email",
-                    url: data.verificationUrl ?? "",
-                }),
+                text:
+                    `Please verify your student email for ${rawTeamName || "your team"}.` +
+                    `\n\nMember: ${data.memberName || "Not provided"}\n\nVerify using this link: ${data.verificationUrl}`,
+                html: appLayout(
+                    title,
+                    paragraph(`<strong>Team:</strong> ${teamName}`) +
+                        paragraph(`<strong>Member:</strong> ${memberName}`) +
+                        paragraph("Please verify your student email address using the button below."),
+                    { label: "Verify email", url: data.verificationUrl ?? "" },
+                ),
             };
         }
         case "TEAM_REGISTRATION_APPROVED": {
             const title = `${rawTeamName || "Your team"} registration approved`;
-            const text = `Your team registration has been approved.\n\nTeam: ${rawTeamName || "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`;
+            const text = `Your team registration has been approved.\n\nTeam: ${rawTeamName || "Not provided"}\nUsername: ${data.username || "Not provided"}\n\nSet your team password using this link: ${data.resetUrl}`;
             return {
                 type,
                 subject: title,
@@ -75,7 +81,8 @@ function renderNotificationTemplateContent(type: NotificationType, data: Notific
                 html: appLayout(
                     title,
                     paragraph("Your team registration has been approved.") +
-                        paragraph(`<strong>Team:</strong> ${teamName}`),
+                        paragraph(`<strong>Team:</strong> ${teamName}`) +
+                        paragraph(`<strong>Username:</strong> ${escapeHtml(data.username) || "Not provided"}`),
                     { label: "Set team password", url: data.resetUrl ?? "" },
                 ),
             };

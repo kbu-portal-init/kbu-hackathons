@@ -26,7 +26,7 @@ function formatEventDateRange(startsAt: Date, endsAt: Date): string {
     const format = new Intl.DateTimeFormat("en-US", {
         day: "2-digit",
         month: "short",
-        timeZone: "UTC",
+        timeZone: "Asia/Bangkok",
     });
     return `${format.format(startsAt).toUpperCase()} — ${format.format(endsAt).toUpperCase()}`;
 }
