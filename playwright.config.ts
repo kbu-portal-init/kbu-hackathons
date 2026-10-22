@@ -1,8 +1,14 @@
+import { resolve } from "node:path";
 import { defineConfig, devices } from "@playwright/test";
-import { loadE2eEnv } from "./tests/e2e/global-setup";
+import dotenv from "dotenv";
 
-// webServer spawns before globalSetup, so .env.e2e must load here or `pnpm dev` uses the dev database.
-loadE2eEnv();
+// webServer spawns before globalSetup, so load the test environment during config evaluation.
+dotenv.config({ path: resolve(__dirname, ".env.e2e"), override: true });
+process.env.NODE_ENV = "test";
+
+if (!process.env.DATABASE_URL) {
+    throw new Error(".env.e2e must set DATABASE_URL to a dedicated test database.");
+}
 
 export default defineConfig({
     testDir: "./tests/e2e",
@@ -17,6 +23,7 @@ export default defineConfig({
         command: "pnpm dev",
         url: "http://localhost:3000",
         reuseExistingServer: false,
+        env: process.env,
         timeout: 120000,
     },
     use: {

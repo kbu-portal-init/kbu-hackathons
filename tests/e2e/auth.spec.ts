@@ -1,9 +1,9 @@
 import { expect, test } from "./fixtures";
 
 test("session API returns valid response", async ({ request }) => {
-    const response = await request.get("/api/auth/*get-session");
+    const response = await request.get("/api/auth/get-session");
     // Better Auth session endpoint returns 200 with session data or redirect
-    expect(response.status()).toBeLessThan(500);
+    expect(response.status()).toBe(200);
 });
 
 test("login page has form fields", async ({ page }) => {

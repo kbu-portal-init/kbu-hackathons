@@ -63,7 +63,7 @@ E2E_SKIP_SEED=1 pnpm test:e2e
 E2E_SKIP_MIGRATE=1 pnpm test:e2e
 ```
 
-`tests/e2e/global-setup.ts` loads `.env.e2e` into `process.env` (which the Playwright `webServer` inherits), runs `pnpm db:migrate:deploy` to apply pending migrations, then runs `pnpm db:seed` — both before the suite starts.
+`playwright.config.ts` loads `.env.e2e`, sets test mode, and passes that environment explicitly to the Playwright `webServer`. `tests/e2e/global-setup.ts` loads `.env.e2e` again for its own process, then runs `pnpm db:migrate:deploy` and `pnpm db:seed` before the suite starts. Playwright always starts a fresh server for E2E runs; it does not reuse an existing developer server.
 
 ### Spec files
 
