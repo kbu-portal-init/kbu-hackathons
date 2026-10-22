@@ -42,6 +42,6 @@ async function createPasswordTokenUrl(userId: string, ttlSeconds: number) {
     });
 
     // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL!.replace(/\/$/, "");
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL!.trim().replace(/\/$/, "");
     return `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
 }

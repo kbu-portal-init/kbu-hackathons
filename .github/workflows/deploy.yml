@@ -81,6 +81,7 @@ jobs:
                   push: true
                   tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
                   build-args: |
+                      NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
                       NEXT_PUBLIC_R2_PUBLIC_URL=${{ vars.NEXT_PUBLIC_R2_PUBLIC_URL }}
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
                       NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
@@ -98,6 +99,7 @@ jobs:
                   push: true
                   tags: ghcr.io/${{ github.repository }}:${{ github.sha }}-builder
                   build-args: |
+                      NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
                       NEXT_PUBLIC_R2_PUBLIC_URL=${{ vars.NEXT_PUBLIC_R2_PUBLIC_URL }}
                       NEXT_PUBLIC_SENTRY_DSN=${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
                       NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
