@@ -19,7 +19,7 @@ function loadEnvFile(path: string): Record<string, string> {
     return vars;
 }
 
-export default function globalSetup(): void {
+export function loadE2eEnv(): void {
     const envPath = resolve(__dirname, "../../.env.e2e");
     if (!existsSync(envPath)) {
         throw new Error("Missing .env.e2e — copy .env.e2e.example to .env.e2e and fill in your test database URL.");
@@ -29,11 +29,15 @@ export default function globalSetup(): void {
     for (const [key, value] of Object.entries(env)) {
         (process.env as Record<string, string | undefined>)[key] = value;
     }
-    (process.env as Record<string, string | undefined>).NODE_ENV = "test";
 
     if (!process.env.DATABASE_URL) {
         throw new Error(".env.e2e must set DATABASE_URL to a dedicated test database.");
     }
+}
+
+export default function globalSetup(): void {
+    loadE2eEnv();
+    (process.env as Record<string, string | undefined>).NODE_ENV = "test";
 
     if (process.env.E2E_SKIP_MIGRATE !== "1") {
         console.log("[global-setup] Applying database migrations...");

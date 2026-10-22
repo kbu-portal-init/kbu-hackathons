@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test } from "./fixtures";
 
 test("unauthenticated access to /team redirects to login", async ({ page }) => {
     await page.goto("/team");

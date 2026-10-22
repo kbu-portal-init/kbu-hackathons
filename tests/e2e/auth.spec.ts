@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test("session API returns valid response", async ({ request }) => {
     const response = await request.get("/api/auth/*get-session");
@@ -20,5 +20,5 @@ test("invalid login shows error", async ({ page }) => {
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL("/login");
     // Check for error message
-    await expect(page.getByText(/invalid|error/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/invalid|unable to authenticate/i)).toBeVisible({ timeout: 5000 });
 });

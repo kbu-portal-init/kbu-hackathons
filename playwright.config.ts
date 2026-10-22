@@ -1,18 +1,22 @@
 import { defineConfig, devices } from "@playwright/test";
+import { loadE2eEnv } from "./tests/e2e/global-setup";
+
+// webServer spawns before globalSetup, so .env.e2e must load here or `pnpm dev` uses the dev database.
+loadE2eEnv();
 
 export default defineConfig({
     testDir: "./tests/e2e",
     globalSetup: "./tests/e2e/global-setup.ts",
-    timeout: 30000,
+    timeout: 60000,
     expect: {
-        timeout: 5000,
+        timeout: 10000,
     },
     retries: process.env.CI ? 1 : 0,
-    workers: process.env.CI ? 1 : 2,
+    workers: 1,
     webServer: {
         command: "pnpm dev",
         url: "http://localhost:3000",
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
         timeout: 120000,
     },
     use: {

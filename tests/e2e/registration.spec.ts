@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 async function acknowledge(page: import("@playwright/test").Page) {
     await page.getByRole("button", { name: "Read before submitting" }).click();
@@ -13,8 +13,8 @@ test.describe("registration form", () => {
         await expect(page.locator("#leaderName")).toBeVisible();
         await expect(page.locator("#leaderEmail")).toBeVisible();
         await expect(page.getByRole("radiogroup")).toBeVisible();
-        await expect(page.locator("#members\\.0\\.name")).toBeVisible();
-        await expect(page.locator("#members\\.0\\.email")).toBeVisible();
+        await expect(page.locator('[name="members.0.name"]')).toBeVisible();
+        await expect(page.locator('[name="members.0.email"]')).toBeVisible();
     });
 
     test("empty submit after acknowledge shows validation errors", async ({ page }) => {
@@ -33,8 +33,8 @@ test.describe("registration form", () => {
         await page.locator('input[type="radio"][value="THAI_PROGRAM"]').check({ force: true });
         await page.fill("#leaderName", "E2E Leader");
         await page.fill("#leaderEmail", `u${ts}a@ms.kbu.ac.th`);
-        await page.fill("#members\\.0\\.name", "E2E Member");
-        await page.fill("#members\\.0\\.email", `u${ts}b@ms.kbu.ac.th`);
+        await page.fill('[name="members.0.name"]', "E2E Member");
+        await page.fill('[name="members.0.email"]', `u${ts}b@ms.kbu.ac.th`);
 
         await acknowledge(page);
         await page.getByRole("button", { name: "Submit registration" }).click();
@@ -51,8 +51,8 @@ test.describe("registration form", () => {
         await page.locator('input[type="radio"][value="THAI_PROGRAM"]').check({ force: true });
         await page.fill("#leaderName", "Dup Leader");
         await page.fill("#leaderEmail", "u660000000001@ms.kbu.ac.th");
-        await page.fill("#members\\.0\\.name", "Dup Member");
-        await page.fill("#members\\.0\\.email", `u${ts}x@ms.kbu.ac.th`);
+        await page.fill('[name="members.0.name"]', "Dup Member");
+        await page.fill('[name="members.0.email"]', `u${ts}x@ms.kbu.ac.th`);
 
         await acknowledge(page);
         await page.getByRole("button", { name: "Submit registration" }).click();
