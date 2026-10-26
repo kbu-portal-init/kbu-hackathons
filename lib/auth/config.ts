@@ -76,7 +76,7 @@ export const auth = betterAuth({
         storeInDatabase: true,
     },
     rateLimit: {
-        enabled: true,
+        enabled: process.env.E2E_TEST !== "1",
         storage: upstashSecondaryStorage ? "secondary-storage" : "memory",
         window: 60,
         max: 100,
