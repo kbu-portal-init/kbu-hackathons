@@ -10,6 +10,8 @@ export type TeamOverviewMember = {
     verifiedAt: string | null;
 };
 
+export type TeamOverviewNotification = Pick<NotificationDTO, "id" | "subject" | "readAt" | "createdAt">;
+
 export type TeamOverviewDTO = {
     approvedAt: string | null;
     members: TeamOverviewMember[];
@@ -20,6 +22,6 @@ export type TeamOverviewDTO = {
     } | null;
     notifications: {
         unreadCount: number;
-        latest: NotificationDTO[];
+        latest: TeamOverviewNotification[];
     };
 };

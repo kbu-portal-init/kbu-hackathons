@@ -1,4 +1,4 @@
-import { AlertCircle, ArrowUpRight, CheckCircle2, Clock, FileText, IdCard, Users } from "lucide-react";
+import { ArrowUpRight, Clock, FileText, IdCard, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { PosterPanel } from "@/components/poster-panel";
@@ -7,11 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import type { TeamOverviewDTO } from "@/lib/contracts/team-overview";
 import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
-import {
-    deriveTeamOverviewActions,
-    getSubmissionWindowState,
-    type TeamOverviewActionId,
-} from "@/lib/services/team-overview";
+import { getSubmissionWindowState } from "@/lib/services/submission-window";
 import { formatRole } from "@/lib/util";
 
 type TeamOverviewProps = {
@@ -37,12 +33,6 @@ export function TeamOverview({ overview, team, locale }: TeamOverviewProps) {
 
     const verifiedCount = overview.members.filter((member) => member.verifiedAt).length;
     const windowState = getSubmissionWindowState(overview.event);
-    const actions = deriveTeamOverviewActions({
-        unverifiedMemberCount: overview.members.length - verifiedCount,
-        submissionStatus: overview.submission?.status ?? null,
-        windowState,
-        unreadNotificationCount: overview.notifications.unreadCount,
-    });
     const statusLabel = overview.submission
         ? {
               DRAFT: t.submissionDraft,
@@ -90,61 +80,6 @@ export function TeamOverview({ overview, team, locale }: TeamOverviewProps) {
                     <p className="mt-2 text-lg font-semibold text-foreground">
                         {t.verifiedCount(verifiedCount, overview.members.length)}
                     </p>
-                </PosterPanel>
-            </section>
-
-            <section aria-labelledby="next-steps-heading">
-                <PosterPanel className="p-6">
-                    <h2
-                        className="font-display text-xl font-bold tracking-tight text-foreground"
-                        id="next-steps-heading"
-                    >
-                        {t.nextStepsTitle}
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">{t.nextStepsDescription}</p>
-                    <ol className="mt-4 space-y-3">
-                        {actions.map((action, index) => {
-                            const content = getActionContent(action, t);
-                            const primary = index === 0;
-                            const body = (
-                                <>
-                                    <span className="flex size-9 shrink-0 items-center justify-center border-2 border-border bg-background text-foreground">
-                                        {primary ? (
-                                            <AlertCircle className="size-4" />
-                                        ) : (
-                                            <CheckCircle2 className="size-4" />
-                                        )}
-                                    </span>
-                                    <span className="min-w-0 flex-1">
-                                        <span className="block font-display font-bold text-foreground">
-                                            {content.title}
-                                        </span>
-                                        <span className="mt-1 block text-sm text-muted-foreground">
-                                            {content.description}
-                                        </span>
-                                    </span>
-                                    {content.href && <ArrowUpRight className="mt-1 size-4 shrink-0 text-primary" />}
-                                </>
-                            );
-                            const className = `flex min-h-11 items-start gap-4 border-2 p-4 ${
-                                primary ? "border-border bg-accent text-accent-foreground" : "border-border/15 bg-card"
-                            }`;
-                            return (
-                                <li key={action}>
-                                    {content.href ? (
-                                        <Link
-                                            className={`${className} transition-colors hover:bg-foreground hover:text-background`}
-                                            href={content.href}
-                                        >
-                                            {body}
-                                        </Link>
-                                    ) : (
-                                        <div className={className}>{body}</div>
-                                    )}
-                                </li>
-                            );
-                        })}
-                    </ol>
                 </PosterPanel>
             </section>
 
@@ -367,27 +302,4 @@ export function TeamOverview({ overview, team, locale }: TeamOverviewProps) {
             </section>
         </div>
     );
-}
-
-function getActionContent(action: TeamOverviewActionId, t: ReturnType<typeof getMessages>["teamOverview"]) {
-    switch (action) {
-        case "VERIFY_MEMBERS":
-            return { title: t.actionVerifyTitle, description: t.actionVerifyDescription, href: "/team/settings" };
-        case "SUBMIT_PROJECT":
-            return { title: t.actionSubmitTitle, description: t.actionSubmitDescription, href: "/team/submit" };
-        case "SUBMIT_CLOSED":
-            return {
-                title: t.actionSubmitClosedTitle,
-                description: t.actionSubmitClosedDescription,
-                href: undefined,
-            };
-        case "READ_NOTIFICATIONS":
-            return {
-                title: t.actionReadTitle,
-                description: t.actionReadDescription,
-                href: "/team/notifications",
-            };
-        case "UP_TO_DATE":
-            return { title: t.actionUpToDateTitle, description: t.actionUpToDateDescription, href: undefined };
-    }
 }

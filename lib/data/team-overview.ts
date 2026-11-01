@@ -2,7 +2,7 @@ import "server-only";
 
 import type { TeamOverviewDTO } from "@/lib/contracts/team-overview";
 import { getEventSettings } from "@/lib/data/event-settings";
-import { countUnreadNotifications, listNotifications } from "@/lib/data/notifications";
+import { countUnreadNotifications, getLatestNotifications } from "@/lib/data/notifications";
 import { getTeamSubmission } from "@/lib/data/submissions";
 import { getTeamApprovalDate, getTeamMembersOverview } from "@/lib/data/team-members";
 
@@ -12,7 +12,7 @@ export async function getTeamOverview(teamId: string, userId: string): Promise<T
         getTeamMembersOverview(teamId),
         getTeamSubmission(teamId),
         getEventSettings(),
-        listNotifications(userId, { page: 1, pageSize: 3 }),
+        getLatestNotifications(userId, 3),
         countUnreadNotifications(userId),
     ]);
 
@@ -28,7 +28,7 @@ export async function getTeamOverview(teamId: string, userId: string): Promise<T
             : null,
         notifications: {
             unreadCount,
-            latest: notifications.items,
+            latest: notifications,
         },
     };
 }
