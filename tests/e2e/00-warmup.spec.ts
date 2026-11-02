@@ -9,6 +9,7 @@ const routes = [
     "/team",
     "/team/cards",
     "/team/notifications",
+    "/team/participant-guide",
     "/team/submit",
     "/team/settings",
     "/panel",
