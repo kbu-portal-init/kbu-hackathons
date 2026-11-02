@@ -3,6 +3,7 @@ import {
     CalendarDays,
     ClipboardList,
     FileText,
+    IdCard,
     LayoutDashboard,
     Settings,
     ShieldCheck,
@@ -18,8 +19,9 @@ export const publicLinks = [
 
 export const participantDashboardLinks = [
     { href: "/team", label: "Our Team", icon: Users },
+    { href: "/team/cards", label: "Member cards", icon: IdCard },
     { href: "/team/notifications", label: "Notifications", icon: Bell },
-    { href: "/team/references", label: "References", icon: FileText },
+    { href: "/team/participant-guide", label: "Participant Guide", icon: FileText },
     { href: "/team/submit", label: "Submit", icon: Upload },
     { href: "/team/settings", label: "Settings", icon: Settings },
 ] as const;

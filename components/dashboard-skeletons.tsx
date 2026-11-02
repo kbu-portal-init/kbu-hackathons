@@ -119,6 +119,44 @@ export function DashboardDetailSkeleton() {
     );
 }
 
+export function DashboardOverviewSkeleton() {
+    return (
+        <StatusRegion label="Loading team overview">
+            <div className="space-y-6">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    {["one", "two", "three", "four"].map((key) => (
+                        <PosterPanel className="space-y-3 border-border/15 p-5" key={key}>
+                            <Skeleton className="h-4 w-24 bg-foreground/10" />
+                            <Skeleton className="h-6 w-32 max-w-full bg-primary/20" />
+                        </PosterPanel>
+                    ))}
+                </div>
+                <PosterPanel className="space-y-4 border-border/15 p-6">
+                    <Skeleton className="h-4 w-32 bg-foreground/10" />
+                    <Skeleton className="h-8 w-64 max-w-full bg-primary/20" />
+                    <Skeleton className="h-4 w-96 max-w-full bg-foreground/10" />
+                </PosterPanel>
+                <div className="grid gap-5 lg:grid-cols-2">
+                    {["one", "two"].map((key) => (
+                        <PosterPanel className="space-y-4 border-border/15 p-6" key={key}>
+                            <Skeleton className="h-5 w-40 bg-foreground/10" />
+                            <Skeleton className="h-4 w-full bg-foreground/10" />
+                            <Skeleton className="h-4 w-3/4 bg-foreground/10" />
+                            <Skeleton className="h-10 w-32 bg-primary/20" />
+                        </PosterPanel>
+                    ))}
+                </div>
+                <PosterPanel className="space-y-3 border-border/15 p-6">
+                    <Skeleton className="h-5 w-36 bg-foreground/10" />
+                    {["one", "two", "three"].map((key) => (
+                        <Skeleton className="h-12 w-full bg-foreground/10" key={key} />
+                    ))}
+                </PosterPanel>
+            </div>
+        </StatusRegion>
+    );
+}
+
 export function DashboardCardGridSkeleton() {
     return (
         <StatusRegion label="Loading member cards">

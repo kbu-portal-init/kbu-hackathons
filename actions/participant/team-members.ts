@@ -25,6 +25,9 @@ export async function updateMemberImage(input: unknown): Promise<ActionResult<Up
     }
 
     const result = await updateMemberImageService(team.id, parsed.data);
-    if (result.ok) revalidatePath("/team/settings");
+    if (result.ok) {
+        revalidatePath("/team/settings");
+        revalidatePath("/team");
+    }
     return result;
 }
