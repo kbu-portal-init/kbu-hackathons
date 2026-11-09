@@ -454,11 +454,20 @@ export const messages = {
             },
             prizes: {
                 title: "Prizes & rewards",
-                description: "Confirmed rewards for this event. All participants receive a participant certificate.",
+                description: "All participants receive a participant certificate.",
                 cashLabel: "Prize tiers",
                 cashValue: "2,000 / 1,500 / 1,000 THB",
                 internshipLabel: "Internship Pass Offer",
                 internshipValue: "Counts as the 3-credit internship course for winning team members.",
+                tiers: [
+                    {
+                        title: "Winner",
+                        reward: "AI agent subscription for each member, Internship Pass Offer (3-credit internship course), 2,000 THB, and a certificate",
+                    },
+                    { title: "1st Runner-Up", reward: "1,500 THB and a certificate" },
+                    { title: "2nd Runner-Up", reward: "1,000 THB and a certificate" },
+                ],
+                allParticipants: "All participants receive a participant certificate.",
             },
             resources: {
                 title: "Resources & support",
@@ -972,11 +981,20 @@ export const messages = {
             },
             prizes: {
                 title: "รางวัลและสิทธิประโยชน์",
-                description: "รางวัลที่ได้รับการยืนยันสำหรับกิจกรรมนี้ ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
+                description: "ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
                 cashLabel: "ระดับรางวัล",
                 cashValue: "2,000 / 1,500 / 1,000 บาท",
                 internshipLabel: "Internship Pass Offer",
                 internshipValue: "นับเป็นวิชาฝึกงาน 3 หน่วยกิตสำหรับสมาชิกทีมที่ชนะ",
+                tiers: [
+                    {
+                        title: "Winner",
+                        reward: "AI agent subscription สำหรับสมาชิกทุกคน, Internship Pass Offer (วิชาฝึกงาน 3 หน่วยกิต), 2,000 บาท และเกียรติบัตร",
+                    },
+                    { title: "1st Runner-Up", reward: "1,500 บาท และเกียรติบัตร" },
+                    { title: "2nd Runner-Up", reward: "1,000 บาท และเกียรติบัตร" },
+                ],
+                allParticipants: "ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
             },
             resources: {
                 title: "แหล่งข้อมูลและความช่วยเหลือ",

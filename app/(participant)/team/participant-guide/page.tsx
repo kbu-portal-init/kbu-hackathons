@@ -64,6 +64,14 @@ export default async function TeamParticipantGuidePage() {
                                 <dd className="mt-1 text-sm leading-6 text-foreground">{t.prizes.internshipValue}</dd>
                             </div>
                         </dl>
+                        <ul className="mt-5 space-y-2 border-t-2 border-border/15 pt-4">
+                            {t.prizes.tiers.map((tier) => (
+                                <li key={tier.title} className="text-sm leading-6 text-foreground">
+                                    <span className="font-semibold">{tier.title}:</span> {tier.reward}
+                                </li>
+                            ))}
+                        </ul>
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">{t.prizes.allParticipants}</p>
                     </PosterPanel>
                 </section>
 
