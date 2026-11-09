@@ -181,6 +181,17 @@ jobs:
                     fi
                     echo "✅ Migrations applied."
 
+                    # ==========================================
+                    # NEW: Run Admin Provisioning Script
+                    # ==========================================
+                    echo "👤 Running admin provisioning..."
+                    docker compose --env-file /opt/hackathon/.env.production run --rm --entrypoint "npx tsx scripts/provision-admins.ts" migrate || {
+                        echo "⚠️ Admin provisioning failed or skipped, but continuing deployment..."
+                    }
+
+                    # Health check with automatic rollback on failure
+                    if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'; then
+
                     # Health check with automatic rollback on failure
                     if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:3000/ > /dev/null; do sleep 2; done'; then
                         echo "❌ Health check failed — dumping web logs before rollback..."
