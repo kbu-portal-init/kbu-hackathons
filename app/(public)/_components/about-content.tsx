@@ -17,6 +17,7 @@ export async function AboutContent() {
                         {t.title}
                     </h2>
                     <p className="mt-5 max-w-md text-lg leading-8 text-muted-foreground">{t.description}</p>
+                    <p className="mt-3 max-w-md leading-7 text-muted-foreground">{t.prototypeHint}</p>
                 </div>
 
                 <div className="border-t-2 border-border">
@@ -76,6 +77,20 @@ export async function AboutContent() {
                     <p className="mt-2 max-w-sm leading-7 text-muted-foreground">{t.prizesText}</p>
                 </article>
             </div>
+
+            <div className="mt-14 grid gap-4 lg:grid-cols-3">
+                {t.prizeTiers.map((tier, index) => (
+                    <article
+                        key={tier.title}
+                        className={`border-2 border-border p-5 ${index === 0 ? "bg-primary text-primary-foreground" : "bg-card"}`}
+                    >
+                        <p className="font-display text-sm font-bold uppercase tracking-widest">{tier.title}</p>
+                        <p className="mt-3 text-base leading-7">{tier.reward}</p>
+                    </article>
+                ))}
+            </div>
+
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">{t.allParticipantsCertificate}</p>
 
             <div
                 id="need-help"

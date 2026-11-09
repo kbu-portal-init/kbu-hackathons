@@ -53,7 +53,9 @@ export const messages = {
         about: {
             title: "Two days, one working prototype.",
             description:
-                "This is not a game or quiz. Teams build a digital prototype for a practical, real-world challenge, then present it to university judges.",
+                "Teams build a digital prototype for a practical, real-world challenge, then present it to university judges.",
+            prototypeHint:
+                "It can be a website, mobile app, desktop app, AI agent, CLI tool, or another digital solution—whatever best demonstrates your idea.",
             directionsLabel: "Possible directions include",
             directions: [
                 "Public services",
@@ -75,10 +77,19 @@ export const messages = {
             teamsKnowText:
                 "This is an in-person event for KBU students. Teams may choose their own problem, approach, and technology within the event rules.",
             support: "Event support",
-            supportText: "Snacks, coffee, KBU Wi-Fi, and backup Wi-Fi support will be available.",
+            supportText: "Snacks, coffee, Wi-Fi support will be available.",
             prizes: "Prizes and awards",
             prizesText:
-                "A guaranteed total cash prize pool of 6,000 Baht. Members of the winning team also receive automatic access to the university's final-year internship.",
+                "Winner: AI agent subscription for each member, Internship Pass Offer (counts as the 3-credit internship course), 2,000 THB, and a certificate. 1st Runner-Up: 1,500 THB and a certificate. 2nd Runner-Up: 1,000 THB and a certificate. All participants receive a participant certificate.",
+            allParticipantsCertificate: "All participants receive a participant certificate.",
+            prizeTiers: [
+                {
+                    title: "Winner",
+                    reward: "AI agent subscription for each member, Internship Pass Offer (counts as the 3-credit internship course), 2,000 THB, and a certificate",
+                },
+                { title: "1st Runner-Up", reward: "1,500 THB and a certificate" },
+                { title: "2nd Runner-Up", reward: "1,000 THB and a certificate" },
+            ],
             help: "Need help?",
             helpText: "Join our official LINE group to connect with organizers and get event support.",
             faqTitle: "Questions, answered",
@@ -443,12 +454,11 @@ export const messages = {
             },
             prizes: {
                 title: "Prizes & rewards",
-                description: "Confirmed rewards for this event.",
-                cashLabel: "Total cash prize pool",
-                cashValue: "6,000 Baht guaranteed",
-                internshipLabel: "Final-year internship",
-                internshipValue:
-                    "Members of the winning team receive automatic access to the university's final-year internship.",
+                description: "Confirmed rewards for this event. All participants receive a participant certificate.",
+                cashLabel: "Prize tiers",
+                cashValue: "2,000 / 1,500 / 1,000 THB",
+                internshipLabel: "Internship Pass Offer",
+                internshipValue: "Counts as the 3-credit internship course for winning team members.",
             },
             resources: {
                 title: "Resources & support",
@@ -595,7 +605,8 @@ export const messages = {
         },
         about: {
             title: "สองวัน หนึ่งต้นแบบที่ใช้งานได้",
-            description: "นี่ไม่ใช่เกมหรือแบบทดสอบ แต่ละทีมจะสร้างต้นแบบดิจิทัลเพื่อตอบโจทย์ปัญหาในโลกจริง แล้วนำเสนอต่ออาจารย์ผู้ตัดสิน",
+            description: "แต่ละทีมจะสร้างต้นแบบดิจิทัลเพื่อตอบโจทย์ปัญหาในโลกจริง แล้วนำเสนอต่ออาจารย์ผู้ตัดสิน",
+            prototypeHint: "อาจเป็นเว็บไซต์ แอปมือถือ แอปเดสก์ท็อป AI agent เครื่องมือ CLI หรือโซลูชันดิจิทัลอื่นใดที่นำเสนอแนวคิดได้ดีที่สุด",
             directionsLabel: "แนวทางที่เป็นไปได้",
             directions: ["บริการสาธารณะ", "การสื่อสาร", "ความปลอดภัย", "ความยั่งยืน", "การสนับสนุนชุมชน", "ด้านอื่นที่เป็นประโยชน์"],
             directionsNote: "ตัวอย่างเหล่านี้เป็นเพียงแนวทาง หัวข้อและขอบเขตสุดท้ายจะแจ้งเมื่อเริ่มกิจกรรม",
@@ -606,10 +617,19 @@ export const messages = {
             teamsKnow: "สิ่งที่ทีมควรรู้",
             teamsKnowText: "กิจกรรมจัดขึ้นที่มหาวิทยาลัยสำหรับนักศึกษา KBU แต่ละทีมเลือกปัญหา แนวทาง และเทคโนโลยีได้ตามกติกา",
             support: "การสนับสนุนภายในงาน",
-            supportText: "มีขนม กาแฟ Wi-Fi ของ KBU และ Wi-Fi สำรองให้บริการ",
+            supportText: "มีขนม กาแฟ และ Wi-Fi ให้บริการ",
             prizes: "รางวัล",
             prizesText:
-                "เงินรางวัลรวม 6,000 บาทแบบรับประกัน และสมาชิกทีมที่ชนะจะได้รับสิทธิ์เข้าร่วมการฝึกงานชั้นปีสุดท้ายของมหาวิทยาลัยโดยอัตโนมัติ",
+                "Winner: AI agent subscription สำหรับสมาชิกทุกคน, Internship Pass Offer (นับเป็นวิชาฝึกงาน 3 หน่วยกิต), 2,000 บาท และเกียรติบัตร 1st Runner-Up: 1,500 บาท และเกียรติบัตร 2nd Runner-Up: 1,000 บาท และเกียรติบัตร ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
+            allParticipantsCertificate: "ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
+            prizeTiers: [
+                {
+                    title: "Winner",
+                    reward: "AI agent subscription สำหรับสมาชิกทุกคน, Internship Pass Offer (นับเป็นวิชาฝึกงาน 3 หน่วยกิต), 2,000 บาท และเกียรติบัตร",
+                },
+                { title: "1st Runner-Up", reward: "1,500 บาท และเกียรติบัตร" },
+                { title: "2nd Runner-Up", reward: "1,000 บาท และเกียรติบัตร" },
+            ],
             help: "ต้องการความช่วยเหลือ?",
             helpText: "เข้าร่วมกลุ่ม LINE อย่างเป็นทางการเพื่อติดต่อผู้จัดงานและรับการสนับสนุน",
             faqTitle: "คำถามที่พบบ่อย",
@@ -952,11 +972,11 @@ export const messages = {
             },
             prizes: {
                 title: "รางวัลและสิทธิประโยชน์",
-                description: "รางวัลที่ได้รับการยืนยันสำหรับกิจกรรมนี้",
-                cashLabel: "เงินรางวัลรวม",
-                cashValue: "รับประกัน 6,000 บาท",
-                internshipLabel: "การฝึกงานชั้นปีสุดท้าย",
-                internshipValue: "สมาชิกทีมที่ชนะจะได้รับสิทธิ์เข้าร่วมการฝึกงานชั้นปีสุดท้ายของมหาวิทยาลัยโดยอัตโนมัติ",
+                description: "รางวัลที่ได้รับการยืนยันสำหรับกิจกรรมนี้ ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
+                cashLabel: "ระดับรางวัล",
+                cashValue: "2,000 / 1,500 / 1,000 บาท",
+                internshipLabel: "Internship Pass Offer",
+                internshipValue: "นับเป็นวิชาฝึกงาน 3 หน่วยกิตสำหรับสมาชิกทีมที่ชนะ",
             },
             resources: {
                 title: "แหล่งข้อมูลและความช่วยเหลือ",
