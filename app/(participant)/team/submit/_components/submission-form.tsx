@@ -70,7 +70,8 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
         <div className="mt-8 space-y-5">
             {locked && (
                 <div className="border-2 border-border bg-accent p-4 font-medium text-accent-foreground">
-                    This submission is finalized and is currently read-only.
+                    This submission is finalized and is currently read-only. If you want changes, reach out to an
+                    organizer.
                 </div>
             )}
             {error && (
