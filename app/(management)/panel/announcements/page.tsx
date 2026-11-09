@@ -15,7 +15,6 @@ export default function PanelAnnouncementsPage({ searchParams }: { searchParams:
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Management workspace"
                 title="Announcements"
                 description="Create, publish, and manage platform announcements."
             />

@@ -11,11 +11,7 @@ export default function PanelTeamsPage({
 }) {
     return (
         <main className="space-y-8">
-            <DashboardPageHeader
-                eyebrow="Management workspace"
-                title="All teams"
-                description="Browse approved teams and monitor their submissions."
-            />
+            <DashboardPageHeader title="All teams" description="Browse approved teams and monitor their submissions." />
             <Suspense fallback={<DashboardListSkeleton />}>
                 {searchParams.then(({ page, status }) => (
                     <TeamListContent page={page} status={status} />
