@@ -79,15 +79,11 @@ export async function AboutContent() {
 
             <div className="mt-14">
                 <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">{t.prizes}</h3>
-                <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">{t.prizesText}</p>
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
-                {t.prizeTiers.map((tier, index) => (
-                    <article
-                        key={tier.title}
-                        className={`border-2 border-border p-5 ${index === 0 ? "bg-primary text-primary-foreground" : "bg-card"}`}
-                    >
+                {t.prizeTiers.map((tier) => (
+                    <article key={tier.title} className="border-2 border-border bg-card p-5">
                         <p className="font-display text-sm font-bold uppercase tracking-widest">{tier.title}</p>
                         <p className="mt-3 text-base leading-7">{tier.reward}</p>
                     </article>
