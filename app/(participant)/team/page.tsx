@@ -1,31 +1,22 @@
 import { Suspense } from "react";
 import { DashboardCardGridSkeleton } from "@/components/dashboard-skeletons";
 import { requireApprovedTeam } from "@/lib/auth/guards";
-import { getTeamMembersForCards } from "@/lib/data/team-members";
-import { MemberCards } from "./_components/member-cards";
+import { getTeamOverview } from "@/lib/data/team-overview";
+import { getLocale } from "@/lib/i18n/server";
+import { TeamOverview } from "./_components/team-overview";
 
-export default async function TeamsPage() {
-    const { team } = await requireApprovedTeam();
+export default async function TeamPage() {
+    const { team, user } = await requireApprovedTeam();
+    const locale = await getLocale();
+    const overview = await getTeamOverview(team.id, user.id);
 
     return (
         <main className="space-y-8">
-            <header className="border-b-2 border-border/15 pb-5">
-                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
-                    {team.displayName}
-                </h1>
-                <p className="mt-3 max-w-2xl text-muted-foreground">
-                    Generate and share a branded digital card for each team member.
-                </p>
-            </header>
-            <Suspense fallback={<DashboardCardGridSkeleton />}>
-                <MemberCardsContent teamId={team.id} />
-            </Suspense>
+            <TeamOverview
+                overview={overview}
+                team={{ loginName: team.loginName, program: team.program }}
+                locale={locale}
+            />
         </main>
     );
-}
-
-async function MemberCardsContent({ teamId }: { teamId: string }) {
-    const members = await getTeamMembersForCards(teamId);
-
-    return <MemberCards members={members} />;
 }
