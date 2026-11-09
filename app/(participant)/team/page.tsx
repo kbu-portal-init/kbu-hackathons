@@ -1,5 +1,3 @@
-import { Suspense } from "react";
-import { DashboardCardGridSkeleton } from "@/components/dashboard-skeletons";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import { getTeamOverview } from "@/lib/data/team-overview";
 import { getLocale } from "@/lib/i18n/server";
