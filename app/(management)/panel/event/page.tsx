@@ -8,7 +8,6 @@ export default function PanelEventPage() {
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Management workspace"
                 title="Event settings"
                 description="Configure event details, dates, team limits, and public images."
             />
