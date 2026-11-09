@@ -19,7 +19,6 @@ export default async function TeamParticipantGuidePage() {
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow={t.eyebrow}
                 title={t.title}
                 description={t.intro}
                 actions={

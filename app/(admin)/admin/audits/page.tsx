@@ -19,7 +19,6 @@ export default function AdminAuditsPage({ searchParams }: { searchParams: Promis
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Administrator access"
                 title="Audit logs"
                 description="Review and permanently delete administrative activity records."
             />
