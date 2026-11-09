@@ -8,7 +8,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import { isActivePath, publicLinks } from "@/lib/navigation";
 
-export function SiteHeaderNav({ locale }: { locale: Locale }) {
+export function SiteHeaderNav({ locale, destination }: { locale: Locale; destination?: string | null }) {
     const pathname = usePathname();
     const t = getMessages(locale).common;
     const labels = { "/register": t.register, "/announcements": t.announcements, "/resources": t.resources };
@@ -36,13 +36,19 @@ export function SiteHeaderNav({ locale }: { locale: Locale }) {
                 })}
             </nav>
             <div className="flex items-center gap-2">
-                <Link
-                    href="/login"
-                    aria-current={signInActive ? "page" : undefined}
-                    className={buttonVariants({ variant: signInActive ? "accent" : "brand" })}
-                >
-                    {t.signIn}
-                </Link>
+                {destination ? (
+                    <Link href={destination} className={buttonVariants({ variant: "brand" })}>
+                        Dashboard
+                    </Link>
+                ) : (
+                    <Link
+                        href="/login"
+                        aria-current={signInActive ? "page" : undefined}
+                        className={buttonVariants({ variant: signInActive ? "accent" : "brand" })}
+                    >
+                        {t.signIn}
+                    </Link>
+                )}
                 <LanguageSwitcher locale={locale} />
             </div>
         </div>

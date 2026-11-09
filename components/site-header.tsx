@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { MobileNavigation } from "@/components/mobile-navigation";
 import { SiteHeaderNav } from "@/components/site-header-nav";
+import { getAuthenticatedDestination } from "@/lib/auth/guards";
 import type { Locale } from "@/lib/i18n/config";
 
-export function SiteHeader({ locale }: { locale: Locale }) {
+export async function SiteHeader({ locale }: { locale: Locale }) {
+    const destination = await getAuthenticatedDestination();
     return (
         <header className="sticky top-0 z-50 border-b-2 border-border/10 bg-background/95 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
@@ -14,9 +16,17 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                         KBU Hackathon 2026
                     </span>
                 </Link>
-                <SiteHeaderNav locale={locale} />
-                <div className="lg:hidden">
-                    <MobileNavigation locale={locale} />
+                <SiteHeaderNav locale={locale} destination={destination} />
+                <div className="flex items-center gap-2 lg:hidden">
+                    {destination ? (
+                        <Link
+                            href={destination}
+                            className="border-2 border-primary bg-primary px-3 py-1.5 font-display text-sm font-semibold text-foreground"
+                        >
+                            Dashboard
+                        </Link>
+                    ) : null}
+                    <MobileNavigation locale={locale} destination={destination} />
                 </div>
             </div>
         </header>

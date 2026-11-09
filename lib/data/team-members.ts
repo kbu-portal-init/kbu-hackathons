@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { TeamMemberCard } from "@/lib/contracts/team-members";
+import type { TeamOverviewMember } from "@/lib/contracts/team-overview";
 import prisma from "@/lib/prisma";
 
 export async function getTeamMembersForCards(teamId: string): Promise<TeamMemberCard[]> {
@@ -19,6 +20,26 @@ export async function getTeamMembersForCards(teamId: string): Promise<TeamMember
     });
 
     return members;
+}
+
+export async function getTeamMembersOverview(teamId: string): Promise<TeamOverviewMember[]> {
+    const members = await prisma.teamMember.findMany({
+        where: { teamId },
+        orderBy: { createdAt: "asc" },
+        select: {
+            id: true,
+            name: true,
+            role: true,
+            studentEmail: true,
+            imageUrl: true,
+            studentEmailVerifiedAt: true,
+        },
+    });
+
+    return members.map(({ studentEmailVerifiedAt, ...member }) => ({
+        ...member,
+        verifiedAt: studentEmailVerifiedAt?.toISOString() ?? null,
+    }));
 }
 
 export async function getTeamApprovalDate(teamId: string): Promise<string | null> {

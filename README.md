@@ -10,7 +10,7 @@ The application uses Next.js App Router, TypeScript, Prisma 7 with PostgreSQL, B
 | --- | --- | --- |
 | Public | `/`, `/announcements`, `/announcements/[announcementId]`, `/resources`, `/resources/[id]`, `/cards/[token]` | Public event information and shared participant cards |
 | Account | `/register`, `/login`, `/reset-password`, `/student-email/verify` | Registration, sign-in, password reset, and email verification |
-| Participant | `/team`, `/team/references`, `/team/submit`, `/team/settings`, `/team/notifications` | Approved team accounts |
+| Participant | `/team`, `/team/cards`, `/team/participant-guide`, `/team/submit`, `/team/settings`, `/team/notifications` | Approved team accounts |
 | Management | `/panel`, `/panel/announcements`, `/panel/organizers`, `/panel/registrations`, `/panel/registrations/[id]`, `/panel/teams`, `/panel/teams/[teamId]`, `/panel/notifications`, `/panel/event`, `/panel/settings` | Organizers and administrators |
 | Administrator | `/admin`, `/admin/audits`, `/admin/organizers`, `/admin/settings` | Administrators |
 | API | `/api/auth/[...all]`, `/api/password-reset/request`, `/api/announcements`, `/api/admin/users`, `/api/participant/member-card/[memberId]/download`, `/api/upload/proxy`, `/api/upload/delete` | Authentication and supporting application endpoints |

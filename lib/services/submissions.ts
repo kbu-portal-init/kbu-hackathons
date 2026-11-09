@@ -5,6 +5,7 @@ import { ErrorCodes } from "@/lib/contracts/errors";
 import type { SubmissionDTO, SubmissionInput } from "@/lib/contracts/submissions";
 import { getTeamSubmission } from "@/lib/data/submissions";
 import prisma from "@/lib/prisma";
+import { getSubmissionWindowState } from "@/lib/services/submission-window";
 
 function toDTO(record: NonNullable<Awaited<ReturnType<typeof prisma.submission.findUnique>>>): SubmissionDTO {
     return {
@@ -26,7 +27,7 @@ async function checkWindow(now = new Date()) {
             code: ErrorCodes.EVENT_NOT_CONFIGURED,
             message: "Event settings are not configured",
         };
-    if (now < event.submissionOpensAt || now > event.submissionDeadline)
+    if (getSubmissionWindowState(event, now) !== "OPEN")
         return {
             ok: false as const,
             code: ErrorCodes.SUBMISSION_CLOSED,

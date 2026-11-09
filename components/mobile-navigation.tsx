@@ -9,7 +9,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { getMessages } from "@/lib/i18n/messages";
 import { isActivePath, publicLinks } from "@/lib/navigation";
 
-export function MobileNavigation({ locale }: { locale: Locale }) {
+export function MobileNavigation({ locale, destination }: { locale: Locale; destination?: string | null }) {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
     const toggleRef = useRef<HTMLButtonElement>(null);
@@ -83,14 +83,24 @@ export function MobileNavigation({ locale }: { locale: Locale }) {
                         </div>
                     </div>
                     <div className="mt-auto border-t-2 border-border/10 pt-6">
-                        <Link
-                            href="/login"
-                            onClick={() => setOpen(false)}
-                            aria-current={isActivePath(pathname, "/login") ? "page" : undefined}
-                            className="flex min-h-12 items-center justify-center border-2 border-primary bg-primary px-4 py-3 text-center font-display text-sm font-semibold text-foreground"
-                        >
-                            {t.signIn}
-                        </Link>
+                        {destination ? (
+                            <Link
+                                href={destination}
+                                onClick={() => setOpen(false)}
+                                className="flex min-h-12 items-center justify-center border-2 border-primary bg-primary px-4 py-3 text-center font-display text-sm font-semibold text-foreground"
+                            >
+                                Dashboard
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/login"
+                                onClick={() => setOpen(false)}
+                                aria-current={isActivePath(pathname, "/login") ? "page" : undefined}
+                                className="flex min-h-12 items-center justify-center border-2 border-primary bg-primary px-4 py-3 text-center font-display text-sm font-semibold text-foreground"
+                            >
+                                {t.signIn}
+                            </Link>
+                        )}
                     </div>
                 </nav>
             ) : null}
