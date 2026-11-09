@@ -26,7 +26,7 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
                             Dashboard
                         </Link>
                     ) : null}
-                    <MobileNavigation locale={locale} />
+                    <MobileNavigation locale={locale} destination={destination} />
                 </div>
             </div>
         </header>
