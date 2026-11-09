@@ -9,7 +9,6 @@ export default function NotificationsPage() {
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Management workspace"
                 title="Notifications"
                 description="Send a notification by email, in-app message, or both."
             />

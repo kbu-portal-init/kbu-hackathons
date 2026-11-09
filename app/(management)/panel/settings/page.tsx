@@ -12,11 +12,7 @@ export default async function PanelSettingsPage() {
 
     return (
         <main className="space-y-8">
-            <DashboardPageHeader
-                eyebrow="Management workspace"
-                title="Organizer settings"
-                description="Manage your profile and password."
-            />
+            <DashboardPageHeader title="Organizer settings" description="Manage your profile and password." />
             <Suspense fallback={<DashboardFormSkeleton />}>
                 <OrganizerSettingsContent userId={session.user.id} />
             </Suspense>

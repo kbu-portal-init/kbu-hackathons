@@ -12,7 +12,6 @@ export default function PanelRegistrationsPage({
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Management workspace"
                 title="Registrations"
                 description="Review team applications and manage approval decisions."
             />
