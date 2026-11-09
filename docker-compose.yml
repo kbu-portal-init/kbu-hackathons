@@ -71,6 +71,35 @@ services:
     cap_drop:
       - ALL
 
+  # One-shot Admin Provisioning Service
+  # Runs automatically after migration or on-demand with: --profile migrate (or its own profile)
+  provision-admin:
+    image: ${IMAGE_REPOSITORY:-ghcr.io/kbu-hackathons/kbu-hackathons}:${IMAGE_TAG:-latest}-builder
+    container_name: kbu_hackathon_provision_admin
+    env_file:
+      - path: /opt/hackathon/.env.production
+        required: true
+    environment:
+      NODE_ENV: production
+    working_dir: /app
+    command: ["pnpm", "tsx", "scripts/provision.ts"]
+    networks:
+      - backend_net
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    profiles:
+      - migrate
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
   db:
     image: postgres:16-alpine
     container_name: kbu_hackathon_db

@@ -66,6 +66,7 @@
         "sonner": "^2.0.8",
         "sortablejs": "^1.15.6",
         "tailwind-merge": "^3.7.0",
+        "tsx": "^4.23.13",
         "zod": "^4.6.5"
     },
     "devDependencies": {
@@ -80,7 +81,6 @@
         "lint-staged": "^16.1.6",
         "prisma": "7.10.0",
         "tailwindcss": "^4",
-        "tsx": "^4.23.13",
         "typescript": "^5"
     },
     "lint-staged": {
