@@ -21,6 +21,9 @@ export async function saveSubmission(input: unknown, finalize = false): Promise<
             },
         };
     const result = await saveTeamSubmission(session.team.id, parsed.data, finalize, session.user.id);
-    if (result.ok) revalidatePath("/team/submit");
+    if (result.ok) {
+        revalidatePath("/team/submit");
+        revalidatePath("/team");
+    }
     return result;
 }

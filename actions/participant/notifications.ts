@@ -41,6 +41,7 @@ export async function markTeamNotificationRead(input: unknown): Promise<ActionRe
         };
     await markNotificationRead(session.user.id, parsed.data.notificationId);
     revalidatePath("/team/notifications");
+    revalidatePath("/team");
     return { ok: true, data: { id: parsed.data.notificationId, readAt: new Date().toISOString() } };
 }
 

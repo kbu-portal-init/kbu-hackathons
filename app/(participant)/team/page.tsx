@@ -1,34 +1,58 @@
+import { IdCard } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
-import { DashboardCardGridSkeleton } from "@/components/dashboard-skeletons";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { DashboardOverviewSkeleton } from "@/components/dashboard-skeletons";
+import { buttonVariants } from "@/components/ui/button";
 import { requireApprovedTeam } from "@/lib/auth/guards";
-import { getTeamMembersForCards } from "@/lib/data/team-members";
-import { MemberCards } from "./_components/member-cards";
+import { getTeamOverview } from "@/lib/data/team-overview";
+import type { Locale } from "@/lib/i18n/config";
+import { getMessages } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
+import { TeamOverview } from "./_components/team-overview";
 
-export default async function TeamsPage() {
-    const { team } = await requireApprovedTeam();
+export default async function TeamPage() {
+    const { team, user } = await requireApprovedTeam();
+    const locale = await getLocale();
+    const t = getMessages(locale).teamOverview;
 
     return (
         <main className="space-y-8">
-            <header className="border-b-2 border-border/15 pb-5">
-                <p className="font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    Participant workspace
-                </p>
-                <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3rem)] font-bold leading-[0.95] tracking-tight text-foreground">
-                    {team.displayName}
-                </h1>
-                <p className="mt-3 max-w-2xl text-muted-foreground">
-                    Generate and share a branded digital card for each team member.
-                </p>
-            </header>
-            <Suspense fallback={<DashboardCardGridSkeleton />}>
-                <MemberCardsContent teamId={team.id} />
+            <DashboardPageHeader
+                eyebrow={t.eyebrow}
+                title={team.displayName}
+                description={t.description}
+                actions={
+                    <Link className={buttonVariants({ variant: "outline" })} href="/team/cards">
+                        <IdCard className="size-4" />
+                        {t.memberCards}
+                    </Link>
+                }
+            />
+            <Suspense fallback={<DashboardOverviewSkeleton />}>
+                <TeamOverviewContent
+                    locale={locale}
+                    team={{ loginName: team.loginName, program: team.program }}
+                    teamId={team.id}
+                    userId={user.id}
+                />
             </Suspense>
         </main>
     );
 }
 
-async function MemberCardsContent({ teamId }: { teamId: string }) {
-    const members = await getTeamMembersForCards(teamId);
+async function TeamOverviewContent({
+    locale,
+    team,
+    teamId,
+    userId,
+}: {
+    locale: Locale;
+    team: { loginName: string; program: "THAI_PROGRAM" | "INTERNATIONAL_PROGRAM" };
+    teamId: string;
+    userId: string;
+}) {
+    const overview = await getTeamOverview(teamId, userId);
 
-    return <MemberCards members={members} />;
+    return <TeamOverview locale={locale} overview={overview} team={team} />;
 }

@@ -29,6 +29,21 @@ export async function listNotifications(
     };
 }
 
+export async function getLatestNotifications(userId: string, limit: number) {
+    const records = await prisma.notification.findMany({
+        where: { recipientId: userId },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        select: { id: true, subject: true, readAt: true, createdAt: true },
+    });
+
+    return records.map((record) => ({
+        ...record,
+        readAt: record.readAt?.toISOString() ?? null,
+        createdAt: record.createdAt.toISOString(),
+    }));
+}
+
 export async function markNotificationRead(userId: string, notificationId: string) {
     return prisma.notification.updateMany({
         where: { id: notificationId, recipientId: userId, readAt: null },
