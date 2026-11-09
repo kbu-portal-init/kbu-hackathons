@@ -8,7 +8,6 @@ export default function AdminPage() {
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Administrator access"
                 title="Administrator panel"
                 description="Overview of accounts, registrations, submissions, and platform management."
             />

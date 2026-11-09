@@ -14,7 +14,6 @@ export default async function TeamCardsPage() {
     return (
         <main className="space-y-8">
             <DashboardPageHeader
-                eyebrow="Participant workspace"
                 title="Member cards"
                 description="Generate and share a branded digital card for each team member."
                 actions={

@@ -13,7 +13,7 @@ export default async function TeamNotificationsPage() {
 
     return (
         <main className="space-y-8">
-            <DashboardPageHeader eyebrow={t.eyebrow} title={t.title} description={t.description} />
+            <DashboardPageHeader title={t.title} description={t.description} />
             <Suspense fallback={<DashboardListSkeleton />}>
                 <TeamNotificationsContent locale={locale} />
             </Suspense>

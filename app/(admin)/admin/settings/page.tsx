@@ -10,11 +10,7 @@ export default async function AdminSettingsPage() {
 
     return (
         <main className="space-y-8">
-            <DashboardPageHeader
-                eyebrow="Administrator access"
-                title="Admin settings"
-                description="Manage your administrator profile and password."
-            />
+            <DashboardPageHeader title="Admin settings" description="Manage your administrator profile and password." />
             <Suspense fallback={<DashboardFormSkeleton />}>
                 <AdminSettingsContent userId={session.user.id} />
             </Suspense>

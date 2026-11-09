@@ -12,11 +12,7 @@ export default function AdminOrganizersPage({
 }) {
     return (
         <main className="space-y-8">
-            <DashboardPageHeader
-                eyebrow="Administrator access"
-                title="Organizers"
-                description="Manage organizer accounts and elevated access."
-            />
+            <DashboardPageHeader title="Organizers" description="Manage organizer accounts and elevated access." />
             <Suspense fallback={<DashboardListSkeleton />}>
                 {searchParams.then(({ page, pageSize }) => (
                     <OrganizerContent page={page} pageSize={pageSize} />
