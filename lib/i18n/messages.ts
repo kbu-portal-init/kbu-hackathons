@@ -425,7 +425,7 @@ export const messages = {
                     body: "The challenge direction is announced at kickoff. Your team chooses its own problem and solution within the announced direction, then explains who is affected and why the solution matters.",
                     outcomeLabel: "Expected outcome",
                     outcomes: [
-                        "A working prototype built during the event",
+                        "A working prototype built during the event (e.g., a website, mobile app, desktop app, AI agent, CLI tool, or another digital solution—whatever best demonstrates your idea.)",
                         "A clear problem statement and target users",
                         "A short explanation of the solution and its impact",
                     ],
@@ -467,7 +467,7 @@ export const messages = {
                         "Project title and summary",
                         "Problem statement and target users",
                         "Solution description and technology stack",
-                        "Repository URL",
+                        "Repository URL (Public)",
                         "Optional demo, presentation, and demo video links",
                     ],
                     finalizeNote:
@@ -984,7 +984,7 @@ export const messages = {
                     body: "โจทย์จะประกาศเมื่อเริ่มกิจกรรม ทีมเลือกปัญหาและแนวทางแก้ไขของตนเองภายใต้โจทย์ที่ประกาศ จากนั้นอธิบายว่าผู้ได้รับผลกระทบคือใคร และเหตุใดแนวทางแก้ไขจึงสำคัญ",
                     outcomeLabel: "ผลลัพธ์ที่คาดหวัง",
                     outcomes: [
-                        "ต้นแบบที่ใช้งานได้จริงซึ่งสร้างขึ้นระหว่างกิจกรรม",
+                        "ต้นแบบที่ใช้งานได้จริงซึ่งสร้างขึ้นระหว่างกิจกรรม (เช่น เว็บไซต์ แอปมือถือ แอปเดสก์ท็อป AI agent เครื่องมือ CLI หรือโซลูชันดิจิทัลอื่นใดที่นำเสนอแนวคิดได้ดีที่สุด)",
                         "คำอธิบายปัญหาที่ชัดเจนและกลุ่มผู้ใช้งานเป้าหมาย",
                         "คำอธิบายสั้น ๆ เกี่ยวกับแนวทางแก้ไขและผลกระทบ",
                     ],
@@ -1023,7 +1023,7 @@ export const messages = {
                         "ชื่อโครงงานและบทสรุป",
                         "คำอธิบายปัญหาและกลุ่มผู้ใช้งานเป้าหมาย",
                         "คำอธิบายแนวทางแก้ไขและเทคโนโลยีที่ใช้",
-                        "ลิงก์ที่เก็บโค้ด (repository)",
+                        "ลิงก์ที่เก็บโค้ด (repository) (Public)",
                         "ลิงก์สาธิต ไฟล์นำเสนอ และวิดีโอสาธิต (ไม่บังคับ)",
                     ],
                     finalizeNote: "เมื่อยืนยันการส่งแล้วจะไม่สามารถแก้ไขได้ หากทีมต้องการให้เปิดการส่งอีกครั้ง โปรดติดต่อผู้จัดงาน",

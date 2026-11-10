@@ -3,6 +3,7 @@ import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
 import { requireApprovedTeam } from "@/lib/auth/guards";
 import { getEventSettings } from "@/lib/data/event-settings";
 import { getTeamSubmission } from "@/lib/data/submissions";
+import { getSubmissionWindowState } from "@/lib/services/submission-window";
 import { SubmissionForm } from "./_components/submission-form";
 
 export default async function TeamSubmitPage() {
@@ -27,6 +28,7 @@ export default async function TeamSubmitPage() {
 
 async function SubmissionContent({ teamId }: { teamId: string }) {
     const [submission, event] = await Promise.all([getTeamSubmission(teamId), getEventSettings()]);
+    const submissionOpen = getSubmissionWindowState(event, new Date()) === "OPEN";
 
     return (
         <>
@@ -42,7 +44,7 @@ async function SubmissionContent({ teamId }: { teamId: string }) {
                     )}
                 </p>
             )}
-            <SubmissionForm submission={submission} />
+            <SubmissionForm submission={submission} submissionOpen={submissionOpen} />
         </>
     );
 }
