@@ -472,6 +472,8 @@ export const messages = {
                     ],
                     finalizeNote:
                         "Finalized submissions are locked. Ask the organizers if your team needs a submission reopened.",
+                    repositoryNote:
+                        "The repository must stay public during the event. Submitted code may be retained for reference, and if a prototype is feasible, the university may continue developing it afterward.",
                     cta: "Open submission workspace",
                 },
             },
@@ -1027,6 +1029,8 @@ export const messages = {
                         "ลิงก์สาธิต ไฟล์นำเสนอ และวิดีโอสาธิต (ไม่บังคับ)",
                     ],
                     finalizeNote: "เมื่อยืนยันการส่งแล้วจะไม่สามารถแก้ไขได้ หากทีมต้องการให้เปิดการส่งอีกครั้ง โปรดติดต่อผู้จัดงาน",
+                    repositoryNote:
+                        "ที่เก็บโค้ดต้องเป็นสาธารณะตลอดช่วงกิจกรรม โค้ดที่ส่งอาจถูกเก็บไว้เพื่ออ้างอิง และหากต้นแบบมีความเป็นไปได้ มหาวิทยาลัยอาจพัฒนาต่อหลังกิจกรรม",
                     cta: "เปิดพื้นที่ส่งผลงาน",
                 },
             },
