@@ -125,7 +125,8 @@ export function SubmissionForm({
                             <Textarea
                                 id={`submission-${name}`}
                                 className="min-h-28"
-                                disabled={locked || isPending || !submissionOpen}
+                                disabled={locked || isPending}
+                                readOnly={!submissionOpen}
                                 maxLength={maxLength}
                                 value={values[name]}
                                 onChange={(event) =>
@@ -135,7 +136,8 @@ export function SubmissionForm({
                         ) : (
                             <Input
                                 id={`submission-${name}`}
-                                disabled={locked || isPending || !submissionOpen}
+                                disabled={locked || isPending}
+                                readOnly={!submissionOpen}
                                 maxLength={maxLength}
                                 type={type}
                                 value={values[name]}
