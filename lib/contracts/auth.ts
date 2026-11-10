@@ -7,7 +7,7 @@ export const teamLoginSchema = z.object({
 });
 
 export const staffLoginSchema = z.object({
-    email: z.email("Enter a valid email address").trim(),
+    email: z.string().trim().email("Enter a valid email address"),
     password: z.string().trim().min(8, "Password must be at least 8 characters"),
 });
 
