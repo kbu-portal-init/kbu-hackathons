@@ -86,8 +86,8 @@ function VerifyContent() {
                             Email verified!
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            Your student email has been confirmed. Once all team members have verified their emails, an
-                            organizer will review and approve your registration.
+                            Your student email has been confirmed. Once all team members have verified their emails, the
+                            leader will receive an account-setup email.
                         </p>
                     </>
                 )}
@@ -116,8 +116,7 @@ function VerifyContent() {
                             Team approved!
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            All team members have verified their emails. The team was automatically approved, and the
-                            leader received a password-reset link.
+                            The team leader will receive an account-setup email.
                         </p>
                     </>
                 )}
