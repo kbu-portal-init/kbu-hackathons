@@ -53,8 +53,7 @@ function VerifyContent() {
                         Invalid link
                     </h1>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                        This verification link is incomplete or invalid. Please open the link directly from your email,
-                        or contact your team leader or the event organizers for a new link.
+                        This verification link is incomplete or invalid.
                     </p>
                     <BackButton fallbackHref="/" label="Back to home" className="mt-8" useHistory={false} />
                 </div>
@@ -86,8 +85,8 @@ function VerifyContent() {
                             Email verified!
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            Your student email has been confirmed. Once all team members have verified their emails, an
-                            organizer will review and approve your registration.
+                            Your student email has been confirmed. Once all team members have verified their emails, we
+                            will approve your registration.
                         </p>
                     </>
                 )}
@@ -102,7 +101,7 @@ function VerifyContent() {
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
                             All team members have verified their emails. An organizer will review and approve your
-                            registration. You will receive your login credentials once approved.
+                            registration. The team leader will receive an account-setup email once approved.
                         </p>
                     </>
                 )}
@@ -116,8 +115,7 @@ function VerifyContent() {
                             Team approved!
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            All team members have verified their emails. The team was automatically approved, and the
-                            leader received a password-reset link.
+                            The team leader will receive an account-setup email.
                         </p>
                     </>
                 )}
@@ -131,8 +129,8 @@ function VerifyContent() {
                             Team approved
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            Your team was automatically approved, but the leader&apos;s password-reset email could not
-                            be delivered. Please contact the organizers for help.
+                            Your team was automatically approved, but the leader&apos;s account-setup email could not be
+                            delivered. Please contact the organizers for help.
                         </p>
                     </>
                 )}
@@ -160,8 +158,9 @@ function VerifyContent() {
                             Verification failed
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            We couldn&apos;t verify this email because the link is invalid or has expired. Please
-                            contact your team leader or the event organizers to request a new verification link.
+                            This verification link is invalid or has expired. Reopen the original email and try again,
+                            or request a replacement link. If you believe this is a mistake, contact your team leader or
+                            the event organizers.
                         </p>
                     </>
                 )}
