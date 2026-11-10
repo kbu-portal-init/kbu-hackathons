@@ -85,10 +85,15 @@ export const messages = {
             prizeTiers: [
                 {
                     title: "Winner",
-                    reward: "AI agent subscription for each member, Internship Pass Offer (counts as the 3-credit internship course), 2,000 THB, and a certificate",
+                    rewards: [
+                        "AI agent subscription for each member",
+                        "Internship Pass Offer (counts as the 3-credit internship course)",
+                        "2,000 THB",
+                        "Certificate",
+                    ],
                 },
-                { title: "1st Runner-Up", reward: "1,500 THB and a certificate" },
-                { title: "2nd Runner-Up", reward: "1,000 THB and a certificate" },
+                { title: "1st Runner-Up", rewards: ["1,500 THB", "Certificate"] },
+                { title: "2nd Runner-Up", rewards: ["1,000 THB", "Certificate"] },
             ],
             help: "Need help?",
             helpText: "Join our official LINE group to connect with organizers and get event support.",
@@ -658,10 +663,15 @@ export const messages = {
             prizeTiers: [
                 {
                     title: "Winner",
-                    reward: "AI agent subscription สำหรับสมาชิกทุกคน, Internship Pass Offer (นับเป็นวิชาฝึกงาน 3 หน่วยกิต), 2,000 บาท และเกียรติบัตร",
+                    rewards: [
+                        "AI agent subscription สำหรับสมาชิกทุกคน",
+                        "Internship Pass Offer (นับเป็นวิชาฝึกงาน 3 หน่วยกิต)",
+                        "2,000 บาท",
+                        "เกียรติบัตร",
+                    ],
                 },
-                { title: "1st Runner-Up", reward: "1,500 บาท และเกียรติบัตร" },
-                { title: "2nd Runner-Up", reward: "1,000 บาท และเกียรติบัตร" },
+                { title: "1st Runner-Up", rewards: ["1,500 บาท", "เกียรติบัตร"] },
+                { title: "2nd Runner-Up", rewards: ["1,000 บาท", "เกียรติบัตร"] },
             ],
             help: "ต้องการความช่วยเหลือ?",
             helpText: "เข้าร่วมกลุ่ม LINE อย่างเป็นทางการเพื่อติดต่อผู้จัดงานและรับการสนับสนุน",
