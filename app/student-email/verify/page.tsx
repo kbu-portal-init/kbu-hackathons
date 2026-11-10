@@ -85,8 +85,8 @@ function VerifyContent() {
                             Email verified!
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            Your student email has been confirmed. Once all team members have verified their emails, the
-                            leader will receive an account-setup email.
+                            Your student email has been confirmed. Once all team members have verified their emails, we
+                            will approve your registration.
                         </p>
                     </>
                 )}
@@ -158,9 +158,9 @@ function VerifyContent() {
                             Verification failed
                         </h1>
                         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                            We couldn&apos;t verify this email because the link is invalid or has expired. If you
-                            believe this is a mistake, please contact your team leader or the event organizers for
-                            assistance.
+                            This verification link is invalid or has expired. Reopen the original email and try again,
+                            or request a replacement link. If you believe this is a mistake, contact your team leader or
+                            the event organizers.
                         </p>
                     </>
                 )}
