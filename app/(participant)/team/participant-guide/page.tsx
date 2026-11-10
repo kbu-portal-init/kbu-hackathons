@@ -67,7 +67,18 @@ export default async function TeamParticipantGuidePage() {
                         <ul className="mt-5 space-y-2 border-t-2 border-border/15 pt-4">
                             {t.prizes.tiers.map((tier) => (
                                 <li key={tier.title} className="text-sm leading-6 text-foreground">
-                                    <span className="font-semibold">{tier.title}:</span> {tier.reward}
+                                    <span className="font-semibold">{tier.title}:</span>
+                                    <ul className="mt-1 space-y-1 pl-4">
+                                        {tier.rewards.map((reward) => (
+                                            <li key={reward} className="flex gap-2 text-foreground">
+                                                <span
+                                                    aria-hidden="true"
+                                                    className="mt-2 size-1.5 shrink-0 bg-primary"
+                                                />
+                                                <span>{reward}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </li>
                             ))}
                         </ul>

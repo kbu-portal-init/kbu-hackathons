@@ -85,7 +85,14 @@ export async function AboutContent() {
                 {t.prizeTiers.map((tier) => (
                     <article key={tier.title} className="border-2 border-border bg-card p-5">
                         <p className="font-display text-sm font-bold uppercase tracking-widest">{tier.title}</p>
-                        <p className="mt-3 text-base leading-7">{tier.reward}</p>
+                        <ul className="mt-3 space-y-1">
+                            {tier.rewards.map((reward) => (
+                                <li key={reward} className="flex gap-2 text-base leading-7">
+                                    <span className="mt-2 size-1.5 shrink-0 bg-primary" aria-hidden="true" />
+                                    {reward}
+                                </li>
+                            ))}
+                        </ul>
                     </article>
                 ))}
             </div>
