@@ -156,7 +156,26 @@ export async function EventGuide({ locale, t }: EventGuideProps) {
                     ))}
                 </ol>
 
-                <p className="mt-3 text-sm text-muted-foreground">{t.schedule.note}</p>
+                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    {[
+                        { label: t.schedule.day1Label, timeline: t.schedule.day1Timeline },
+                        { label: t.schedule.day2Label, timeline: t.schedule.day2Timeline },
+                    ].map((day) => (
+                        <PosterPanel className="p-5" key={day.label}>
+                            <h3 className="font-display text-base font-bold text-foreground">{day.label}</h3>
+                            <dl className="mt-3 space-y-2">
+                                {day.timeline.map((item) => (
+                                    <div className="grid grid-cols-[6rem_1fr] gap-3 text-sm" key={item.time}>
+                                        <dt className="font-medium text-muted-foreground">{item.time}</dt>
+                                        <dd className="text-foreground">{item.activity}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        </PosterPanel>
+                    ))}
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">{t.schedule.timetableNote}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t.schedule.note}</p>
             </section>
         </div>
     );

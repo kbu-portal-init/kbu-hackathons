@@ -3,12 +3,12 @@ import type { ActionResult } from "./common";
 
 export const teamLoginSchema = z.object({
     username: z.string().trim().min(1, "Username is required"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().trim().min(8, "Password must be at least 8 characters"),
 });
 
 export const staffLoginSchema = z.object({
-    email: z.email("Enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    email: z.email("Enter a valid email address").trim(),
+    password: z.string().trim().min(8, "Password must be at least 8 characters"),
 });
 
 export const passwordResetSchema = z

@@ -16,7 +16,6 @@ export async function AboutContent() {
                     <h2 className="max-w-md font-display text-[clamp(2.4rem,6vw,4.5rem)] font-bold leading-[0.92] tracking-tight text-foreground">
                         {t.title}
                     </h2>
-                    <p className="mt-5 max-w-md text-lg leading-8 text-muted-foreground">{t.description}</p>
                 </div>
 
                 <div className="border-t-2 border-border">
@@ -42,6 +41,11 @@ export async function AboutContent() {
                 </div>
             </div>
 
+            <div className="mt-6 max-w-3xl space-y-2">
+                <p className="text-lg leading-8 text-muted-foreground">{t.description}</p>
+                <p className="text-lg leading-8 text-muted-foreground">{t.prototypeHint}</p>
+            </div>
+
             <div className="mt-14 border-2 border-border">
                 <div className="border-b-2 border-border bg-accent text-accent-foreground px-5 py-4">
                     <h3 className="font-display text-xl font-semibold text-foreground">{t.directionsLabel}</h3>
@@ -62,20 +66,31 @@ export async function AboutContent() {
                 </p>
             </div>
 
-            <div className="mt-14 grid border-t-2 border-border lg:grid-cols-3">
+            <div className="mt-14 grid border-t-2 border-border lg:grid-cols-2">
                 <article className="border-b-2 border-border/15 py-6 lg:border-b-0 lg:border-r-2 lg:pr-6">
                     <h3 className="font-display text-lg font-semibold text-foreground">{t.teamsKnow}</h3>
                     <p className="mt-2 max-w-sm leading-7 text-muted-foreground">{t.teamsKnowText}</p>
                 </article>
-                <article className="border-b-2 border-border/15 py-6 lg:border-b-0 lg:border-r-2 lg:px-6">
+                <article className="py-6 lg:pl-6">
                     <h3 className="font-display text-lg font-semibold text-foreground">{t.support}</h3>
                     <p className="mt-2 max-w-sm leading-7 text-muted-foreground">{t.supportText}</p>
                 </article>
-                <article className="py-6 lg:pl-6">
-                    <h3 className="font-display text-lg font-semibold text-foreground">{t.prizes}</h3>
-                    <p className="mt-2 max-w-sm leading-7 text-muted-foreground">{t.prizesText}</p>
-                </article>
             </div>
+
+            <div className="mt-14">
+                <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">{t.prizes}</h3>
+            </div>
+
+            <div className="mt-6 grid gap-4 lg:grid-cols-3">
+                {t.prizeTiers.map((tier) => (
+                    <article key={tier.title} className="border-2 border-border bg-card p-5">
+                        <p className="font-display text-sm font-bold uppercase tracking-widest">{tier.title}</p>
+                        <p className="mt-3 text-base leading-7">{tier.reward}</p>
+                    </article>
+                ))}
+            </div>
+
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">{t.allParticipantsCertificate}</p>
 
             <div
                 id="need-help"
