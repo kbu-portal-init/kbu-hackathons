@@ -77,7 +77,7 @@ export const messages = {
             teamsKnowText:
                 "This is an in-person event for KBU students. Teams may choose their own problem, approach, and technology within the event rules.",
             support: "Event support",
-            supportText: "Snacks, coffee, Wi-Fi support will be available.",
+            supportText: "Snacks, coffee, and Wi-Fi will be available.",
             prizes: "Prizes and awards",
             prizesText:
                 "Winner: AI agent subscription for each member, Internship Pass Offer (counts as the 3-credit internship course), 2,000 THB, and a certificate. 1st Runner-Up: 1,500 THB and a certificate. 2nd Runner-Up: 1,000 THB and a certificate. All participants receive a participant certificate.",
