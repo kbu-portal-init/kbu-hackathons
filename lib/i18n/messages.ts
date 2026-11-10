@@ -380,7 +380,7 @@ export const messages = {
             schedule: {
                 title: "Event schedule",
                 description:
-                    "Registration opens in November, and the hackathon runs across two days in December. The timetable below is tentative and may change.",
+                    "Registration opens in November, and the hackathon runs across two days in December. The schedule below is tentative and may change.",
 
                 registrationLabel: "Registration opens",
                 day1Label: "Day 1",
@@ -397,7 +397,7 @@ export const messages = {
                 day2Body:
                     "Teams present their prototypes to university professors acting as judges. Winners are announced after the presentations.",
                 day2Items: ["Teams present their prototypes", "University professors judge", "Winners announced"],
-                note: "The timetable below is tentative; session times and rooms may change or run overtime.",
+                note: "The schedule below is tentative; session times and rooms may change or run overtime.",
 
                 day1Timeline: [
                     { time: "08:00–08:30", activity: "Registration and arrival" },
@@ -415,7 +415,6 @@ export const messages = {
                     { time: "15:30–16:00", activity: "Judges’ deliberation" },
                     { time: "16:00–17:00", activity: "Awards, certificates, closing remarks and feedback" },
                 ],
-                timetableNote: "The timetable may change or run overtime.",
             },
             guide: {
                 title: "Participant guide",
@@ -975,7 +974,6 @@ export const messages = {
                     { time: "15:30–16:00", activity: "กรรมการปรึกษาหารือ" },
                     { time: "16:00–17:00", activity: "มอบรางวัล เกียรติบัตร ปิดงานและข้อเสนอแนะ" },
                 ],
-                timetableNote: "ตารางเวลาอาจเปลี่ยนแปลงหรือเลื่อนเวลาได้",
             },
             guide: {
                 title: "คู่มือผู้เข้าร่วม",
