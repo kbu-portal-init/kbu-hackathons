@@ -108,6 +108,7 @@ export function ReferenceSections({ t }: { t: Messages["references"] }) {
                         ))}
                     </ul>
                     <p className="mt-4 text-sm leading-6 text-muted-foreground">{t.guide.submission.finalizeNote}</p>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{t.guide.submission.repositoryNote}</p>
                     <Link className={buttonVariants({ variant: "brand", className: "mt-5" })} href="/team/submit">
                         {t.guide.submission.cta}
                         <ArrowUpRight className="size-4" />
