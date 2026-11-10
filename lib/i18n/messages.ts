@@ -375,7 +375,8 @@ export const messages = {
             schedule: {
                 title: "Event schedule",
                 description:
-                    "Registration opens in November, and the hackathon runs across two days in December. Exact session times will be announced by the organizers.",
+                    "Registration opens in November, and the hackathon runs across two days in December. The timetable below is tentative and may change.",
+
                 registrationLabel: "Registration opens",
                 day1Label: "Day 1",
                 day1Title: "Build and submit",
@@ -391,7 +392,8 @@ export const messages = {
                 day2Body:
                     "Teams present their prototypes to university professors acting as judges. Winners are announced after the presentations.",
                 day2Items: ["Teams present their prototypes", "University professors judge", "Winners announced"],
-                note: "Detailed session times and room information will be announced by the organizers.",
+                note: "The timetable below is tentative; session times and rooms may change or run overtime.",
+
                 day1Timeline: [
                     { time: "08:00–08:30", activity: "Registration and arrival" },
                     { time: "08:30–09:00", activity: "Opening, rules, challenge briefing and questions" },
@@ -929,7 +931,8 @@ export const messages = {
             schedule: {
                 title: "กำหนดการกิจกรรม",
                 description:
-                    "เปิดรับสมัครในเดือนพฤศจิกายน และแฮกกาธอนจัดต่อเนื่องสองวันในเดือนธันวาคม โดยเวลาของแต่ละช่วงจะประกาศโดยผู้จัดงาน",
+                    "เปิดรับสมัครในเดือนพฤศจิกายน และแฮกกาธอนจัดต่อเนื่องสองวันในเดือนธันวาคม ตารางเวลาด้านล่างเป็นเพียงแนวทางและอาจเปลี่ยนแปลงได้",
+
                 registrationLabel: "เปิดรับสมัคร",
                 day1Label: "วันที่ 1",
                 day1Title: "สร้างและส่งผลงาน",
@@ -939,7 +942,8 @@ export const messages = {
                 day2Title: "นำเสนอและประกาศผล",
                 day2Body: "แต่ละทีมนำเสนอต้นแบบต่ออาจารย์มหาวิทยาลัยในฐานะกรรมการ และจะประกาศผู้ชนะหลังการนำเสนอ",
                 day2Items: ["ทีมนำเสนอต้นแบบ", "อาจารย์มหาวิทยาลัยร่วมตัดสิน", "ประกาศผู้ชนะ"],
-                note: "เวลาของแต่ละช่วงและห้องจัดกิจกรรมจะประกาศโดยผู้จัดงาน",
+                note: "ตารางเวลาด้านล่างเป็นเพียงแนวทาง เวลาของแต่ละช่วงและห้องจัดกิจกรรมอาจเปลี่ยนแปลงหรือเลื่อนเวลาได้",
+
                 day1Timeline: [
                     { time: "08:00–08:30", activity: "ลงทะเบียนและเข้าร่วม" },
                     { time: "08:30–09:00", activity: "เปิดงาน กฎกติกา บรรยายโจทย์และถาม-ตอบ" },
