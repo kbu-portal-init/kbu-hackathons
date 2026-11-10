@@ -15,7 +15,7 @@ const fields = [
     ["targetUsers", "Target users", "text", 500],
     ["solution", "Solution description", "textarea", 3000],
     ["technologyStack", "Technology stack", "text", 1000],
-    ["repositoryUrl", "Repository URL", "url", undefined],
+    ["repositoryUrl", "Repository URL (Public)", "url", undefined],
     ["demoUrl", "Working demo URL", "url", undefined],
     ["presentationUrl", "Presentation URL", "url", undefined],
     ["demoVideoUrl", "Demo video URL", "url", undefined],
@@ -30,7 +30,13 @@ function initialValues(submission: SubmissionDTO | null): FormValues {
     ) as FormValues;
 }
 
-export function SubmissionForm({ submission }: { submission: SubmissionDTO | null }) {
+export function SubmissionForm({
+    submission,
+    submissionOpen = true,
+}: {
+    submission: SubmissionDTO | null;
+    submissionOpen?: boolean;
+}) {
     const [values, setValues] = useState(() => initialValues(submission));
     const [error, setError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -74,6 +80,11 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                     organizer.
                 </div>
             )}
+            {!submissionOpen && (
+                <div className="border-2 border-border bg-accent p-4 font-medium text-accent-foreground">
+                    Submissions are not currently open.
+                </div>
+            )}
             {error && (
                 <div
                     role="alert"
@@ -114,7 +125,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                             <Textarea
                                 id={`submission-${name}`}
                                 className="min-h-28"
-                                disabled={locked || isPending}
+                                disabled={locked || isPending || !submissionOpen}
                                 maxLength={maxLength}
                                 value={values[name]}
                                 onChange={(event) =>
@@ -124,7 +135,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                         ) : (
                             <Input
                                 id={`submission-${name}`}
-                                disabled={locked || isPending}
+                                disabled={locked || isPending || !submissionOpen}
                                 maxLength={maxLength}
                                 type={type}
                                 value={values[name]}
@@ -142,7 +153,12 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                     </label>
                 ))}
                 <div className="flex flex-col gap-3 border-t-2 border-border/15 pt-5 sm:flex-row sm:justify-end">
-                    <Button variant="outline" className="px-5" disabled={locked || isPending} type="submit">
+                    <Button
+                        variant="outline"
+                        className="px-5"
+                        disabled={locked || isPending || !submissionOpen}
+                        type="submit"
+                    >
                         {isPending ? "Saving..." : "Save draft"}
                     </Button>
                     <ConfirmActionAlertDialog
@@ -150,7 +166,7 @@ export function SubmissionForm({ submission }: { submission: SubmissionDTO | nul
                             <Button
                                 variant="default"
                                 className="h-11 px-5 font-display text-sm font-semibold"
-                                disabled={locked || isPending}
+                                disabled={locked || isPending || !submissionOpen}
                             >
                                 Finalize submission
                             </Button>
