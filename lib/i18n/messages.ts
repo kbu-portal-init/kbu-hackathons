@@ -77,7 +77,7 @@ export const messages = {
             teamsKnowText:
                 "This is an in-person event for KBU students. Teams may choose their own problem, approach, and technology within the event rules.",
             support: "Event support",
-            supportText: "Snacks, coffee, Wi-Fi support will be available.",
+            supportText: "Snacks, coffee, and Wi-Fi will be available.",
             prizes: "Prizes and awards",
             prizesText:
                 "Winner: AI agent subscription for each member, Internship Pass Offer (counts as the 3-credit internship course), 2,000 THB, and a certificate. 1st Runner-Up: 1,500 THB and a certificate. 2nd Runner-Up: 1,000 THB and a certificate. All participants receive a participant certificate.",
@@ -85,10 +85,15 @@ export const messages = {
             prizeTiers: [
                 {
                     title: "Winner",
-                    reward: "AI agent subscription for each member, Internship Pass Offer (counts as the 3-credit internship course), 2,000 THB, and a certificate",
+                    rewards: [
+                        "AI agent subscription for each member",
+                        "Internship Pass Offer (counts as the 3-credit internship course)",
+                        "2,000 THB",
+                        "Certificate",
+                    ],
                 },
-                { title: "1st Runner-Up", reward: "1,500 THB and a certificate" },
-                { title: "2nd Runner-Up", reward: "1,000 THB and a certificate" },
+                { title: "1st Runner-Up", rewards: ["1,500 THB", "Certificate"] },
+                { title: "2nd Runner-Up", rewards: ["1,000 THB", "Certificate"] },
             ],
             help: "Need help?",
             helpText: "Join our official LINE group to connect with organizers and get event support.",
@@ -375,7 +380,7 @@ export const messages = {
             schedule: {
                 title: "Event schedule",
                 description:
-                    "Registration opens in November, and the hackathon runs across two days in December. The timetable below is tentative and may change.",
+                    "Registration opens in November, and the hackathon runs across two days in December. The schedule below is tentative and may change.",
 
                 registrationLabel: "Registration opens",
                 day1Label: "Day 1",
@@ -392,7 +397,7 @@ export const messages = {
                 day2Body:
                     "Teams present their prototypes to university professors acting as judges. Winners are announced after the presentations.",
                 day2Items: ["Teams present their prototypes", "University professors judge", "Winners announced"],
-                note: "The timetable below is tentative; session times and rooms may change or run overtime.",
+                note: "The schedule below is tentative; session times and rooms may change or run overtime.",
 
                 day1Timeline: [
                     { time: "08:00–08:30", activity: "Registration and arrival" },
@@ -410,7 +415,6 @@ export const messages = {
                     { time: "15:30–16:00", activity: "Judges’ deliberation" },
                     { time: "16:00–17:00", activity: "Awards, certificates, closing remarks and feedback" },
                 ],
-                timetableNote: "The timetable may change or run overtime.",
             },
             guide: {
                 title: "Participant guide",
@@ -481,10 +485,15 @@ export const messages = {
                 tiers: [
                     {
                         title: "Winner",
-                        reward: "AI agent subscription for each member, Internship Pass Offer (3-credit internship course), 2,000 THB, and a certificate",
+                        rewards: [
+                            "AI agent subscription for each member",
+                            "Internship Pass Offer (3-credit internship course)",
+                            "2,000 THB",
+                            "Certificate",
+                        ],
                     },
-                    { title: "1st Runner-Up", reward: "1,500 THB and a certificate" },
-                    { title: "2nd Runner-Up", reward: "1,000 THB and a certificate" },
+                    { title: "1st Runner-Up", rewards: ["1,500 THB", "Certificate"] },
+                    { title: "2nd Runner-Up", rewards: ["1,000 THB", "Certificate"] },
                 ],
                 allParticipants: "All participants receive a participant certificate.",
             },
@@ -653,10 +662,15 @@ export const messages = {
             prizeTiers: [
                 {
                     title: "Winner",
-                    reward: "AI agent subscription สำหรับสมาชิกทุกคน, Internship Pass Offer (นับเป็นวิชาฝึกงาน 3 หน่วยกิต), 2,000 บาท และเกียรติบัตร",
+                    rewards: [
+                        "AI agent subscription สำหรับสมาชิกทุกคน",
+                        "Internship Pass Offer (นับเป็นวิชาฝึกงาน 3 หน่วยกิต)",
+                        "2,000 บาท",
+                        "เกียรติบัตร",
+                    ],
                 },
-                { title: "1st Runner-Up", reward: "1,500 บาท และเกียรติบัตร" },
-                { title: "2nd Runner-Up", reward: "1,000 บาท และเกียรติบัตร" },
+                { title: "1st Runner-Up", rewards: ["1,500 บาท", "เกียรติบัตร"] },
+                { title: "2nd Runner-Up", rewards: ["1,000 บาท", "เกียรติบัตร"] },
             ],
             help: "ต้องการความช่วยเหลือ?",
             helpText: "เข้าร่วมกลุ่ม LINE อย่างเป็นทางการเพื่อติดต่อผู้จัดงานและรับการสนับสนุน",
@@ -960,7 +974,6 @@ export const messages = {
                     { time: "15:30–16:00", activity: "กรรมการปรึกษาหารือ" },
                     { time: "16:00–17:00", activity: "มอบรางวัล เกียรติบัตร ปิดงานและข้อเสนอแนะ" },
                 ],
-                timetableNote: "ตารางเวลาอาจเปลี่ยนแปลงหรือเลื่อนเวลาได้",
             },
             guide: {
                 title: "คู่มือผู้เข้าร่วม",
@@ -1027,10 +1040,15 @@ export const messages = {
                 tiers: [
                     {
                         title: "Winner",
-                        reward: "AI agent subscription สำหรับสมาชิกทุกคน, Internship Pass Offer (วิชาฝึกงาน 3 หน่วยกิต), 2,000 บาท และเกียรติบัตร",
+                        rewards: [
+                            "AI agent subscription สำหรับสมาชิกทุกคน",
+                            "Internship Pass Offer (วิชาฝึกงาน 3 หน่วยกิต)",
+                            "2,000 บาท",
+                            "เกียรติบัตร",
+                        ],
                     },
-                    { title: "1st Runner-Up", reward: "1,500 บาท และเกียรติบัตร" },
-                    { title: "2nd Runner-Up", reward: "1,000 บาท และเกียรติบัตร" },
+                    { title: "1st Runner-Up", rewards: ["1,500 บาท", "เกียรติบัตร"] },
+                    { title: "2nd Runner-Up", rewards: ["1,000 บาท", "เกียรติบัตร"] },
                 ],
                 allParticipants: "ผู้เข้าร่วมทุกคนจะได้รับเกียรติบัตรผู้เข้าร่วม",
             },

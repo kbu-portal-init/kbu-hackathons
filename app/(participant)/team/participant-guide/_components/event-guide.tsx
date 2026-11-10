@@ -174,8 +174,7 @@ export async function EventGuide({ locale, t }: EventGuideProps) {
                         </PosterPanel>
                     ))}
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground">{t.schedule.timetableNote}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{t.schedule.note}</p>
+                <p className="mt-3 text-sm text-muted-foreground">{t.schedule.note}</p>
             </section>
         </div>
     );
