@@ -2,6 +2,7 @@ import { CalendarDays } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnnouncementCategoryBadge } from "@/components/announcements/announcement-badge";
+import { LinkifiedText } from "@/components/linkified-text";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import type { Locale } from "@/lib/i18n/config";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
@@ -65,7 +66,7 @@ export default function AnnouncementCard({ announcement, locale }: AnnouncementC
                     {announcement.title}
                 </h2>
                 <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground sm:text-base">
-                    {announcement.content}
+                    <LinkifiedText text={announcement.content} />
                 </p>
             </article>
 

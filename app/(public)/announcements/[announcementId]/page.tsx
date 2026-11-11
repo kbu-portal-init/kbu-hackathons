@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { LinkifiedText } from "@/components/linkified-text";
 import { PosterBreadcrumb } from "@/components/poster-breadcrumb";
 import { ShareButton } from "@/components/share-button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -147,7 +148,7 @@ async function AnnouncementContent({ announcementId }: { announcementId: string 
                     </h1>
 
                     <div className="mt-5 whitespace-pre-wrap wrap-break-word text-base leading-8 text-muted-foreground sm:text-lg">
-                        {announcement.content}
+                        <LinkifiedText text={announcement.content} />
                     </div>
                 </div>
             </article>

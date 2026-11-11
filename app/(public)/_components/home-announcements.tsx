@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LinkifiedText } from "@/components/linkified-text";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { listPublicAnnouncements } from "@/lib/data/announcements";
 import type { Locale } from "@/lib/i18n/config";
@@ -62,7 +63,7 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
                                     {announcement.title}
                                 </h3>
                                 <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted-foreground sm:text-base">
-                                    {announcement.content}
+                                    <LinkifiedText text={announcement.content} />
                                 </p>
                             </div>
                             <span className="font-display text-xs font-semibold text-muted-foreground sm:pt-1">
