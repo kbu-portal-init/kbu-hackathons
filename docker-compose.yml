@@ -115,6 +115,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - backend_net # Completely isolated; no host port mapping
+      - db_host_net # Non-internal network so host port publishing works
     deploy:
       resources:
         limits:
@@ -142,6 +143,8 @@ networks:
     driver: bridge
   backend_net:
     internal: true # Cannot receive external traffic; database isolation
+  db_host_net:
+    driver: bridge # Non-internal so host port publishing works
 
 volumes:
   postgres_data:
