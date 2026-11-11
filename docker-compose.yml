@@ -103,6 +103,8 @@ services:
   db:
     image: postgres:16-alpine
     container_name: kbu_hackathon_db
+    ports:
+      - "127.0.0.1:5432:5432" # Bind so that the host can use it
     restart: unless-stopped
     env_file:
       - path: /opt/hackathon/.env.production
