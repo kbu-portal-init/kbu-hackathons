@@ -15,6 +15,7 @@ const chakraPetch = Chakra_Petch({
     subsets: ["latin", "thai"],
     weight: ["500", "600", "700"],
     display: "swap",
+    preload: false,
 });
 
 const ibmPlexSansThai = IBM_Plex_Sans_Thai({
@@ -29,6 +30,7 @@ const firaCode = Fira_Code({
     subsets: ["latin"],
     weight: ["400", "500", "600"],
     display: "swap",
+    preload: false,
 });
 
 const DESCRIPTION = "Discover hackathons, join a team, and keep up with the KBU community.";
