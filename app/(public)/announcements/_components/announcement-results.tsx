@@ -1,10 +1,8 @@
 import { redirect } from "next/navigation";
-
 import { listPublishedAnnouncements } from "@/actions/management/announcements";
 import { PaginationFooter } from "@/components/pagination-footer";
 import type { AnnouncementCategory } from "@/lib/contracts/announcements";
 import { getLocale } from "@/lib/i18n/server";
-
 import AnnouncementCard from "./announcement-card";
 
 const PAGE_SIZE = 10;
