@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LinkifiedText } from "@/components/linkified-text";
 import type { PublicAnnouncementDTO } from "@/lib/contracts/announcements";
 import { listPublicAnnouncements } from "@/lib/data/announcements";
 import type { Locale } from "@/lib/i18n/config";
@@ -47,9 +46,10 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
                     const publishedDate = announcement.publishedAt ?? announcement.createdAt;
 
                     return (
-                        <div
+                        <Link
                             key={announcement.id}
-                            className="group grid gap-2 border-b-2 border-border/15 py-5 transition-colors hover:bg-accent/20 sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
+                            href={`/announcements/${announcement.id}`}
+                            className="group grid gap-2 border-b-2 border-border/15 py-5 transition-colors hover:bg-accent/20 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary sm:grid-cols-[8.5rem_1fr_auto] sm:gap-6 sm:px-2"
                         >
                             <time
                                 dateTime={new Date(publishedDate).toISOString()}
@@ -59,18 +59,16 @@ export async function HomeAnnouncements({ locale }: { locale: Locale }) {
                             </time>
                             <div className="min-w-0">
                                 <h3 className="font-display text-lg font-semibold leading-6 text-foreground group-hover:text-primary sm:text-xl">
-                                    <Link href={`/announcements/${announcement.id}`} className="hover:underline">
-                                        {announcement.title}
-                                    </Link>
+                                    {announcement.title}
                                 </h3>
                                 <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted-foreground sm:text-base">
-                                    <LinkifiedText text={announcement.content} />
+                                    {announcement.content}
                                 </p>
                             </div>
                             <span className="font-display text-xs font-semibold text-muted-foreground sm:pt-1">
                                 {categoryLabel(announcement.category, locale)}
                             </span>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>
