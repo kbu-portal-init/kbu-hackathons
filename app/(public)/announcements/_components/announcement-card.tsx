@@ -60,17 +60,15 @@ export default function AnnouncementCard({ announcement, locale }: AnnouncementC
             </div>
             <article className="min-w-0 sm:col-span-1 lg:col-span-1">
                 <h2 className="font-display text-xl font-semibold leading-7 text-foreground transition-colors group-hover:text-primary sm:text-2xl">
-                    <Link href={`/announcements/${announcement.id}`} className="hover:underline">
-                        {announcement.title}
-                    </Link>
+                    {announcement.title}
                 </h2>
                 <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground sm:text-base">
-                    <LinkifiedText text={announcement.content} />
+                    {announcement.content}
                 </p>
             </article>
             <div className="sm:col-start-2 lg:col-start-auto lg:pt-1">
                 <AnnouncementCategoryBadge category={getCategory(announcement.category)} />
             </div>
-        </div>
+        </Link>
     );
 }
