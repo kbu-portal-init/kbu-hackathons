@@ -89,6 +89,7 @@ async function renderMemberCard(
                     style={{
                         color: "#ffffff",
                         display: "flex",
+                        flexWrap: "wrap",
                         fontFamily: "Ethnocentric",
                         fontSize: 68,
                         fontWeight: 800,
