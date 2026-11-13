@@ -9,6 +9,13 @@ let notificationError: unknown;
 let createTeamMember: typeof import("@/actions/management/teams").createTeamMember;
 let updateTeamMember: typeof import("@/actions/management/teams").updateTeamMember;
 let deleteTeamMember: typeof import("@/actions/management/teams").deleteTeamMember;
+let deleteRegistrationRequest: typeof import("@/actions/management/registrations").deleteRegistrationRequest;
+
+let deleteRegistrationServiceArgs: unknown[] | undefined;
+let deleteRegistrationServiceResult: unknown = {
+    ok: true,
+    data: { registrationId: "registration-1" },
+};
 
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
@@ -117,6 +124,10 @@ mock("@/lib/services/registration", {
         updateRegistrationServiceArgs = [input, actorId];
         return updateRegistrationServiceResult;
     },
+    deleteRegistration: async (input: unknown, actorId: string) => {
+        deleteRegistrationServiceArgs = [input, actorId];
+        return deleteRegistrationServiceResult;
+    },
 });
 
 let banAccount: typeof import("@/actions/admin/accounts").banAccount;
@@ -127,6 +138,7 @@ before(async () => {
     ({ requestStudentEmailVerification } = await import("@/actions/management/student-email"));
     ({ createRegistrationRequest } = await import("@/actions/management/registrations"));
     ({ updateRegistrationRequest } = await import("@/actions/management/registrations"));
+    ({ deleteRegistrationRequest } = await import("@/actions/management/registrations"));
     const teamActions = await import("@/actions/management/teams");
 
     createTeamMember = teamActions.createTeamMember;
@@ -156,6 +168,11 @@ beforeEach(() => {
     deleteResult = defaultDeleteResult;
     updateRegistrationServiceArgs = undefined;
     updateRegistrationServiceResult = {
+        ok: true,
+        data: { registrationId: "registration-1" },
+    };
+    deleteRegistrationServiceArgs = undefined;
+    deleteRegistrationServiceResult = {
         ok: true,
         data: { registrationId: "registration-1" },
     };
@@ -461,5 +478,42 @@ describe("management Registration CRUD actions", () => {
         await assert.rejects(() => createRegistrationRequest(validManagementRegistrationInput), /redirect:\/login/);
 
         assert.equal(registrationServiceArgs, undefined);
+    });
+
+    it("deletes a registration and forwards the authenticated actor ID", async () => {
+        const input = { registrationId: "registration-1" };
+
+        const result = await deleteRegistrationRequest(input);
+
+        assert.deepEqual(result, deleteRegistrationServiceResult);
+        assert.deepEqual(deleteRegistrationServiceArgs, [input, "admin-1"]);
+    });
+
+    it("rejects invalid deletion input before calling the service", async () => {
+        const result = await deleteRegistrationRequest({
+            registrationId: "",
+        });
+
+        assert.equal(result.ok, false);
+
+        if (!result.ok) {
+            assert.equal(result.error.code, "VALIDATION_ERROR");
+        }
+
+        assert.equal(deleteRegistrationServiceArgs, undefined);
+    });
+
+    it("requires an organizer or admin before deleting a registration", async () => {
+        session = null;
+
+        await assert.rejects(
+            () =>
+                deleteRegistrationRequest({
+                    registrationId: "registration-1",
+                }),
+            /redirect:\/login/,
+        );
+
+        assert.equal(deleteRegistrationServiceArgs, undefined);
     });
 });

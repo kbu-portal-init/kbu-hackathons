@@ -7,6 +7,7 @@ import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     CreateManagementRegistrationData,
+    DeleteRegistrationData,
     RegistrationDetailDTO,
     RegistrationListItem,
     RejectRegistrationData,
@@ -16,6 +17,7 @@ import type {
 import {
     approveRegistrationSchema,
     createManagementRegistrationSchema,
+    deleteRegistrationSchema,
     listRegistrationsSchema,
     registrationIdSchema,
     rejectRegistrationSchema,
@@ -27,6 +29,7 @@ import prisma from "@/lib/prisma";
 import {
     approveRegistration as approveRegistrationService,
     createManagementRegistration as createManagementRegistrationService,
+    deleteRegistration as deleteRegistrationService,
     rejectRegistration as rejectRegistrationService,
     submitRegistration as submitRegistrationService,
     updateRegistration as updateRegistrationService,
@@ -91,6 +94,25 @@ export async function updateRegistrationRequest(input: unknown): Promise<ActionR
     }
 
     return updateRegistrationService(parsed.data, session.user.id);
+}
+
+export async function deleteRegistrationRequest(input: unknown): Promise<ActionResult<DeleteRegistrationData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = deleteRegistrationSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid registration ID",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return deleteRegistrationService(parsed.data, session.user.id);
 }
 
 export async function listRegistrationRequests(input: unknown): Promise<ListActionResult<RegistrationListItem>> {

@@ -660,4 +660,238 @@ describe("registration lifecycle", () => {
             prisma.$transaction = originalTransaction;
         }
     });
+
+    it("deletes pending, rejected, and withdrawn registrations with an audit snapshot", async () => {
+        const originalTransaction = prisma.$transaction;
+        const statuses = ["PENDING", "REJECTED", "WITHDRAWN"] as const;
+
+        try {
+            for (const status of statuses) {
+                const operations: string[] = [];
+                let auditData: Record<string, unknown> | undefined;
+
+                const submittedAt = new Date("2026-11-01T10:00:00.000Z");
+                const createdAt = new Date("2026-10-30T10:00:00.000Z");
+                const updatedAt = new Date("2026-11-02T10:00:00.000Z");
+                const reviewCreatedAt = new Date("2026-11-01T12:00:00.000Z");
+
+                prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                    callback({
+                        $queryRaw: async () => {
+                            operations.push("lock");
+                        },
+                        registration: {
+                            findUnique: async () => {
+                                operations.push("find");
+                                return {
+                                    id: "registration-1",
+                                    teamId: "team-1",
+                                    status,
+                                    applicationNotes: "Original notes",
+                                    submittedAt,
+                                    withdrawnAt: null,
+                                    createdAt,
+                                    updatedAt,
+                                    team: {
+                                        id: "team-1",
+                                        displayName: "Build Team",
+                                        loginName: "build-team",
+                                        program: "THAI_PROGRAM",
+                                        userId: null,
+                                    },
+                                    reviews: [
+                                        {
+                                            id: "review-1",
+                                            reviewerId: "organizer-2",
+                                            decision: "REJECT",
+                                            reason: "Incomplete application",
+                                            createdAt: reviewCreatedAt,
+                                        },
+                                    ],
+                                };
+                            },
+                            delete: async () => {
+                                operations.push("delete-registration");
+                            },
+                        },
+                        registrationReview: {
+                            deleteMany: async () => {
+                                operations.push("delete-reviews");
+                            },
+                        },
+                        auditLog: {
+                            create: async ({ data }: { data: Record<string, unknown> }) => {
+                                operations.push("audit");
+                                auditData = data;
+                            },
+                        },
+                    } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+                const result = await service.deleteRegistration({ registrationId: "registration-1" }, "organizer-1");
+
+                assert.deepEqual(result, {
+                    ok: true,
+                    data: { registrationId: "registration-1" },
+                });
+
+                assert.equal(auditData?.actorId, "organizer-1");
+                assert.equal(auditData?.action, "REGISTRATION_DELETED");
+                assert.equal(auditData?.targetType, "Registration");
+                assert.equal(auditData?.targetId, "registration-1");
+
+                assert.deepEqual(operations, [
+                    "lock",
+                    "lock",
+                    "find",
+                    "audit",
+                    "delete-reviews",
+                    "delete-registration",
+                ]);
+
+                const details = auditData?.details as {
+                    registration: { status: string; applicationNotes: string };
+                    team: { id: string; displayName: string };
+                    reviews: Array<{ id: string; reason: string }>;
+                };
+
+                assert.equal(details.registration.status, status);
+                assert.equal(details.registration.applicationNotes, "Original notes");
+                assert.equal(details.team.id, "team-1");
+                assert.equal(details.team.displayName, "Build Team");
+                assert.equal(details.reviews[0].id, "review-1");
+                assert.equal(details.reviews[0].reason, "Incomplete application");
+            }
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("rejects deletion of approved registrations", async () => {
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+
+        try {
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    $queryRaw: async () => operations.push("lock"),
+                    registration: {
+                        findUnique: async () => {
+                            operations.push("find");
+                            return {
+                                id: "registration-1",
+                                status: "APPROVED",
+                            };
+                        },
+                        delete: async () => operations.push("delete"),
+                    },
+                    registrationReview: {
+                        deleteMany: async () => operations.push("delete-reviews"),
+                    },
+                    auditLog: {
+                        create: async () => operations.push("audit"),
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            const result = await service.deleteRegistration({ registrationId: "registration-1" }, "organizer-1");
+
+            assert.equal(result.ok, false);
+
+            if (!result.ok) {
+                assert.equal(result.error.code, "INVALID_STATUS");
+            }
+
+            assert.deepEqual(operations, ["lock", "lock", "find"]);
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("returns REGISTRATION_NOT_FOUND when deleting a missing registration", async () => {
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+
+        try {
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    $queryRaw: async () => operations.push("lock"),
+                    registration: {
+                        findUnique: async () => {
+                            operations.push("find");
+                            return null;
+                        },
+                        delete: async () => operations.push("delete"),
+                    },
+                    registrationReview: {
+                        deleteMany: async () => operations.push("delete-reviews"),
+                    },
+                    auditLog: {
+                        create: async () => operations.push("audit"),
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            const result = await service.deleteRegistration({ registrationId: "missing-registration" }, "organizer-1");
+
+            assert.equal(result.ok, false);
+
+            if (!result.ok) {
+                assert.equal(result.error.code, "REGISTRATION_NOT_FOUND");
+            }
+
+            assert.deepEqual(operations, ["lock", "lock", "find"]);
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("propagates audit failures during registration deletion", async () => {
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+        const auditError = new Error("Audit write failed");
+
+        try {
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    $queryRaw: async () => operations.push("lock"),
+                    registration: {
+                        findUnique: async () => ({
+                            id: "registration-1",
+                            teamId: "team-1",
+                            status: "PENDING",
+                            applicationNotes: null,
+                            submittedAt: null,
+                            withdrawnAt: null,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                            team: {
+                                id: "team-1",
+                                displayName: "Build Team",
+                                loginName: "build-team",
+                                program: "THAI_PROGRAM",
+                                userId: null,
+                            },
+                            reviews: [],
+                        }),
+                        delete: async () => operations.push("delete-registration"),
+                    },
+                    registrationReview: {
+                        deleteMany: async () => operations.push("delete-reviews"),
+                    },
+                    auditLog: {
+                        create: async () => {
+                            operations.push("audit");
+                            throw auditError;
+                        },
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            await assert.rejects(
+                () => service.deleteRegistration({ registrationId: "registration-1" }, "organizer-1"),
+                auditError,
+            );
+
+            assert.deepEqual(operations, ["lock", "lock", "audit"]);
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
 });

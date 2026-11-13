@@ -785,3 +785,126 @@ export async function createManagementRegistration(
         },
     };
 }
+
+// ── Delete registration (management) ───────────────────────────────
+
+export async function deleteRegistration(
+    input: DeleteRegistrationInput,
+    actorId: string,
+): Promise<ActionResult<DeleteRegistrationData>> {
+    return prisma.$transaction(async (tx) => {
+        // Match the approval transaction's lock order to avoid lock-order
+        // conflicts when approval and deletion happen concurrently.
+        await tx.$queryRaw`
+            SELECT id
+            FROM "event_settings"
+            WHERE id = 1
+            FOR UPDATE
+        `;
+
+        await tx.$queryRaw`
+            SELECT id
+            FROM "registration"
+            WHERE id = ${input.registrationId}
+            FOR UPDATE
+        `;
+
+        const registration = await tx.registration.findUnique({
+            where: { id: input.registrationId },
+            select: {
+                id: true,
+                teamId: true,
+                status: true,
+                applicationNotes: true,
+                submittedAt: true,
+                withdrawnAt: true,
+                createdAt: true,
+                updatedAt: true,
+                team: {
+                    select: {
+                        id: true,
+                        displayName: true,
+                        loginName: true,
+                        program: true,
+                        userId: true,
+                    },
+                },
+                reviews: {
+                    select: {
+                        id: true,
+                        reviewerId: true,
+                        decision: true,
+                        reason: true,
+                        createdAt: true,
+                    },
+                },
+            },
+        });
+
+        if (!registration) {
+            return {
+                ok: false as const,
+                error: {
+                    code: ErrorCodes.REGISTRATION_NOT_FOUND,
+                    message: "Registration not found",
+                },
+            };
+        }
+
+        if (
+            registration.status !== "PENDING" &&
+            registration.status !== "REJECTED" &&
+            registration.status !== "WITHDRAWN"
+        ) {
+            return {
+                ok: false as const,
+                error: {
+                    code: ErrorCodes.INVALID_STATUS,
+                    message: "Only pending, rejected, or withdrawn registrations can be deleted",
+                },
+            };
+        }
+
+        await tx.auditLog.create({
+            data: {
+                actorId,
+                action: "REGISTRATION_DELETED",
+                targetType: "Registration",
+                targetId: registration.id,
+                details: {
+                    registration: {
+                        id: registration.id,
+                        teamId: registration.teamId,
+                        status: registration.status,
+                        applicationNotes: registration.applicationNotes,
+                        submittedAt: registration.submittedAt?.toISOString() ?? null,
+                        withdrawnAt: registration.withdrawnAt?.toISOString() ?? null,
+                        createdAt: registration.createdAt.toISOString(),
+                        updatedAt: registration.updatedAt.toISOString(),
+                    },
+                    team: registration.team,
+                    reviews: registration.reviews.map((review) => ({
+                        id: review.id,
+                        reviewerId: review.reviewerId,
+                        decision: review.decision,
+                        reason: review.reason,
+                        createdAt: review.createdAt.toISOString(),
+                    })),
+                },
+            },
+        });
+
+        await tx.registrationReview.deleteMany({
+            where: { registrationId: registration.id },
+        });
+
+        await tx.registration.delete({
+            where: { id: registration.id },
+        });
+
+        return {
+            ok: true as const,
+            data: { registrationId: registration.id },
+        };
+    });
+}
