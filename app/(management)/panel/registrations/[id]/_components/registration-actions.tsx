@@ -33,6 +33,7 @@ export function RegistrationActions({
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [rejectOpen, setRejectOpen] = useState(false);
+    const [approveOpen, setApproveOpen] = useState(false);
 
     const rejectForm = useForm<RejectRegistrationInput>({
         resolver: zodResolver(rejectRegistrationSchema),
@@ -75,7 +76,7 @@ export function RegistrationActions({
                 <Tooltip>
                     <TooltipTrigger
                         render={
-                            <Button onClick={onApprove} disabled={approveDisabled}>
+                            <Button onClick={() => setApproveOpen(true)} disabled={approveDisabled}>
                                 {isPending ? (
                                     <>
                                         <Loader2 className="size-4 animate-spin" />
@@ -142,6 +143,37 @@ export function RegistrationActions({
                             </Button>
                         </DialogFooter>
                     </form>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={approveOpen} onOpenChange={(open) => !open && setApproveOpen(false)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Approve registration</DialogTitle>
+                        <DialogDescription>
+                            This provisions the team account and sends a password setup link to the leader.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4">
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => setApproveOpen(false)}
+                            disabled={isPending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            disabled={isPending}
+                            onClick={() => {
+                                setApproveOpen(false);
+                                onApprove();
+                            }}
+                        >
+                            {isPending ? "Approving..." : "Approve registration"}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </TooltipProvider>
