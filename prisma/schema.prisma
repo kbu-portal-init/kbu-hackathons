@@ -220,10 +220,12 @@ model AuditLog {
   targetId   String
   details    Json?
   createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  deletedAt  DateTime? @db.Timestamptz(3)
 
   @@index([actorId, createdAt])
   @@index([targetType, targetId, createdAt])
   @@index([createdAt])
+  @@index([deletedAt, createdAt])
   @@map("audit_log")
 }
 
