@@ -10,10 +10,7 @@ export const programLabels: Record<EducationProgram, string> = {
 export const roleOptions = [
     { value: TeamMemberRole.DEVELOPER, label: formatRole(TeamMemberRole.DEVELOPER) },
     { value: TeamMemberRole.DESIGNER, label: formatRole(TeamMemberRole.DESIGNER) },
-    { value: TeamMemberRole.PRODUCT_MANAGER, label: formatRole(TeamMemberRole.PRODUCT_MANAGER) },
-    { value: TeamMemberRole.MARKETER, label: formatRole(TeamMemberRole.MARKETER) },
     { value: TeamMemberRole.PRESENTER, label: formatRole(TeamMemberRole.PRESENTER) },
-    { value: TeamMemberRole.RESEARCHER, label: formatRole(TeamMemberRole.RESEARCHER) },
     { value: TeamMemberRole.TESTER, label: formatRole(TeamMemberRole.TESTER) },
     { value: TeamMemberRole.OTHER, label: formatRole(TeamMemberRole.OTHER) },
 ] as const;
