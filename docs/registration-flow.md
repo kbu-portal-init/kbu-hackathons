@@ -362,7 +362,9 @@ The following must always remain true:
 - Withdrawn/removed teams cannot log in.
 - Team username is server-generated.
 - Team username cannot be changed by the team.
-- A team's program never changes after registration.
+- Organizers and admins may change a team's program through management.
+- Approved teams must remain within the destination program's quota.
+- Program changes and team archival actions must be recorded in the audit log.
 - APPROVED teams never exceed the total quota or their program quota.
 - Team members cannot change the team's role.
 - Organizer cannot create or promote admins/organizers.

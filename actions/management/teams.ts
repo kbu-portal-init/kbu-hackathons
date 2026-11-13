@@ -6,12 +6,29 @@ import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
 import type { CreateTeamMemberData, DeleteTeamMemberData, UpdateTeamMemberData } from "@/lib/contracts/team-members";
 import { createTeamMemberSchema, deleteTeamMemberSchema, updateTeamMemberSchema } from "@/lib/contracts/team-members";
-import type { TeamDetailDTO, TeamListItem } from "@/lib/contracts/teams";
-import { listTeamsSchema, teamIdSchema } from "@/lib/contracts/teams";
+import type {
+    ArchiveTeamData,
+    TeamDetailDTO,
+    TeamListItem,
+    UnarchiveTeamData,
+    UpdateTeamData,
+} from "@/lib/contracts/teams";
+import {
+    archiveTeamSchema,
+    listTeamsSchema,
+    teamIdSchema,
+    unarchiveTeamSchema,
+    updateTeamSchema,
+} from "@/lib/contracts/teams";
 import { getTeamDetail, listTeams as listTeamsData } from "@/lib/data/teams";
 import { banAccount, unbanAccount } from "@/lib/services/account-banning";
 import { isNotificationDeliveryError } from "@/lib/services/notifications";
 import { sendStudentEmailVerification } from "@/lib/services/student-email-verification";
+import {
+    archiveTeam as archiveTeamService,
+    unarchiveTeam as unarchiveTeamService,
+    updateTeam as updateTeamService,
+} from "@/lib/services/team-management";
 import {
     createTeamMember as createTeamMemberService,
     deleteTeamMember as deleteTeamMemberService,
@@ -201,6 +218,63 @@ export async function getTeam(input: unknown): Promise<ActionResult<TeamDetailDT
     return team
         ? { ok: true, data: team }
         : { ok: false, error: { code: ErrorCodes.TEAM_NOT_FOUND, message: "Team not found" } };
+}
+
+export async function updateTeamRequest(input: unknown): Promise<ActionResult<UpdateTeamData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = updateTeamSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid team details",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return updateTeamService(parsed.data, session.user.id);
+}
+
+export async function archiveTeamRequest(input: unknown): Promise<ActionResult<ArchiveTeamData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = archiveTeamSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid team ID",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return archiveTeamService(parsed.data, session.user.id);
+}
+
+export async function unarchiveTeamRequest(input: unknown): Promise<ActionResult<UnarchiveTeamData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = unarchiveTeamSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid team ID",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return unarchiveTeamService(parsed.data, session.user.id);
 }
 
 export async function banTeam(input: unknown): Promise<ActionResult<{ userId: string }>> {

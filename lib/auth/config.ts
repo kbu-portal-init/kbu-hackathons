@@ -48,6 +48,12 @@ export const auth = betterAuth({
             if (typeof username !== "string") return;
 
             const user = await findTeamAccountByUsername(username);
+            if (user?.role === "team" && user.team?.archivedAt) {
+                throw APIError.fromStatus("FORBIDDEN", {
+                    message: "This team account has been archived. Contact an organizer for assistance.",
+                });
+            }
+
             if (user && !isApprovedTeamAccount(user)) {
                 throw APIError.fromStatus("FORBIDDEN", {
                     message: "Your team registration is still pending approval.",

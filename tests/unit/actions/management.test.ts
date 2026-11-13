@@ -17,6 +17,41 @@ let deleteRegistrationServiceResult: unknown = {
     data: { registrationId: "registration-1" },
 };
 
+let updateTeamRequest: typeof import("@/actions/management/teams").updateTeamRequest;
+let archiveTeamRequest: typeof import("@/actions/management/teams").archiveTeamRequest;
+let unarchiveTeamRequest: typeof import("@/actions/management/teams").unarchiveTeamRequest;
+
+let teamManagementServiceArgs: {
+    update?: unknown[];
+    archive?: unknown[];
+    unarchive?: unknown[];
+} = {};
+
+let updateTeamServiceResult: unknown = {
+    ok: true,
+    data: {
+        teamId: "team-1",
+        displayName: "Updated Team",
+        program: "THAI_PROGRAM",
+    },
+};
+
+let archiveTeamServiceResult: unknown = {
+    ok: true,
+    data: {
+        teamId: "team-1",
+        archivedAt: "2026-11-13T15:00:00.000Z",
+    },
+};
+
+let unarchiveTeamServiceResult: unknown = {
+    ok: true,
+    data: {
+        teamId: "team-1",
+        archivedAt: null,
+    },
+};
+
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
@@ -111,6 +146,22 @@ mock("@/lib/services/team-members", {
         return deleteResult;
     },
 });
+
+mock("@/lib/services/team-management", {
+    updateTeam: async (input: unknown, actorId: string) => {
+        teamManagementServiceArgs.update = [input, actorId];
+        return updateTeamServiceResult;
+    },
+    archiveTeam: async (input: unknown, actorId: string) => {
+        teamManagementServiceArgs.archive = [input, actorId];
+        return archiveTeamServiceResult;
+    },
+    unarchiveTeam: async (input: unknown, actorId: string) => {
+        teamManagementServiceArgs.unarchive = [input, actorId];
+        return unarchiveTeamServiceResult;
+    },
+});
+
 mock("@/lib/services/notifications", {
     isNotificationDeliveryError: (error: unknown) => notificationError === error,
 });
@@ -133,6 +184,7 @@ mock("@/lib/services/registration", {
 let banAccount: typeof import("@/actions/admin/accounts").banAccount;
 let requestStudentEmailVerification: typeof import("@/actions/management/student-email").requestStudentEmailVerification;
 
+// Load management actions
 before(async () => {
     ({ banAccount } = await import("@/actions/admin/accounts"));
     ({ requestStudentEmailVerification } = await import("@/actions/management/student-email"));
@@ -144,8 +196,12 @@ before(async () => {
     createTeamMember = teamActions.createTeamMember;
     updateTeamMember = teamActions.updateTeamMember;
     deleteTeamMember = teamActions.deleteTeamMember;
+    updateTeamRequest = teamActions.updateTeamRequest;
+    archiveTeamRequest = teamActions.archiveTeamRequest;
+    unarchiveTeamRequest = teamActions.unarchiveTeamRequest;
 });
 
+// Reset mock state before each test
 beforeEach(() => {
     session = { user: { id: "admin-1", role: "admin" } };
     banServiceArgs = undefined;
@@ -175,6 +231,32 @@ beforeEach(() => {
     deleteRegistrationServiceResult = {
         ok: true,
         data: { registrationId: "registration-1" },
+    };
+    teamManagementServiceArgs = {};
+
+    updateTeamServiceResult = {
+        ok: true,
+        data: {
+            teamId: "team-1",
+            displayName: "Updated Team",
+            program: "THAI_PROGRAM",
+        },
+    };
+
+    archiveTeamServiceResult = {
+        ok: true,
+        data: {
+            teamId: "team-1",
+            archivedAt: "2026-11-13T15:00:00.000Z",
+        },
+    };
+
+    unarchiveTeamServiceResult = {
+        ok: true,
+        data: {
+            teamId: "team-1",
+            archivedAt: null,
+        },
     };
 });
 
@@ -515,5 +597,111 @@ describe("management Registration CRUD actions", () => {
         );
 
         assert.equal(deleteRegistrationServiceArgs, undefined);
+    });
+});
+
+describe("management Team actions", () => {
+    it("updates team details and forwards the authenticated actor ID", async () => {
+        const input = {
+            teamId: "team-1",
+            displayName: "Updated Team",
+            program: "THAI_PROGRAM",
+        };
+
+        const result = await updateTeamRequest(input);
+
+        assert.deepEqual(result, updateTeamServiceResult);
+        assert.deepEqual(teamManagementServiceArgs.update, [input, "admin-1"]);
+    });
+
+    it("rejects invalid team updates before calling the service", async () => {
+        const result = await updateTeamRequest({
+            teamId: "team-1",
+        });
+
+        assert.equal(result.ok, false);
+
+        if (!result.ok) {
+            assert.equal(result.error.code, "VALIDATION_ERROR");
+        }
+
+        assert.equal(teamManagementServiceArgs.update, undefined);
+    });
+
+    it("requires an organizer or admin before updating a team", async () => {
+        session = null;
+
+        await assert.rejects(
+            () =>
+                updateTeamRequest({
+                    teamId: "team-1",
+                    displayName: "Updated Team",
+                }),
+            /redirect:\/login/,
+        );
+
+        assert.equal(teamManagementServiceArgs.update, undefined);
+    });
+
+    it("archives a team and forwards the authenticated actor ID", async () => {
+        const input = { teamId: "team-1" };
+
+        const result = await archiveTeamRequest(input);
+
+        assert.deepEqual(result, archiveTeamServiceResult);
+        assert.deepEqual(teamManagementServiceArgs.archive, [input, "admin-1"]);
+    });
+
+    it("rejects invalid archive input before calling the service", async () => {
+        const result = await archiveTeamRequest({
+            teamId: "",
+        });
+
+        assert.equal(result.ok, false);
+
+        if (!result.ok) {
+            assert.equal(result.error.code, "VALIDATION_ERROR");
+        }
+
+        assert.equal(teamManagementServiceArgs.archive, undefined);
+    });
+
+    it("requires an organizer or admin before archiving a team", async () => {
+        session = null;
+
+        await assert.rejects(() => archiveTeamRequest({ teamId: "team-1" }), /redirect:\/login/);
+
+        assert.equal(teamManagementServiceArgs.archive, undefined);
+    });
+
+    it("unarchives a team and forwards the authenticated actor ID", async () => {
+        const input = { teamId: "team-1" };
+
+        const result = await unarchiveTeamRequest(input);
+
+        assert.deepEqual(result, unarchiveTeamServiceResult);
+        assert.deepEqual(teamManagementServiceArgs.unarchive, [input, "admin-1"]);
+    });
+
+    it("rejects invalid unarchive input before calling the service", async () => {
+        const result = await unarchiveTeamRequest({
+            teamId: "",
+        });
+
+        assert.equal(result.ok, false);
+
+        if (!result.ok) {
+            assert.equal(result.error.code, "VALIDATION_ERROR");
+        }
+
+        assert.equal(teamManagementServiceArgs.unarchive, undefined);
+    });
+
+    it("requires an organizer or admin before unarchiving a team", async () => {
+        session = null;
+
+        await assert.rejects(() => unarchiveTeamRequest({ teamId: "team-1" }), /redirect:\/login/);
+
+        assert.equal(teamManagementServiceArgs.unarchive, undefined);
     });
 });
