@@ -43,6 +43,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
     const router = useRouter();
     const [statusFilter, setStatusFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">(status ?? "ALL");
     const [rejectItem, setRejectItem] = useState<RegistrationListItem | null>(null);
+    const [approveItem, setApproveItem] = useState<RegistrationListItem | null>(null);
     const [isPending, startTransition] = useTransition();
 
     const rejectForm = useForm<RejectRegistrationInput>({
@@ -157,7 +158,7 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                                                         variant="default"
                                                         size="sm"
                                                         className="text-xs"
-                                                        onClick={() => onApprove(item.id)}
+                                                        onClick={() => setApproveItem(item)}
                                                         disabled={isPending}
                                                     >
                                                         Approve
@@ -199,6 +200,38 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                     return `/panel/registrations?${params.toString()}`;
                 }}
             />
+
+            <Dialog open={!!approveItem} onOpenChange={(open) => !open && setApproveItem(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="font-display">Approve registration</DialogTitle>
+                        <DialogDescription>
+                            Approving &quot;{approveItem?.teamName}&quot;. This provisions the team account and sends a
+                            password setup link to the leader.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4 border-t-2 border-border/15 pt-4">
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => setApproveItem(null)}
+                            disabled={isPending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            disabled={isPending}
+                            onClick={() => {
+                                if (approveItem) onApprove(approveItem.id);
+                                setApproveItem(null);
+                            }}
+                        >
+                            {isPending ? "Approving..." : "Approve registration"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <Dialog open={!!rejectItem} onOpenChange={(open) => !open && setRejectItem(null)}>
                 <DialogContent>
