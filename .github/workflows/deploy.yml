@@ -24,7 +24,6 @@ jobs:
                   username: ${{ secrets.SERVER_USER }}
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   port: ${{ secrets.SERVER_PORT }}
-                  script_stop: true
                   script: |
                       set -e
                       production_env=/opt/hackathon/.env.production
@@ -143,7 +142,6 @@ jobs:
                 key: ${{ secrets.SERVER_SSH_KEY }}
                 port: ${{ secrets.SERVER_PORT }}
                 envs: IMAGE_REPOSITORY,IMAGE_TAG,GHCR_TOKEN,GHCR_USER,COMPOSE_B64
-                script_stop: true
                 script: |
                     set -e
                     cd /opt/hackathon
@@ -198,11 +196,8 @@ jobs:
                     echo "✅ Health check passed."
                     # Remove old application image tags while retaining the current release and rollback target.
                     docker image ls "$IMAGE_REPOSITORY" --format '{{.Repository}}:{{.Tag}}' | while IFS= read -r image; do
-                        if [ "$image" = "$IMAGE_REPOSITORY:$IMAGE_TAG" ] ||
-                            [ "$image" = "$IMAGE_REPOSITORY:$IMAGE_TAG-builder" ] ||
-                            [ "$image" = "$IMAGE_REPOSITORY:rollback" ]; then
-                            continue
-                        fi
+                        # Keep on one line so it still works if script_stop is turned back on.
+                        case "$image" in "$IMAGE_REPOSITORY:$IMAGE_TAG"|"$IMAGE_REPOSITORY:$IMAGE_TAG-builder"|"$IMAGE_REPOSITORY:rollback") continue ;; esac
 
                         docker image rm "$image" || echo "Could not remove obsolete image tag: $image" >&2
                     done || echo "Could not enumerate obsolete image tags; continuing deployment." >&2
