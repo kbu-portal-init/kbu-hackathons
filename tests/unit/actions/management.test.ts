@@ -49,6 +49,22 @@ const defaultDeleteResult = {
 let createResult: unknown = defaultCreateResult;
 let updateResult: unknown = defaultUpdateResult;
 let deleteResult: unknown = defaultDeleteResult;
+let createRegistrationRequest: typeof import("@/actions/management/registrations").createRegistrationRequest;
+let registrationServiceArgs: unknown[] | undefined;
+let registrationServiceResult: unknown = {
+    ok: true,
+    data: {
+        registrationId: "registration-1",
+        teamName: "Build Team",
+        verificationEmailsSent: true,
+    },
+};
+let updateRegistrationRequest: typeof import("@/actions/management/registrations").updateRegistrationRequest;
+let updateRegistrationServiceArgs: unknown[] | undefined;
+let updateRegistrationServiceResult: unknown = {
+    ok: true,
+    data: { registrationId: "registration-1" },
+};
 
 mock("@/lib/auth/guards", {
     requireOrganizerOrAdmin: async () => {
@@ -92,13 +108,25 @@ mock("@/lib/services/notifications", {
     isNotificationDeliveryError: (error: unknown) => notificationError === error,
 });
 
+mock("@/lib/services/registration", {
+    createManagementRegistration: async (input: unknown, actorId: string) => {
+        registrationServiceArgs = [input, actorId];
+        return registrationServiceResult;
+    },
+    updateRegistration: async (input: unknown, actorId: string) => {
+        updateRegistrationServiceArgs = [input, actorId];
+        return updateRegistrationServiceResult;
+    },
+});
+
 let banAccount: typeof import("@/actions/admin/accounts").banAccount;
 let requestStudentEmailVerification: typeof import("@/actions/management/student-email").requestStudentEmailVerification;
 
 before(async () => {
     ({ banAccount } = await import("@/actions/admin/accounts"));
     ({ requestStudentEmailVerification } = await import("@/actions/management/student-email"));
-
+    ({ createRegistrationRequest } = await import("@/actions/management/registrations"));
+    ({ updateRegistrationRequest } = await import("@/actions/management/registrations"));
     const teamActions = await import("@/actions/management/teams");
 
     createTeamMember = teamActions.createTeamMember;
@@ -111,13 +139,26 @@ beforeEach(() => {
     banServiceArgs = undefined;
     verificationError = undefined;
     notificationError = undefined;
-
+    registrationServiceArgs = undefined;
+    registrationServiceResult = {
+        ok: true,
+        data: {
+            registrationId: "registration-1",
+            teamName: "Build Team",
+            verificationEmailsSent: true,
+        },
+    };
     teamMemberServiceArgs = {};
     verificationCalls = [];
 
     createResult = defaultCreateResult;
     updateResult = defaultUpdateResult;
     deleteResult = defaultDeleteResult;
+    updateRegistrationServiceArgs = undefined;
+    updateRegistrationServiceResult = {
+        ok: true,
+        data: { registrationId: "registration-1" },
+    };
 });
 
 describe("management action error mapping", () => {
@@ -331,5 +372,94 @@ describe("management TeamMember CRUD actions", () => {
 
         assert.deepEqual(teamMemberServiceArgs, {});
         assert.deepEqual(verificationCalls, []);
+    });
+});
+
+const validManagementRegistrationInput = {
+    teamName: "Build Team",
+    program: "THAI_PROGRAM",
+    leaderName: "Leader",
+    leaderEmail: "leader@ms.kbu.ac.th",
+    leaderRole: "LEADER",
+    members: [
+        {
+            name: "Member",
+            email: "member@ms.kbu.ac.th",
+            role: "DESIGNER",
+        },
+    ],
+};
+
+describe("management Registration CRUD actions", () => {
+    it("updates registration notes and forwards the authenticated actor ID", async () => {
+        const input = {
+            registrationId: "registration-1",
+            applicationNotes: "Updated application notes",
+        };
+
+        const result = await updateRegistrationRequest(input);
+
+        assert.deepEqual(result, updateRegistrationServiceResult);
+        assert.deepEqual(updateRegistrationServiceArgs, [input, "admin-1"]);
+    });
+
+    it("rejects invalid update input before calling the service", async () => {
+        const result = await updateRegistrationRequest({
+            registrationId: "",
+            applicationNotes: "Updated notes",
+        });
+
+        assert.equal(result.ok, false);
+
+        if (!result.ok) {
+            assert.equal(result.error.code, "VALIDATION_ERROR");
+        }
+
+        assert.equal(updateRegistrationServiceArgs, undefined);
+    });
+
+    it("requires an organizer or admin before updating a registration", async () => {
+        session = null;
+
+        await assert.rejects(
+            () =>
+                updateRegistrationRequest({
+                    registrationId: "registration-1",
+                    applicationNotes: "Updated notes",
+                }),
+            /redirect:\/login/,
+        );
+
+        assert.equal(updateRegistrationServiceArgs, undefined);
+    });
+
+    it("creates a registration and forwards the authenticated actor ID", async () => {
+        const result = await createRegistrationRequest(validManagementRegistrationInput);
+
+        assert.deepEqual(result, registrationServiceResult);
+        assert.deepEqual(registrationServiceArgs, [validManagementRegistrationInput, "admin-1"]);
+    });
+
+    it("rejects invalid creation input before calling the service", async () => {
+        const result = await createRegistrationRequest({
+            ...validManagementRegistrationInput,
+            leaderEmail: "invalid@example.com",
+        });
+
+        assert.equal(result.ok, false);
+
+        if (!result.ok) {
+            assert.equal(result.error.code, "VALIDATION_ERROR");
+        }
+
+        assert.equal(registrationServiceArgs, undefined);
+    });
+
+    it("requires an organizer or admin before creating a registration", async () => {
+        session = null;
+
+        await assert.rejects(() => createRegistrationRequest(validManagementRegistrationInput), /redirect:\/login/);
+
+        assert.equal(registrationServiceArgs, undefined);
     });
 });

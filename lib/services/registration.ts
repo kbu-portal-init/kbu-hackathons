@@ -8,11 +8,17 @@ import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
     ApproveRegistrationInput,
+    CreateManagementRegistrationData,
+    CreateManagementRegistrationInput,
+    DeleteRegistrationData,
+    DeleteRegistrationInput,
     EducationProgram,
     RejectRegistrationData,
     RejectRegistrationInput,
     SubmitRegistrationData,
     SubmitRegistrationInput,
+    UpdateRegistrationData,
+    UpdateRegistrationInput,
 } from "@/lib/contracts/registration";
 import { countApprovedTeams, getRegistrationByTeamId, getRegistrationWithTeam } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
@@ -247,6 +253,86 @@ async function provisionTeamAccount(
     };
 }
 
+type CreateRegistrationRecordInput = {
+    input: SubmitRegistrationInput;
+    applicationNotes: string | null;
+    submittedAt: Date;
+    actorId: string | null;
+};
+
+async function createRegistrationRecord({
+    input,
+    applicationNotes,
+    submittedAt,
+    actorId,
+}: CreateRegistrationRecordInput): Promise<{
+    registrationId: string;
+    teamName: string;
+    memberIds: string[];
+}> {
+    const loginName = await uniqueLoginName(toLoginName(input.teamName));
+
+    return prisma.$transaction(async (tx) => {
+        const team = await tx.team.create({
+            data: {
+                loginName,
+                displayName: input.teamName,
+                program: input.program,
+            },
+        });
+
+        const allMembers = [
+            { name: input.leaderName, role: input.leaderRole, email: input.leaderEmail },
+            ...input.members,
+        ];
+
+        const createdMembers = await Promise.all(
+            allMembers.map((member) =>
+                tx.teamMember.create({
+                    data: {
+                        teamId: team.id,
+                        name: member.name,
+                        role: member.role,
+                        studentEmail: member.email,
+                    },
+                    select: { id: true },
+                }),
+            ),
+        );
+
+        const registration = await tx.registration.create({
+            data: {
+                teamId: team.id,
+                applicationNotes,
+                submittedAt,
+            },
+        });
+
+        if (actorId) {
+            await tx.auditLog.create({
+                data: {
+                    actorId,
+                    action: "REGISTRATION_CREATED",
+                    targetType: "Registration",
+                    targetId: registration.id,
+                    details: {
+                        teamId: team.id,
+                        teamName: team.displayName,
+                        program: input.program,
+                        memberCount: createdMembers.length,
+                    },
+                },
+            });
+        }
+
+        return {
+            registrationId: registration.id,
+            teamName: team.displayName,
+            memberIds: createdMembers.map((member) => member.id),
+        };
+    });
+}
+
 // ── Submit (public, no auth) ───────────────────────────────────────
 
 export async function submitRegistration(
@@ -304,55 +390,24 @@ export async function submitRegistration(
         };
     }
 
-    const loginName = await uniqueLoginName(toLoginName(input.teamName));
+    let result: Awaited<ReturnType<typeof createRegistrationRecord>>;
 
-    let result: { registrationId: string; teamName: string; memberIds: string[] };
     try {
-        result = await prisma.$transaction(async (tx) => {
-            const team = await tx.team.create({
-                data: {
-                    loginName,
-                    displayName: input.teamName,
-                    program: input.program,
-                },
-            });
-
-            const allMembers = [
-                { name: input.leaderName, role: input.leaderRole, email: input.leaderEmail },
-                ...input.members,
-            ];
-
-            const createdMembers = await Promise.all(
-                allMembers.map((m) =>
-                    tx.teamMember.create({
-                        data: {
-                            teamId: team.id,
-                            name: m.name,
-                            role: m.role,
-                            studentEmail: m.email,
-                        },
-                        select: { id: true },
-                    }),
-                ),
-            );
-
-            const registration = await tx.registration.create({
-                data: {
-                    teamId: team.id,
-                    applicationNotes: `Registered by ${input.leaderName}`,
-                    submittedAt: now,
-                },
-            });
-
-            return {
-                registrationId: registration.id,
-                teamName: team.displayName,
-                memberIds: createdMembers.map((m) => m.id),
-            };
+        result = await createRegistrationRecord({
+            input,
+            applicationNotes: `Registered by ${input.leaderName}`,
+            submittedAt: now,
+            actorId: null,
         });
     } catch (error) {
-        const databaseError = error as { code?: string; message?: string; meta?: unknown };
+        const databaseError = error as {
+            code?: string;
+            message?: string;
+            meta?: unknown;
+        };
+
         const detail = `${databaseError.message ?? ""}${JSON.stringify(databaseError.meta ?? "")}`;
+
         if (databaseError.code === "P2002" && detail.includes("team_member_student_email_key")) {
             return {
                 ok: false,
@@ -362,6 +417,7 @@ export async function submitRegistration(
                 },
             };
         }
+
         throw error;
     }
 
@@ -380,6 +436,61 @@ export async function submitRegistration(
             verificationEmailsSent,
         },
     };
+}
+
+// ── Update registration (management) ───────────────────────────────
+
+export async function updateRegistration(
+    input: UpdateRegistrationInput,
+    actorId: string,
+): Promise<ActionResult<UpdateRegistrationData>> {
+    const result = await prisma.$transaction(async (tx) => {
+        const registration = await tx.registration.findUnique({
+            where: { id: input.registrationId },
+            select: {
+                id: true,
+                applicationNotes: true,
+            },
+        });
+
+        if (!registration) {
+            return null;
+        }
+
+        await tx.registration.update({
+            where: { id: registration.id },
+            data: {
+                applicationNotes: input.applicationNotes,
+            },
+        });
+
+        await tx.auditLog.create({
+            data: {
+                actorId,
+                action: "REGISTRATION_UPDATED",
+                targetType: "Registration",
+                targetId: registration.id,
+                details: {
+                    previousApplicationNotes: registration.applicationNotes,
+                    applicationNotes: input.applicationNotes,
+                },
+            },
+        });
+
+        return { registrationId: registration.id };
+    });
+
+    if (!result) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.REGISTRATION_NOT_FOUND,
+                message: "Registration not found",
+            },
+        };
+    }
+
+    return { ok: true, data: result };
 }
 
 // ── Verify team member email (public, no auth) ─────────────────────
@@ -581,4 +692,96 @@ export async function rejectRegistration(
     }).catch(() => {});
 
     return { ok: true, data: { registrationId: record.id } };
+}
+
+// ── Create registration (management) ───────────────────────────────
+
+export async function createManagementRegistration(
+    input: CreateManagementRegistrationInput,
+    actorId: string,
+): Promise<ActionResult<CreateManagementRegistrationData>> {
+    const eventSettings = await prisma.eventSettings.findUnique({ where: { id: 1 } });
+
+    if (!eventSettings) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.EVENT_NOT_CONFIGURED,
+                message: "Event settings are not configured",
+            },
+        };
+    }
+
+    const totalMembers = 1 + input.members.length;
+
+    if (totalMembers < eventSettings.minTeamSize || totalMembers > eventSettings.maxTeamSize) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.INVALID_TEAM_SIZE,
+                message: `Team must have ${eventSettings.minTeamSize} to ${eventSettings.maxTeamSize} members`,
+            },
+        };
+    }
+
+    const programApproved = await countApprovedTeams(input.program);
+
+    if (programApproved >= programQuotaLimit(eventSettings, input.program)) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.MAX_TEAMS_REACHED,
+                message: programQuotaMessage(input.program),
+            },
+        };
+    }
+
+    let result: Awaited<ReturnType<typeof createRegistrationRecord>>;
+
+    try {
+        result = await createRegistrationRecord({
+            input,
+            applicationNotes:
+                input.applicationNotes === undefined ? `Registered by ${input.leaderName}` : input.applicationNotes,
+            submittedAt: new Date(),
+            actorId,
+        });
+    } catch (error) {
+        const databaseError = error as {
+            code?: string;
+            message?: string;
+            meta?: unknown;
+        };
+
+        const detail = `${databaseError.message ?? ""}${JSON.stringify(databaseError.meta ?? "")}`;
+
+        if (databaseError.code === "P2002" && detail.includes("team_member_student_email_key")) {
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.EMAIL_EXISTS,
+                    message: "Student email already exists in another team",
+                },
+            };
+        }
+
+        throw error;
+    }
+
+    let verificationEmailsSent = true;
+
+    for (const memberId of result.memberIds) {
+        await sendStudentEmailVerification(memberId, { rateLimit: false }).catch(() => {
+            verificationEmailsSent = false;
+        });
+    }
+
+    return {
+        ok: true,
+        data: {
+            registrationId: result.registrationId,
+            teamName: result.teamName,
+            verificationEmailsSent,
+        },
+    };
 }

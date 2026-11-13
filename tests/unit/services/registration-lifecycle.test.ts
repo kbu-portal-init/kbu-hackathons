@@ -11,15 +11,24 @@ const notifications: unknown[] = [];
 
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
+let approvedTeamCount = 0;
+let rateLimitCalls = 0;
+const verificationRequests: string[] = [];
 
 mock("next/headers", { headers: async () => new Headers() });
 mock("@/lib/auth/config", { auth: { api: { signUpEmail: async () => {} } } });
 mock("@/lib/data/registrations", {
-    countApprovedTeams: async () => 0,
+    countApprovedTeams: async () => approvedTeamCount,
     getRegistrationWithTeam: async () => registrationRecord,
     getRegistrationByTeamId: async () => registrationRecord,
 });
-mock("@/lib/services/rate-limit", { checkRegistrationRateLimit: async () => ({ success: true }) });
+
+mock("@/lib/services/rate-limit", {
+    checkRegistrationRateLimit: async () => {
+        rateLimitCalls++;
+        return { success: true };
+    },
+});
 mock("@/lib/services/password-reset", {
     createPasswordSetupUrl: async () => "https://example.test/setup",
 });
@@ -35,7 +44,8 @@ mock("@/lib/services/student-email-verification", {
         ok: true,
         data: { teamMemberId: "member-1", alreadyVerified: false },
     }),
-    sendStudentEmailVerification: async () => {
+    sendStudentEmailVerification: async (memberId: string) => {
+        verificationRequests.push(memberId);
         if (verificationFails) throw new Error("delivery failed");
     },
 });
@@ -66,6 +76,9 @@ beforeEach(() => {
     notificationFails = false;
     verificationFails = false;
     notifications.length = 0;
+    approvedTeamCount = 0;
+    rateLimitCalls = 0;
+    verificationRequests.length = 0;
 });
 
 describe("registration lifecycle", () => {
@@ -241,6 +254,408 @@ describe("registration lifecycle", () => {
             );
             assert.deepEqual(result, { ok: true, data: { registrationId: "registration-1" } });
             assert.deepEqual(operations, ["registration", "review", "audit"]);
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("creates a pending management registration with an audit entry and verification emails", async () => {
+        const originalEvent = prisma.eventSettings.findUnique;
+        const originalTeamFind = prisma.team.findUnique;
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+        const memberIds: string[] = [];
+        let registrationData: Record<string, unknown> | undefined;
+        let auditData: Record<string, unknown> | undefined;
+
+        try {
+            prisma.eventSettings.findUnique = (async () => ({
+                minTeamSize: 2,
+                maxTeamSize: 4,
+                maxThaiTeams: 10,
+                maxInternationalTeams: 10,
+            })) as unknown as typeof prisma.eventSettings.findUnique;
+
+            prisma.team.findUnique = (async () => null) as unknown as typeof prisma.team.findUnique;
+
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    team: {
+                        create: async () => {
+                            operations.push("team");
+                            return { id: "team-1", displayName: "Build Team" };
+                        },
+                    },
+                    teamMember: {
+                        create: async ({ data }: { data: { role: string } }) => {
+                            operations.push("member");
+                            const id = data.role === "LEADER" ? "leader-1" : "member-1";
+                            memberIds.push(id);
+                            return { id };
+                        },
+                    },
+                    registration: {
+                        create: async ({ data }: { data: Record<string, unknown> }) => {
+                            operations.push("registration");
+                            registrationData = data;
+                            return { id: "registration-1" };
+                        },
+                    },
+                    auditLog: {
+                        create: async ({ data }: { data: Record<string, unknown> }) => {
+                            operations.push("audit");
+                            auditData = data;
+                        },
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            const result = await service.createManagementRegistration(
+                {
+                    teamName: "Build Team",
+                    program: "THAI_PROGRAM",
+                    leaderName: "Leader",
+                    leaderEmail: "leader@example.com",
+                    leaderRole: "LEADER",
+                    members: [{ name: "Member", email: "member@example.com", role: "DESIGNER" }],
+                },
+                "organizer-1",
+            );
+
+            assert.deepEqual(result, {
+                ok: true,
+                data: {
+                    registrationId: "registration-1",
+                    teamName: "Build Team",
+                    verificationEmailsSent: true,
+                },
+            });
+
+            assert.deepEqual(operations, ["team", "member", "member", "registration", "audit"]);
+            assert.deepEqual(memberIds, ["leader-1", "member-1"]);
+            assert.deepEqual(verificationRequests, ["leader-1", "member-1"]);
+            assert.equal(rateLimitCalls, 0);
+
+            assert.equal(registrationData?.applicationNotes, "Registered by Leader");
+            assert.ok(registrationData?.submittedAt instanceof Date);
+            assert.equal(registrationData?.status, undefined);
+
+            assert.equal(auditData?.actorId, "organizer-1");
+            assert.equal(auditData?.action, "REGISTRATION_CREATED");
+            assert.equal(auditData?.targetType, "Registration");
+            assert.equal(auditData?.targetId, "registration-1");
+        } finally {
+            prisma.eventSettings.findUnique = originalEvent;
+            prisma.team.findUnique = originalTeamFind;
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("rejects management creation when team size is invalid or program quota is exhausted", async () => {
+        const originalEvent = prisma.eventSettings.findUnique;
+        const originalTransaction = prisma.$transaction;
+        const settings = {
+            minTeamSize: 2,
+            maxTeamSize: 4,
+            maxThaiTeams: 10,
+            maxInternationalTeams: 5,
+        };
+
+        let transactionCalls = 0;
+
+        try {
+            prisma.eventSettings.findUnique = (async () =>
+                settings) as unknown as typeof prisma.eventSettings.findUnique;
+            prisma.$transaction = (async () => {
+                transactionCalls++;
+                throw new Error("Transaction should not run");
+            }) as unknown as typeof prisma.$transaction;
+
+            const input = {
+                teamName: "Build Team",
+                program: "THAI_PROGRAM" as const,
+                leaderName: "Leader",
+                leaderEmail: "leader@example.com",
+                leaderRole: "LEADER" as const,
+                members: [] as { name: string; email: string; role: "DESIGNER" }[],
+            };
+
+            const invalidSize = await service.createManagementRegistration(input, "organizer-1");
+
+            assert.equal(invalidSize.ok, false);
+            if (!invalidSize.ok) assert.equal(invalidSize.error.code, "INVALID_TEAM_SIZE");
+
+            approvedTeamCount = 10;
+
+            const quotaReached = await service.createManagementRegistration(
+                {
+                    ...input,
+                    members: [{ name: "Member", email: "member@example.com", role: "DESIGNER" }],
+                },
+                "organizer-1",
+            );
+
+            assert.equal(quotaReached.ok, false);
+            if (!quotaReached.ok) assert.equal(quotaReached.error.code, "MAX_TEAMS_REACHED");
+
+            assert.equal(transactionCalls, 0);
+        } finally {
+            prisma.eventSettings.findUnique = originalEvent;
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("maps duplicate student emails to EMAIL_EXISTS for management creation", async () => {
+        const originalEvent = prisma.eventSettings.findUnique;
+        const originalTeamFind = prisma.team.findUnique;
+        const originalTransaction = prisma.$transaction;
+
+        try {
+            prisma.eventSettings.findUnique = (async () => ({
+                minTeamSize: 2,
+                maxTeamSize: 4,
+                maxThaiTeams: 10,
+                maxInternationalTeams: 10,
+            })) as unknown as typeof prisma.eventSettings.findUnique;
+
+            prisma.team.findUnique = (async () => null) as unknown as typeof prisma.team.findUnique;
+
+            prisma.$transaction = (async () => {
+                throw {
+                    code: "P2002",
+                    message: "Unique constraint failed on the constraint: `team_member_student_email_key`",
+                };
+            }) as unknown as typeof prisma.$transaction;
+
+            const result = await service.createManagementRegistration(
+                {
+                    teamName: "Build Team",
+                    program: "THAI_PROGRAM",
+                    leaderName: "Leader",
+                    leaderEmail: "leader@example.com",
+                    leaderRole: "LEADER",
+                    members: [{ name: "Member", email: "member@example.com", role: "DESIGNER" }],
+                },
+                "organizer-1",
+            );
+
+            assert.equal(result.ok, false);
+            if (!result.ok) assert.equal(result.error.code, "EMAIL_EXISTS");
+        } finally {
+            prisma.eventSettings.findUnique = originalEvent;
+            prisma.team.findUnique = originalTeamFind;
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("keeps management registration creation successful when verification delivery fails", async () => {
+        const originalEvent = prisma.eventSettings.findUnique;
+        const originalTeamFind = prisma.team.findUnique;
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+
+        try {
+            prisma.eventSettings.findUnique = (async () => ({
+                minTeamSize: 2,
+                maxTeamSize: 4,
+                maxThaiTeams: 10,
+                maxInternationalTeams: 10,
+            })) as unknown as typeof prisma.eventSettings.findUnique;
+
+            prisma.team.findUnique = (async () => null) as unknown as typeof prisma.team.findUnique;
+
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    team: {
+                        create: async () => ({ id: "team-1", displayName: "Build Team" }),
+                    },
+                    teamMember: {
+                        create: async ({ data }: { data: { role: string } }) => ({
+                            id: data.role === "LEADER" ? "leader-1" : "member-1",
+                        }),
+                    },
+                    registration: {
+                        create: async () => {
+                            operations.push("registration");
+                            return { id: "registration-1" };
+                        },
+                    },
+                    auditLog: {
+                        create: async () => operations.push("audit"),
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            verificationFails = true;
+
+            const result = await service.createManagementRegistration(
+                {
+                    teamName: "Build Team",
+                    program: "THAI_PROGRAM",
+                    leaderName: "Leader",
+                    leaderEmail: "leader@example.com",
+                    leaderRole: "LEADER",
+                    members: [{ name: "Member", email: "member@example.com", role: "DESIGNER" }],
+                },
+                "organizer-1",
+            );
+
+            assert.deepEqual(result, {
+                ok: true,
+                data: {
+                    registrationId: "registration-1",
+                    teamName: "Build Team",
+                    verificationEmailsSent: false,
+                },
+            });
+
+            assert.deepEqual(operations, ["registration", "audit"]);
+            assert.deepEqual(verificationRequests, ["leader-1", "member-1"]);
+        } finally {
+            prisma.eventSettings.findUnique = originalEvent;
+            prisma.team.findUnique = originalTeamFind;
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("updates registration notes and writes an audit entry atomically", async () => {
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+        let auditData: Record<string, unknown> | undefined;
+        let updateData: Record<string, unknown> | undefined;
+
+        try {
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    registration: {
+                        findUnique: async () => {
+                            operations.push("find");
+                            return {
+                                id: "registration-1",
+                                applicationNotes: "Old notes",
+                            };
+                        },
+                        update: async ({ data }: { data: Record<string, unknown> }) => {
+                            operations.push("update");
+                            updateData = data;
+                        },
+                    },
+                    auditLog: {
+                        create: async ({ data }: { data: Record<string, unknown> }) => {
+                            operations.push("audit");
+                            auditData = data;
+                        },
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            const result = await service.updateRegistration(
+                {
+                    registrationId: "registration-1",
+                    applicationNotes: "Updated notes",
+                },
+                "organizer-1",
+            );
+
+            assert.deepEqual(result, {
+                ok: true,
+                data: { registrationId: "registration-1" },
+            });
+
+            assert.deepEqual(updateData, {
+                applicationNotes: "Updated notes",
+            });
+
+            assert.equal(auditData?.actorId, "organizer-1");
+            assert.equal(auditData?.action, "REGISTRATION_UPDATED");
+            assert.equal(auditData?.targetType, "Registration");
+            assert.equal(auditData?.targetId, "registration-1");
+
+            assert.deepEqual(auditData?.details, {
+                previousApplicationNotes: "Old notes",
+                applicationNotes: "Updated notes",
+            });
+
+            assert.deepEqual(operations, ["find", "update", "audit"]);
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("returns REGISTRATION_NOT_FOUND without updating or auditing", async () => {
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+
+        try {
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    registration: {
+                        findUnique: async () => {
+                            operations.push("find");
+                            return null;
+                        },
+                        update: async () => operations.push("update"),
+                    },
+                    auditLog: {
+                        create: async () => operations.push("audit"),
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            const result = await service.updateRegistration(
+                {
+                    registrationId: "missing-registration",
+                    applicationNotes: "Updated notes",
+                },
+                "organizer-1",
+            );
+
+            assert.equal(result.ok, false);
+
+            if (!result.ok) {
+                assert.equal(result.error.code, "REGISTRATION_NOT_FOUND");
+            }
+
+            assert.deepEqual(operations, ["find"]);
+        } finally {
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("propagates audit failures during registration updates", async () => {
+        const originalTransaction = prisma.$transaction;
+        const operations: string[] = [];
+        const auditError = new Error("Audit write failed");
+
+        try {
+            prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+                callback({
+                    registration: {
+                        findUnique: async () => ({
+                            id: "registration-1",
+                            applicationNotes: "Old notes",
+                        }),
+                        update: async () => {
+                            operations.push("update");
+                        },
+                    },
+                    auditLog: {
+                        create: async () => {
+                            operations.push("audit");
+                            throw auditError;
+                        },
+                    },
+                } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+
+            await assert.rejects(
+                () =>
+                    service.updateRegistration(
+                        {
+                            registrationId: "registration-1",
+                            applicationNotes: "Updated notes",
+                        },
+                        "organizer-1",
+                    ),
+                auditError,
+            );
+
+            assert.deepEqual(operations, ["update", "audit"]);
         } finally {
             prisma.$transaction = originalTransaction;
         }

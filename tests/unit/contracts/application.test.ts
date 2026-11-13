@@ -7,9 +7,12 @@ import { deleteAuditLogSchema, listAuditLogsSchema } from "@/lib/contracts/audit
 import { upsertEventSettingsSchema } from "@/lib/contracts/event-settings";
 import {
     approveRegistrationSchema,
+    createManagementRegistrationSchema,
+    deleteRegistrationSchema,
     listRegistrationsSchema,
     rejectRegistrationSchema,
     submitRegistrationSchema,
+    updateRegistrationSchema,
 } from "@/lib/contracts/registration";
 import { updateTeamLogoSchema } from "@/lib/contracts/team-settings";
 import { listTeamsSchema, teamIdSchema } from "@/lib/contracts/teams";
@@ -172,5 +175,64 @@ describe("application contracts", () => {
         assert.equal(deleteAuditLogSchema.safeParse({ id: "" }).success, false);
         assert.equal(updateTeamLogoSchema.safeParse({ imageUrl: "not-a-url" }).success, false);
         assert.equal(updateTeamLogoSchema.safeParse({ imageUrl: null }).success, true);
+    });
+
+    it("validates management registration creation, updates, and deletion", () => {
+        const base = {
+            teamName: "Build Team",
+            program: "THAI_PROGRAM",
+            leaderName: "Leader",
+            leaderEmail: "leader@ms.kbu.ac.th",
+            leaderRole: "LEADER",
+            members: [{ name: "Member", email: "member@ms.kbu.ac.th", role: "DESIGNER" }],
+        };
+
+        // Creation: notes are optional, nullable, trimmed, and length-limited.
+        assert.equal(createManagementRegistrationSchema.safeParse(base).success, true);
+        assert.equal(createManagementRegistrationSchema.safeParse({ ...base, applicationNotes: null }).success, true);
+
+        const normalized = createManagementRegistrationSchema.safeParse({
+            ...base,
+            applicationNotes: "  Management note  ",
+        });
+        assert.equal(normalized.success, true);
+        if (normalized.success) {
+            assert.equal(normalized.data.applicationNotes, "Management note");
+        }
+
+        assert.equal(
+            createManagementRegistrationSchema.safeParse({
+                ...base,
+                applicationNotes: "x".repeat(2001),
+            }).success,
+            false,
+        );
+
+        // Update: registration ID is required and notes may be null.
+        assert.equal(
+            updateRegistrationSchema.safeParse({
+                registrationId: "registration-1",
+                applicationNotes: null,
+            }).success,
+            true,
+        );
+        assert.equal(
+            updateRegistrationSchema.safeParse({
+                registrationId: "",
+                applicationNotes: "Updated note",
+            }).success,
+            false,
+        );
+        assert.equal(
+            updateRegistrationSchema.safeParse({
+                registrationId: "registration-1",
+                applicationNotes: "x".repeat(2001),
+            }).success,
+            false,
+        );
+
+        // Delete: a non-empty registration ID is mandatory.
+        assert.equal(deleteRegistrationSchema.safeParse({ registrationId: "registration-1" }).success, true);
+        assert.equal(deleteRegistrationSchema.safeParse({ registrationId: "" }).success, false);
     });
 });

@@ -6,24 +6,30 @@ import { studentEmailVerificationSchema } from "@/lib/contracts/email";
 import { ErrorCodes } from "@/lib/contracts/errors";
 import type {
     ApproveRegistrationData,
+    CreateManagementRegistrationData,
     RegistrationDetailDTO,
     RegistrationListItem,
     RejectRegistrationData,
     SubmitRegistrationData,
+    UpdateRegistrationData,
 } from "@/lib/contracts/registration";
 import {
     approveRegistrationSchema,
+    createManagementRegistrationSchema,
     listRegistrationsSchema,
     registrationIdSchema,
     rejectRegistrationSchema,
     submitRegistrationSchema,
+    updateRegistrationSchema,
 } from "@/lib/contracts/registration";
 import { getRegistrationDetail, listRegistrations } from "@/lib/data/registrations";
 import prisma from "@/lib/prisma";
 import {
     approveRegistration as approveRegistrationService,
+    createManagementRegistration as createManagementRegistrationService,
     rejectRegistration as rejectRegistrationService,
     submitRegistration as submitRegistrationService,
+    updateRegistration as updateRegistrationService,
 } from "@/lib/services/registration";
 import { sendStudentEmailVerification } from "@/lib/services/student-email-verification";
 import { toFieldErrors } from "@/lib/validation/zod";
@@ -46,6 +52,46 @@ export async function submitTeamRegistration(input: unknown): Promise<ActionResu
 }
 
 // ── Management (organizer/admin) ───────────────────────────────────
+
+export async function createRegistrationRequest(
+    input: unknown,
+): Promise<ActionResult<CreateManagementRegistrationData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = createManagementRegistrationSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid registration details",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return createManagementRegistrationService(parsed.data, session.user.id);
+}
+
+export async function updateRegistrationRequest(input: unknown): Promise<ActionResult<UpdateRegistrationData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = updateRegistrationSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid registration details",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return updateRegistrationService(parsed.data, session.user.id);
+}
 
 export async function listRegistrationRequests(input: unknown): Promise<ListActionResult<RegistrationListItem>> {
     await requireOrganizerOrAdmin();

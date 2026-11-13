@@ -136,3 +136,36 @@ export type RegistrationDetailDTO = RegistrationListItem & {
         createdAt: string;
     }[];
 };
+
+// ── Management registration CRUD ──────────────────────────────────
+
+const applicationNotesSchema = z.string().trim().max(2000, "Application notes must not exceed 2000 characters");
+
+export const createManagementRegistrationSchema = submitRegistrationSchema.extend({
+    applicationNotes: applicationNotesSchema.nullable().optional(),
+});
+
+export type CreateManagementRegistrationInput = z.infer<typeof createManagementRegistrationSchema>;
+
+export type CreateManagementRegistrationData = SubmitRegistrationData;
+
+export const updateRegistrationSchema = z.object({
+    registrationId: z.string().min(1, "Registration ID is required"),
+    applicationNotes: applicationNotesSchema.nullable(),
+});
+
+export type UpdateRegistrationInput = z.infer<typeof updateRegistrationSchema>;
+
+export type UpdateRegistrationData = {
+    registrationId: string;
+};
+
+export const deleteRegistrationSchema = z.object({
+    registrationId: z.string().min(1, "Registration ID is required"),
+});
+
+export type DeleteRegistrationInput = z.infer<typeof deleteRegistrationSchema>;
+
+export type DeleteRegistrationData = {
+    registrationId: string;
+};
