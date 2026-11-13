@@ -268,9 +268,7 @@ export function RegistrationForm({
                         <SectionHeading
                             step={3}
                             title={`${th ? "สมาชิกทีมคนอื่น ๆ" : "Other team members"} (${selectedTeamSize - 1})`}
-                            hint={
-                                th ? "เปลี่ยนจำนวนสมาชิกได้ที่ขนาดทีมด้านบน" : "Change the number of rows with team size above."
-                            }
+                            hint={t.roleHelp}
                         />
                         <FieldSet className="mt-6">
                             <FieldGroup className="gap-4">
