@@ -66,6 +66,7 @@ export function MemberRow({
                                 </SelectContent>
                             </Select>
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            <p className="text-xs text-muted-foreground">{t.roleHelp}</p>
                         </Field>
                     )}
                 />
