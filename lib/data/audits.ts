@@ -17,7 +17,11 @@ export async function listAuditLogs(input: ListAuditLogsInput): Promise<ListResu
                 : { targetId: input.userId }
             : {};
 
-    const where: Prisma.AuditLogWhereInput = { ...selectedUser, ...(input.action ? { action: input.action } : {}) };
+    const where: Prisma.AuditLogWhereInput = {
+        deletedAt: null,
+        ...selectedUser,
+        ...(input.action ? { action: input.action } : {}),
+    };
 
     const [total, records] = await Promise.all([
         prisma.auditLog.count({ where }),

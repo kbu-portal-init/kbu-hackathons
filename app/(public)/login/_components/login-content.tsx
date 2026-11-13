@@ -76,6 +76,7 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
     const t = getMessages(locale).login;
     const [loginError, setLoginError] = useState<string>();
     const [showPassword, setShowPassword] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
 
     const form = useForm<TeamLoginInput>({
         resolver: zodResolver(teamLoginSchema),
@@ -89,12 +90,17 @@ function TeamLoginForm({ locale }: { locale: Locale }) {
             setLoginError(result.error.message);
             return;
         }
+        setIsRedirecting(true);
         toast.success(t.success);
         window.location.href = "/team";
     };
 
     const usernameError = form.formState.errors.username;
     const passwordError = form.formState.errors.password;
+
+    if (isRedirecting) {
+        return <div className="mt-2 text-center text-sm text-muted-foreground">{t.signingIn}</div>;
+    }
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2">
@@ -155,6 +161,7 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
     const t = getMessages(locale).login;
     const [loginError, setLoginError] = useState<string>();
     const [showPassword, setShowPassword] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
     const router = useRouter();
     const form = useForm<StaffLoginInput>({
         resolver: zodResolver(staffLoginSchema),
@@ -167,12 +174,17 @@ function StaffLoginForm({ locale }: { locale: Locale }) {
             setLoginError(result.error.message);
             return;
         }
+        setIsRedirecting(true);
         router.push("/panel");
         toast.success(t.success);
     };
 
     const emailError = form.formState.errors.email;
     const passwordError = form.formState.errors.password;
+
+    if (isRedirecting) {
+        return <div className="mt-2 text-center text-sm text-muted-foreground">{t.signingIn}</div>;
+    }
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2">
