@@ -25,17 +25,17 @@ before(async () => {
 
 describe("supporting backend modules", () => {
     it("reports whether an audit record was deleted", async () => {
-        const originalDelete = prisma.auditLog.deleteMany;
+        const originalUpdate = prisma.auditLog.updateMany;
         try {
-            prisma.auditLog.deleteMany = (async () => ({ count: 0 })) as typeof prisma.auditLog.deleteMany;
+            prisma.auditLog.updateMany = (async () => ({ count: 0 })) as typeof prisma.auditLog.updateMany;
             let result = await deleteAuditLog({ id: "audit-1" });
             assert.equal(result.ok, false);
             if (!result.ok) assert.equal(result.error.code, "AUDIT_LOG_NOT_FOUND");
-            prisma.auditLog.deleteMany = (async () => ({ count: 1 })) as typeof prisma.auditLog.deleteMany;
+            prisma.auditLog.updateMany = (async () => ({ count: 1 })) as typeof prisma.auditLog.updateMany;
             result = await deleteAuditLog({ id: "audit-1" });
             assert.deepEqual(result, { ok: true, data: { id: "audit-1" } });
         } finally {
-            prisma.auditLog.deleteMany = originalDelete;
+            prisma.auditLog.updateMany = originalUpdate;
         }
     });
 
@@ -56,9 +56,9 @@ describe("supporting backend modules", () => {
                 userKind: "user",
                 action: "EMAIL_SENT",
             });
-            assert.deepEqual(where, { actorId: "user-1", action: "EMAIL_SENT" });
+            assert.deepEqual(where, { deletedAt: null, actorId: "user-1", action: "EMAIL_SENT" });
             await audits.listAuditLogs({ page: 1, pageSize: 20, userId: "member-1", userKind: "teamMember" });
-            assert.deepEqual(where, { targetId: "member-1" });
+            assert.deepEqual(where, { deletedAt: null, targetId: "member-1" });
         } finally {
             prisma.auditLog.count = originalCount;
             prisma.auditLog.findMany = originalFind;

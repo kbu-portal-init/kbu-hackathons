@@ -4,7 +4,10 @@ import type { ActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
 import prisma from "@/lib/prisma";
 export async function deleteAuditLog(input: DeleteAuditLogInput): Promise<ActionResult<DeleteAuditLogData>> {
-    const result = await prisma.auditLog.deleteMany({ where: { id: input.id } });
+    const result = await prisma.auditLog.updateMany({
+        where: { id: input.id, deletedAt: null },
+        data: { deletedAt: new Date() },
+    });
     return result.count === 0
         ? {
               ok: false,

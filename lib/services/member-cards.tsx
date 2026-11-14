@@ -89,6 +89,7 @@ async function renderMemberCard(
                     style={{
                         color: "#ffffff",
                         display: "flex",
+                        flexWrap: "wrap",
                         fontFamily: "Ethnocentric",
                         fontSize: 68,
                         fontWeight: 800,
@@ -114,7 +115,7 @@ async function renderMemberCard(
                         whiteSpace: "nowrap",
                     }}
                 >
-                    {formatRole(role)}
+                    {role === "OTHER" ? "Participant" : formatRole(role)}
                 </div>
             </div>
             <div

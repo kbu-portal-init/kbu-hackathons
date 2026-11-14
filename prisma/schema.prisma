@@ -220,10 +220,12 @@ model AuditLog {
   targetId   String
   details    Json?
   createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  deletedAt  DateTime? @db.Timestamptz(3)
 
   @@index([actorId, createdAt])
   @@index([targetType, targetId, createdAt])
   @@index([createdAt])
+  @@index([deletedAt, createdAt])
   @@map("audit_log")
 }
 
@@ -318,4 +320,17 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model EventScheduleItem {
+  id        String   @id @default(cuid())
+  day       Int
+  time      String
+  activity  String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([day, sortOrder])
+  @@map("event_schedule_item")
 }
