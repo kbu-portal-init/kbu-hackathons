@@ -4,8 +4,19 @@ import { getUserRole, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { banAccountSchema, unbanAccountSchema } from "@/lib/contracts/accounts";
 import type { ActionResult, ListActionResult } from "@/lib/contracts/common";
 import { ErrorCodes } from "@/lib/contracts/errors";
-import type { CreateTeamMemberData, DeleteTeamMemberData, UpdateTeamMemberData } from "@/lib/contracts/team-members";
-import { createTeamMemberSchema, deleteTeamMemberSchema, updateTeamMemberSchema } from "@/lib/contracts/team-members";
+import type {
+    CreateTeamMemberData,
+    DeleteTeamMemberData,
+    UpdateManagementMemberImageData,
+    UpdateTeamMemberData,
+} from "@/lib/contracts/team-members";
+
+import {
+    createTeamMemberSchema,
+    deleteTeamMemberSchema,
+    updateManagementMemberImageSchema,
+    updateTeamMemberSchema,
+} from "@/lib/contracts/team-members";
 import type {
     ArchiveTeamData,
     TeamDetailDTO,
@@ -32,6 +43,7 @@ import {
 import {
     createTeamMember as createTeamMemberService,
     deleteTeamMember as deleteTeamMemberService,
+    updateManagementMemberImage as updateManagementMemberImageService,
     updateTeamMember as updateTeamMemberService,
 } from "@/lib/services/team-members";
 import { toFieldErrors } from "@/lib/validation/zod";
@@ -109,6 +121,27 @@ export async function updateTeamMember(
             verificationEmail,
         },
     };
+}
+
+export async function updateManagementMemberImage(
+    input: unknown,
+): Promise<ActionResult<UpdateManagementMemberImageData>> {
+    const session = await requireOrganizerOrAdmin();
+
+    const parsed = updateManagementMemberImageSchema.safeParse(input);
+
+    if (!parsed.success) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.VALIDATION_ERROR,
+                message: "Invalid team member image details",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
+        };
+    }
+
+    return updateManagementMemberImageService(parsed.data, session.user.id);
 }
 
 export async function deleteTeamMember(input: unknown): Promise<ActionResult<DeleteTeamMemberData>> {

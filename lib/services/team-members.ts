@@ -7,6 +7,8 @@ import type {
     CreateTeamMemberInput,
     DeleteTeamMemberData,
     DeleteTeamMemberInput,
+    UpdateManagementMemberImageData,
+    UpdateManagementMemberImageInput,
     UpdateMemberImageData,
     UpdateMemberImageInput,
     UpdateTeamMemberData,
@@ -370,6 +372,102 @@ export async function updateMemberImage(
         return {
             ok: false,
             error: { code: ErrorCodes.UPDATE_FAILED, message: "Failed to update" },
+        };
+    }
+}
+
+export async function updateManagementMemberImage(
+    input: UpdateManagementMemberImageInput,
+    actorId: string,
+): Promise<ActionResult<UpdateManagementMemberImageData>> {
+    if (input.imageUrl && !isOwnedR2PublicUrl(input.imageUrl, `uploads/${input.teamId}`)) {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.IMAGE_NOT_OWNED,
+                message: "Member image must be uploaded to your team storage area",
+            },
+        };
+    }
+
+    try {
+        return await prisma.$transaction(async (tx) => {
+            await tx.$queryRaw`SELECT id FROM "team" WHERE id = ${input.teamId} FOR UPDATE`;
+
+            const team = await tx.team.findUnique({
+                where: { id: input.teamId },
+                select: { id: true },
+            });
+
+            if (!team) {
+                return {
+                    ok: false,
+                    error: {
+                        code: ErrorCodes.TEAM_NOT_FOUND,
+                        message: "Team not found",
+                    },
+                };
+            }
+
+            const member = await tx.teamMember.findFirst({
+                where: {
+                    id: input.memberId,
+                    teamId: input.teamId,
+                },
+                select: {
+                    id: true,
+                    imageUrl: true,
+                },
+            });
+
+            if (!member) {
+                return {
+                    ok: false,
+                    error: {
+                        code: ErrorCodes.TEAM_MEMBER_NOT_FOUND,
+                        message: "Team member not found",
+                    },
+                };
+            }
+
+            if (member.imageUrl === input.imageUrl) {
+                return {
+                    ok: true,
+                    data: { imageUrl: input.imageUrl },
+                };
+            }
+
+            await tx.teamMember.update({
+                where: { id: input.memberId },
+                data: { imageUrl: input.imageUrl },
+            });
+
+            await tx.auditLog.create({
+                data: {
+                    actorId,
+                    action: "TEAM_MEMBER_IMAGE_UPDATED",
+                    targetType: "TeamMember",
+                    targetId: input.memberId,
+                    details: {
+                        teamId: input.teamId,
+                        previousImageUrl: member.imageUrl,
+                        imageUrl: input.imageUrl,
+                    },
+                },
+            });
+
+            return {
+                ok: true,
+                data: { imageUrl: input.imageUrl },
+            };
+        });
+    } catch {
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.UPDATE_FAILED,
+                message: "Failed to update team member image",
+            },
         };
     }
 }

@@ -100,5 +100,17 @@ export type TeamMemberCard = {
     cardShareToken: string | null;
 };
 
+export const updateManagementMemberImageSchema = z.object({
+    teamId: z.string().min(1, "Team ID is required"),
+    memberId: z.string().min(1, "Member ID is required"),
+    imageUrl: z.url("Invalid URL").nullable(),
+});
+
+export type UpdateManagementMemberImageInput = z.infer<typeof updateManagementMemberImageSchema>;
+
+export type UpdateManagementMemberImageData = {
+    imageUrl: string | null;
+};
+
 export type GenerateMemberCardData = Pick<TeamMemberCard, "id" | "cardUrl" | "cardShareToken">;
 export type TeamMemberRole = z.infer<typeof teamMemberRoleSchema>;

@@ -5,7 +5,7 @@ import { type EducationProgram, educationProgramSchema } from "@/lib/contracts/r
 export const listTeamsSchema = z.object({
     page: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(100).default(20),
-    status: z.enum(["ACTIVE", "BANNED"]).optional(),
+    status: z.enum(["ACTIVE", "BANNED", "ARCHIVED"]).optional(),
 });
 
 export const teamIdSchema = z.object({ teamId: z.string().min(1, "Team ID is required") });
@@ -22,6 +22,7 @@ export type TeamListItem = {
     memberCount: number;
     submissionCount: number;
     registrationStatus: string;
+    archivedAt: string | null;
     banned: boolean;
     banReason: string | null;
     banExpires: string | null;

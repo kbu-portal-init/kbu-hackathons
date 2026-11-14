@@ -7,13 +7,22 @@ process.env.R2_SECRET_ACCESS_KEY = "test-secret-key";
 process.env.R2_BUCKET_NAME = "test-bucket";
 process.env.NEXT_PUBLIC_R2_PUBLIC_URL = "https://media.example.test/";
 
+const cases = [
+    ["uploads/team-1/avatar.webp", "team-1", true],
+    ["uploads/team-10/avatar.webp", "team-1", false],
+    ["uploads/team-2/avatar.webp", "team-1", false],
+    ["uploads/team-1/nested/avatar.webp", "team-1", true],
+    ["uploads/team-1", "team-1", false],
+] as const;
+
 async function main() {
     const serverOnlyPath = require.resolve("server-only");
     require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
     const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
     const { deleteObject } = await import("@/lib/services/storage");
-    const { r2 } = await import("@/lib/r2");
+    const { isOwnedR2PublicUrl, r2 } = await import("@/lib/r2");
+
     assert.ok(r2, "Test R2 client should be configured");
 
     const originalSend = r2.send;
@@ -32,13 +41,44 @@ async function main() {
 
     describe("storage service", () => {
         it("deletes only objects in the owner scope", async () => {
-            const result = await deleteObject({ key: "uploads/events/banner.png" }, "events");
+            for (const [key, owner, allowed] of cases) {
+                const commandCountBefore = sentCommands.length;
+                const result = await deleteObject({ key }, owner);
 
-            assert.deepEqual(result, { ok: true, data: { ok: true } });
-            assert.ok(sentCommands.at(-1) instanceof DeleteObjectCommand);
+                assert.equal(result.ok, allowed, `Unexpected result for key "${key}" and owner "${owner}"`);
 
-            const forbidden = await deleteObject({ key: "uploads/other-team/banner.png" }, "events");
-            assert.equal(forbidden.ok, false);
+                assert.equal(
+                    sentCommands.length - commandCountBefore,
+                    allowed ? 1 : 0,
+                    `Unexpected R2 command count for key "${key}"`,
+                );
+
+                if (allowed) {
+                    assert.ok(sentCommands.at(-1) instanceof DeleteObjectCommand);
+                }
+            }
+        });
+
+        it("validates R2 public URL ownership", () => {
+            assert.equal(
+                isOwnedR2PublicUrl("https://media.example.test/uploads/team-1/avatar.webp", "uploads/team-1"),
+                true,
+            );
+
+            assert.equal(
+                isOwnedR2PublicUrl("https://media.example.test/uploads/team-2/avatar.webp", "uploads/team-1"),
+                false,
+            );
+
+            assert.equal(
+                isOwnedR2PublicUrl("https://other.example.test/uploads/team-1/avatar.webp", "uploads/team-1"),
+                false,
+            );
+
+            assert.equal(
+                isOwnedR2PublicUrl("https://media.example.test/uploads/team-10/avatar.webp", "uploads/team-1"),
+                false,
+            );
         });
     });
 }

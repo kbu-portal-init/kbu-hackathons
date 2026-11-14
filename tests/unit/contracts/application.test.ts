@@ -169,7 +169,10 @@ describe("application contracts", () => {
         assert.deepEqual(listTeamsSchema.parse({}), { page: 1, pageSize: 20 });
         assert.deepEqual(listAuditLogsSchema.parse({}), { page: 1, pageSize: 20 });
         assert.equal(listUsersSchema.safeParse({ pageSize: 501 }).success, false);
-        assert.equal(listTeamsSchema.safeParse({ status: "ARCHIVED" }).success, false);
+        assert.equal(listTeamsSchema.safeParse({ status: "ARCHIVED" }).success, true);
+        assert.equal(listTeamsSchema.safeParse({ status: "ACTIVE" }).success, true);
+        assert.equal(listTeamsSchema.safeParse({ status: "BANNED" }).success, true);
+        assert.equal(listTeamsSchema.safeParse({ status: "UNKNOWN" }).success, false);
         assert.equal(listAuditLogsSchema.safeParse({ action: "UNKNOWN" }).success, false);
         assert.equal(teamIdSchema.safeParse({ teamId: "" }).success, false);
         assert.equal(deleteAuditLogSchema.safeParse({ id: "" }).success, false);

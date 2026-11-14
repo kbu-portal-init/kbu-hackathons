@@ -2,6 +2,7 @@
 
 import { AlertCircle, CheckCircle, ImageIcon, LoaderCircle, Pencil, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { ConfirmActionAlertDialog } from "@/components/confirm-action-alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,14 +18,15 @@ import {
 import { useUpload } from "@/lib/hooks/use-upload";
 
 type FileUploadProps = {
-    category:
+    category?:
         | "image"
         | "submission"
         | "event-image"
         | "admin-profile-image"
         | "organizer-profile-image"
         | "announcement-image"
-        | "member-profile-image";
+        | "member-profile-image"
+        | "management-member-profile-image";
     accept?: string;
     currentFile?: string | null;
     onUploadComplete: (url: string, key: string) => void | Promise<void>;
@@ -35,6 +37,10 @@ type FileUploadProps = {
     uploadHint?: string;
     editDescription?: string;
     inputId?: string;
+    uploadContext?: {
+        teamId: string;
+        memberId: string;
+    };
 };
 
 type UploadedFile = {
@@ -54,6 +60,7 @@ export function FileUpload({
     uploadHint,
     editDescription,
     inputId,
+    uploadContext,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -100,15 +107,26 @@ export function FileUpload({
         inputRef.current?.click();
     };
 
-    const handleRemove = async () => {
-        await onRemove?.();
-        setPopoverOpen(false);
+    const handleRemove = async (): Promise<boolean> => {
+        try {
+            await onRemove?.();
+            setPopoverOpen(false);
+            return true;
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Could not remove the image.");
+            return false;
+        }
     };
 
     const handleUpload = async () => {
         if (!selectedFile) return;
 
-        const result = await upload(selectedFile, category);
+        if (!category) {
+            toast.error("Upload category is not configured.");
+            return;
+        }
+
+        const result = await upload(selectedFile, category, uploadContext);
 
         if (result) {
             setUploadedFile(result);
@@ -135,6 +153,8 @@ export function FileUpload({
             await onUploadComplete(uploadedFile.publicUrl, uploadedFile.key);
             clearSelection();
             setDialogOpen(false);
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Could not save the uploaded image.");
         } finally {
             setIsSaving(false);
         }
@@ -150,7 +170,10 @@ export function FileUpload({
                 const response = await fetch("/api/upload/delete", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ key: uploadedFile.key }),
+                    body: JSON.stringify({
+                        key: uploadedFile.key,
+                        ...(category === "management-member-profile-image" && uploadContext ? uploadContext : {}),
+                    }),
                 });
 
                 if (!response.ok) {

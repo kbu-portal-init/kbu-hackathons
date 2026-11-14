@@ -13,6 +13,11 @@ let uploadedKey: string | undefined;
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
+let memberRecord: { id: string; teamId: string } | null = {
+    id: "member-1",
+    teamId: "team-1",
+};
+
 mock("@/lib/r2", {
     isR2Configured: () => true,
     R2_BUCKET: "bucket-test",
@@ -40,6 +45,21 @@ mock("@/lib/auth/guards", {
     },
 });
 
+mock("@/lib/prisma", {
+    __esModule: true,
+    default: {
+        teamMember: {
+            findFirst: async ({ where }: { where: { id: string; teamId: string } }) => {
+                if (memberRecord?.id !== where.id || memberRecord.teamId !== where.teamId) {
+                    return null;
+                }
+
+                return { teamId: memberRecord.teamId };
+            },
+        },
+    },
+});
+
 mock("@/lib/services/storage", {
     deleteObject: async (_input: unknown, owner: string) => {
         deletedOwner = owner;
@@ -60,13 +80,24 @@ beforeEach(() => {
     deletedOwner = undefined;
     uploadedKey = undefined;
     deleteResult = { ok: true, data: { ok: true } };
+    memberRecord = { id: "member-1", teamId: "team-1" };
 });
 
-function uploadRequest(file?: File, category?: string) {
+function uploadRequest(file?: File, category?: string, context?: { teamId: string; memberId: string }) {
     const body = new FormData();
+
     if (file) body.set("file", file);
     if (category) body.set("category", category);
-    return new Request("https://example.test/api/upload/proxy", { method: "POST", body });
+
+    if (context) {
+        body.set("teamId", context.teamId);
+        body.set("memberId", context.memberId);
+    }
+
+    return new Request("https://example.test/api/upload/proxy", {
+        method: "POST",
+        body,
+    });
 }
 
 const TINY_PNG = new Uint8Array(
@@ -201,5 +232,185 @@ describe("upload API routes", () => {
         assert.equal(response.status, 500);
         assert.deepEqual(await response.json(), { error: "Deletion failed" });
         assert.equal(deletedOwner, "events");
+    });
+
+    it("allows organizers and admins to upload images for verified team members", async () => {
+        const png = new File([tinyPng()], "avatar.png", { type: "image/png" });
+
+        access = "staff";
+
+        const response = await uploadPost(
+            uploadRequest(png, "management-member-profile-image", {
+                teamId: "team-1",
+                memberId: "member-1",
+            }) as never,
+        );
+
+        assert.equal(response.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/team-1\/[0-9a-f-]+\.webp$/);
+
+        uploadedKey = undefined;
+        access = "admin";
+
+        const adminResponse = await uploadPost(
+            uploadRequest(png, "management-member-profile-image", {
+                teamId: "team-1",
+                memberId: "member-1",
+            }) as never,
+        );
+
+        assert.equal(adminResponse.status, 200);
+        assert.match(String(uploadedKey), /^uploads\/team-1\/[0-9a-f-]+\.webp$/);
+    });
+
+    it("rejects management uploads for unauthorized users or unrelated members", async () => {
+        const png = new File([tinyPng()], "avatar.png", { type: "image/png" });
+
+        const context = {
+            teamId: "team-1",
+            memberId: "member-1",
+        };
+
+        access = "team";
+
+        let response = await uploadPost(uploadRequest(png, "management-member-profile-image", context) as never);
+
+        assert.equal(response.status, 401);
+
+        access = "staff";
+        memberRecord = { id: "member-1", teamId: "team-2" };
+
+        response = await uploadPost(uploadRequest(png, "management-member-profile-image", context) as never);
+
+        assert.equal(response.status, 401);
+        assert.equal(uploadedKey, undefined);
+    });
+
+    it("requires team and member context for management uploads", async () => {
+        access = "staff";
+
+        const png = new File([tinyPng()], "avatar.png", { type: "image/png" });
+
+        const response = await uploadPost(uploadRequest(png, "management-member-profile-image") as never);
+
+        assert.equal(response.status, 401);
+        assert.equal(uploadedKey, undefined);
+    });
+
+    it("allows organizers and admins to delete verified team member uploads", async () => {
+        access = "staff";
+
+        let response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                body: JSON.stringify({
+                    key: "uploads/team-1/member-avatar.webp",
+                    teamId: "team-1",
+                    memberId: "member-1",
+                }),
+            }) as never,
+        );
+
+        assert.equal(response.status, 200);
+        assert.equal(deletedOwner, "team-1");
+
+        deletedOwner = undefined;
+        access = "admin";
+
+        response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                body: JSON.stringify({
+                    key: "uploads/team-1/member-avatar.webp",
+                    teamId: "team-1",
+                    memberId: "member-1",
+                }),
+            }) as never,
+        );
+
+        assert.equal(response.status, 200);
+        assert.equal(deletedOwner, "team-1");
+    });
+
+    it("rejects management deletion for unauthorized users or unrelated members", async () => {
+        const body = {
+            key: "uploads/team-1/member-avatar.webp",
+            teamId: "team-1",
+            memberId: "member-1",
+        };
+
+        access = "team";
+
+        let response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                body: JSON.stringify(body),
+            }) as never,
+        );
+
+        assert.equal(response.status, 401);
+        assert.equal(deletedOwner, undefined);
+
+        access = "staff";
+        memberRecord = { id: "member-1", teamId: "team-2" };
+
+        response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                body: JSON.stringify(body),
+            }) as never,
+        );
+
+        assert.equal(response.status, 401);
+        assert.equal(deletedOwner, undefined);
+    });
+
+    it("rejects management deletion when the storage key belongs to another team", async () => {
+        access = "staff";
+
+        const response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                body: JSON.stringify({
+                    key: "uploads/team-2/member-avatar.webp",
+                    teamId: "team-1",
+                    memberId: "member-1",
+                }),
+            }) as never,
+        );
+
+        assert.equal(response.status, 401);
+        assert.equal(deletedOwner, undefined);
+    });
+
+    it("rejects incomplete management deletion context", async () => {
+        access = "staff";
+
+        const response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                body: JSON.stringify({
+                    key: "uploads/team-1/member-avatar.webp",
+                    teamId: "team-1",
+                }),
+            }) as never,
+        );
+
+        assert.equal(response.status, 400);
+        assert.equal(deletedOwner, undefined);
+    });
+
+    it("rejects malformed JSON in delete requests", async () => {
+        const response = await deletePost(
+            new Request("https://example.test/api/upload/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: "{invalid-json",
+            }) as never,
+        );
+
+        assert.equal(response.status, 400);
+        assert.deepEqual(await response.json(), { error: "Invalid JSON body" });
+        assert.equal(deletedOwner, undefined);
     });
 });

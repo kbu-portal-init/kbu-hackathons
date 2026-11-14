@@ -20,6 +20,7 @@ let deleteRegistrationServiceResult: unknown = {
 let updateTeamRequest: typeof import("@/actions/management/teams").updateTeamRequest;
 let archiveTeamRequest: typeof import("@/actions/management/teams").archiveTeamRequest;
 let unarchiveTeamRequest: typeof import("@/actions/management/teams").unarchiveTeamRequest;
+let updateManagementMemberImage: typeof import("@/actions/management/teams").updateManagementMemberImage;
 
 let teamManagementServiceArgs: {
     update?: unknown[];
@@ -107,6 +108,10 @@ let updateRegistrationServiceResult: unknown = {
     ok: true,
     data: { registrationId: "registration-1" },
 };
+let updateManagementMemberImageResult: unknown = {
+    ok: true,
+    data: { imageUrl: "https://cdn.example.com/uploads/team-1/member.png" },
+};
 
 mock("@/lib/auth/guards", {
     requireOrganizerOrAdmin: async () => {
@@ -144,6 +149,10 @@ mock("@/lib/services/team-members", {
     deleteTeamMember: async (input: unknown, actorId: string) => {
         teamMemberServiceArgs.delete = [input, actorId];
         return deleteResult;
+    },
+    updateManagementMemberImage: async (input: unknown, actorId: string) => {
+        teamMemberServiceArgs.updateImage = [input, actorId];
+        return updateManagementMemberImageResult;
     },
 });
 
@@ -199,6 +208,7 @@ before(async () => {
     updateTeamRequest = teamActions.updateTeamRequest;
     archiveTeamRequest = teamActions.archiveTeamRequest;
     unarchiveTeamRequest = teamActions.unarchiveTeamRequest;
+    updateManagementMemberImage = teamActions.updateManagementMemberImage;
 });
 
 // Reset mock state before each test
@@ -233,6 +243,10 @@ beforeEach(() => {
         data: { registrationId: "registration-1" },
     };
     teamManagementServiceArgs = {};
+    updateManagementMemberImageResult = {
+        ok: true,
+        data: { imageUrl: "https://cdn.example.com/uploads/team-1/member.png" },
+    };
 
     updateTeamServiceResult = {
         ok: true,
@@ -471,6 +485,44 @@ describe("management TeamMember CRUD actions", () => {
 
         assert.deepEqual(teamMemberServiceArgs, {});
         assert.deepEqual(verificationCalls, []);
+    });
+    it("updates a member image and forwards the actor ID", async () => {
+        const input = {
+            teamId: "team-1",
+            memberId: "member-1",
+            imageUrl: "https://cdn.example.com/uploads/team-1/member.png",
+        };
+
+        const result = await updateManagementMemberImage(input);
+
+        assert.deepEqual(result, updateManagementMemberImageResult);
+        assert.deepEqual(teamMemberServiceArgs.updateImage, [input, "admin-1"]);
+    });
+
+    it("allows removing a member image", async () => {
+        const input = {
+            teamId: "team-1",
+            memberId: "member-1",
+            imageUrl: null,
+        };
+
+        const result = await updateManagementMemberImage(input);
+
+        assert.equal(result.ok, true);
+        assert.deepEqual(teamMemberServiceArgs.updateImage, [input, "admin-1"]);
+    });
+
+    it("rejects invalid image update input before calling the service", async () => {
+        const result = await updateManagementMemberImage({
+            teamId: "team-1",
+            memberId: "",
+            imageUrl: null,
+        });
+
+        assert.equal(result.ok, false);
+        if (!result.ok) assert.equal(result.error.code, "VALIDATION_ERROR");
+
+        assert.equal(teamMemberServiceArgs.updateImage, undefined);
     });
 });
 

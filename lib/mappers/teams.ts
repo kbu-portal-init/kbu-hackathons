@@ -18,6 +18,7 @@ type TeamListRecord = {
         imageUrl?: string | null;
         studentEmailVerifiedAt?: Date | null;
     }[];
+    archivedAt: Date | null;
     submission: { id: string } | null;
     registration: { status: string } | null;
 };
@@ -34,6 +35,7 @@ export function toTeamListItem(record: TeamListRecord): TeamListItem {
         memberCount: record.members.length,
         submissionCount: record.submission ? 1 : 0,
         registrationStatus: record.registration?.status ?? "UNKNOWN",
+        archivedAt: record.archivedAt?.toISOString() ?? null,
         banned,
         banReason: record.user?.banReason ?? null,
         banExpires: record.user?.banExpires?.toISOString() ?? null,
