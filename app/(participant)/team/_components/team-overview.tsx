@@ -112,10 +112,7 @@ export function TeamOverview({ overview, team, locale }: TeamOverviewProps) {
                                     )}
                                 </>
                             ) : (
-                                <>
-                                    <p className="font-semibold text-foreground">{t.submissionEmpty}</p>
-                                    <p className="text-muted-foreground">{t.submissionEmptyDescription}</p>
-                                </>
+                                <p className="font-semibold text-foreground">{t.submissionEmpty}</p>
                             )}
 
                             <div className="border-2 border-border/15 bg-background p-3">
@@ -225,7 +222,6 @@ export function TeamOverview({ overview, team, locale }: TeamOverviewProps) {
                             >
                                 {t.membersTitle}
                             </h2>
-                            <p className="mt-1 text-sm text-muted-foreground">{t.membersDescription}</p>
                         </div>
                         <Link
                             className="inline-flex min-h-11 items-center gap-1 font-semibold text-foreground underline decoration-primary decoration-2 underline-offset-4 hover:bg-accent hover:text-accent-foreground"
@@ -236,9 +232,7 @@ export function TeamOverview({ overview, team, locale }: TeamOverviewProps) {
                         </Link>
                     </div>
 
-                    {overview.members.length === 0 ? (
-                        <p className="mt-4 text-sm text-muted-foreground">{t.membersDescription}</p>
-                    ) : (
+                    {overview.members.length === 0 ? null : (
                         <ul className="mt-4 space-y-3">
                             {overview.members.map((member) => (
                                 <li

@@ -115,7 +115,7 @@ async function renderMemberCard(
                         whiteSpace: "nowrap",
                     }}
                 >
-                    {formatRole(role)}
+                    {role === "OTHER" ? "Participant" : formatRole(role)}
                 </div>
             </div>
             <div
