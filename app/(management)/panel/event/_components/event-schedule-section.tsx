@@ -12,6 +12,7 @@ export function EventScheduleSection({ schedule }: { schedule: EventScheduleDTO 
     const [items, setItems] = useState(schedule.items);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [saved, setSaved] = useState(false);
 
     function add(day: number) {
         setItems((prev) => [...prev, { id: crypto.randomUUID(), day, time: "", activity: "" }]);
@@ -26,15 +27,22 @@ export function EventScheduleSection({ schedule }: { schedule: EventScheduleDTO 
     async function save() {
         setSaving(true);
         setError(null);
-        const result = await upsertEventSchedule({
-            items: items.map(({ day, time, activity }) => ({ day, time, activity })),
-        });
-        setSaving(false);
-        if (!result.ok) {
-            setError(result.error.message);
-            return;
+        setSaved(false);
+        try {
+            const result = await upsertEventSchedule({
+                items: items.map(({ day, time, activity }) => ({ day, time, activity })),
+            });
+            if (!result.ok) {
+                setError(result.error.message);
+                return;
+            }
+            setSaved(true);
+            router.refresh();
+        } catch {
+            setError("Failed to save schedule.");
+        } finally {
+            setSaving(false);
         }
-        router.refresh();
     }
 
     return (
@@ -70,6 +78,7 @@ export function EventScheduleSection({ schedule }: { schedule: EventScheduleDTO 
                 </div>
             ))}
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
+            {saved ? <p className="text-sm text-muted-foreground">Saved.</p> : null}
             <Button type="button" onClick={save} disabled={saving}>
                 {saving ? "Saving..." : "Save schedule"}
             </Button>
