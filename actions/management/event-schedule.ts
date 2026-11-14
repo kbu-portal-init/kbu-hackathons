@@ -10,8 +10,12 @@ import { toFieldErrors } from "@/lib/validation/zod";
 
 export async function getEventSchedule(): Promise<ActionResult<EventScheduleDTO>> {
     await requireOrganizerOrAdmin();
-    const schedule = await fetchEventSchedule();
-    return { ok: true, data: schedule };
+    try {
+        const schedule = await fetchEventSchedule();
+        return { ok: true, data: schedule };
+    } catch {
+        return { ok: false, error: { code: ErrorCodes.UPSERT_FAILED, message: "Failed to load schedule." } };
+    }
 }
 
 export async function upsertEventSchedule(input: unknown): Promise<ActionResult<UpsertEventScheduleData>> {

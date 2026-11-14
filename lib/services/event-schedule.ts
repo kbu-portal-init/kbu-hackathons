@@ -20,28 +20,31 @@ export async function upsertEventSchedule(
     actorId: string,
 ): Promise<ActionResult<UpsertEventScheduleData>> {
     try {
-        await prisma.$transaction(async (tx) => {
-            await tx.eventScheduleItem.deleteMany({});
-            if (input.items.length > 0) {
-                await tx.eventScheduleItem.createMany({
-                    data: input.items.map((item, index) => ({
-                        day: item.day,
-                        time: item.time,
-                        activity: item.activity,
-                        sortOrder: index,
-                    })),
+        await prisma.$transaction(
+            async (tx) => {
+                await tx.eventScheduleItem.deleteMany({});
+                if (input.items.length > 0) {
+                    await tx.eventScheduleItem.createMany({
+                        data: input.items.map((item, index) => ({
+                            day: item.day,
+                            time: item.time,
+                            activity: item.activity,
+                            sortOrder: index,
+                        })),
+                    });
+                }
+                await tx.auditLog.create({
+                    data: {
+                        actorId,
+                        action: "EVENT_SCHEDULE_UPSERTED",
+                        targetType: "EventSchedule",
+                        targetId: "schedule",
+                        details: { count: input.items.length },
+                    },
                 });
-            }
-            await tx.auditLog.create({
-                data: {
-                    actorId,
-                    action: "EVENT_SCHEDULE_UPSERTED",
-                    targetType: "EventSchedule",
-                    targetId: "schedule",
-                    details: { count: input.items.length },
-                },
-            });
-        });
+            },
+            { isolationLevel: "Serializable" },
+        );
         revalidateTag("event-schedule", "max");
     } catch {
         return { ok: false, error: { code: ErrorCodes.UPSERT_FAILED, message: "Failed to save schedule." } };
