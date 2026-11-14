@@ -31,9 +31,19 @@ function formatDate(value: string, locale: Locale, withTime = false): string {
 
 export async function EventGuide({ locale, t }: EventGuideProps) {
     const event = await getEventSettings();
-    const schedule = await fetchEventSchedule();
-    const day1Timeline = schedule.items.filter((i) => i.day === 1).map((i) => ({ time: i.time, activity: i.activity }));
-    const day2Timeline = schedule.items.filter((i) => i.day === 2).map((i) => ({ time: i.time, activity: i.activity }));
+    let schedule: Awaited<ReturnType<typeof fetchEventSchedule>> | null = null;
+    let scheduleError = false;
+    try {
+        schedule = await fetchEventSchedule();
+    } catch {
+        scheduleError = true;
+    }
+    const day1Timeline = schedule
+        ? schedule.items.filter((i) => i.day === 1).map((i) => ({ time: i.time, activity: i.activity }))
+        : [];
+    const day2Timeline = schedule
+        ? schedule.items.filter((i) => i.day === 2).map((i) => ({ time: i.time, activity: i.activity }))
+        : [];
     const timeline1 = day1Timeline.length ? day1Timeline : t.schedule.day1Timeline;
     const timeline2 = day2Timeline.length ? day2Timeline : t.schedule.day2Timeline;
     const now = new Date();
@@ -163,6 +173,7 @@ export async function EventGuide({ locale, t }: EventGuideProps) {
                 </ol>
 
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    {scheduleError ? <p className="text-sm text-muted-foreground">Schedule unavailable.</p> : null}
                     {[
                         { label: t.schedule.day1Label, timeline: timeline1 },
                         { label: t.schedule.day2Label, timeline: timeline2 },
