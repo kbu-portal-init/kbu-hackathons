@@ -44,8 +44,8 @@ export async function EventGuide({ locale, t }: EventGuideProps) {
     const day2Timeline = schedule
         ? schedule.items.filter((i) => i.day === 2).map((i) => ({ time: i.time, activity: i.activity }))
         : [];
-    const timeline1 = day1Timeline.length ? day1Timeline : t.schedule.day1Timeline;
-    const timeline2 = day2Timeline.length ? day2Timeline : t.schedule.day2Timeline;
+    const timeline1 = day1Timeline.length ? day1Timeline : null;
+    const timeline2 = day2Timeline.length ? day2Timeline : null;
     const now = new Date();
 
     const startsAt = new Date(HACKATHON_STARTS_AT);
@@ -173,23 +173,37 @@ export async function EventGuide({ locale, t }: EventGuideProps) {
                 </ol>
 
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
-                    {scheduleError ? <p className="text-sm text-muted-foreground">Schedule unavailable.</p> : null}
-                    {[
-                        { label: t.schedule.day1Label, timeline: timeline1 },
-                        { label: t.schedule.day2Label, timeline: timeline2 },
-                    ].map((day) => (
-                        <PosterPanel className="p-5" key={day.label}>
-                            <h3 className="font-display text-base font-bold text-foreground">{day.label}</h3>
-                            <dl className="mt-3 space-y-2">
-                                {day.timeline.map((item) => (
-                                    <div className="grid grid-cols-[6rem_1fr] gap-3 text-sm" key={item.time}>
-                                        <dt className="font-medium text-muted-foreground">{item.time}</dt>
-                                        <dd className="text-foreground">{item.activity}</dd>
-                                    </div>
-                                ))}
-                            </dl>
-                        </PosterPanel>
-                    ))}
+                    {scheduleError ? (
+                        <p className="text-sm text-muted-foreground">Schedule will be announced soon.</p>
+                    ) : (
+                        <>
+                            {[
+                                { label: t.schedule.day1Label, timeline: timeline1 },
+                                { label: t.schedule.day2Label, timeline: timeline2 },
+                            ].map((day) => (
+                                <PosterPanel className="p-5" key={day.label}>
+                                    <h3 className="font-display text-base font-bold text-foreground">{day.label}</h3>
+                                    <dl className="mt-3 space-y-2">
+                                        {day.timeline ? (
+                                            day.timeline.map((item) => (
+                                                <div
+                                                    className="grid grid-cols-[6rem_1fr] gap-3 text-sm"
+                                                    key={item.time}
+                                                >
+                                                    <dt className="font-medium text-muted-foreground">{item.time}</dt>
+                                                    <dd className="text-foreground">{item.activity}</dd>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-sm text-muted-foreground">
+                                                Schedule will be announced soon.
+                                            </p>
+                                        )}
+                                    </dl>
+                                </PosterPanel>
+                            ))}
+                        </>
+                    )}
                 </div>
             </section>
         </div>
