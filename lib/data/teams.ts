@@ -18,11 +18,24 @@ export async function listTeams(input: ListTeamsInput): Promise<ListResult<TeamL
     const now = new Date();
     const where = {
         registration: { status: "APPROVED" as const },
-        ...(input.status === "BANNED"
-            ? { user: { banned: true, OR: [{ banExpires: null }, { banExpires: { gt: now } }] } }
-            : input.status === "ACTIVE"
-              ? { user: { OR: [{ banned: false }, { banned: true, banExpires: { lte: now } }] } }
-              : {}),
+        ...(input.status === "ARCHIVED"
+            ? { archivedAt: { not: null } }
+            : input.status === "BANNED"
+              ? {
+                    archivedAt: null,
+                    user: {
+                        banned: true,
+                        OR: [{ banExpires: null }, { banExpires: { gt: now } }],
+                    },
+                }
+              : input.status === "ACTIVE"
+                ? {
+                      archivedAt: null,
+                      user: {
+                          OR: [{ banned: false }, { banned: true, banExpires: { lte: now } }],
+                      },
+                  }
+                : {}),
     };
 
     const [total, records] = await Promise.all([

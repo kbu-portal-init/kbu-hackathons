@@ -64,9 +64,21 @@ beforeEach(() => {
 
 function uploadRequest(file?: File, category?: string) {
     const body = new FormData();
+
     if (file) body.set("file", file);
     if (category) body.set("category", category);
-    return new Request("https://example.test/api/upload/proxy", { method: "POST", body });
+
+    return new Request("https://example.test/api/upload/proxy", {
+        method: "POST",
+        body,
+    });
+}
+
+function deleteRequest(key: string) {
+    return new Request("https://example.test/api/upload/delete", {
+        method: "POST",
+        body: JSON.stringify({ key }),
+    });
 }
 
 const TINY_PNG = new Uint8Array(
@@ -83,12 +95,16 @@ function tinyPng(): Uint8Array<ArrayBuffer> {
 describe("upload API routes", () => {
     it("rejects missing and unknown upload fields", async () => {
         let response = await uploadPost(uploadRequest() as never);
+
         assert.equal(response.status, 400);
-        assert.deepEqual(await response.json(), { error: "Missing file or category" });
+        assert.deepEqual(await response.json(), {
+            error: "Missing file or category",
+        });
 
         response = await uploadPost(
             uploadRequest(new File(["data"], "file.txt", { type: "text/plain" }), "unknown") as never,
         );
+
         assert.equal(response.status, 400);
         assert.equal((await response.json()).error, "Validation failed");
     });
@@ -100,22 +116,40 @@ describe("upload API routes", () => {
                 "submission",
             ) as never,
         );
-        assert.equal(response.status, 400);
-        assert.deepEqual(await response.json(), { error: "File type not allowed" });
 
-        const oversized = new File([new Uint8Array(6 * 1024 * 1024)], "large.png", { type: "image/png" });
-        response = await uploadPost(uploadRequest(oversized, "image") as never);
         assert.equal(response.status, 400);
-        assert.deepEqual(await response.json(), { error: "File too large" });
+        assert.deepEqual(await response.json(), {
+            error: "File type not allowed",
+        });
+
+        const oversized = new File([new Uint8Array(6 * 1024 * 1024)], "large.png", {
+            type: "image/png",
+        });
+
+        response = await uploadPost(uploadRequest(oversized, "image") as never);
+
+        assert.equal(response.status, 400);
+        assert.deepEqual(await response.json(), {
+            error: "File too large",
+        });
     });
 
     it("requires the role associated with each upload category", async () => {
-        const submission = new File(["data"], "project.pdf", { type: "application/pdf" });
-        let response = await uploadPost(uploadRequest(submission, "submission") as never);
-        assert.equal(response.status, 401);
-        assert.deepEqual(await response.json(), { error: "Unauthorized" });
+        const submission = new File(["data"], "project.pdf", {
+            type: "application/pdf",
+        });
 
-        const png = new File([tinyPng()], "avatar.png", { type: "image/png" });
+        let response = await uploadPost(uploadRequest(submission, "submission") as never);
+
+        assert.equal(response.status, 401);
+        assert.deepEqual(await response.json(), {
+            error: "Unauthorized",
+        });
+
+        const png = new File([tinyPng()], "avatar.png", {
+            type: "image/png",
+        });
+
         for (const [category, allowed] of [
             ["admin-profile-image", "admin"],
             ["event-image", "staff"],
@@ -124,82 +158,120 @@ describe("upload API routes", () => {
             ["image", "team"],
         ] as const) {
             access = allowed === "team" ? "staff" : "team";
+
             response = await uploadPost(uploadRequest(png, category) as never);
+
             assert.equal(response.status, 401, `${category} should reject role ${access}`);
         }
+
         assert.equal(uploadedKey, undefined);
     });
 
     it("derives the storage key from the session owner, never the client", async () => {
-        const png = () => new File([tinyPng()], "avatar.png", { type: "image/png" });
-        const pdf = new File(["data"], "project.pdf", { type: "application/pdf" });
+        const png = () =>
+            new File([tinyPng()], "avatar.png", {
+                type: "image/png",
+            });
+
+        const pdf = new File(["data"], "project.pdf", {
+            type: "application/pdf",
+        });
 
         access = "team";
+
         let response = await uploadPost(uploadRequest(pdf, "submission") as never);
+
         assert.equal(response.status, 200);
         assert.match(String(uploadedKey), /^uploads\/team-1\/[0-9a-f-]+\.pdf$/);
 
         uploadedKey = undefined;
+
         response = await uploadPost(uploadRequest(png(), "member-profile-image") as never);
+
         assert.equal(response.status, 200);
         assert.match(String(uploadedKey), /^uploads\/team-1\/[0-9a-f-]+\.webp$/);
 
         uploadedKey = undefined;
         access = "staff";
+
         response = await uploadPost(uploadRequest(png(), "event-image") as never);
+
         assert.equal(response.status, 200);
         assert.match(String(uploadedKey), /^uploads\/events\/[0-9a-f-]+\.webp$/);
 
         uploadedKey = undefined;
         access = "admin";
+
         response = await uploadPost(uploadRequest(png(), "admin-profile-image") as never);
+
         assert.equal(response.status, 200);
         assert.match(String(uploadedKey), /^uploads\/admins\/admin-1\/[0-9a-f-]+\.webp$/);
 
-        const body = (await response.json()) as { key: string; publicUrl: string };
+        const body = (await response.json()) as {
+            key: string;
+            publicUrl: string;
+        };
+
         assert.equal(body.key, uploadedKey);
         assert.equal(body.publicUrl, `https://cdn.example.test/${uploadedKey}`);
     });
 
     it("validates delete payloads and enforces key-prefix ownership", async () => {
-        let response = await deletePost(
-            new Request("https://example.test/api/upload/delete", {
-                method: "POST",
-                body: JSON.stringify({ key: "" }),
-            }) as never,
-        );
+        let response = await deletePost(deleteRequest("") as never);
+
         assert.equal(response.status, 400);
 
-        response = await deletePost(
-            new Request("https://example.test/api/upload/delete", {
-                method: "POST",
-                body: JSON.stringify({ key: "uploads/team-1/file.png" }),
-            }) as never,
-        );
+        response = await deletePost(deleteRequest("uploads/team-1/file.png") as never);
+
         assert.equal(response.status, 401);
 
         access = "team";
-        response = await deletePost(
-            new Request("https://example.test/api/upload/delete", {
-                method: "POST",
-                body: JSON.stringify({ key: "uploads/team-1/file.png" }),
-            }) as never,
-        );
+
+        response = await deletePost(deleteRequest("uploads/team-1/file.png") as never);
+
+        assert.equal(response.status, 200);
+        assert.equal(deletedOwner, "team-1");
+
+        access = "staff";
+        deletedOwner = undefined;
+
+        response = await deletePost(deleteRequest("uploads/team-1/member-image.webp") as never);
+
         assert.equal(response.status, 200);
         assert.equal(deletedOwner, "team-1");
     });
 
+    it("rejects malformed team upload keys", async () => {
+        access = "staff";
+
+        for (const key of [
+            "uploads/team-1",
+            "uploads/team-1/",
+            "uploads/team-1/../admins/admin-1/avatar.png",
+            "uploads//file.png",
+            "invalid/team-1/file.png",
+        ]) {
+            const response = await deletePost(deleteRequest(key) as never);
+
+            assert.equal(response.status, 401, `Expected ${key} to be rejected`);
+        }
+
+        assert.equal(deletedOwner, undefined);
+    });
+
     it("maps storage deletion failures to 500", async () => {
         access = "staff";
-        deleteResult = { ok: false, error: { message: "Deletion failed" } };
-        const response = await deletePost(
-            new Request("https://example.test/api/upload/delete", {
-                method: "POST",
-                body: JSON.stringify({ key: "uploads/events/banner.png" }),
-            }) as never,
-        );
+        deleteResult = {
+            ok: false,
+            error: { message: "Deletion failed" },
+        };
+
+        const response = await deletePost(deleteRequest("uploads/events/banner.png") as never);
+
         assert.equal(response.status, 500);
-        assert.deepEqual(await response.json(), { error: "Deletion failed" });
+        assert.deepEqual(await response.json(), {
+            error: "Deletion failed",
+        });
         assert.equal(deletedOwner, "events");
     });
 });

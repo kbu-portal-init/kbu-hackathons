@@ -20,6 +20,7 @@ type TeamListRecord = {
     }[];
     submission: { id: string } | null;
     registration: { status: string } | null;
+    archivedAt: Date | null;
 };
 
 export function toTeamListItem(record: TeamListRecord): TeamListItem {
@@ -38,6 +39,7 @@ export function toTeamListItem(record: TeamListRecord): TeamListItem {
         banReason: record.user?.banReason ?? null,
         banExpires: record.user?.banExpires?.toISOString() ?? null,
         createdAt: record.createdAt.toISOString(),
+        archivedAt: record.archivedAt?.toISOString() ?? null,
     };
 }
 

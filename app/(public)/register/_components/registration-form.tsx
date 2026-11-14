@@ -97,18 +97,24 @@ export function RegistrationForm({
     };
 
     const completeSubmission = async (values: SubmittedFormValues) => {
-        const result = await submitTeamRegistration({
-            ...values,
-            leaderRole: values.leaderRole ?? TeamMemberRole.LEADER,
-        });
-        if (!result.ok) {
-            applyActionFieldErrors(result.error.fieldErrors, form.setError);
-            toast.error(result.error.message);
-            return;
+        try {
+            const result = await submitTeamRegistration({
+                ...values,
+                leaderRole: values.leaderRole ?? TeamMemberRole.LEADER,
+            });
+
+            if (!result.ok) {
+                applyActionFieldErrors(result.error.fieldErrors, form.setError);
+                toast.error(result.error.message);
+                return;
+            }
+
+            toast.success(result.data.verificationEmailsSent ? t.submitted : t.verificationFailed);
+            setVerificationEmailsSent(result.data.verificationEmailsSent);
+            setSubmitted(true);
+        } catch {
+            toast.error(t.submissionError);
         }
-        toast.success(result.data.verificationEmailsSent ? t.submitted : t.verificationFailed);
-        setVerificationEmailsSent(result.data.verificationEmailsSent);
-        setSubmitted(true);
     };
 
     if (submitted) {

@@ -42,7 +42,19 @@ export async function submitTeamRegistration(input: unknown): Promise<ActionResu
             },
         };
     }
-    return submitRegistrationService(parsed.data);
+
+    try {
+        return await submitRegistrationService(parsed.data);
+    } catch (error) {
+        console.error("[registrations] submit failed", error);
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.CREATE_FAILED,
+                message: "Failed to submit registration",
+            },
+        };
+    }
 }
 
 // ── Management (organizer/admin) ───────────────────────────────────
@@ -60,6 +72,7 @@ export async function listRegistrationRequests(input: unknown): Promise<ListActi
             },
         };
     }
+
     return { ok: true, data: await listRegistrations(parsed.data) };
 }
 
@@ -76,6 +89,7 @@ export async function getRegistrationRequest(input: unknown): Promise<ActionResu
             },
         };
     }
+
     const detail = await getRegistrationDetail(parsed.data.registrationId);
     return detail
         ? { ok: true, data: detail }
@@ -101,7 +115,19 @@ export async function approveRegistrationRequest(input: unknown): Promise<Action
             },
         };
     }
-    return approveRegistrationService(parsed.data, session.user.id);
+
+    try {
+        return await approveRegistrationService(parsed.data, session.user.id);
+    } catch (error) {
+        console.error("[registrations] approval failed", error);
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.APPROVAL_FAILED,
+                message: "Failed to approve registration",
+            },
+        };
+    }
 }
 
 export async function rejectRegistrationRequest(input: unknown): Promise<ActionResult<RejectRegistrationData>> {
@@ -117,7 +143,19 @@ export async function rejectRegistrationRequest(input: unknown): Promise<ActionR
             },
         };
     }
-    return rejectRegistrationService(parsed.data, session.user.id);
+
+    try {
+        return await rejectRegistrationService(parsed.data, session.user.id);
+    } catch (error) {
+        console.error("[registrations] rejection failed", error);
+        return {
+            ok: false,
+            error: {
+                code: ErrorCodes.UPDATE_FAILED,
+                message: "Failed to reject registration",
+            },
+        };
+    }
 }
 
 export async function resendStudentEmailVerification(input: unknown): Promise<ActionResult<{ sent: boolean }>> {
@@ -133,6 +171,7 @@ export async function resendStudentEmailVerification(input: unknown): Promise<Ac
             },
         };
     }
+
     try {
         await sendStudentEmailVerification(parsed.data.teamMemberId);
     } catch (error) {
@@ -144,6 +183,7 @@ export async function resendStudentEmailVerification(input: unknown): Promise<Ac
         }
         throw error;
     }
+
     return { ok: true, data: { sent: true } };
 }
 
@@ -160,6 +200,7 @@ export async function manuallyVerifyStudentEmail(input: unknown): Promise<Action
             },
         };
     }
+
     const now = new Date();
     await prisma.$transaction(async (tx) => {
         await tx.teamMember.update({
@@ -179,5 +220,6 @@ export async function manuallyVerifyStudentEmail(input: unknown): Promise<Action
             },
         });
     });
+
     return { ok: true, data: { verifiedAt: now.toISOString() } };
 }

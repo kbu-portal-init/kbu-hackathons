@@ -29,7 +29,14 @@ export async function sendStudentEmailVerification(teamMemberId: string, options
     await prisma.$transaction(async (tx) => {
         // delete any existing unverified verifications for this team member
         await tx.studentEmailVerification.deleteMany({ where: { teamMemberId, verifiedAt: null } });
-        await tx.studentEmailVerification.create({ data: { teamMemberId, tokenHash, expiresAt } });
+        await tx.studentEmailVerification.create({
+            data: {
+                teamMemberId,
+                recipientEmail: member.studentEmail,
+                tokenHash,
+                expiresAt,
+            },
+        });
     });
 
     // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
@@ -62,6 +69,21 @@ export async function consumeStudentEmailVerification(
     }
 
     if (verification.verifiedAt) {
+        const member = await prisma.teamMember.findUnique({
+            where: { id: verification.teamMemberId },
+            select: { studentEmail: true },
+        });
+
+        if (!member || member.studentEmail !== verification.recipientEmail) {
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.INVALID_VERIFICATION_TOKEN,
+                    message: "Invalid or expired verification token",
+                },
+            };
+        }
+
         return {
             ok: true,
             data: {
@@ -82,15 +104,49 @@ export async function consumeStudentEmailVerification(
         };
     }
 
-    const updated = await prisma.$transaction(async (tx) => {
-        const claimed = await tx.studentEmailVerification.updateMany({
-            where: { id: verification.id, verifiedAt: null, expiresAt: { gt: now } },
-            data: { verifiedAt: now },
+    let updated: boolean;
+
+    try {
+        updated = await prisma.$transaction(async (tx) => {
+            const claimed = await tx.studentEmailVerification.updateMany({
+                where: {
+                    id: verification.id,
+                    verifiedAt: null,
+                    expiresAt: { gt: now },
+                    recipientEmail: verification.recipientEmail,
+                },
+                data: { verifiedAt: now },
+            });
+
+            if (claimed.count !== 1) return false;
+
+            const memberUpdated = await tx.teamMember.updateMany({
+                where: {
+                    id: verification.teamMemberId,
+                    studentEmail: verification.recipientEmail,
+                },
+                data: { studentEmailVerifiedAt: now },
+            });
+
+            if (memberUpdated.count !== 1) {
+                throw new Error("VERIFICATION_RECIPIENT_MISMATCH");
+            }
+
+            return true;
         });
-        if (claimed.count !== 1) return null;
-        await tx.teamMember.update({ where: { id: verification.teamMemberId }, data: { studentEmailVerifiedAt: now } });
-        return true;
-    });
+    } catch (error) {
+        if (error instanceof Error && error.message === "VERIFICATION_RECIPIENT_MISMATCH") {
+            return {
+                ok: false,
+                error: {
+                    code: ErrorCodes.INVALID_VERIFICATION_TOKEN,
+                    message: "Invalid or expired verification token",
+                },
+            };
+        }
+
+        throw error;
+    }
 
     if (!updated) {
         return {

@@ -264,6 +264,7 @@ export const messages = {
             teamSizeHelp: "Choose between",
             totalMembers: "total members, including the leader.",
             submitted: "Registration submitted!",
+            submissionError: "Unable to submit your registration. Please try again.",
             verificationSent:
                 "Verification links have been sent to all team members. Once everyone verifies their email, your team will be automatically approved and the leader will receive a password-reset link.",
             verificationFailed:
@@ -832,6 +833,7 @@ export const messages = {
             memberPlaceholder: "ชื่อสมาชิก",
             selectProgram: "เลือกโปรแกรม",
             teamSizeHelp: "เลือกสมาชิกระหว่าง",
+            submissionError: "ไม่สามารถส่งใบสมัครได้ โปรดลองอีกครั้ง",
             totalMembers: "คน รวมทั้งหัวหน้าทีม",
             submitted: "ส่งใบสมัครสำเร็จ!",
             verificationSent:

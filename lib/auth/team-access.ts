@@ -40,3 +40,25 @@ export async function findTeamAccountByUsername(username: string) {
         },
     });
 }
+
+export async function findTeamAccountByEmail(email: string) {
+    return prisma.user.findFirst({
+        where: { email: email.toLowerCase(), role: "team" },
+        select: {
+            id: true,
+            email: true,
+            role: true,
+            team: {
+                select: {
+                    archivedAt: true,
+                    registration: { select: { status: true } },
+                    members: {
+                        where: { role: "LEADER", studentEmailVerifiedAt: { not: null } },
+                        select: { studentEmail: true },
+                        take: 1,
+                    },
+                },
+            },
+        },
+    });
+}

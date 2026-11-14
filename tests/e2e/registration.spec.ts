@@ -59,4 +59,42 @@ test.describe("registration form", () => {
 
         await expect(page.getByText(/already exists/i).first()).toBeVisible({ timeout: 15000 });
     });
+
+    test("network failure during submission shows an error and allows retry", async ({ page }) => {
+        await page.goto("/register");
+
+        const ts = Date.now();
+        const teamName = `E2E Network Failure ${ts}`;
+
+        await page.fill("#teamName", teamName);
+        await page.locator('input[type="radio"][value="THAI_PROGRAM"]').check({ force: true });
+        await page.fill("#leaderName", "E2E Leader");
+        await page.fill("#leaderEmail", `u${ts}a@ms.kbu.ac.th`);
+        await page.fill('[name="members.0.name"]', "E2E Member");
+        await page.fill('[name="members.0.email"]', `u${ts}b@ms.kbu.ac.th`);
+
+        await acknowledge(page);
+
+        let requestAborted = false;
+
+        await page.route("**/register", async (route) => {
+            if (route.request().method() === "POST") {
+                requestAborted = true;
+                await route.abort("failed");
+                return;
+            }
+
+            await route.continue();
+        });
+
+        await page.getByRole("button", { name: "Submit registration" }).click();
+
+        await expect(page.getByText("Unable to submit your registration. Please try again.")).toBeVisible({
+            timeout: 10000,
+        });
+
+        expect(requestAborted).toBe(true);
+        await expect(page.locator("#teamName")).toHaveValue(teamName);
+        await expect(page.getByRole("button", { name: "Submit registration" })).toBeEnabled();
+    });
 });
