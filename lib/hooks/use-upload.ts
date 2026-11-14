@@ -9,6 +9,11 @@ type UploadResult = {
     publicUrl: string;
 };
 
+type UploadContext = {
+    teamId: string;
+    memberId: string;
+};
+
 export function useUpload() {
     const [state, setState] = useState<UploadState>("idle");
     const [error, setError] = useState<string | null>(null);
@@ -23,7 +28,9 @@ export function useUpload() {
                 | "admin-profile-image"
                 | "organizer-profile-image"
                 | "announcement-image"
-                | "member-profile-image",
+                | "member-profile-image"
+                | "management-member-profile-image",
+            context?: UploadContext,
         ): Promise<UploadResult | null> => {
             setState("uploading");
             setError(null);
@@ -32,6 +39,15 @@ export function useUpload() {
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("category", category);
+
+                if (category === "management-member-profile-image") {
+                    if (!context) {
+                        throw new Error("Team and member context is required for management uploads.");
+                    }
+
+                    formData.append("teamId", context.teamId);
+                    formData.append("memberId", context.memberId);
+                }
 
                 const res = await fetch("/api/upload/proxy", {
                     method: "POST",

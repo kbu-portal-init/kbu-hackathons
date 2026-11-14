@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { before, describe, it } from "node:test";
+import { before, describe, it, mock } from "node:test";
 
 let prisma: typeof import("@/lib/prisma").default;
 let teams: typeof import("@/lib/data/teams");
@@ -109,6 +109,90 @@ describe("data query boundaries", () => {
             prisma.announcement.findMany = originalFind;
             prisma.announcement.count = originalCount;
             prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("lists approved teams with correct status filters and pagination", async () => {
+        const originalCount = prisma.team.count;
+        const originalFind = prisma.team.findMany;
+
+        let countArgs: unknown;
+        let findArgs!: {
+            where: unknown;
+            skip: number;
+            take: number;
+            orderBy: unknown;
+        };
+
+        const now = new Date("2026-11-14T09:00:00.000Z");
+        mock.timers.enable({ apis: ["Date"], now });
+
+        const cases = [
+            {
+                status: "BANNED" as const,
+                expectedWhere: {
+                    registration: { status: "APPROVED" },
+                    archivedAt: null,
+                    user: {
+                        banned: true,
+                        OR: [{ banExpires: null }, { banExpires: { gt: now } }],
+                    },
+                },
+            },
+            {
+                status: "ACTIVE" as const,
+                expectedWhere: {
+                    registration: { status: "APPROVED" },
+                    archivedAt: null,
+                    user: {
+                        OR: [{ banned: false }, { banned: true, banExpires: { lte: now } }],
+                    },
+                },
+            },
+            {
+                status: "ARCHIVED" as const,
+                expectedWhere: {
+                    registration: { status: "APPROVED" },
+                    archivedAt: { not: null },
+                },
+            },
+            {
+                status: undefined,
+                expectedWhere: {
+                    registration: { status: "APPROVED" },
+                },
+            },
+        ];
+
+        try {
+            prisma.team.count = (async (args: unknown) => {
+                countArgs = args;
+                return 5;
+            }) as typeof prisma.team.count;
+
+            prisma.team.findMany = (async (args: unknown) => {
+                findArgs = args as typeof findArgs;
+                return [];
+            }) as unknown as typeof prisma.team.findMany;
+
+            for (const testCase of cases) {
+                const result = await teams.listTeams({
+                    page: 2,
+                    pageSize: 2,
+                    ...(testCase.status ? { status: testCase.status } : {}),
+                });
+
+                assert.deepEqual(findArgs.where, testCase.expectedWhere);
+                assert.deepEqual(countArgs, { where: findArgs.where });
+                assert.equal(findArgs.skip, 2);
+                assert.equal(findArgs.take, 2);
+                assert.deepEqual(findArgs.orderBy, { createdAt: "desc" });
+                assert.equal(result.meta.hasNextPage, true);
+            }
+        } finally {
+            prisma.team.count = originalCount;
+            prisma.team.findMany = originalFind;
+            mock.timers.reset();
         }
     });
 });

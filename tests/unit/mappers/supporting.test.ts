@@ -17,6 +17,7 @@ function listRecord() {
         program: "THAI_PROGRAM" as const,
         createdAt: date,
         user: { banned: true, banReason: "spam", banExpires: activeBan },
+        archivedAt: null,
         members: [{ id: "m1" }, { id: "m2" }],
         submission: { id: "s1" },
         registration: { status: "APPROVED" },
@@ -48,6 +49,14 @@ describe("supporting DTO mappers", () => {
             user: { banned: true, banReason: "spam", banExpires: expiredBan },
         });
         assert.equal(expired.banned, false);
+        const archivedAt = new Date("2026-11-13T10:00:00.000Z");
+
+        const archived = toTeamListItem({
+            ...listRecord(),
+            archivedAt,
+        });
+
+        assert.equal(archived.archivedAt, archivedAt.toISOString());
     });
 
     it("serializes team detail members, reviews, and submission dates", () => {

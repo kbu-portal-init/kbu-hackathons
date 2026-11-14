@@ -10,6 +10,7 @@ import { getRegistrationDetail } from "@/lib/data/registrations";
 import { formatRole } from "@/lib/util";
 import { MemberRow } from "./_components/member-row";
 import { RegistrationActions } from "./_components/registration-actions";
+import { RegistrationCrudActions } from "./_components/registration-crud-actions";
 
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
@@ -19,6 +20,8 @@ function StatusBadge({ status }: { status: string }) {
             return <Badge variant="outline">Approved</Badge>;
         case "REJECTED":
             return <Badge variant="destructive">Rejected</Badge>;
+        case "WITHDRAWN":
+            return <Badge variant="secondary">Withdrawn</Badge>;
         default:
             return <Badge variant="secondary">{status}</Badge>;
     }
@@ -66,13 +69,11 @@ async function RegistrationDetailContent({ id }: { id: string }) {
                 <DetailField label="Program" value={formatRole(item.program)} />
             </div>
 
-            {item.applicationNotes && (
-                <div className="space-y-1 border-2 border-border/15 bg-card p-4">
-                    <p className="text-xs font-medium text-muted-foreground">Application notes</p>
-                    <p className="text-sm">{item.applicationNotes}</p>
-                </div>
-            )}
-
+            <RegistrationCrudActions
+                registrationId={item.id}
+                status={item.status}
+                applicationNotes={item.applicationNotes}
+            />
             <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground">Team members ({item.members.length})</p>
                 <div className="border-2 border-border">

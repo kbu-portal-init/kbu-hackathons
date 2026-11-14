@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "../_components/team-actions";
 import { ReopenSubmissionButton } from "./_components/reopen-submission-button";
+import { TeamRoster } from "./_components/team-roster";
 
 export default function PanelTeamDetailPage({ params }: { params: Promise<{ teamId: string }> }) {
     return (
@@ -65,7 +66,10 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                 <Panel title="Team information">
                     <div className="grid gap-3 text-sm sm:grid-cols-2">
                         <Info label="Registration" value={team.registrationStatus} />
-                        <Info label="Account" value={team.banned ? "Banned" : "Active"} />
+                        <Info
+                            label="Account"
+                            value={team.archivedAt ? "Archived" : team.banned ? "Banned" : "Active"}
+                        />{" "}
                         <Info label="Program" value={formatRole(team.program)} />
                         <Info label="Created" value={format(new Date(team.createdAt), "PPP p")} />
                         <Info label="Updated" value={format(new Date(team.updatedAt), "PPP p")} />
@@ -80,48 +84,7 @@ async function TeamDetailContent({ teamId }: { teamId: string }) {
                     <p className="text-sm text-muted-foreground">{team.applicationNotes || "No application notes."}</p>
                 </Panel>
             </div>
-            <Panel title={`Roster (${team.members.length})`}>
-                <div className="divide-y">
-                    {team.members.map((member) => (
-                        <div key={member.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
-                            <div className="flex min-w-0 items-center gap-3">
-                                {member.imageUrl ? (
-                                    <Image
-                                        src={member.imageUrl}
-                                        alt={`${member.name} avatar`}
-                                        width={40}
-                                        height={40}
-                                        className="size-10 object-cover"
-                                        unoptimized
-                                    />
-                                ) : (
-                                    <div
-                                        className="flex size-10 shrink-0 items-center justify-center bg-accent font-display font-bold text-accent-foreground"
-                                        aria-hidden="true"
-                                    >
-                                        {getInitials(member.name)}
-                                    </div>
-                                )}
-                                <div className="min-w-0">
-                                    <p className="truncate font-medium">{member.name}</p>
-                                    <p className="truncate text-sm text-muted-foreground">{member.email}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="border-border/20">
-                                    {member.role}
-                                </Badge>
-                                <Badge
-                                    variant={member.verifiedAt ? "default" : "secondary"}
-                                    className="border-border/20"
-                                >
-                                    {member.verifiedAt ? "Verified" : "Unverified"}
-                                </Badge>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </Panel>
+            <TeamRoster teamId={team.id} members={team.members} />
             <Panel title="Submission">
                 {team.submission ? (
                     <div className="space-y-4 text-sm">

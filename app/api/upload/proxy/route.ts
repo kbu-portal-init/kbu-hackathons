@@ -4,6 +4,7 @@ import sharp from "sharp";
 import { z } from "zod";
 import { requireAdmin, requireApprovedTeam, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { ALLOWED_IMAGE_TYPES, ALLOWED_SUBMISSION_TYPES, MAX_FILE_SIZE, MAX_IMAGE_SIZE } from "@/lib/contracts/storage";
+import prisma from "@/lib/prisma";
 import { isR2Configured, R2_BUCKET, R2_PUBLIC_URL, r2 } from "@/lib/r2";
 import { toFieldErrors } from "@/lib/validation/zod";
 
@@ -16,6 +17,7 @@ const proxySchema = z.object({
         "organizer-profile-image",
         "announcement-image",
         "member-profile-image",
+        "management-member-profile-image",
     ]),
 });
 
@@ -26,13 +28,32 @@ const IMAGE_CATEGORIES = [
     "organizer-profile-image",
     "announcement-image",
     "member-profile-image",
+    "management-member-profile-image",
 ] as const;
 
 const MAX_IMAGE_DIMENSION = 1600;
 const WEBP_QUALITY = 82;
 
-async function getUploadOwner(category: string) {
+async function getUploadOwner(category: string, teamId?: string, memberId?: string) {
     try {
+        if (category === "management-member-profile-image") {
+            if (!teamId || !memberId) return null;
+
+            await requireOrganizerOrAdmin();
+
+            const member = await prisma.teamMember.findFirst({
+                where: {
+                    id: memberId,
+                    teamId,
+                },
+                select: {
+                    teamId: true,
+                },
+            });
+
+            return member?.teamId ?? null;
+        }
+
         if (category === "admin-profile-image") {
             return (await requireAdmin()).user.id;
         }
@@ -69,6 +90,8 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
         const file = formData.get("file") as File | null;
         const categoryRaw = formData.get("category") as string | null;
+        const teamId = formData.get("teamId");
+        const memberId = formData.get("memberId");
 
         if (!file || !categoryRaw) {
             return NextResponse.json({ error: "Missing file or category" }, { status: 400 });
@@ -106,7 +129,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "File too large" }, { status: 400 });
         }
 
-        const owner = await getUploadOwner(category);
+        const owner = await getUploadOwner(
+            category,
+            typeof teamId === "string" ? teamId : undefined,
+            typeof memberId === "string" ? memberId : undefined,
+        );
 
         if (!owner) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

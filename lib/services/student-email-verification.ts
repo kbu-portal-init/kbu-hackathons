@@ -29,7 +29,9 @@ export async function sendStudentEmailVerification(teamMemberId: string, options
     await prisma.$transaction(async (tx) => {
         // delete any existing unverified verifications for this team member
         await tx.studentEmailVerification.deleteMany({ where: { teamMemberId, verifiedAt: null } });
-        await tx.studentEmailVerification.create({ data: { teamMemberId, tokenHash, expiresAt } });
+        await tx.studentEmailVerification.create({
+            data: { teamMemberId, studentEmail: member.studentEmail, tokenHash, expiresAt },
+        });
     });
 
     // biome-ignore lint/style/noNonNullAssertion: <We know this is set because we validated it>
@@ -83,6 +85,12 @@ export async function consumeStudentEmailVerification(
     }
 
     const updated = await prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM "team_member" WHERE id = ${verification.teamMemberId} FOR UPDATE`;
+        const member = await tx.teamMember.findUnique({
+            where: { id: verification.teamMemberId },
+            select: { studentEmail: true },
+        });
+        if (!member || member.studentEmail !== verification.studentEmail) return null;
         const claimed = await tx.studentEmailVerification.updateMany({
             where: { id: verification.id, verifiedAt: null, expiresAt: { gt: now } },
             data: { verifiedAt: now },

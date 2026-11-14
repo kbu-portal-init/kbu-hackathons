@@ -52,7 +52,8 @@ export const ErrorCodes = {
     TEAM_LEADER_NOT_FOUND: "TEAM_LEADER_NOT_FOUND",
     TEAM_NOT_APPROVED: "TEAM_NOT_APPROVED",
     INVALID_TEAM_SIZE: "INVALID_TEAM_SIZE",
-
+    TEAM_LEADER_ALREADY_EXISTS: "TEAM_LEADER_ALREADY_EXISTS",
+    TEAM_LEADER_REQUIRED: "TEAM_LEADER_REQUIRED",
     // ─────────────────────────────────────────────────────────────
     // Registration
     // ─────────────────────────────────────────────────────────────

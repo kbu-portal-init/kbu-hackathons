@@ -8,6 +8,7 @@ import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { approveRegistrationRequest, rejectRegistrationRequest } from "@/actions/management/registrations";
+import type { ProgramSlot } from "@/app/(public)/register/_components/types";
 import { PaginationFooter } from "@/components/pagination-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,18 +31,27 @@ import {
 } from "@/lib/contracts/registration";
 import { formatRole } from "@/lib/util";
 import { applyActionFieldErrors } from "@/lib/validation/react-hook-form";
+import { CreateRegistrationDialog } from "./create-registration-dialog";
 
+type RegistrationStatus = "PENDING" | "APPROVED" | "REJECTED" | "WITHDRAWN";
+
+type RegistrationFilter = "ALL" | RegistrationStatus;
 type Props = {
     items: RegistrationListItem[];
     meta: PaginationMeta;
-    status?: "PENDING" | "APPROVED" | "REJECTED";
+    status?: RegistrationStatus;
+    creationConfig: {
+        minTeamSize: number;
+        maxTeamSize: number;
+        programSlots: ProgramSlot[];
+    } | null;
 };
 
-const statusFilters = ["ALL", "PENDING", "APPROVED", "REJECTED"] as const;
+const statusFilters = ["ALL", "PENDING", "APPROVED", "REJECTED", "WITHDRAWN"] as const;
 
-export function RegistrationManagement({ items, meta, status }: Props) {
+export function RegistrationManagement({ items, meta, status, creationConfig }: Props) {
     const router = useRouter();
-    const [statusFilter, setStatusFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">(status ?? "ALL");
+    const [statusFilter, setStatusFilter] = useState<RegistrationFilter>(status ?? "ALL");
     const [rejectItem, setRejectItem] = useState<RegistrationListItem | null>(null);
     const [approveItem, setApproveItem] = useState<RegistrationListItem | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -78,32 +88,38 @@ export function RegistrationManagement({ items, meta, status }: Props) {
         });
     };
 
-    const handleFilterChange = (status: "ALL" | "PENDING" | "APPROVED" | "REJECTED") => {
-        setStatusFilter(status);
+    const handleFilterChange = (nextStatus: RegistrationFilter) => {
+        setStatusFilter(nextStatus);
+
         const params = new URLSearchParams();
-        if (status !== "ALL") params.set("status", status);
+        if (nextStatus !== "ALL") params.set("status", nextStatus);
         params.set("page", "1");
+
         router.push(`/panel/registrations?${params.toString()}`);
     };
 
     return (
         <>
-            <div className="flex flex-wrap items-center gap-2">
-                {statusFilters.map((s) => (
-                    <Button
-                        key={s}
-                        variant={statusFilter === s ? "default" : "outline"}
-                        size="sm"
-                        className={
-                            statusFilter === s
-                                ? "border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-foreground"
-                                : "border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
-                        }
-                        onClick={() => handleFilterChange(s)}
-                    >
-                        {s.charAt(0) + s.slice(1).toLowerCase()}
-                    </Button>
-                ))}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                    {statusFilters.map((s) => (
+                        <Button
+                            key={s}
+                            variant={statusFilter === s ? "default" : "outline"}
+                            size="sm"
+                            className={
+                                statusFilter === s
+                                    ? "border-2 border-border bg-foreground font-display text-xs font-semibold text-background hover:bg-foreground"
+                                    : "border-2 border-border/20 font-display text-xs font-semibold text-foreground hover:bg-accent hover:text-accent-foreground"
+                            }
+                            onClick={() => handleFilterChange(s)}
+                        >
+                            {s.charAt(0) + s.slice(1).toLowerCase()}
+                        </Button>
+                    ))}
+                </div>
+
+                <CreateRegistrationDialog creationConfig={creationConfig} />
             </div>
 
             <div className="mt-4 border-2 border-border bg-card">
@@ -233,7 +249,13 @@ export function RegistrationManagement({ items, meta, status }: Props) {
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={!!rejectItem} onOpenChange={(open) => !open && setRejectItem(null)}>
+            <Dialog
+                open={!!rejectItem}
+                onOpenChange={(open) => {
+                    if (!open && isPending) return;
+                    if (!open) setRejectItem(null);
+                }}
+            >
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="font-display">Reject registration</DialogTitle>
@@ -295,6 +317,12 @@ function StatusBadge({ status }: { status: string }) {
             return <Badge variant="outline">Approved</Badge>;
         case "REJECTED":
             return <Badge variant="destructive">Rejected</Badge>;
+        case "WITHDRAWN":
+            return (
+                <Badge variant="secondary" className="border-border/15">
+                    Withdrawn
+                </Badge>
+            );
         default:
             return (
                 <Badge variant="secondary" className="border-border/15">
