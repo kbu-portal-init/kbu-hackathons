@@ -332,7 +332,7 @@ describe("upload API routes", () => {
         assert.equal(deletedOwner, "team-1");
     });
 
-    it("rejects management deletion for unauthorized users or unrelated members", async () => {
+    it("rejects unauthorized users but allows staff cleanup after member deletion", async () => {
         const body = {
             key: "uploads/team-1/member-avatar.webp",
             teamId: "team-1",
@@ -352,7 +352,7 @@ describe("upload API routes", () => {
         assert.equal(deletedOwner, undefined);
 
         access = "staff";
-        memberRecord = { id: "member-1", teamId: "team-2" };
+        memberRecord = null;
 
         response = await deletePost(
             new Request("https://example.test/api/upload/delete", {
@@ -361,8 +361,8 @@ describe("upload API routes", () => {
             }) as never,
         );
 
-        assert.equal(response.status, 401);
-        assert.equal(deletedOwner, undefined);
+        assert.equal(response.status, 200);
+        assert.equal(deletedOwner, "team-1");
     });
 
     it("rejects management deletion when the storage key belongs to another team", async () => {

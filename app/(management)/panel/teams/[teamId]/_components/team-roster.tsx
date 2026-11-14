@@ -71,6 +71,8 @@ function showVerificationStatus(status: { sent: true } | { sent: false; error: {
 
 export function TeamRoster({ teamId, members }: { teamId: string; members: RosterMember[] }) {
     const router = useRouter();
+    const [editError, setEditError] = useState<string | null>(null);
+    const [createError, setCreateError] = useState<string | null>(null);
 
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
@@ -97,6 +99,7 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
     });
 
     const openCreateDialog = () => {
+        setCreateError(null);
         createForm.reset({
             teamId,
             name: "",
@@ -107,6 +110,7 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
     };
 
     const openEditDialog = (member: RosterMember) => {
+        setEditError(null);
         editForm.reset({
             teamId,
             memberId: member.id,
@@ -118,38 +122,48 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
     };
 
     const handleCreate = async (values: CreateTeamMemberInput) => {
-        const result = await createTeamMember(values);
+        setCreateError(null);
+        try {
+            const result = await createTeamMember(values);
 
-        if (!result.ok) {
-            applyActionFieldErrors(result.error.fieldErrors, createForm.setError);
-            toast.error(result.error.message);
-            return;
+            if (!result.ok) {
+                applyActionFieldErrors(result.error.fieldErrors, createForm.setError);
+                toast.error(result.error.message);
+                return;
+            }
+
+            toast.success("Team member added");
+            showVerificationStatus(result.data.verificationEmail);
+            setCreateOpen(false);
+            createForm.reset();
+            router.refresh();
+        } catch {
+            setCreateError("Unable to add member. Please try again.");
         }
-
-        toast.success("Team member added");
-        showVerificationStatus(result.data.verificationEmail);
-        setCreateOpen(false);
-        createForm.reset();
-        router.refresh();
     };
 
     const handleUpdate = async (values: UpdateTeamMemberInput) => {
-        const result = await updateTeamMember(values);
+        setEditError(null);
+        try {
+            const result = await updateTeamMember(values);
 
-        if (!result.ok) {
-            applyActionFieldErrors(result.error.fieldErrors, editForm.setError);
-            toast.error(result.error.message);
-            return;
+            if (!result.ok) {
+                applyActionFieldErrors(result.error.fieldErrors, editForm.setError);
+                toast.error(result.error.message);
+                return;
+            }
+
+            toast.success("Team member updated");
+
+            if (result.data.emailChanged) {
+                showVerificationStatus(result.data.verificationEmail);
+            }
+
+            setEditOpen(false);
+            router.refresh();
+        } catch {
+            setEditError("Unable to update member. Please try again.");
         }
-
-        toast.success("Team member updated");
-
-        if (result.data.emailChanged) {
-            showVerificationStatus(result.data.verificationEmail);
-        }
-
-        setEditOpen(false);
-        router.refresh();
     };
 
     const handleDelete = async (member: RosterMember): Promise<boolean> => {
@@ -163,6 +177,9 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
             return false;
         }
 
+        if (result.data.imageCleanupFailed) {
+            toast.warning("Member deleted, but their profile image could not be removed from storage.");
+        }
         if (result.data.cardCleanupFailed) {
             toast.warning("Member deleted, but their card image could not be removed from storage.");
         } else {
@@ -295,7 +312,12 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={createForm.handleSubmit(handleCreate)}>
+                    <form onChange={() => setCreateError(null)} onSubmit={createForm.handleSubmit(handleCreate)}>
+                        {createError && (
+                            <p role="alert" className="text-sm text-destructive">
+                                {createError}
+                            </p>
+                        )}
                         <FieldGroup>
                             <Controller
                                 name="name"
@@ -338,7 +360,13 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel>Role</FieldLabel>
-                                        <Select value={field.value} onValueChange={field.onChange}>
+                                        <Select
+                                            value={field.value}
+                                            onValueChange={(value) => {
+                                                setCreateError(null);
+                                                field.onChange(value);
+                                            }}
+                                        >
                                             <SelectTrigger aria-invalid={fieldState.invalid}>
                                                 <SelectValue placeholder="Select a role" />
                                             </SelectTrigger>
@@ -388,7 +416,12 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={editForm.handleSubmit(handleUpdate)}>
+                    <form onChange={() => setEditError(null)} onSubmit={editForm.handleSubmit(handleUpdate)}>
+                        {editError && (
+                            <p role="alert" className="text-sm text-destructive">
+                                {editError}
+                            </p>
+                        )}
                         <FieldGroup>
                             <Controller
                                 name="name"
@@ -425,7 +458,13 @@ export function TeamRoster({ teamId, members }: { teamId: string; members: Roste
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel>Role</FieldLabel>
-                                        <Select value={field.value} onValueChange={field.onChange}>
+                                        <Select
+                                            value={field.value}
+                                            onValueChange={(value) => {
+                                                setEditError(null);
+                                                field.onChange(value);
+                                            }}
+                                        >
                                             <SelectTrigger aria-invalid={fieldState.invalid}>
                                                 <SelectValue placeholder="Select a role" />
                                             </SelectTrigger>

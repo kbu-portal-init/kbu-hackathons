@@ -84,6 +84,7 @@ describe("student email verification", () => {
         prisma.studentEmailVerification.findUnique = (async () => ({
             id: "verification-1",
             teamMemberId: "member-1",
+            studentEmail: "student@ms.kbu.ac.th",
             tokenHash: "hash",
             expiresAt: new Date("2099-01-01T00:00:00.000Z"),
             verifiedAt: null,
@@ -91,8 +92,10 @@ describe("student email verification", () => {
         })) as unknown as typeof prisma.studentEmailVerification.findUnique;
         prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
             callback({
+                $queryRaw: async () => [],
                 studentEmailVerification: { updateMany: async () => ({ count: 1 }) },
                 teamMember: {
+                    findUnique: async () => ({ studentEmail: "student@ms.kbu.ac.th" }),
                     update: async () => {
                         memberUpdated = true;
                         return {};
@@ -104,6 +107,41 @@ describe("student email verification", () => {
             assert.equal(result.ok, true);
             assert.equal(result.ok && result.data.alreadyVerified, false);
             assert.equal(memberUpdated, true);
+        } finally {
+            prisma.studentEmailVerification.findUnique = originalFind;
+            prisma.$transaction = originalTransaction;
+        }
+    });
+
+    it("rejects a token sent to a previous student email", async () => {
+        const originalFind = prisma.studentEmailVerification.findUnique;
+        const originalTransaction = prisma.$transaction;
+        let memberUpdated = false;
+        prisma.studentEmailVerification.findUnique = (async () => ({
+            id: "verification-1",
+            teamMemberId: "member-1",
+            studentEmail: "student@ms.kbu.ac.th",
+            tokenHash: "hash",
+            expiresAt: new Date("2099-01-01T00:00:00.000Z"),
+            verifiedAt: null,
+            createdAt: new Date(),
+        })) as unknown as typeof prisma.studentEmailVerification.findUnique;
+        prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
+            callback({
+                $queryRaw: async () => [],
+                studentEmailVerification: { updateMany: async () => ({ count: 1 }) },
+                teamMember: {
+                    findUnique: async () => ({ studentEmail: "changed@ms.kbu.ac.th" }),
+                    update: async () => {
+                        memberUpdated = true;
+                        return {};
+                    },
+                },
+            } as unknown as typeof prisma)) as unknown as typeof prisma.$transaction;
+        try {
+            const result = await consume("token");
+            assert.equal(result.ok, false);
+            assert.equal(memberUpdated, false);
         } finally {
             prisma.studentEmailVerification.findUnique = originalFind;
             prisma.$transaction = originalTransaction;

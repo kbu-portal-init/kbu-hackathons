@@ -445,6 +445,7 @@ export async function updateRegistration(
     actorId: string,
 ): Promise<ActionResult<UpdateRegistrationData>> {
     const result = await prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM "registration" WHERE id = ${input.registrationId} FOR UPDATE`;
         const registration = await tx.registration.findUnique({
             where: { id: input.registrationId },
             select: {

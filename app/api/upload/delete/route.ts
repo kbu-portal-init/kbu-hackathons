@@ -2,7 +2,6 @@
 import { z } from "zod";
 import { requireAdmin, requireApprovedTeam, requireOrganizerOrAdmin } from "@/lib/auth/guards";
 import { deleteObjectSchema } from "@/lib/contracts/storage";
-import prisma from "@/lib/prisma";
 import { deleteObject } from "@/lib/services/storage";
 import { toFieldErrors } from "@/lib/validation/zod";
 
@@ -47,21 +46,10 @@ async function getUploadOwner(key: string) {
     }
 }
 
-async function getManagementMemberUploadOwner(teamId: string, memberId: string) {
+async function getManagementMemberUploadOwner(teamId: string) {
     try {
         await requireOrganizerOrAdmin();
-
-        const member = await prisma.teamMember.findFirst({
-            where: {
-                id: memberId,
-                teamId,
-            },
-            select: {
-                teamId: true,
-            },
-        });
-
-        return member?.teamId ?? null;
+        return teamId;
     } catch {
         return null;
     }
@@ -90,7 +78,7 @@ export async function POST(request: NextRequest) {
     let owner: string | null;
 
     if (teamId && memberId) {
-        owner = await getManagementMemberUploadOwner(teamId, memberId);
+        owner = await getManagementMemberUploadOwner(teamId);
 
         if (!owner) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

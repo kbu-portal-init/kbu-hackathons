@@ -15,7 +15,7 @@ import type {
     UpdateTeamMemberInput,
 } from "@/lib/contracts/team-members";
 import prisma from "@/lib/prisma";
-import { isOwnedR2PublicUrl } from "@/lib/r2";
+import { isOwnedR2PublicUrl, R2_PUBLIC_URL } from "@/lib/r2";
 import { deleteObject } from "@/lib/services/storage";
 
 export async function createTeamMember(
@@ -299,6 +299,7 @@ export async function updateTeamMember(
                 ok: true as const,
                 data: {
                     ...member,
+                    studentEmailVerifiedAt: member.studentEmailVerifiedAt?.toISOString() ?? null,
                     emailChanged,
                 },
             };
@@ -480,7 +481,7 @@ export async function deleteTeamMember(
     let result:
         | {
               ok: true;
-              data: { id: string; cardKey: string | null };
+              data: { id: string; cardKey: string | null; imageKey: string | null };
           }
         | {
               ok: false;
@@ -522,6 +523,7 @@ export async function deleteTeamMember(
                     studentEmail: true,
                     role: true,
                     cardKey: true,
+                    imageUrl: true,
                 },
             });
 
@@ -583,6 +585,18 @@ export async function deleteTeamMember(
                 }
             }
 
+            let imageKey: string | null = null;
+            if (
+                existingMember.imageUrl &&
+                R2_PUBLIC_URL &&
+                isOwnedR2PublicUrl(existingMember.imageUrl, `uploads/${input.teamId}`)
+            ) {
+                const baseUrl = new URL(`${R2_PUBLIC_URL}/`);
+                imageKey = decodeURIComponent(
+                    new URL(existingMember.imageUrl).pathname.slice(baseUrl.pathname.length).replace(/^\//, ""),
+                );
+            }
+
             await tx.teamMember.delete({
                 where: { id: input.memberId },
             });
@@ -608,6 +622,7 @@ export async function deleteTeamMember(
                 data: {
                     id: existingMember.id,
                     cardKey: existingMember.cardKey,
+                    imageKey,
                 },
             };
         });
@@ -638,11 +653,21 @@ export async function deleteTeamMember(
             cardCleanupFailed = true;
         }
     }
+    let imageCleanupFailed = false;
+    if (result.data.imageKey) {
+        try {
+            const cleanup = await cleanupCard({ key: result.data.imageKey }, input.teamId);
+            imageCleanupFailed = !cleanup.ok;
+        } catch {
+            imageCleanupFailed = true;
+        }
+    }
     return {
         ok: true,
         data: {
             id: result.data.id,
             cardCleanupFailed,
+            imageCleanupFailed,
         },
     };
 }

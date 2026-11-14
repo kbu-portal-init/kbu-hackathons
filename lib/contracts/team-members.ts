@@ -59,7 +59,7 @@ export type UpdateTeamMemberData = {
     name: string;
     studentEmail: string;
     role: TeamMemberRole;
-    studentEmailVerifiedAt: Date | null;
+    studentEmailVerifiedAt: string | null;
     emailChanged: boolean;
 };
 
@@ -73,6 +73,7 @@ export type DeleteTeamMemberInput = z.infer<typeof deleteTeamMemberSchema>;
 export type DeleteTeamMemberData = {
     id: string;
     cardCleanupFailed: boolean;
+    imageCleanupFailed: boolean;
 };
 
 export const updateMemberImageSchema = z.object({

@@ -37,6 +37,7 @@ type Props = {
 
 export function CreateRegistrationDialog({ creationConfig }: Props) {
     const router = useRouter();
+    const [formError, setFormError] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
     const [selectedTeamSize, setSelectedTeamSize] = useState(creationConfig?.minTeamSize ?? 2);
     const [applicationNotes, setApplicationNotes] = useState("");
@@ -116,26 +117,31 @@ export function CreateRegistrationDialog({ creationConfig }: Props) {
     };
 
     const onSubmit = async (values: SubmittedFormValues) => {
-        const result = await createRegistrationRequest({
-            ...values,
-            applicationNotes: applicationNotes.trim() || null,
-        });
+        setFormError(null);
+        try {
+            const result = await createRegistrationRequest({
+                ...values,
+                applicationNotes: applicationNotes.trim() || null,
+            });
 
-        if (!result.ok) {
-            applyActionFieldErrors(result.error.fieldErrors, form.setError);
-            toast.error(result.error.message);
-            return;
+            if (!result.ok) {
+                applyActionFieldErrors(result.error.fieldErrors, form.setError);
+                toast.error(result.error.message);
+                return;
+            }
+
+            toast.success(
+                result.data.verificationEmailsSent
+                    ? "Registration created. Verification emails sent."
+                    : "Registration created, but verification emails could not be sent.",
+            );
+
+            setOpen(false);
+            resetForm();
+            router.refresh();
+        } catch {
+            setFormError("Unable to create registration. Please try again.");
         }
-
-        toast.success(
-            result.data.verificationEmailsSent
-                ? "Registration created. Verification emails sent."
-                : "Registration created, but verification emails could not be sent.",
-        );
-
-        setOpen(false);
-        resetForm();
-        router.refresh();
     };
 
     const rosterNames = [watchedLeaderName ?? "", ...(watchedMembers ?? []).map((member) => member?.name ?? "")];
@@ -160,7 +166,16 @@ export function CreateRegistrationDialog({ creationConfig }: Props) {
                         </div>
                     ) : null}
 
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form
+                        onChange={() => setFormError(null)}
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-6"
+                    >
+                        {formError && (
+                            <p role="alert" className="text-sm text-destructive">
+                                {formError}
+                            </p>
+                        )}
                         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_17rem]">
                             <div className="space-y-5">
                                 <FieldGroup>

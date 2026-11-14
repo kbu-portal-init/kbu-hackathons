@@ -147,6 +147,7 @@ model StudentEmailVerification {
   id           String     @id @default(cuid())
   teamMemberId String
   teamMember   TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  studentEmail String
   tokenHash    String     @unique
   expiresAt    DateTime
   verifiedAt   DateTime?

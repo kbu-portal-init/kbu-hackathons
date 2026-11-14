@@ -88,6 +88,7 @@ const memberToDelete = {
 };
 
 before(async () => {
+    process.env.NEXT_PUBLIC_R2_PUBLIC_URL = "https://media.example.test";
     const serverOnlyPath = require.resolve("server-only");
     require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
 
@@ -492,7 +493,7 @@ describe("updateTeamMember", () => {
 
         if (result.ok) {
             assert.equal(result.data.emailChanged, false);
-            assert.equal(result.data.studentEmailVerifiedAt, existingMember.studentEmailVerifiedAt);
+            assert.equal(result.data.studentEmailVerifiedAt, existingMember.studentEmailVerifiedAt.toISOString());
         }
     });
 
@@ -790,6 +791,42 @@ describe("deleteTeamMember", () => {
         if (result.ok) {
             assert.equal(result.data.id, memberToDelete.id);
             assert.equal(result.data.cardCleanupFailed, false);
+        }
+    });
+
+    it("cleans the owned profile image after commit and reports cleanup failure separately", async () => {
+        let committed = false;
+        const keys: string[] = [];
+        const tx = createTransaction({
+            teamMember: {
+                count: async () => 3,
+                findFirst: async () => ({
+                    ...memberToDelete,
+                    imageUrl: "https://media.example.test/uploads/team-1/avatar.webp",
+                }),
+                delete: async () => ({}),
+            },
+        });
+        const originalTransaction = prisma.$transaction;
+        prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) => {
+            const result = await callback(tx as unknown as typeof prisma);
+            committed = true;
+            return result;
+        }) as unknown as typeof prisma.$transaction;
+        try {
+            const result = await deleteTeamMember(deleteInput, "organizer-1", async ({ key }) => {
+                assert.equal(committed, true);
+                keys.push(key);
+                if (key.endsWith("avatar.webp")) throw new Error("Storage unavailable");
+                return { ok: true, data: { ok: true } };
+            });
+            assert.deepEqual(keys, [memberToDelete.cardKey, "uploads/team-1/avatar.webp"]);
+            assert.deepEqual(result, {
+                ok: true,
+                data: { id: memberToDelete.id, cardCleanupFailed: false, imageCleanupFailed: true },
+            });
+        } finally {
+            prisma.$transaction = originalTransaction;
         }
     });
 

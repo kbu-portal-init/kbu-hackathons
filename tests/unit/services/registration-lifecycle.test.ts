@@ -525,6 +525,7 @@ describe("registration lifecycle", () => {
         try {
             prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
                 callback({
+                    $queryRaw: async () => operations.push("lock"),
                     registration: {
                         findUnique: async () => {
                             operations.push("find");
@@ -573,7 +574,7 @@ describe("registration lifecycle", () => {
                 applicationNotes: "Updated notes",
             });
 
-            assert.deepEqual(operations, ["find", "update", "audit"]);
+            assert.deepEqual(operations, ["lock", "find", "update", "audit"]);
         } finally {
             prisma.$transaction = originalTransaction;
         }
@@ -586,6 +587,7 @@ describe("registration lifecycle", () => {
         try {
             prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
                 callback({
+                    $queryRaw: async () => operations.push("lock"),
                     registration: {
                         findUnique: async () => {
                             operations.push("find");
@@ -612,7 +614,7 @@ describe("registration lifecycle", () => {
                 assert.equal(result.error.code, "REGISTRATION_NOT_FOUND");
             }
 
-            assert.deepEqual(operations, ["find"]);
+            assert.deepEqual(operations, ["lock", "find"]);
         } finally {
             prisma.$transaction = originalTransaction;
         }
@@ -626,6 +628,7 @@ describe("registration lifecycle", () => {
         try {
             prisma.$transaction = (async (callback: (tx: typeof prisma) => Promise<unknown>) =>
                 callback({
+                    $queryRaw: async () => operations.push("lock"),
                     registration: {
                         findUnique: async () => ({
                             id: "registration-1",
@@ -655,7 +658,7 @@ describe("registration lifecycle", () => {
                 auditError,
             );
 
-            assert.deepEqual(operations, ["update", "audit"]);
+            assert.deepEqual(operations, ["lock", "update", "audit"]);
         } finally {
             prisma.$transaction = originalTransaction;
         }

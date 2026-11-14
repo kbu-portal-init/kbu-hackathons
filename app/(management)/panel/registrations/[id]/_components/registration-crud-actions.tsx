@@ -30,6 +30,7 @@ type Props = {
 
 export function RegistrationCrudActions({ registrationId, status, applicationNotes }: Props) {
     const router = useRouter();
+    const [formError, setFormError] = useState<string | null>(null);
     const [editOpen, setEditOpen] = useState(false);
 
     const form = useForm<UpdateRegistrationInput>({
@@ -41,6 +42,8 @@ export function RegistrationCrudActions({ registrationId, status, applicationNot
     });
 
     const handleEditOpen = (open: boolean) => {
+        if (form.formState.isSubmitting) return;
+        setFormError(null);
         if (open) {
             form.reset({ registrationId, applicationNotes });
         }
@@ -48,17 +51,22 @@ export function RegistrationCrudActions({ registrationId, status, applicationNot
     };
 
     const onUpdate = async (values: UpdateRegistrationInput) => {
-        const result = await updateRegistrationRequest(values);
+        setFormError(null);
+        try {
+            const result = await updateRegistrationRequest(values);
 
-        if (!result.ok) {
-            applyActionFieldErrors(result.error.fieldErrors, form.setError);
-            toast.error(result.error.message);
-            return;
+            if (!result.ok) {
+                applyActionFieldErrors(result.error.fieldErrors, form.setError);
+                toast.error(result.error.message);
+                return;
+            }
+
+            toast.success("Application notes updated");
+            setEditOpen(false);
+            router.refresh();
+        } catch {
+            setFormError("Unable to update registration. Please try again.");
         }
-
-        toast.success("Application notes updated");
-        setEditOpen(false);
-        router.refresh();
     };
 
     const onDelete = async (): Promise<boolean> => {
@@ -115,7 +123,12 @@ export function RegistrationCrudActions({ registrationId, status, applicationNot
                         <DialogDescription>Update the notes associated with this registration.</DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={form.handleSubmit(onUpdate)}>
+                    <form onChange={() => setFormError(null)} onSubmit={form.handleSubmit(onUpdate)}>
+                        {formError && (
+                            <p role="alert" className="text-sm text-destructive">
+                                {formError}
+                            </p>
+                        )}
                         <FieldGroup>
                             <Controller
                                 name="applicationNotes"
