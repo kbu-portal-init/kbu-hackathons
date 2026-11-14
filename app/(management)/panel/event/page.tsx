@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { getEventSettings } from "@/actions/management/event-settings";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardFormSkeleton } from "@/components/dashboard-skeletons";
+import { EventScheduleLoader } from "./_components/event-schedule-loader";
 import { EventSettingsForm } from "./_components/event-settings-form";
 
 export default function PanelEventPage() {
@@ -13,6 +14,9 @@ export default function PanelEventPage() {
             />
             <Suspense fallback={<DashboardFormSkeleton />}>
                 <EventSettingsContent />
+            </Suspense>
+            <Suspense fallback={<DashboardFormSkeleton />}>
+                <EventScheduleLoader />
             </Suspense>
         </main>
     );
