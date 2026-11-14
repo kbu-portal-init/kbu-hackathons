@@ -144,13 +144,14 @@ model TeamMember {
 }
 
 model StudentEmailVerification {
-  id           String     @id @default(cuid())
-  teamMemberId String
-  teamMember   TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
-  tokenHash    String     @unique
-  expiresAt    DateTime
-  verifiedAt   DateTime?
-  createdAt    DateTime   @default(now())
+  id            String     @id @default(cuid())
+  teamMemberId  String
+  teamMember    TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  recipientEmail String
+  tokenHash     String     @unique
+  expiresAt     DateTime
+  verifiedAt    DateTime?
+  createdAt     DateTime   @default(now())
 
   @@index([teamMemberId, expiresAt])
   @@map("student_email_verification")

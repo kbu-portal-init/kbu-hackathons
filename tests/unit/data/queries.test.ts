@@ -16,33 +16,81 @@ before(async () => {
 });
 
 describe("data query boundaries", () => {
-    it("lists only approved teams and applies pagination and ban filters", async () => {
+    it("lists approved teams with correct active, banned, and archived filters", async () => {
         const originalCount = prisma.team.count;
         const originalFind = prisma.team.findMany;
+
         let countArgs: unknown;
         let findArgs!: {
-            where: { registration: { status: string }; user: { banned: boolean } };
+            where: {
+                registration: { status: string };
+                archivedAt?: null | { not: null };
+                user?: {
+                    banned?: boolean;
+                    OR?: Array<Record<string, unknown>>;
+                };
+            };
             skip: number;
             take: number;
             orderBy: unknown;
         };
+
         try {
             prisma.team.count = (async (args: unknown) => {
                 countArgs = args;
                 return 5;
             }) as typeof prisma.team.count;
+
             prisma.team.findMany = (async (args: unknown) => {
                 findArgs = args as typeof findArgs;
                 return [];
             }) as unknown as typeof prisma.team.findMany;
-            const result = await teams.listTeams({ page: 2, pageSize: 2, status: "BANNED" });
-            assert.equal(result.meta.hasNextPage, true);
+
+            // BANNED
+            const bannedResult = await teams.listTeams({
+                page: 2,
+                pageSize: 2,
+                status: "BANNED",
+            });
+
+            assert.equal(bannedResult.meta.hasNextPage, true);
             assert.deepEqual(countArgs, { where: findArgs.where });
             assert.equal(findArgs.where.registration.status, "APPROVED");
-            assert.equal(findArgs.where.user.banned, true);
+            assert.equal(findArgs.where.archivedAt, null);
+            assert.equal(findArgs.where.user?.banned, true);
+            assert.deepEqual(findArgs.where.user?.OR?.[0], { banExpires: null });
+            assert.ok(findArgs.where.user?.OR?.[1].banExpires);
+            const bannedExpiry = findArgs.where.user?.OR?.[1].banExpires as Record<string, unknown> | undefined;
+
+            assert.ok(bannedExpiry?.gt instanceof Date);
             assert.equal(findArgs.skip, 2);
             assert.equal(findArgs.take, 2);
             assert.deepEqual(findArgs.orderBy, { createdAt: "desc" });
+
+            // ACTIVE
+            await teams.listTeams({ page: 1, pageSize: 20, status: "ACTIVE" });
+
+            assert.equal(findArgs.where.registration.status, "APPROVED");
+            assert.equal(findArgs.where.archivedAt, null);
+            assert.deepEqual(findArgs.where.user?.OR?.[0], { banned: false });
+            assert.ok(findArgs.where.user?.OR?.[1].banExpires);
+            const activeExpiry = findArgs.where.user?.OR?.[1].banExpires as Record<string, unknown> | undefined;
+
+            assert.ok(activeExpiry?.lte instanceof Date);
+            // ARCHIVED
+            await teams.listTeams({ page: 1, pageSize: 20, status: "ARCHIVED" });
+
+            assert.deepEqual(findArgs.where, {
+                registration: { status: "APPROVED" },
+                archivedAt: { not: null },
+            });
+
+            // ALL
+            await teams.listTeams({ page: 1, pageSize: 20 });
+
+            assert.deepEqual(findArgs.where, {
+                registration: { status: "APPROVED" },
+            });
         } finally {
             prisma.team.count = originalCount;
             prisma.team.findMany = originalFind;

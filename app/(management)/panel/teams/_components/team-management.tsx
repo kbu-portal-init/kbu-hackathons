@@ -13,8 +13,8 @@ import type { TeamListItem } from "@/lib/contracts/teams";
 import { formatRole } from "@/lib/util";
 import { TeamActions } from "./team-actions";
 
-type Props = { items: TeamListItem[]; meta: PaginationMeta; status?: "ACTIVE" | "BANNED" };
-const filters = ["ALL", "ACTIVE", "BANNED"] as const;
+type Props = { items: TeamListItem[]; meta: PaginationMeta; status?: "ACTIVE" | "BANNED" | "ARCHIVED" };
+const filters = ["ALL", "ACTIVE", "BANNED", "ARCHIVED"] as const;
 
 export function TeamManagement({ items, meta, status }: Props) {
     const router = useRouter();
@@ -61,8 +61,8 @@ export function TeamManagement({ items, meta, status }: Props) {
                     <TableBody>
                         {items.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
-                                    No approved teams found.
+                                <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
+                                    No teams found.
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -82,7 +82,9 @@ export function TeamManagement({ items, meta, status }: Props) {
                                         )}
                                     </TableCell>
                                     <TableCell>
-                                        {item.banned ? (
+                                        {item.archivedAt ? (
+                                            <Badge variant="secondary">Archived</Badge>
+                                        ) : item.banned ? (
                                             <Badge variant="destructive">Banned</Badge>
                                         ) : (
                                             <Badge variant="outline">Active</Badge>

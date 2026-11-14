@@ -16,6 +16,7 @@ function listRecord() {
         imageUrl: null,
         program: "THAI_PROGRAM" as const,
         createdAt: date,
+        archivedAt: null,
         user: { banned: true, banReason: "spam", banExpires: activeBan },
         members: [{ id: "m1" }, { id: "m2" }],
         submission: { id: "s1" },
@@ -32,7 +33,14 @@ describe("supporting DTO mappers", () => {
         assert.equal(item.banned, true);
         assert.equal(item.banExpires, activeBan.toISOString());
         assert.equal(item.createdAt, date.toISOString());
+        assert.equal(item.archivedAt, null);
 
+        const archived = toTeamListItem({
+            ...listRecord(),
+            archivedAt: date,
+        });
+
+        assert.equal(archived.archivedAt, date.toISOString());
         const unknown = toTeamListItem({
             ...listRecord(),
             user: null,
@@ -42,7 +50,6 @@ describe("supporting DTO mappers", () => {
         assert.equal(unknown.registrationStatus, "UNKNOWN");
         assert.equal(unknown.submissionCount, 0);
         assert.equal(unknown.banned, false);
-
         const expired = toTeamListItem({
             ...listRecord(),
             user: { banned: true, banReason: "spam", banExpires: expiredBan },

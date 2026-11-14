@@ -4,12 +4,15 @@ import { before, describe, it } from "node:test";
 let prisma: typeof import("@/lib/prisma").default;
 let findTeamAccountByUsername: typeof import("@/lib/auth/team-access").findTeamAccountByUsername;
 let isApprovedTeamAccount: typeof import("@/lib/auth/team-access").isApprovedTeamAccount;
+let findTeamAccountByEmail: typeof import("@/lib/auth/team-access").findTeamAccountByEmail;
 
 before(async () => {
     const serverOnlyPath = require.resolve("server-only");
     require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
     ({ default: prisma } = await import("@/lib/prisma"));
-    ({ findTeamAccountByUsername, isApprovedTeamAccount } = await import("@/lib/auth/team-access"));
+    ({ findTeamAccountByUsername, findTeamAccountByEmail, isApprovedTeamAccount } = await import(
+        "@/lib/auth/team-access"
+    ));
 });
 
 describe("team access", () => {
@@ -41,6 +44,27 @@ describe("team access", () => {
         try {
             await findTeamAccountByUsername("Team-Alpha");
             assert.equal(receivedUsername, "team-alpha");
+        } finally {
+            prisma.user.findFirst = originalFindFirst;
+        }
+    });
+
+    it("normalizes email lookup input and restricts lookup to team accounts", async () => {
+        const originalFindFirst = prisma.user.findFirst;
+        let receivedWhere: { email: string; role: string } | undefined;
+
+        prisma.user.findFirst = (async ({ where }: { where: { email: string; role: string } }) => {
+            receivedWhere = where;
+            return null;
+        }) as unknown as typeof prisma.user.findFirst;
+
+        try {
+            await findTeamAccountByEmail("TEAM@EXAMPLE.COM");
+
+            assert.deepEqual(receivedWhere, {
+                email: "team@example.com",
+                role: "team",
+            });
         } finally {
             prisma.user.findFirst = originalFindFirst;
         }

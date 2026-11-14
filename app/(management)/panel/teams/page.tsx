@@ -22,8 +22,14 @@ export default function PanelTeamsPage({
 }
 
 async function TeamListContent({ page, status }: { page?: string; status?: string }) {
-    const normalizedStatus = status === "ACTIVE" || status === "BANNED" ? status : undefined;
-    const result = await listTeams({ page: page ? Number(page) : 1, pageSize: 20, status: normalizedStatus });
+    const normalizedStatus = status === "ACTIVE" || status === "BANNED" || status === "ARCHIVED" ? status : undefined;
+
+    const result = await listTeams({
+        page: page ? Number(page) : 1,
+        pageSize: 20,
+        status: normalizedStatus,
+    });
+
     if (!result.ok) throw new Error(result.error.message);
 
     return <TeamManagement items={result.data.items} meta={result.data.meta} status={normalizedStatus} />;

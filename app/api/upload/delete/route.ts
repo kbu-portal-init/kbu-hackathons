@@ -4,33 +4,89 @@ import { deleteObjectSchema } from "@/lib/contracts/storage";
 import { deleteObject } from "@/lib/services/storage";
 import { toFieldErrors } from "@/lib/validation/zod";
 
-async function getUploadOwner(key: string) {
+function getTeamIdFromKey(key: string): string | null {
+    const [root, teamId, ...path] = key.split("/");
+
+    if (
+        root !== "uploads" ||
+        !teamId ||
+        path.length === 0 ||
+        path.some((segment) => !segment || segment === "." || segment === "..") ||
+        ["admins", "organizers", "events", "announcements"].includes(teamId)
+    ) {
+        return null;
+    }
+
+    return teamId;
+}
+
+async function getUploadOwner(key: string): Promise<string | null> {
     try {
-        if (key.startsWith("uploads/admins/")) return `admins/${(await requireAdmin()).user.id}`;
-        if (key.startsWith("uploads/organizers/")) return `organizers/${(await requireOrganizerOrAdmin()).user.id}`;
+        if (key.startsWith("uploads/admins/")) {
+            return `admins/${(await requireAdmin()).user.id}`;
+        }
+
+        if (key.startsWith("uploads/organizers/")) {
+            return `organizers/${(await requireOrganizerOrAdmin()).user.id}`;
+        }
+
         if (key.startsWith("uploads/events/")) {
             await requireOrganizerOrAdmin();
             return "events";
         }
+
         if (key.startsWith("uploads/announcements/")) {
             await requireOrganizerOrAdmin();
             return "announcements";
         }
-        return (await requireApprovedTeam()).team.id;
+
+        const teamId = getTeamIdFromKey(key);
+
+        if (!teamId) {
+            return null;
+        }
+
+        // Organizers and admins can clean up team uploads,
+        // including images belonging to members who have been deleted.
+        try {
+            await requireOrganizerOrAdmin();
+            return teamId;
+        } catch {
+            // Fall through to team ownership validation.
+        }
+
+        const { team } = await requireApprovedTeam();
+
+        return team.id === teamId ? team.id : null;
     } catch {
         return null;
     }
 }
+
 export async function POST(request: NextRequest) {
     const parsed = deleteObjectSchema.safeParse(await request.json());
-    if (!parsed.success)
+
+    if (!parsed.success) {
         return NextResponse.json(
-            { error: "Validation failed", fieldErrors: toFieldErrors(parsed.error) },
+            {
+                error: "Validation failed",
+                fieldErrors: toFieldErrors(parsed.error),
+            },
             { status: 400 },
         );
+    }
+
     const owner = await getUploadOwner(parsed.data.key);
-    if (!owner) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    if (!owner) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const result = await deleteObject(parsed.data, owner);
-    if (!result.ok) return NextResponse.json({ error: result.error.message }, { status: 500 });
+
+    if (!result.ok) {
+        return NextResponse.json({ error: result.error.message }, { status: 500 });
+    }
+
     return NextResponse.json(result.data);
 }

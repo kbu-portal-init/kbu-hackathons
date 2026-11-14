@@ -9,6 +9,9 @@ let deleteServiceInput: unknown;
 let logoServiceArgs: unknown[] | undefined;
 let submitServiceInput: unknown;
 let validationFailure: { issues: { path: (string | number)[]; message: string }[] } | undefined;
+let submitServiceError: Error | undefined;
+let approveServiceError: Error | undefined;
+let rejectServiceError: Error | undefined;
 
 const serverOnlyPath = require.resolve("server-only");
 require.cache[serverOnlyPath] = { exports: {} } as NodeJS.Module;
@@ -48,7 +51,16 @@ mock("@/lib/services/team-settings", {
 mock("@/lib/services/registration", {
     submitRegistration: async (input: unknown) => {
         submitServiceInput = input;
-        return { ok: true, data: { id: "registration-1" } };
+        if (submitServiceError) throw submitServiceError;
+        return { ok: true, data: { registrationId: "registration-1" } };
+    },
+    approveRegistration: async () => {
+        if (approveServiceError) throw approveServiceError;
+        return { ok: true, data: { registrationId: "registration-1" } };
+    },
+    rejectRegistration: async () => {
+        if (rejectServiceError) throw rejectServiceError;
+        return { ok: true, data: { registrationId: "registration-1" } };
     },
     verifyTeamMemberEmail: async (token: string) => ({ ok: true, data: { token } }),
 });
@@ -136,5 +148,52 @@ describe("server action boundaries", () => {
         organizerSession = null;
         const { listRegistrationRequests } = await import("@/actions/management/registrations");
         await assert.rejects(() => listRegistrationRequests({}), /redirect:\/login/);
+    });
+
+    it("maps unexpected registration submission failures to CREATE_FAILED", async () => {
+        submitServiceError = new Error("database unavailable");
+
+        const result = await submitTeamRegistration({
+            teamName: "Team",
+            program: "THAI_PROGRAM",
+            leaderName: "Leader",
+            leaderEmail: "u123456789012@ms.kbu.ac.th",
+            members: [],
+        });
+
+        assert.equal(result.ok, false);
+        if (!result.ok) {
+            assert.equal(result.error.code, "CREATE_FAILED");
+            assert.equal(result.error.message, "Failed to submit registration");
+        }
+    });
+
+    it("maps unexpected registration approval failures to APPROVAL_FAILED", async () => {
+        approveServiceError = new Error("database unavailable");
+
+        const { approveRegistrationRequest } = await import("@/actions/management/registrations");
+        const result = await approveRegistrationRequest({ registrationId: "registration-1" });
+
+        assert.equal(result.ok, false);
+        if (!result.ok) {
+            assert.equal(result.error.code, "APPROVAL_FAILED");
+            assert.equal(result.error.message, "Failed to approve registration");
+        }
+    });
+
+    it("maps unexpected registration rejection failures to UPDATE_FAILED", async () => {
+        rejectServiceError = new Error("database unavailable");
+
+        const { rejectRegistrationRequest } = await import("@/actions/management/registrations");
+        const result = await rejectRegistrationRequest({
+            registrationId: "registration-1",
+            reason: "Incomplete application",
+        });
+
+        assert.equal(result.ok, false);
+        if (!result.ok) {
+            assert.equal(result.error.code, "UPDATE_FAILED");
+            assert.equal(result.error.message, "Failed to reject registration");
+        }
     });
 });

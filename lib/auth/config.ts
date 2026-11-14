@@ -4,7 +4,7 @@ import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/a
 import { admin } from "better-auth/plugins/admin";
 import { username } from "better-auth/plugins/username";
 import { after as scheduleAfter } from "next/server";
-import { findTeamAccountByUsername, isApprovedTeamAccount } from "@/lib/auth/team-access";
+import { findTeamAccountByEmail, findTeamAccountByUsername, isApprovedTeamAccount } from "@/lib/auth/team-access";
 import prisma from "@/lib/prisma";
 import { isOwnedR2PublicUrl } from "@/lib/r2";
 import { sendLoginNotification, sendNotification } from "@/lib/services/notifications";
@@ -21,13 +21,14 @@ export const auth = betterAuth({
         before: createAuthMiddleware(async (context) => {
             if (context.path === "/update-user") {
                 const image = context.body?.image;
-                if (image !== undefined && image !== null) {
+                if (image !== undefined && image != null) {
                     const session = await getSessionFromCtx(context);
                     const user = session?.user;
                     if (!user) {
-                        throw APIError.fromStatus("UNAUTHORIZED", { message: "Authentication required" });
+                        throw APIError.fromStatus("UNAUTHORIZED");
                     }
-                    const role = user?.role;
+
+                    const role = user.role;
                     const keyPrefix =
                         role === "admin"
                             ? `uploads/admins/${user.id}`
@@ -41,21 +42,42 @@ export const auth = betterAuth({
                         });
                     }
                 }
+
                 return;
             }
-            if (context.path !== "/sign-in/username") return;
-            const username = context.body?.username;
-            if (typeof username !== "string") return;
 
-            const user = await findTeamAccountByUsername(username);
-            if (user && !isApprovedTeamAccount(user)) {
-                throw APIError.fromStatus("FORBIDDEN", {
-                    message: "Your team registration is still pending approval.",
-                });
+            if (context.path === "/sign-in/username") {
+                const username = context.body?.username;
+                if (typeof username !== "string") return;
+
+                const user = await findTeamAccountByUsername(username);
+
+                if (user && !isApprovedTeamAccount(user)) {
+                    throw APIError.fromStatus("FORBIDDEN", {
+                        message: "Your team registration is still pending approval.",
+                    });
+                }
+
+                return;
+            }
+
+            if (context.path === "/sign-in/email") {
+                const email = context.body?.email;
+                if (typeof email !== "string") return;
+
+                const user = await findTeamAccountByEmail(email);
+
+                if (user && !isApprovedTeamAccount(user)) {
+                    throw APIError.fromStatus("FORBIDDEN", {
+                        message: "Your team registration is still pending approval.",
+                    });
+                }
             }
         }),
+
         after: createAuthMiddleware(async (context) => {
             if (context.path !== "/sign-in/username" && context.path !== "/sign-in/email") return;
+
             const session = context.context.newSession;
             const userId = session?.user?.id;
             if (!userId) return;
