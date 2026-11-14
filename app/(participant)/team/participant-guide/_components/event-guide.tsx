@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getEventSettings } from "@/lib/data/event-settings";
 import type { Locale } from "@/lib/i18n/config";
 import type { Messages } from "@/lib/i18n/messages";
+import { fetchEventSchedule } from "@/lib/services/event-schedule";
 import { getSubmissionWindowState } from "@/lib/services/submission-window";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -30,6 +31,11 @@ function formatDate(value: string, locale: Locale, withTime = false): string {
 
 export async function EventGuide({ locale, t }: EventGuideProps) {
     const event = await getEventSettings();
+    const schedule = await fetchEventSchedule();
+    const day1Timeline = schedule.items.filter((i) => i.day === 1).map((i) => ({ time: i.time, activity: i.activity }));
+    const day2Timeline = schedule.items.filter((i) => i.day === 2).map((i) => ({ time: i.time, activity: i.activity }));
+    const timeline1 = day1Timeline.length ? day1Timeline : t.schedule.day1Timeline;
+    const timeline2 = day2Timeline.length ? day2Timeline : t.schedule.day2Timeline;
     const now = new Date();
 
     const startsAt = new Date(HACKATHON_STARTS_AT);
@@ -158,8 +164,8 @@ export async function EventGuide({ locale, t }: EventGuideProps) {
 
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                     {[
-                        { label: t.schedule.day1Label, timeline: t.schedule.day1Timeline },
-                        { label: t.schedule.day2Label, timeline: t.schedule.day2Timeline },
+                        { label: t.schedule.day1Label, timeline: timeline1 },
+                        { label: t.schedule.day2Label, timeline: timeline2 },
                     ].map((day) => (
                         <PosterPanel className="p-5" key={day.label}>
                             <h3 className="font-display text-base font-bold text-foreground">{day.label}</h3>
